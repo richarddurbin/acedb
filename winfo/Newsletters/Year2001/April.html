@@ -1,0 +1,472 @@
+<HTML>
+
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - April 2001</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - April 2001</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P>This months newsletter is once again late...sigh. I had hoped to
+announce the arrival in a blaze of glory of AceDB 4_9. Sadly we have had
+endless trouble with getting the binaries for different platforms to build
+and in particular with doing static-link builds. There is some news on
+AceDB 4_9 however so see the special section below. There is also news of the
+next AceDB course, see "Education" section. And a reminder about the new
+code to display CDS's in fmap see "Articles" section. The newsletter web pages
+have also been improved.
+
+
+<!--******************************************************************** -->
+<a name="General"></a><H2>General News</H2>
+
+<a name="AceDB"></a><H3>AceDB 4_9</H3>
+
+<P>AceDB 4_9 has finally arrived, the development version (4_8) has been
+around for what seems like years but its been a labour of love to translate
+that into 4_9. What follows is a brief overview.
+
+
+<a name="summary"></a><h4>Summary</h4>
+
+<P>The current release is AceDB 4_9a and can be found at:
+
+<ul>
+  <li><b>Internally to the Sanger Centre:</b> ~acedb/RELEASE.SUPPORTED
+  <li><b>Externally:</b>
+      <A href="http://www.acedb.org/Software/Downloads/supported.shtml">
+      http://www.acedb.org/Software/Downloads/supported.shtml</A>
+</ul>
+
+<P>This new release is fully compatible with 4_7 & 4_8. The new release also
+includes a windows version.
+
+<P>Note that from this release onwards, AceDB is distributed under
+the GNU General Public License. This means that AceDB is still
+free/open software. The license allows you to copy and alter the
+code for your own purposes but you must acknowledge and retain the AceDB and GNU copyright
+notices in the code and you must not try to make money from it.
+Please see the file
+wdoc/GNU_GENERAL_PUBLIC_LICENSE in this distribution or go to
+http://www.uk.gnu.org/ for more details.
+
+
+<a name="Whats"></a><h4>What's available/not available</h4>
+
+<P>For the first time this release we are supplying both compiled binaries
+that include the readline/GTK libraries used by AceDB (so-called "statically linked"
+executables) and also, for users who already have readline/GTK installed on their
+systems, binaries that don't (so-called "dynamically linked" executables).
+The problems in producing the static links are too numerous, tiring,
+tiresome and, well just irritating to go into. Suffice it to say that about
+half the problems have been caused by individual operating system manufacturers own
+little quirks...sigh....and the other half by local system problems (including a power
+cut, overloaded networks, and...oh never mind).
+
+<P>We have managed to do both static and dynamic linked builds of 4_9a for the
+following operating systems/levels:
+<dl>
+  <dt>ALPHA
+  <dd>OSF1 V4.0 1229 alpha
+  <dt>LINUX
+  <dd>Linux 2.2.14-5.0 #1 Tue Mar 7 21:07:39 EST 2000 i686 unknown" -->
+  <dt>SGI
+  <dd>IRIX 6.5 10120105 IP32
+</dl>
+
+<P>We are close to succeeding with a Sun box running SunOS 5.8, a system which should more
+closely match many users Sun boxes. Currently we are held up by the fact that the GNU
+software supplied by Sun themselves is incorrectly installed and will have to be reinstalled
+from scratch. Sounds simple but took about 5 million years to track down.
+
+<a name="Porting"></a><h4>Porting to MS Windows, and beyond...</h4>
+
+<P>In the past AceDB has been ported to both Windows and the Mac but
+these ports have suffered in a number of ways:
+
+<ol>
+  <li>They've had fewer features because system
+      incompatibilities have limited the port.
+  <li>They've been hard to extend or bugfix because
+      significant portions of code had to be rewritten to support
+      the different systems.
+  <li>They've been hard to build because each
+      system had a completely different way of building programs.
+</ol>
+
+<P>The net effect of this is that the Mac version is now completely
+out of date and the original Windows system was not being updated
+often enough.
+
+<P>Simon Kelley has pretty much single-handedly introduced two
+vital pieces of software that have enabled us to port AceDB
+to Windows (and soon we hope to the Mac) with very few code
+changes from the Unix version:
+
+<ul>
+  <li><b>Cygwin</b> is a piece of software that emulates on MS-Windows
+      much of the Unix environment (shells, make, utilities, C libraries etc.).
+      Cygwin provides not only the utilities we need to build AceDB
+      but also the operating system calls that we need for AceDB to work.
+  <li><b>GTK</b> is a new set of windowing libraries that allow us to
+      use the same programming interface for both X-windows/Unix and
+      MS-Windows.
+</ul>
+
+<P>The new Mac operating system (OS-X) is a variant of unix so that much
+of AceDB should run unaltered on it, the missing piece is the X Windows
+libraries. Once these are available then GTK should also work and AceDB
+will at last be available again on the Mac. We are getting our new Mac system sometime in the next
+couple of weeks to begin the the port to OS-X.
+
+
+<P><b>AceDB 4_7 no longer supported:</b>
+we will be putting all our efforts into supporting/developing 4_9 which means
+that we will no longer be actively supporting 4_7. The existing 4_7 code will
+still be available from:
+<ul>
+  <li><b>Internally:</b> to the Sanger Centre: ~acedb/RELEASE.4_7
+  <li><b>Externally:</b> by ftp (ftp.sanger.ac.uk) from the directory pub/ftp/ace.4_7
+</ul>
+
+
+<P><b>New query language:</b>
+The new release also incorporates the new AQL query language that
+allows much finer grained and more complex queries than the existing
+query language.
+
+<p><b>Socket server replaces RPC server:</b>
+The RPC server has been discontinued and is replaced by the sockets based version.
+The sockets version has been ported to MS-Windows as well as Unix and includes:
+
+<ul>
+  <li>A proper MD5-based userid/password mechanism (the client and server no longer
+      have to be able to see a common disk for control of user access to the database)..
+  <li>Simple control of read/write access to the database.
+  <li>"Read", "Write" and "Admin" classes of users.
+  <li>Allows access for domain name groups of users, e.g. everyone at sanger.ac.uk
+  <li>New database admin commands, e.g. to add new users.
+  <li>Control of server restarting after crashes.
+</ul>
+
+<P>For fuller details, see the online documentation in
+<A href="http://www.acedb.org/Development/wdoc/SOCKET_aceserver.html>wdoc/SOCKET_aceserver.html</A>.
+
+<P>There is also a developers guide to interfacing to the the socket server in
+<A href="http://www.acedb.org/Development/wdoc/SOCKET_interface.html>wdoc/SOCKET_interface.html</A>.
+
+<p><b>Fmap configurable columns:</b> fmap columns can now be interactively configured
+via drop down menus at the top of each column. fmap configuration will be further
+extended in the next month or so with the addition of user defaults to allow
+individual customisation of fmap views.
+
+<P>Please do try the new AceDB 4_9 and let us the developers know of any problems, you can
+report bugs in the usual ways:
+
+<ul>
+  <li><b>web:</b> <A href="http://www.sanger.ac.uk/cgi-bin/webddts/WebDDTS.pl?Project=Acedb">
+      http://www.sanger.ac.uk/cgi-bin/webddts/WebDDTS.pl?Project=Acedb</A>
+  <li><b>email:</b> <A href="mailto:acedb@sanger.ac.uk">&lt;acedb@sanger.ac.uk&gt;</A>
+</ul>
+
+
+
+
+<!--******************************************************************** -->
+<a name="Education"></a><H2>Education</H2>
+
+<P>The next AceDB course is coming soon, it will be at the Dept. of Genetics
+in Cambridge and comprises:
+
+<dl>
+  <dt>19th June:
+  <dd>An Introduction to ACEDB software using C. elegans and human genome databases.
+  <dt>20th-22nd June:
+  <dd>Advanced use of AceDB : for those wanting to use AceDB to manage their own data.
+</dl>
+
+<p>For further details please visit:
+<ul>
+  <li><A href="http://www.hgmp.mrc.ac.uk/About/Courses/2001/comp.acedb.course.html">
+      http://www.hgmp.mrc.ac.uk/About/Courses/2001/comp.acedb.course.html</A>
+</ul>
+
+
+
+<!--******************************************************************** -->
+<a name="New"></a><H2>New Features</H2>
+
+
+<a name="Newsindex"></a><H3>Improved Newsletter pages</H3>
+
+<P>The newsletter web pages have been improved thanks to a script from
+Roger Pettett of the Sanger Web Team. If you go to any of the directories
+containing one of the years set of newsletters
+e.g.
+<A href="http://www.acedb.org/winfo/Newsletters/Year2000/index.shtml">
+http://www.acedb.org/winfo/Newsletters/Year2000/index.shtml
+</A>, you will find that the major sections of the newsletter are
+all listed as hyperlinks into the newsletters. This makes it easy to
+see what each newsletter contains and get a quick overview of the letter.
+
+<a name="Title"></a><H3>New TITLE keyword for databases</H3>
+
+<P>If you use xace you will have noticed that the main window has some text in
+its title bar. This text is made up of the following elements:
+
+<pre>"code-version, window-title db-name"
+</pre> 
+
+<P>In the past these elements were set by:
+
+<dl>
+  <dt>code-version
+  <dd>Always set according to the builtin code version number, cannot be altered.
+  <dt>window-title
+  <dd>Optional, set each time an AceDB program is run using the "-t" option
+      for _DDtMain in wspec/dislays.wrm
+  <dt>db-name
+  <dd>Optional, set when the database is rebuilt using the NAME keyword in wspec/database.wrm
+</dl>
+
+<P>Over time however the window-title and db-name elements have in some cases
+been used to represent the database title and database version respectively.
+In the C. elegans database for instance the window-title was set to something
+like "C. elegans database" and the db-name to "WS40" to show that this build
+of the database was at the WS40 level.
+
+<p>This presents a bit of a problem for tace users (e.g. all those who use AcePerl,
+which itself uses tace), because the window-title is not available. In an attempt
+at making this more rational, a new "TITLE" keyword has been added to wspec/database.wrm.
+This new keyword can take the place of window-title, the rules for what is displayed are
+now:
+
+<pre>"code-version, db-title db-name"
+</pre> 
+
+<P>set by:
+
+<dl>
+  <dt>code-version
+  <dd>Always set according to the builtin code version number, cannot be altered.
+  <dt>db-title
+  <dd>Optional, set each time an AceDB program is run using the TITLE keyword
+      in wspec/database.wrm, if this is not set then its set using any text
+      specified with the "-t" option for _DDtMain in wspec/dislays.wrm.
+  <dt>db-name
+  <dd>Optional, set when the database is rebuilt using the NAME keyword in wspec/database.wrm
+</dl>
+
+<P>It is recommended that database administrators switch to using the TITLE
+and NAME keywords in wspec/database.wrm, only use the "-t" option for _DDtMain
+in wspec/dislays.wrm if you don't really care about a database title.
+
+<P>The db-title and db-name can be seen in tace/saceclient using the "status"
+command.
+
+
+
+<a name="BLIXEM"></a><H3>BLIXEM improvements including gapped alignments</H3>
+
+<a name="Generaldisp"></a><H4>General display improvements</H4>
+
+<P>A number of changes have been made to the Blixem window in response
+to annotators requests:
+
+<ul>
+  <li>bug fix to prevent the Blixem window from being too large to fit
+      on the screen initially.
+  <li>Independant scolling to alignments for each strand.
+  <li>Detachable button bar with cut-able co-ordinate display.
+</ul>
+
+<P>In addition finer control of the homology data that blixem uses
+has been provided. The user can set a maximum number of sequences
+to efetch in the AceDB preferences window.
+If that num is exceeded a dialog box will ask for confirmation
+that sequences should be ommitted and the user can then set a cut off
+score to exclude more sequences as necessary.
+
+
+<a name="Display"></a><H4>Display of gapped alignments in Blixem</H4>
+
+<P>AceDB now supports the storage and display of gap information with alignments, the
+following are extracts from
+<A href="http://www.acedb.org/Development/wdoc/gappedAlignments.html">
+wdoc/gappedAlignments.html</A> which contains a fuller write up of the gapped
+alignment system.
+
+<P><HR>
+The Homol tag in ?Sequence and ?Protein now has a model which looks
+like this:
+
+<pre><code>Homol DNA_homol ?Sequence XREF DNA_homol ?Method Float Int Int Int Int #Homol_info
+      Pep_homol ?Protein XREF DNA_homol ?Method Float Int Int Int Int  #Homol_info
+      Motif_homol ?Motif XREF DNA_homol ?Method Float Int Int Int Int #Homol_info
+</code></pre>
+
+<P>and the Homol-info class looks like this:
+
+<pre><code>#Homol_info Segs #Match_seg     // old way to give gapped alignment -  used in pephomolcol for Belvu call
+            Align Int UNIQUE Int UNIQUE Int     // correct way to give gapped alignments for FMAP
+             // for each ungapped block, self_start target_start [length]
+             // if no length then until next block (so no double gap) 
+             // if no Align assume ungapped
+            AlignDNAPep Int UNIQUE Int UNIQUE Int
+            AlignPepDNA Int UNIQUE Int UNIQUE Int
+             // These two tags are analogous to Align, but scale length
+	     // for the case of a dna alignment to peptide or vice-versa.
+</code></pre>
+
+<P>This system is backwards compatible since if the Homol_info data is
+not present, the Homologies are interpreted as before. (For reference,
+the Float parameter is a score and the four Ints are start and end
+co-ordinates in this sequence followed by start and end coordinates in
+the homologous sequence.
+
+<P>The gaps are not displayed in the fMap, but they are displayed in blixem.
+
+<P>Gaps in the query sequence (ie where there are bases in the target 
+with corresponding bases in the query) are shown by omitting the un-matched bases
+and drawing a vertical red bar. Gaps in the target sequence are shown with dots.
+
+<HR><P>
+
+
+
+<a name="Socket"></a><H3>Socket Server working directory</H3>
+
+<P>When the socket server is started via inetd it inherits much of the inetd
+daemons environment including its current working directory. This is a potential
+security exposure. Accordingly an alternative working directory can now be specified
+in wspec/serverconfig.wrm using the WORKING_DIRECTORY keyword, if no
+directory is specified then the database directory will be used as
+the working directory. If the server is unable to set the working
+directory it will exit.
+
+
+<a name="CDS"></a><H3>The new CDS code for fmap</H3>
+
+<P>I received the following comment about the new colours of some objects when
+displayed in fmap:
+
+
+<pre>&gt; We have just changed over to the new version of ACEDB and we have a
+&gt; question about the purple object repreenting coding CDS.
+&gt; Unfortunately every prediction, (Genscan, Ensembl, halfwise etc) is
+&gt; purple alongside our own CDS which we create. Is there something we have
+&gt; to change in the method model to be able to differentiate between these
+&gt; different things and set different colours (I dont have anything against
+&gt; purple honest!).
+</pre>
+
+<P>Well why is everything purple (or pink or magenta depending on your
+eyes/screen) ???
+
+<P>Some new code has been introduced into AceDB to solve the somewhat annoying
+problem of having to use two sequence objects to represent an mRNA and its
+coding region.
+
+<P>The way this should work is that you define a sequence object for the mRNA with
+a set of Source_Exons and then set the CDS tag in the object to show which part
+of the Source_Exons are the coding region. The object will then be displayed
+according to how the Method object for the sequence has been set up: non-coding
+parts will be coloured with the "Colour" tag colour and coding parts with the
+"CDS_colour" tag colour (yes, you've guessed it, the default colour is purple).
+
+<P>So what has gone wrong for the user above ?  Well....in the past AceDB has only
+done protein translations of objects which had the CDS tag set in them so people
+ended up setting the CDS tag in everything just to get the translation. This
+means of course that whole objects now come out in purple with the new code.
+
+
+<P>How to fix this....
+
+<P>In the short term you can just update your models file to make sure you have the
+Method class with the CDS_colour tag in it and then change your methods so that
+the CDS_colour is the same as the CDS tag for objects that you want to come out
+in the colour they were before you used the new code.
+
+<P>In the longer term (and far more preferably), you should use the CDS tag
+correctly and not add it willy-nilly to all sequence objects. To allow this I
+have been adding code to allow protein translation of non-CDS objects. This
+latter facility should be in the next monthly build, so if you use the May build
+and find that its not working how you would like send me a note.
+
+<P>You should also note that this change was originally described in the February
+AceDB newsletter so you may want to go back to that and reread it (you can
+access past newsletters via:  http://www.acedb.org/winfo/Newsletters/).
+
+<P>If this is not clear or you need further information then come and see me, phone
+me, email me,
+<A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A>.
+
+
+<!--******************************************************************** -->
+<a name="Bugs"></a><H2>Bugs Fixed</H2>
+
+<a name="Tablemaker"></a><H3>Old, old table maker bug</H3>
+
+<P>Table maker uses %n in two different ways:
+
+<dl>
+  <dt>%n
+  <dd>are parameter to be given on the command line in tace
+  <dt>\%n
+  <dd>are substituted by the value of column n at run time
+</dl>
+
+<P>Neither of these worked correctly in some later versions of 4_7 code and in
+4_8 code because of a bug in AceDBs parameter quoting/interpreting mechanism.
+This bug is now fixed.
+
+
+
+<!-- ******************************************************************** -->
+<H2>April monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<H2>Next User Group Meeting - D319, 2.30pm, Thursday, 17th May 2001</H2>
+
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon May 21 18:35:29 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

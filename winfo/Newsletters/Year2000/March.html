@@ -1,0 +1,159 @@
+<HTML>
+
+
+<!-- Stuff you should alter is highlighted with "***" -->
+
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - March 2000</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<H1>ACEDB User Group Newsletter - March 2000</H1>
+
+<P>This is the first attempt at a monthly news letter, if you don't like
+the format or there is something missing then please email me with
+suggestions (edgrif@sanger.ac.uk).
+
+<P>This issue includes information about who the acedb
+developers are and how to contact us, where to pick up acedb releases and
+whats new in acedb.
+
+<a name="acedev"></a><H3>Who are the acedb developers and how do I contact them ?</H3>
+
+<P><B>Developers:</B>
+<UL>
+  <LI>Ed Griffiths (edgrif@sanger.ac.uk), Simon Kelley (srk@sanger.ac.uk) (ext 4780/4991, room D3-22)
+  <LI>Richard Durbin (rd@sanger.ac.uk)
+  <LI>Jean Thierry-Mieg (works at CNRS, Montpellier, France. email: mieg@crbm.cnrs-mop.fr)
+</UL>
+You should contact Ed and Simon for acedb problems in the first instance.
+
+<P><B>mail to:</B>  acedb@sanger.ac.uk  (is forwarded to all the above)
+
+<P><B>web site:</B> http://www.acedb.org/  (you can log problems/suggestions from here)
+
+<P><B>news group:</B> bionet.software.acedb 
+
+<P><B>user group mailing list:</B> acedbg
+
+<P>Anyone can be added to the "acedbg" users circulation list by sending an
+email request to the acedb address. Notification of the monthly users
+group/gripe meeting is currently circulated by this method as are these
+newsletters.
+
+
+<a name="Newdirs"></a><H3>New directories for Release Versions of Acedb</H3>
+
+<P>If you need to pick up new/existing versions of acedb code/binaries then this is
+just a reminder about where to find them internally within
+the Sanger Centre:
+
+<P>Acedb source/binaries can be found under <CODE><B>"/nfs/disk100/acedb"</B></CODE>.
+All source/binaries directories begin with <CODE><B>"RELEASE."</B></CODE>, those ending
+with <CODE><B>".BUILD"</B></CODE> include source as well as binaries.
+
+<P>The ones you should look at are:
+<DL>
+  <DT><CODE><B>RELEASE.SUPPORTED</B></CODE>
+  <DD>this is stable publically released code (currently 4_7l)
+  <DT><CODE><B>RELEASE.DEVELOPMENT</B></CODE>
+  <DD>this is the monthly build of the reasonably stable development code (currently 4_8b)
+  <DT><CODE><B>RELEASE.EXPERIMENTAL</B></CODE>
+  <DD>this is the overnight build of the latest 4_8 code, you should not use this
+       without first talking to acedb developers
+</DL>
+
+
+<a name="New"></a><H2>New Features</H2>
+
+<P>This months development build of Acedb is 4_8c which includes
+a number of new features.
+
+<a name="Acedbgtk"></a><H3>Acedb and GTK</H3>
+xace has used the Athena widget set (the code that does the buttons, scroll bars etc) ever since
+it first started. This widget set is now out of date and as well as just looking very clunky,
+does not provide support for facilities such as "drag and drop". An even greated problem is that
+it is not portable to Windows machines. Simon Kelley has produced a version of xace which
+uses GTK, a free/Open Software widget set. This widget set not only supports more modern
+facilities but has also been ported to Windows.
+
+<P>To try out the new interface you need to use Acedb 4_8 code, please send comments to "acedb".
+
+
+<a name="Acedbwindows"></a><H3>Acedb on Windows</H3>
+
+<P>As alluded to in the previous item, we now have acedb running on Windows platforms.
+Currently its possible to use xace, tace and the socket-based version of the server (see below item
+for more on the server). In addition there is a smart/trendy install package for
+the windows version which should make setting acedb up on a machine much easier.
+You should contact Simon Kelley for more information about this
+version of acedb. 
+
+<a name="acedbwormCD"></a><H3>The Windows Version Acedb + Worm CD !</H3>
+
+<P>It's now possible to install acedb and a version of the C. elegans database on to a
+Window system from a CD. This can be done in the same way that most other Windows
+programs are installed via a neat install program. Once again, see Simon Kelley
+for information about this.
+
+<a name="Sockets"></a><H3>A Sockets based server/client (password system etc)</H3>
+
+<P>Previously acedb used a protocol called RPC for its client/server communication,
+this had a number of drawbacks, portability being a major one. The server has now
+been recoded to use sockets with the following advantages:
+<UL>
+  <LI>we now have a version of the client/server running on Windows machines
+  <LI>a new password based system has been produced for giving users access to
+       databases.
+  <LI>Perl and Java programs can now access the server directly instead of via
+       the ace client providing better performance/reliability
+</UL>
+
+<P>Documents for the server can be found at:
+<UL>
+  <LI>http://www.acedb.org/Development/wdoc/SOCKET_aceserver.html
+  <LI>http://www.acedb.org/Development/wdoc/SOCKET_interface.html
+</UL>
+
+<P>The former is the administrators guide to setting up the server/database, the latter is
+for programmers who want to interface directly to the server via TCP sockets.
+
+<P>Once we are sure the code is stable Ed (edgrif@sanger.ac.uk) will organise a short (1/2 day)
+course on how to set up and use the new server.
+
+<a name="Education"></a><H2>Education</H2>
+
+<P>Sylvia Martinelli (sylvia@sanger.ac.uk) is running a 3 day internal (Sanger centre only) introductory
+course on acedb on 22nd-24th March. If haven't used acedb much before and you need to
+know about it, then this is the course for you. Contact Sylvia direct if you are
+interested, there may still be a few places left.
+
+
+
+<H2><B>!! TODAY !!</B> Next User Group Meeting - D213, 2.30pm, Thurs 9th March</H2>
+
+
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon May 21 15:41:37 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

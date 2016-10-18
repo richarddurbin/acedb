@@ -1,0 +1,249 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - September 2002</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - September 2002</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<P>Some small changes to AceConn, a new init flag, some query improvements,
+some smap stuff...some bugs....
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="General_News"></a><H2>General News</H2>
+
+<P>The long and winding road, at last we make a reasonable release of acedb
+including a complete replacement of the sequence building code in FMap with
+the new SMap code.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+<a name="Aceconn_change"></a><H3>AceConn Interface Change</H3>
+
+<P>There has been a small change to the AceConn interface, this is
+the C library that provides a set of basic routines for interfacing to
+the acedb socket server.
+
+<P>Initialisation and connection have now been separated which gives the
+application more control over when to connect to the database and also
+more error feedback when the crucial intial connection fails. The
+initialise/connect and disconnect/destroy calls are now:
+
+<pre><code>status = AceConnCreate(&connection, host, port, userid, passwd, timeout) ;
+
+status = AceConnConnect(connection) ;
+
+.... make requests to server ....
+
+status = AceConnDisconnect(connection) ;
+
+AceConnDestroy(AceConnection connection) ;
+</code></pre>
+
+
+
+<a name="Force_init"></a><H3>Forced initialisation of tace/giface</H3>
+
+<P>When any acedb program starts up, it checks for the presence of the database/ACEDB.wrm file,
+it then prompts the user as to whether to reinitialise the database. This can make running
+tace and giface from a script a bit tedious because you have to remember to handle this
+possibility. You can now specify the <code><b>"-init"</b></code> command line option which
+means that if database/ACEDB.wrm file is not found, then the program will continue without
+prompting and reinitialise.
+
+
+<a name="dna_cmd"></a><H3>New "dna" command options</H3>
+
+<P>The tace/giface "dna" command now has options for unspliced/spliced/cds dna dumping.
+The new command synopsis is:
+
+<pre><code>Dna [-mismatch] [-unspliced | -spliced | -cds] [[-f] out_filename] :
+   Fasta dump of related dna sequences.
+        -mismatch          allow mismatches in construction of dna
+        -unspliced | -spliced | -cds
+                           for intron/exon objects dna can be dumped for exons + introns,
+                           the spliced exons or just the CDS within the spliced exons.
+        [-f] out_filename  output file for dna.
+</code></pre>
+
+
+<a name="query_number"></a><H3>Query/TableMaker number interpretation</H3>
+
+<P>The query/tablemaker handling of arithmetic/algebra has been improved so that
+it can do interpretations of sums like: <code><b>"- -3 == 3"</b></code>
+and <code><b>"3 + 5 (7+2)"</b></code>. The handling
+of negative numbers is useful in table maker when you say <code><b>"%5"</b></code>
+and <code><b>"%5"</b></code> is negative.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+
+<a name="Smap_model"></a><H3>SMap Model clarification</H3>
+
+<P>A small but important clarification has been added to the SMap model for
+gluing together sequences and features, it is fundamental to the SMap that
+each child has one and only one parent. Objects that are to be SMap'd must
+form strict trees, i.e. each object has a single parent (except for the
+top object which has no parent). Objects may, of course, have multiple
+children.
+
+<P>The part of the SMap model that must be put in the child object to point to its
+parent should be:
+
+<pre><code>	  SMap S_Parent UNIQUE &lt;parent_tag&gt; UNIQUE &lt;parent_key&gt;
+                               &lt;parent_tag&gt; UNIQUE &lt;parent_key&gt;
+</code></pre>
+
+<P>As an example the current wspec/models.wrm Sequence class includes:
+
+<pre><code>?Sequence
+
+          SMap S_Parent Canonical_parent UNIQUE ?Sequence XREF Genomic_non_canonical
+                        Genomic_parent UNIQUE ?Sequence XREF Nongenomic
+                        AGP_parent UNIQUE ?Sequence XREF AGP_fragment
+
+</code></pre>
+
+<P>This means that any <b>one</b> of <b>Canonical_parent</b>, <b>Genomic_parent</b>
+or <b>AGP_parent</b> could be the parent of this object.
+
+
+
+<a name="dotter_blixem"></a><H3>Dotter and Blixem binaries</H3>
+
+<P>The <A HREF="http://www.acedb.org/Software/Downloads/">downloads page</A>
+on the acedb web site now includes a separate downloads package for the belvu, dotter,
+and blixem binaries. These are available for Unix, Mac OSX and MS Windows.
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="Fasta_dump"></a><H3>Dumping dna for genes on reverse strand</H3>
+
+<P>An old bug, if you used the seqdna command from giface to dump the dna for
+a gene on the reverse strand it dumped the dna for the forward strand instead !
+This goes right back to acedb 4_7 and is now fixed.
+
+
+<a name="signal_handler"></a><H3>Bug in signal handler</H3>
+
+<P>The signal handler was setting the messOut context to NULL instead of the messExit
+context. Then when it called messExit, this caused the program to reenter GTK from the
+signal handler, this is almost always a disaster as it messes up the state of GTK. This
+is fixed now.
+
+
+<a name="max_reply"></a><H3>max_reply in acedb server</H3>
+
+<P>The documentation for "max reply bytes" in the server was muddled:
+the client can set this to any value between 0 and the server maximum (100KB),
+the server will except the special value zero, meaning "no maximum",
+i.e. send whole of reply at once.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+<a name="nested_dirs"></a><H3>Subdirectories in whelp/ and wdoc/</H3>
+
+<P>Since Simon improved the help browser for acedb it handles subdirectories within
+whelp/ and in general it would be good if we could all consider putting documents
+that go into whelp/ or wdoc/ into their subdirectories, particularly if you include
+seperate picture files that should go with the documents.
+This has been done for whelp/AQL and also for wdoc/SMap and wdoc/Socket_server
+documentation already. If you aren't sure how to add subdirectories in a CVS
+directory then mail me
+<A HREF="mailto:edgrif@sanger.ac.uk">edgrif@sanger.ac.uk</A>
+and I'll send you the incantations.
+
+
+
+<a name="cvs_changes"></a><H3>Some new CVS stuff</H3>
+
+<P>When we all used the <code><b>"acXXXX"</b></code> scripts to access our files there
+was a system that warned you if someone else was already editting a file that you wanted
+to get out, if you carried on and got the file out then it also warned the person(s)
+already editting the file that you had got the file out. Note that this was just a warning,
+it in no way prevented you from editting the file, a courtesy email really. Rob has added
+code to get CVS to perform this function now rather than the
+<code><b>"acXXXX"</b></code> scripts.
+
+<P>The aquila scripts have now been placed in cvs.
+
+
+<a name="alpha_5"></a><H3>Alpha OSF v5 make</H3>
+
+<P>We now have a "_DEF" file for OSF v5 called ALPHA_5, Simon has pointed out
+that this breaks the convention that the first number refers to the acedb release.
+This is partly my fault, I was unaware of this convention and also it has been
+broken for other operating systems. If anyone feels really strongly about this I will
+change it to ALPHA_4_5. I have put in the compiler flags to get "level 3" warnings out
+which seems about right as a balance between over zealous and useful messages.
+
+
+<P>I also attempted to fix yet more #define nonsense on Alpha,
+they cannot make up their minds whether to
+define socklen_t or not...sigh.... first they don't, then they do, then
+they only sometimes do....
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<H2>May monthly build not available.</H2>
+
+<P>Apologies, once again there was no build this month due to the major
+SMap development work.
+
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Fri Dec 20 09:46:07 GMT 2002
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

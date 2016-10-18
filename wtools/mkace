@@ -1,0 +1,92 @@
+#! /bin/sh
+# mkace -- Script to make an AceDB database
+#
+# Arguments can be any mixture of:
+#    *.wrm          files to override standard ones
+#    *.ace          files to load into database
+#    *.tace, */tace (once only) tace program to use
+#    */wspec        directory for default .wrm files
+# all of which are optional,
+# and there must be one other argument, which is the
+# name of the database directory being created
+#
+# If no tace program is specified on the command line,
+# env var TACE is tried, and if no joy, your path.
+#
+# .wrm files are copied from acedb/wspec in your home
+# directory if no argument ends with wspec
+
+WRMS=""
+ACES=""
+HASACE=false
+EXAMPLE=$HOME/acedb/wspec
+
+while [ $# -gt 0 ]
+do
+  case $1 in
+    *.wrm)         WRMS="$WRMS $1"
+                   shift ;;
+    *.ace)         ACES="$ACES $1"
+                   HASACE=true
+                   shift ;;
+    *.tace|*/tace) TACE=$1
+                   shift ;;
+    */wspec)       EXAMPLE=$1
+                   shift ;;
+    *)             TOP=$1
+                   shift ;;
+  esac
+done
+
+echo TOP is $TOP
+echo WRMS are $WRMS
+echo ACES are $ACES
+
+if [ -d "$TOP" ]
+then
+  rm -rf $TOP
+fi
+
+mkdir $TOP
+mkdir $TOP/database
+WSPEC=$TOP/wspec
+mkdir $WSPEC
+
+for SPECFILE in models.wrm options.wrm passwd.wrm database.wrm
+do
+  cp $EXAMPLE/$SPECFILE $WSPEC
+  chmod u+w $WSPEC/$SPECFILE
+done
+
+for SPECFILE in $WRMS
+do
+  echo Overriding with $SPECFILE
+  cp $SPECFILE $WSPEC
+done
+
+if $HASACE
+then
+  if [ "$TACE" != "" ]
+  then
+    echo will add $ACES
+  else
+    TACE=`which tace`
+    if [ "$TACE" != "" ]
+    then
+      echo will add $ACES
+      TACETEMP=/tmp/mkace$$
+      echo y > $TACETEMP
+      for ACEFILE in $ACES
+      do
+        echo parse $ACEFILE >> $TACETEMP
+      done
+      echo save >> $TACETEMP
+      echo quit >> $TACETEMP
+      $TACE $TOP < $TACETEMP
+      rm -f $TACETEMP
+    else
+      echo tace not defined -- either give as argument or define TACE in environment
+      exit 1
+    fi
+  fi
+fi

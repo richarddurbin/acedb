@@ -1,0 +1,18 @@
+/* @(#)rpcace.acf	1.0 1/8/97 */
+
+/*
+** This attribute control file (ACF)
+** gets processed by DCE IDL compiler
+**
+*/
+
+[
+	explicit_handle
+]
+interface RPC_ACE
+{
+//
+//	The ACEDB RPC call prototype
+//
+ace_server([comm_status, fault_status] ace_rpc_status ) ;
+}

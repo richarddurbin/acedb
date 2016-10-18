@@ -1,0 +1,45 @@
+#!/bin/ksh
+#
+# Runs the cvs2cl tool (available from http://www.red-bean.com/cvs2cl/) to give
+# changes in all the directories we are interested in.
+#
+# Note that you can get help on cvs2cl using:   "perldoc cvs2cl"
+#
+# Script should be invoked like this: cvschanges '2004-03-01<2004-04-01'
+#
+# Some day I will add user friendly options to do months automatically....note from
+# the above that you need to include the first day of the _next_ month to get all of
+# the current month...a cvs date range oddity.
+#
+
+changes_file=`pwd`
+
+# We need to run it on several directories.....
+acedb_cvs="$HOME/acedb/CODE"
+acedb_dirs='Ace-Conn Ace-docs Ace-python acedb build tools'
+acedb_dirs='acedb tools'
+zmap_cvs="$HOME/ZMap/ZMap"
+zmap_dirs='doc src'
+
+# Need to make sure the date stuff is passed correctly to cvs, format must be:
+#
+# cvs2cl.pl  -l "-d'2004-03-01<2004-04-01'"  [other args]
+#
+
+date="-d'"$1"'"
+
+# do acedb stuf...
+cd $acedb_cvs
+print "Issuing: cvs2cl --chrono -f $changes_file'/ChangeLog.ACEDB'  -l $date $acedb_dirs"
+
+cvs2cl --chrono -f $changes_file'/ChangeLog.ACEDB'  -l $date $acedb_dirs
+
+#do Zmap stuf...
+#  could use "--accum" to put zmap stuff in same change file....
+
+cd $zmap_cvs
+print "Issuing: cvs2cl --chrono -f $changes_file'/ChangeLog.ZMAP'  -l $date $zmap_dirs"
+
+cvs2cl --chrono -f $changes_file'/ChangeLog.ZMAP'  -l $date $zmap_dirs
+
+exit 0

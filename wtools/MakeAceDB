@@ -1,0 +1,674 @@
+#!/usr/bin/perl 
+#
+# NB perl sometimes lives somewhere else.  You could try /usr/bin/perl, frinstance.
+#
+# Originally written by Andrew Menzies, Sanger Institute.  
+# Completed Sept, 2002 by Rob Clack, Sanger Institute.
+#
+#
+#  	This is a perl script to generate a new AceDB database
+#	from existing wspec directory and zero or more .ace files
+#
+#	It takes the following parameters on the command line.  This is not
+#	perfect, but I don't have time to fix it.  If you use a command file
+#	to specify the parameters, each is preceded by an identifying flag,
+#	so they can be in any order.
+#
+#	However, if you run from the command line, the first 5 parameters can
+#	be in any order, but everything from the target directory on must be
+#	in the order specified. 
+#
+#   NB  Be aware that the --userid and --groupid options have not been tested
+# 	as I'm not a superuser, so don't have the necessary privileges.
+#
+#	grpwr option - if 1 then group write access is enabled
+#
+#	rdwr option - if 1 then enable read-write access, else readonly.
+#
+#	userid - if provided and script is being run by root then everything
+#	will be owned by $userid
+#
+#	groupid - if provided and the person running the script is a member
+#	of that group, the groupid will be changed to that supplied.
+#
+#	tace executable		- eg /home/bin/tace
+#	- if not supplied the script will exit.
+#
+#	target directory 	- eg /home/work/newacedb
+#	This is where the new Acedb will be built, 
+#	- if not supplied the script will exit.
+#	- if it already exists the script will exit.
+#
+#	Source wspec dir	- eg /group/production/acedb/wspec
+#	This is where all the template .wrm files are taken from.
+#	- if not supplied the script will exit.
+#	- if it doesn't exist the script will exit.
+#	- if any of the essential .wrm files are not present script will exit.
+#
+#	Source .wrm files	- eg /home/config/testace/passwd.wrm
+#	Zero or more individual .wrm files, these will overwrite 
+#	those copied from the Source wspec directory.
+#	- if defined but found not to exist the script will exit.
+#
+#	Source .ace files	- eg /home/data/dump.1.ace
+#	Zero or more .ace files to read into the new database.
+#	- if not defined the database will be initialised but no data loaded.
+#	- if specified .ace file does not exist the script will exit.
+#
+#	On normal completion of the script its exit status is 0, anything 
+#	else is an error.
+#
+#	It would be nice if it gave a running commentary of what it was doing
+#	but it doesn't.  Sometime....
+##########################################################################
+
+use strict ;
+use Getopt::Long ;  
+use Pod::Usage;
+
+my $comfile = '';	# command file used instead of command line options/args
+my $line    = '';
+my $flag    = '';
+my $value   = '';
+my $man     = 0 ;
+my $help    = 0 ;
+my $login   = '';
+my $passwd  = '';
+my $userid  = '';
+my $groupid = '';
+my $grpwr   = 0 ;	# if 1 then enable group write access
+my $rdwr    = 0 ;	# if 1 then enable read-write, else readonly
+my $tace    = '';	# location of tace executable - required
+my $targ_dir    ;	# where the database will be created - required
+my $source_wspec;	# wspec directory to get wrm files from - required
+my @source_ace;		# location of .ace files if any
+my @source_wrm;		# location of wrm files to override those in wspec
+
+##########################################################################
+###	Essential .wrm files, must be in the $source_wspec directory
+##########################################################################
+
+my @ess_wrms = qw( models.wrm   
+		   database.wrm 
+		   options.wrm );
+
+##########################################################################
+###	Voluntary .wrm files. If these are in the $source_wspec directory
+###	they will be copied across to the new database
+###
+### NB passwd.wrm is essential, but if there isn't one to copy, we create it.
+##########################################################################
+
+my @vol_wrms = qw( cachesize.wrm 
+		   displays.wrm 
+		   layout.wrm 
+		   passwd.wrm 
+		   subclasses.wrm );	
+
+
+##########################################################################
+# Parse cmd line args.
+# If a command file is specified with -file then read that to get flags and
+# arguments, else take them from the command line.
+##########################################################################
+
+GetOptions('help|?'    => \$help, 
+    	    man        => \$man,
+	   'file:s'    => \$comfile,
+   	   'userid:s'  => \$userid, 
+   	   'groupid:s' => \$groupid, 
+   	   'grpwr:s'   => \$grpwr,
+   	   'rdwr:s'    => \$rdwr,
+   	   'tace:s'    => \$tace) or pod2usage(2);
+
+pod2usage(1) if $help;
+pod2usage(-exitval => 0, -verbose => 2) if $man;
+      
+
+if ($comfile ne '')
+{
+	open (COMFILE, $comfile) || die "Can't open command file $comfile: $!";
+
+	while (defined ($line = <COMFILE>))
+	{
+		($flag, $value) = split(/=/,$line);
+		chomp($value);
+
+		if ($flag eq "ace")
+		{
+			push(@source_ace, $value);
+		}
+		if ($flag eq "wrm")
+		{
+			push(@source_wrm, $value);
+		}
+		elsif ($flag eq "wspec")
+		{
+			$source_wspec = $value;
+		}
+		elsif ($flag eq "db")
+		{
+			$targ_dir = $value;
+		}
+		elsif ($flag eq "groupid")
+		{
+			$groupid = $value;
+		}
+		elsif ($flag eq "grpwr")
+		{
+			$grpwr = $value;
+		}
+		elsif ($flag eq "rdwr")
+		{
+			$rdwr = $value;
+		}
+		elsif ($flag eq "userid")
+		{
+			$userid = $value;
+		}
+		elsif ($flag eq "tace")
+		{
+			$tace = $value;
+		}
+	}
+
+	close (COMFILE) || die "Problem closing command file $comfile: $!";
+
+}
+else
+{
+	pod2usage("$0: No files given.") if (@ARGV == 0) ;
+	 
+	foreach my $arg (@ARGV)
+	{
+
+		if   ($arg =~ m/^.*?\/wspec/)	{ $source_wspec = $arg;	  }
+		elsif($arg =~ m/^.*?\.ace/)	{ push(@source_ace,$arg); }
+		elsif($arg =~ m/^.*?\.wrm/)	{ push(@source_wrm,$arg); }
+		else				{ $targ_dir = $arg;	  }
+	}
+}
+
+##########################################################################
+# verify that required parameters are present.
+##########################################################################
+
+if ($targ_dir eq ''
+||  $source_wspec eq ''
+||  $tace eq '')
+{
+    pod2usage("\nRequired params not found: one of tace, db directory or wspec.\n");
+}
+
+##########################################################################
+# do we need to pretend to be anyone else?
+##########################################################################
+
+$login = getlogin();
+
+if ($userid ne '')
+{
+	if ($login ne "root")
+	{
+	    die "\nOnly root can run this for a different user or group.\n\n";
+	}
+}
+
+##########################################################################
+# is the groupid a valid one for this user
+##########################################################################
+
+my @groups = `groups`;
+my $group;
+
+if ($groupid ne '')
+{
+	while (defined ($group = <@groups>))
+	{
+		if ($group eq $groupid) { last; }
+	}
+	if ($group ne $groupid) 
+	{ 
+		die "\nYou are not a member of the group ($groupid) you've specified.\n\n"; 
+	}
+}
+
+##########################################################################
+###	Check everything
+##########################################################################
+
+unless(defined $tace )
+{
+	print "\n tace binary has not been specified.\n\n";
+	exit 1;
+}
+
+# I can't get -x operative to work properly under Cygwin.
+# so I'm just going to assume the binary is executable on WIN32.
+
+my $opsys = `uname`;
+unless($opsys =~ /CYGWIN/)
+{
+    unless( -x $tace)
+    {
+	print "\n tace: $tace \n is not executable.\n\n";
+	exit 1;
+    }
+}
+
+
+##########################################################################
+# wspec directory
+##########################################################################
+# Because of some wierdnesses to do with end-of-lines in Windows
+# we have to lose the last characters of these variables if they've
+# been derived from a command file, but not otherwise.
+
+if ($opsys =~ /CYGWIN/ && $comfile ne '')
+{
+    chop($source_wspec);    # remove CR
+    chop($targ_dir);
+    chop($tace);
+}
+
+unless(defined $source_wspec && -d $source_wspec)
+{	
+	print "\nwspec $source_wspec is not a directory.\n\n";
+	exit 1;		
+}
+
+##########################################################################
+# essential wrm files
+##########################################################################
+
+foreach my $wrm (@ess_wrms)
+{
+
+	my $file = "$source_wspec/$wrm";
+	
+	unless(-e $file && -r $file)
+{
+		print "\nwrm file $file is not readable.\n\n";
+		exit 1;
+	}
+}
+
+##########################################################################
+# non-essential wrm files
+##########################################################################
+
+if(defined $source_wrm[0])
+{
+
+	foreach my $file (@source_wrm)
+{
+		unless(-e $file && -r $file)
+{
+			print "\nwrm file $file is not readable.\n\n";
+			exit 1;
+		}
+	}
+}
+
+##########################################################################
+# target directory
+##########################################################################
+
+unless(defined $targ_dir)
+{
+	print "\nNo target dir.\n";
+	exit 1;		
+}
+
+if(-e $targ_dir)
+{
+	print "\n$targ_dir already exists.\n\n";
+	exit 1;		
+}
+
+
+##########################################################################
+# .ace files will be used if present
+##########################################################################
+
+if (defined $source_ace[0])
+{
+	foreach my $acef (@source_ace)
+	{
+	  if (-e $acef)
+	    {
+	      if (-T $acef) 
+	        {
+	          unless (-r $acef)
+	            {
+		      print "\n.ace file $acef not readable.\n\n";
+		      exit 1;
+		    }
+	        }
+	      else
+		{
+		  print "\n.ace file is not a text file\n\n";
+		  exit 1;
+		}
+	    }
+	  else
+	    {
+	      print "\n.ace file doesn't exist\n\n";
+	      exit 1;
+	    }
+	}
+}
+else
+{
+	print "\nNo .ace files specified.\n";
+	print "Database will be initialised but no data will be loaded.\n\n";
+}
+
+##########################################################################
+# enable group write access if specified
+##########################################################################
+
+if ( $grpwr == 1 )	
+{
+	umask ( umask() & 0757);	# requires leading 0 to force octal
+}
+
+##########################################################################
+# Make the basic acedb directories.
+##########################################################################
+
+my $dbwspec = "$targ_dir/wspec";
+my $dbdatabase = "$targ_dir/database" ;
+mkdir $targ_dir or die "Could not make directory: $targ_dir" ;
+mkdir $dbdatabase or die "Could not make directory: $dbdatabase" ;
+mkdir $dbwspec or die "Could not make directory: $dbwspec" ;
+
+##########################################################################
+# populate new directories with required files
+##########################################################################
+
+foreach my $wrm (@ess_wrms)
+{
+
+	my $file = "$source_wspec/$wrm";
+	
+	eval   {unless(system("cp $file $dbwspec") == 0) 
+					{die "Failed copying $file";}};
+	if($@) {die " Evaluation error copying $dbwspec: $@";	}
+	
+	my $newfile = "$dbwspec/$wrm";
+	
+	unless(-e $newfile) {	exit 1;	}
+	
+}
+
+foreach my $wrm (@vol_wrms)
+{
+
+	my $file = "$source_wspec/$wrm";
+	
+	if(-e $file)
+	{
+	
+		eval{	system("cp $file $dbwspec");	};
+			
+	}
+	
+}
+
+foreach my $file (@source_wrm)
+{
+
+	eval{	unless(system("cp -f $file $dbwspec") == 0) {	die;	}};
+	if($@) {	exit 1;	}
+	
+}
+
+##########################################################################
+# Ensure this user is in passwd.wrm.  If not present, add her.
+# If passwd.wrm doesn't exist, create a minimal one
+##########################################################################
+
+if ( -e "$dbwspec/passwd.wrm" )		
+{
+	my $found = 0;
+	my $line;
+
+	# scan passwd.wrm for this user
+
+	open (PWDFILE, "<$dbwspec/passwd.wrm") 
+				or die "Can't open passwd.wrm to read: $!";
+	while (defined ($line = <PWDFILE>))
+	{
+		if ($line =~ $login)
+		{
+			$found = 1;
+			last;
+		}
+	}
+	close PWDFILE;
+
+	# if not found, add this user to file
+
+	if (!$found)
+	{
+	        chmod 644, "$dbwspec/passwd.wrm";
+		open (PWDFILE, ">>$dbwspec/passwd.wrm") 
+				or die "Can't open passwd.wrm to write: $!";
+
+		print PWDFILE "$login \n";
+		print "\n$login not found in passwd.wrm, so I've added her.\n\n";
+		close PWDFILE;
+	}
+}
+else
+{
+	# create new passwd.wrm file & add user to it.
+
+	my $date = `date`;
+	open (PWDFILE, ">$dbwspec/passwd.wrm") 
+				or die "Can't create passwd.wrm: $!";
+	print PWDFILE "// passwd.wrm	created: $date \n\n";
+
+	print PWDFILE "$login \n";
+
+	close CMDFILE;
+
+	print "\nNew password file created.\n\n";
+}
+	
+
+##########################################################################
+# change ownership if required.
+# not tested as I'm not a superuser :(
+##########################################################################
+
+if ($userid ne '' || $groupid ne '')
+{
+
+	# if userid has not been supplied, use -1 to leave as is
+
+	if ( $userid eq '') 
+	{ 
+		$userid = -1;
+	}
+
+	# if groupid has not been supplied, use -1 to take default
+
+	if ( $groupid eq '') 
+	{ 
+		$groupid = -1;
+	}
+
+	# build a list of the files and chown them
+
+  	my @filenames = ($targ_dir  , 
+		     	 $dbdatabase, 
+		     	 $dbwspec   , 
+		     	 @source_ace, 
+		     	 @source_wrm) ;
+
+	chown($userid, $groupid, @filenames) == @filenames 
+				or die "Can't chown @filenames: $!" ;
+}
+
+##########################################################################
+# run tace to initialise and populate the new database
+# This requires a temporary command file in which we construct the 
+# ace commands we need to run to complete the operation.
+##########################################################################
+
+my $temp2tace = "$targ_dir/MakeAceDB.$$.cmd";
+
+open(CMDFILE, ">$temp2tace") or die "\nCan't create tace command file: $!\n\n";
+
+if (defined (@source_ace[0]))
+{
+	foreach my $file (@source_ace)
+	{
+	
+		print CMDFILE "parse $file\n";
+		
+	}
+}
+print CMDFILE "save\n";
+print CMDFILE "exit\n";
+
+close CMDFILE;
+
+# the -init flag in the tace command line tells tace to initialise 
+# the database without further prompting.
+
+unless(system("$tace -init $targ_dir < $temp2tace > /dev/null") == 0)
+{
+
+	exit 1;
+}
+
+##########################################################################
+# delete the temporary command file
+##########################################################################
+
+unlink $temp2tace;
+
+##########################################################################
+# if a readonly database is required, remove all users from passwd.wrm
+##########################################################################
+
+if ( $rdwr = 0 )
+{
+	# overwrite existing passwd.wrm with an empty one
+
+	my $date = `date`;
+	open (PWDFILE, ">$dbwspec/passwd.wrm") 
+				or die "Can't reopen passwd.wrm: $!";
+	print PWDFILE "// passwd.wrm	created: $date \n\n";
+
+	close CMDFILE;
+}
+
+exit 0 ;
+
+
+__END__
+
+##########################################################################
+# start of pod 
+##########################################################################
+
+=head1 NAME
+
+MakeAceDB - make an acedb database from scratch.
+
+=head1 SYNOPSIS
+
+MakeAceDB [options] -tace <tace path> new_db_dir wspec_dir [XXX.wrm...] [XXX.ace...]
+
+ Options:
+   -userid          owner for database files
+   -groupid         group for database files
+   -grpwr           enables/disables group write access
+   -rdwr            enables/disables owner write access
+   -tace            tace executable to use for intialising database
+   -help            brief help message
+   -man             full documentation
+
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<-userid new_userid>
+
+By default the database will be created with your userid as the owner for
+database files/directories,
+if you run this script as root you can specify a different owner.
+
+=item B<-groupid new_groupid>
+
+By default the database will be created with your default groupid as the group for database
+files/directories, this option allows you to specify one of your alternate groups (use the
+unix "groups" command to see what your alternate groups are). You must be root to specify
+a group other than one of your alternate ones.
+
+=item B<-rdwr 0 or 1>
+
+By default the database will be created with whatever your current umask permissions are
+for database files/directories. This option allows you to disable all write permissions 
+and thus build a readonly database.  0 = disable, 1 = enable write permission.
+
+=item B<-grpwr 0 or 1>
+
+This option allows you to enable group write permission if your umask doesn't already do so.
+0 = disable, 1 = enable group write permission.
+
+=item B<-help>
+
+Print a brief help message and exits.
+
+=item B<-man>
+
+Prints the manual page and exits.
+
+=back
+
+=head1 ARGUMENTS
+
+=over 8
+
+=item B<-tace>
+
+This mandatory argument specifies a tace executable to initialise the database, including
+reading in the wspec/models.wrm file etc. If you also specify some XXX.ace files on
+the command line, tace will additionally be used to read them into the database.
+
+=item B<new_db_dir>
+
+The directory in which to create all required subdirectories and files for the new database.
+It must not already exist.
+
+=item B<wspec_dir>
+
+A wspec directory from which to copy the essential .wrm files for the database.
+
+=item B<XXX.wrm>
+
+Optional .wrm files to overwrite or augment the ones copied from wspec_dir.
+
+=item B<XXX.ace>
+
+Optional .ace files specifying data to be added to the database after its initialisation.
+
+=back
+
+=head1 DESCRIPTION
+
+B<MakeAceDB> will read the given input file(s) and build an ace database.  If any .ace files
+are specified, it will load them into the new database, but if not, it will just leave the database
+initialised and ready for use.
+
+The primary wrm files are copied from the location given by the wspec parameter, but if any .wrm files 
+are specified, it will copy them over those taken from wspec.  ie individually specified .wrm files
+override any of the same name in the wspec directory.
+
+=cut  

@@ -1,0 +1,46 @@
+================================================================================
+                              AceDB - January MAR
+
+
+Executive summary.                                                                        
+------------------                                                                        
+
+DAS 2.0/ZMap design work. More Wormbase support work, builds for latest
+versions of GTK and linux.
+
+
+DAS 2.0
+-------
+
+Ed Griffiths visiting Lincoln Stein to work on DAS 2.0 which will be one of
+the protocols used by the ZMap.
+
+
+ZMap
+----
+
+Work continuing to import the Gnome canvas for display of the data in ZMap,
+performance tests seem ok.
+
+Code now supports multiple threads per Zmap to query multiple servers for
+data.
+
+
+Wormbase
+--------
+
+More new code to support new models in wormbase especially in gene making code.
+
+
+New builds
+----------
+
+For Alpha with GTK2 and Redhat 9.
+
+
+Bug fixes
+---------
+
+Various bug fixes including text editting, DNA output coords, blixem coords.
+
+no

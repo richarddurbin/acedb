@@ -1,0 +1,48 @@
+// a database to test aql stuff
+
+?Movie  Release Date DateType UNIQUE Text // multiple dates for different countries allowed
+		Production_company ?Company XREF Released
+		Distributors ?Company XREF Distributed UNIQUE Text // Text is "video" or "country" etc.
+        Cast ?Person XREF Stars_in UNIQUE Text // Character name
+	Director ?Person XREF Directed UNIQUE Text
+	Writer ?Person XREF Scripted UNIQUE Text
+	Aka Text UNIQUE Text // second text is language etc.
+	Based_on ?Book XREF Script_for
+	Links Follows ?Movie XREF Followed_by
+	      Followed_by ?Movie XREF Follows
+	      Spoofs ?Movie XREF Spoofed_in
+	      Spoofed_in ?Movie XREF Spoofs
+	      References ?Movie XREF Referenced_in
+	      Referenced_in ?Movie XREF References
+	      Features ?Movie XREF Featured_in
+	      Featured_in ?Movie XREF Features
+	Rating UNIQUE Float UNIQUE Int  // rating out of 10 Int is No. of votes submitted
+
+?Person Real_name UNIQUE Text
+	Date_of_Birth UNIQUE DateType UNIQUE Text // Text is Place of Birth
+	Address Mail Text
+		Email Text
+		Phone Text
+	Height Imperial UNIQUE Int UNIQUE Int  // feet & inches
+               Metric UNIQUE Int               // cm
+	Stars_in  ?Movie XREF Cast
+	Directed  ?Movie XREF Director
+	Scripted  ?Movie XREF Writer
+	Wrote	  ?Book XREF Author
+	Relations Spouse   ?Person UNIQUE DateType UNIQUE DateType  // from to dates
+                  Father   ?Person
+		  Mother   ?Person
+		  Children ?Person
+                  
+
+?Book	Reference	Publisher UNIQUE Text
+			Year UNIQUE Int
+	Author ?Person XREF Wrote
+	Script_for ?Movie XREF Based_on
+
+
+?Company  Released ?Movie XREF Production_company
+          Distributed ?Movie XREF Distributors
+	  Owned_by Text
+	  Founded UNIQUE DateType Text  // Text is name of Founder
+                                        // or society etc..

@@ -1,0 +1,143 @@
+<!--  $Id: Class_Configuration.html,v 1.1 1999-05-03 13:50:46 fw Exp $  -->
+<head>
+<title>options.wrm</title>
+</head>
+
+<BODY BGCOLOR=#ffffff>
+
+<h2>Configuring Classes with options.wrm</h2>
+
+The special configuration file <B>wspec/options.wrm</B> is read
+in conjunction with the database models when the acedb application 
+starts up.<BR>
+It holds the class definitions necessary to the applications.
+The kernel classes are defined in the program code.<BR>
+Most options can be changed freely to configure the behaviour
+of certain aspects of the program.<BR>
+
+<H3>File format</H3>
+
+All lines starting with _V&lt;class&gt; are parsed, where &lt;class&gt;
+is a valid class name from the database models or the name of
+a kernel class, if it is wise to change its configuration.<BR>
+
+This token is followed by a set of parameters which is written
+like a Unix style command line, i.e. each option starts with a dash '-'
+followed by the option name. Option names can be abbreviated down
+to the shortest possible length where no ambiguity is possible.
+
+<H3>Class options</H3>
+
+<DL>
+  <DT>-Visible</DT>
+  <DD>This class will automatically appear in the class chooser of
+      the acedb main window.<P>
+      This will only affect the default class layout when the
+      program first starts. The final layout of the classes
+      in the main window can be configured in the 
+      <A HREF="Layout.html">Layout editor</A> or in the configuration
+      file wspec/layout.wrm<P>
+  </DD>
+
+  <DT>-Hidden</DT>
+  <DD>This class is not shown automatically in the main window
+      class chooser, but will be listed in the class-menu in the
+      button 'Other class...' in the main window.<P>
+  </DD>
+
+  <DT>-Array</DT>
+  <DD>The class is of type 'A' (a class containing fixed sized
+      elements in the style of arrays or tuples.)
+      An example is the built-in DNA class, which contains a sequence
+      of special characters A, C, T, G.<BR>
+      The user will not typically use this option.<P>
+  </DD>
+
+
+  <DT>-Btree</DT>
+  <DD>The class is of type 'B', which are the user-defined classes
+      in models.wrm, which have a tree-like structure.<BR>
+      As this is the default for classes that appear in models.wrm,
+      The user will not typically use this option.<P>
+  </DD>
+
+
+  <DT>-Display &lt;displaytype&gt;</DT>
+  <DD>An important option to configure the behaviour of the graphical
+      acedb applications. All 'B' class objects are usually shown
+      in the textual <A HREF="Tree.html">Tree</A> display, when the
+      object is fecthed by a double click in a graphical display.
+      However special displays like the  Map displays have been written 
+      for certain classes to present the object's information 
+      graphically.<BR>
+      This option is used to configure, which display will be used by
+      default. There are a number of displays, but to give an example,
+      the type GMAP is used for the Map class, or the type FMAP for the
+      Sequence class. The option 'Show as Text' which is available
+      in the <A HREF="KeySet.html">KeySet window</A> and also in map
+      displays will force the display in the default TREE display
+      if necessary.<P>
+  </DD>
+
+  <DT>-Title &lt;Tag&gt;</DT>
+  <DD>If present in some object of that class, the text following it
+      will be used preferentially when referring to that object.<P>
+  </DD>
+
+  <DT>-Symbol &lt;Tag&gt;</DT>
+  <DD>If present in some object of that class, the text
+      or key following it will be used preferentially
+      when referring to that object in Maps.<P>
+  </DD>
+
+
+  <DT>-Rename &lt;otherName&gt;</DT>
+  <DD>Other name will show in lists, old and new
+      name will be recognized in ace files and queries, old
+      is used in the code. In case some newName
+      matches some old name, the new name takes precedence.<P>
+  </DD>
+
+  <DT>-CaseSensitive</DT>
+  <DD>The names in this class will be case sensitive
+      (case-insensitivity is the default).
+      This applies to all queries. A case-sensitive class
+      can have an object called 'aa' and another object 'AA'.
+      By default a class is not case-sensitive, so in that class
+      any mention of 'aa' will refer to the same object as 'AA'.
+      <BR>
+      Never undo this option once it has been used, as it may corrupt
+      the integrity of the database. Imagine you have a case-sensitive
+      class with two object called 'aa' and 'AA'. If this class was
+      now made ce-insensitive, you would have to fuse the two objects
+      'aa' and 'AA' into one object, because in the case-insensitive
+      class noth names would refer to the same object.
+      This can be achieved by hand, if the whole class in dumped,
+      then you unset this option and destroy the class in the database
+      before reading in the dump file. The parser would then fuse the
+      objects as necessary but with unforseen consequences.<P>
+  </DD>
+
+  <DT>-Known</DT>
+  <DD>Prevents indirect creation of new object in ace files
+      You can't enter a new object in this class directly
+      but not by quoting it in another object.<P>
+  </DD>
+
+</DL>
+
+The default options for each user-defined classes are
+<CODE>-Btree -Hidden -Display TREE</CODE>.<P>
+
+Every 'A' class has a special function the program that defined how the 
+array elements are to be read from an ace-file and how they are dunped out to an ace-file. These classes are therefor built into the program code
+and probably shouldn't be re-configured.<P>
+
+
+
+to <a href="TOC.html">Table of Contents</a><p>
+
+last edited: April 1999<p>
+
+
+</BODY>

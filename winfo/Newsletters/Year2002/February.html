@@ -1,0 +1,403 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - February 2002</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - February 2002</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<P>In this issue: new builds of acedb for latest SGIs, some useful acedb
+data processing scripts, acedb incorporates the LGPL licence and some
+bug fixes.
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="General_News"></a><H2>General News</H2>
+
+<P>This month once again sees us buried deep in the new SMap code, converting
+the virtual sequence building code to use the new tags while maintaining
+compatibility with the old Sequence tags. One more time, we hope to have working
+code sometime soon.
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+<a name="SGI"></a><H3>SGI builds of acedb</H3>
+
+<P>Acedb now builds on SGI Ultrix 6.5, to compile for this version
+of the operating system you should set the ACEDB_MACHINE environment
+variable to SGI_65_GCC.
+
+<P>Thanks to Jeroen van Gastel &lt;Jeroen-van.Gastel@unilever.com&gt; and
+Stefan Verhoeven &lt;Stefan.Verhoeven@unilever.com&gt; of Unilever
+for providing the necessary changes to the code and makefile.
+
+
+<a name="ace2line"></a><H3>New/old acedb tool - ace2line & line2ace utilities</H3>
+
+<P>Dave Matthews recently sent me a couple of useful awk scripts for processing
+AceDB data prompted by a users question on the acedb newsgroup. Let us know
+(<A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>)
+if they prove useful or have bugs or whatever.
+
+<P><B>Acknowledgements:</B> The scripts were written in awk in 1992
+by Cornel Lee at the Lawrence Berkeley
+Lab. (his address at that time was &lt;clee@genome.lbl.gov&gt;).
+Dave Matthews (&lt;matthews@greengenes.cit.cornell.edu&gt;)
+kindly forwarded the scripts to be included with the
+AceDB CVS repository.
+
+<P><b>Synopsis</b>ace2line.awk converts ACEDB .ace files to tab-delimited tables.
+line2ace.awk performs the reverse conversion.
+See also documentation at the top of the scripts.
+
+<P><b>Description</b>This is a widely useful functionality and there is a script to do it.
+It was written for our project by Cornel Lee at LBL some years ago.
+
+<P>It's called ace2line.awk and its purpose is to
+select fields in arbitrary order from .ace file and create
+line-records.
+
+<P>The hard part about converting .ace data to CSV/tab-delimited is dealing
+with 1) multivalued fields and 2) compound (vector) fields.  The script
+seems to do reasonable things for these.
+
+
+<P><b>A short example</b>
+
+<pre><code><b>INPUT -</b>
+  Sequence :
+  DNA_homol
+
+  Sequence : "Contig5002"
+  DNA_homol BE443570 Phrap 587 1 587 1 587
+  DNA_homol BE446512 Phrap 200 1 200 1 200
+
+  Sequence : "Contig5003
+  DNA_homol BE492786 Phrap 456 1 456 1 456
+  DNA_homol BF473179 Phrap 538 157 692 4 538
+  DNA_homol BE444401 Phrap 629 382 1010 1 629
+
+<b>OUTPUT -</b>
+  Sequence        DNA_homol
+  Contig5002      BE443570 Phrap 587 1 587 1 587$BE446512 Phrap 200 1 200 1 200
+  Contig5003      BE492786 Phrap 456 1 456 1 456$BF473179 Phrap 538 157 692 4 538$BE444401 Phrap 629 382 1010 1 629
+</code></pre>
+
+
+<b>and a longer one</b>
+
+<pre><code><b>INPUT -</b>
+/* Sample.ace: a sample input file for ace2line.awk */
+
+
+ // Class Paper 
+/***** Specification record for ace2nal.awk *****/
+
+Paper :
+
+Title
+Author
+
+Year
+
+/***** end of the spec record  *****/
+
+
+/************ .ace data ***********/
+Paper : "?Paper"
+
+Paper : "mazur-1987-aaaqb"
+Title	 "Acetolactate synthase, the target enzyme of the sulfonylurea \
+	herbicides"
+So	 \
+	"NATO-advanced-science-institutes-series-:-Series-A-:-Life-sciences \
+	(USA). (1987). v. 140 p. 339-349"
+DNAL	 "QH301.N32"
+Year	 1987
+Author	 "Mazur-B-J"
+Author	 "Falco-S-C"
+Author	 "Knowlton-S"
+Author	 "Smith-J-K"
+Language	 "English"
+
+Paper : "knowl-1988-aaauc"
+Title	 "Creation and field testing of sulfonylurea-resistant crops"
+So	 "Fraley,-R.T.; Frey,-N.M.; Schell,-J. (eds.). Genetic \
+	improvements of agriculturally important crops : progress and issues. \
+	Cold Spring Harbor, N.Y. (USA). Cold Spring Harbor Laboratory. 1988. \
+	p. 55-60"
+DNAL	 "QK981.5.G464"
+Year	 1988
+Author	 "Mazur-B-J"
+Author	 "Knowlton-S"
+Author	 "Arntzen-C-J"
+Language	 "English"
+
+Paper : "mazur-1987-aaadc"
+Title	 "Acetolactate synthase, the target enzyme of the sulfonylurea \
+	herbicides"
+So	 "Plant molecular biology. Proceedings of a NATO Advanced Study \
+	Institute, 10-19 June, 1987, Carlsberg Lab., Copenhagen, Denmark \
+	[edited by Wettstein, D. von; Chua, N. H.]. 1987, 339-349; 18 ref., \
+	in NATO ASI Series A, Life Sciences Vol. 140. New York, USA; Plenum \
+	Press"
+Year	 1987
+Author	 "Mazur-B-J"
+Author	 "Falco-S-C"
+Author	 "Knowlton-S"
+Author	 "Smith-J-K"
+Language	 "English"
+
+Paper : "mazur-1987-aaapv"
+Title	 "Isolation and characterization of plant genes coding for \
+	acetolactate synthase, the target enzyme for two classes of \
+	herbicides"
+So	 "Plant-physiology (USA). (Dec 1987). v. 85(4) p. 1110-1117"
+DNAL	 "450 P692"
+Year	 1987
+Author	 "Mazur-B-J"
+Author	 "Smith-J-K"
+Author	 "Chui-C-F"
+Language	 "English"
+
+Paper : "smith-1989-aaauz"
+Title	 "Functional expression of plant acetolactate synthase genes in \
+	Escherichia coli"
+So	 \
+	"Proceedings-of-the-National-Academy-of-Sciences-of-the-United-States-o\
+	f-America (USA). (Jun 1989). v. 86(11) p. 4179-4183"
+DNAL	 "500 N21P"
+Year	 1989
+Institution	 "Agric. Prod. Dep., E.I. du Pont de Nemours & Co., Exp. \
+	Stn. E402,Wilmington, DE 19880-0402, USA"
+Author	 "Mazur-B-J"
+Author	 "Smith-J-K"
+Author	 "Schloss-J-V"
+Type	 "Journal Article"
+Language	 "English"
+Keyword	 "algae"
+Keyword	 "Escherichia coli"
+Keyword	 "expression of cloned genes"
+Keyword	 "gene expression"
+Keyword	 "Gene manipulation"
+Keyword	 "Genetic engineering"
+Keyword	 "acetolactate synthase"
+
+Paper : "haugh-1987-aabsb"
+Title	 "AN ARABIDOPSIS ACETOLACTATE SYNTHASE GENE IN TOBACCO CONFERS \
+	RESISTANCE TO SULFONYLUREA HERBICIDES"
+Journal	 "INTERNATIONAL BOTANICAL CONGRESS ABSTRACTS"
+So	 "XIVTH INTERNATIONAL BOTANICAL CONGRESS, BERLIN, WEST GERMANY, \
+	JULY  24-AUGUST 1, 1987. INT BOT CONGR ABSTR 17. 1987. 71"
+Year	 1987
+Author	 "Mazur-B-J"
+Author	 "Smith-J-K"
+Author	 "Somerville-C-R"
+Author	 "Haughn-G-W"
+Keyword	 "selectable marker"
+Keyword	 "plant transformation"
+
+Paper : "chui--1987-aadad"
+Title	 "ISOLATION AND CHARACTERIZATION OF PLANT GENES CODING FOR \
+	ACETOLACTATE SYNTHASE THE TARGET ENZYME FOR TWO CLASSES OF HERBICIDES"
+Journal	 "PLANT PHYSIOLOGY (BETHESDA)"
+Year	 1987
+Volume	 85
+Page	 1110 1117
+Author	 "Mazur-B-J"
+Author	 "Smith-J-K"
+Author	 "Chui-C-F"
+Keyword	 "Nicotiana tabacum"
+Keyword	 "yeast"
+Keyword	 "bacterial isozymes"
+Keyword	 "homology"
+Keyword	 "valine"
+Keyword	 "isoleucine"
+Keyword	 "leucine"
+Keyword	 "sulfonyl urea"
+Keyword	 "imidazolinones"
+Keyword	 "amino acid sequences"
+
+Paper : "mazur-1989-aadew"
+Title	 "FUNCTIONAL EXPRESSION OF PLANT ACETOLACTATE SYNTHASE GENES IN \
+	ESCHERICHIA-COLI"
+Journal	 "PROCEEDINGS OF THE NATIONAL ACADEMY OF SCIENCES OF THE \
+	UNITED STATES OF AMERICA"
+Year	 1989
+Volume	 86
+Page	 4179 4183
+Author	 "Mazur-B-J"
+Author	 "Smith-J-K"
+Author	 "Schloss-J-V"
+Keyword	 "EC 4.1.3.18"
+Keyword	 "chloroplast"
+Keyword	 "transit peptide"
+Keyword	 "herbicide"
+Keyword	 "amino acid biosynthesis"
+
+Paper : "marti-1987-aabrk"
+Title	 "TRANSCRIPTION OF ACETOLACTATE SYNTHASE GENES IN HIGHER PLANTS"
+Journal	 "PLANT PHYSIOLOGY (BETHESDA)"
+So	 "ANNUAL MEETING OF THE AMERICAN SOCIETY OF PLANT PHYSIOLOGISTS, \
+	ST.  LOUIS, MISSOURI, USA, JULY 19-23, 1987. PLANT PHYSIOL (BETHESDA) \
+	83 (4  SUPPL.). 1987. 16"
+Year	 1987
+Author	 "Smith-J-K"
+Author	 "Martin-S-J"
+Keyword	 "Nicotiana tabacum"
+Keyword	 "regulation"
+
+Paper : "hepbu-1987-aaaqc"
+Title	 "DNA methylation in plants"
+So	 "Developmental-genetics (USA). (1987). v. 8(5/6) p. 475-493"
+DNAL	 "QH426.D32"
+Year	 1987
+Author	 "Hepburn-A-G"
+Author	 "Belanger-F-C"
+Author	 "Mattheis-J-R"
+Language	 "English"
+
+Paper : "belan-1987-aadaj"
+Title	 "DNA methylation in plants"
+Journal	 "DEVELOPMENTAL GENETICS"
+Year	 1987
+Volume	 8
+Page	 475 494
+Author	 "Hepburn-A-G"
+Author	 "Belander-F-C"
+Author	 "Mattheis-J-B"
+Keyword	 "Zea sp"
+
+ /*#########################*/ 
+
+
+<b>OUTPUT -</b>
+Paper	Title	Author	Year
+
+?Paper			
+mazur-1987-aaaqb	Acetolactate synthase, the target enzyme of the sulfonylurea herbicides	Mazur-B-J$Falco-S-C$Knowlton-S$Smith-J-K	1987
+knowl-1988-aaauc	Creation and field testing of sulfonylurea-resistant crops	Mazur-B-J$Knowlton-S$Arntzen-C-J	1988
+mazur-1987-aaadc	Acetolactate synthase, the target enzyme of the sulfonylurea herbicides	Mazur-B-J$Falco-S-C$Knowlton-S$Smith-J-K	1987
+mazur-1987-aaapv	Isolation and characterization of plant genes coding for acetolactate synthase, the target enzyme for two classes of herbicides	Mazur-B-J$Smith-J-K$Chui-C-F	1987
+smith-1989-aaauz	Functional expression of plant acetolactate synthase genes in Escherichia coli	Mazur-B-J$Smith-J-K$Schloss-J-V	1989
+haugh-1987-aabsb	AN ARABIDOPSIS ACETOLACTATE SYNTHASE GENE IN TOBACCO CONFERS RESISTANCE TO SULFONYLUREA HERBICIDES	Mazur-B-J$Smith-J-K$Somerville-C-R$Haughn-G-W	1987
+chui--1987-aadad	ISOLATION AND CHARACTERIZATION OF PLANT GENES CODING FOR ACETOLACTATE SYNTHASE THE TARGET ENZYME FOR TWO CLASSES OF HERBICIDES	Mazur-B-J$Smith-J-K$Chui-C-F	1987
+mazur-1989-aadew	FUNCTIONAL EXPRESSION OF PLANT ACETOLACTATE SYNTHASE GENES IN ESCHERICHIA-COLI	Mazur-B-J$Smith-J-K$Schloss-J-V	1989
+marti-1987-aabrk	TRANSCRIPTION OF ACETOLACTATE SYNTHASE GENES IN HIGHER PLANTS	Smith-J-K$Martin-S-J	1987
+hepbu-1987-aaaqc	DNA methylation in plants	Hepburn-A-G$Belanger-F-C$Mattheis-J-R	1987
+belan-1987-aadaj	DNA methylation in plants	Hepburn-A-G$Belander-F-C$Mattheis-J-B	1987
+
+</code></pre>
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+
+<a name="wscripts"></a><H3>File permissions for wscripts scripts</H3>
+
+<P>If you are a database administrator or you are involved in the setting up
+of a wscripts directory within a database then you should read this note.
+
+<P>The scripts in wscripts are called from various parts of the acedb
+code, for this to work the scripts themselves must be executable by the
+user running the script. A recent user problem turned out to be caused
+by a script not having the execute flag turned on (you can see this using
+the "ls-l" command). You will probably want to make sure that anyone
+can execute the script and you can do this by:
+
+<P><code><pre>cd wscripts
+chmod ugo+x the_script_name
+</pre></code>
+
+<P>This will allow anyone to run the script, if you want to restrict the script
+to the user and group for the script you should specify just "ug" instead of "ugo"
+in the above example.
+
+
+<a name="LGPL"></a><H3>AceDB changes its license</H3>
+
+<P>Acedb has been licensed under the Gnu Public License (GPL) for some years
+now which means that the code is freely available to all but cannot be filched
+for commercial gain and that authors must be acknowledged. This license has a
+major drawback however in that it effectively prevents the use of the licensed
+code in any form in commercial software. As this was restricting the spread of
+GPL code (synonymous with "open source software"), a new less restrictive license
+was produced which meant libraries consisting of GPL code could be incorporated
+into programs sold for profit provided the inclusion of GPL code was acknowledged.
+
+<P>Acedb has now moved on to this less restrictive form of licensing allowing
+greater use of the code for commercial programs.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+<a name="Table_maker"></a><H3>Tablemake bug in batch mode.</H3>
+
+<P>There was a bug in tablemaker which caused the first line of the table
+to clash with the prompt in batch mode.
+
+<a name="tace_dna"></a><H3>Bug in flags to "dna" command in tace.</H3>
+
+<P>The bug in tace that caused the "-mismatch" flag to be interpreted as
+a filename has been fixed.
+
+<a name="genefinder"></a><H3>Crash in gene finder.</H3>
+
+<P>A bug in genefinder caused it to crash if used on objects where no dna was
+available, now an error message is displayed.
+
+
+<a name="cygwin"></a><H3>Grim CYGWIN bug.</H3>
+
+<P>Set a registry key to increase available cygwin heap space from the
+deafult 128MB. currently tp 256MB, which is enough for wormbase.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<H2>February monthly build not available.</H2>
+
+<P>Apologies, once again there was no build this month due to the major
+SMap development work.
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Thu May 16 11:51:56 2002
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

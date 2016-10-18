@@ -1,0 +1,97 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - May 2004</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - May 2004</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+
+<P>Bug fixes and developer stuff only this month.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+<a name="a_class_display"></a><H3>Display of Array Class objects in Update Mode in Tree display</H3>
+
+<P>Jean has fixed a long standing bug so that the node for A class objects
+shows correctly in update mode as ?DNA not (NULL).
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+
+<a name="bitset_stuff"></a><H3>New BitSet operations</H3>
+
+<P>Jean has added some new utils in bitset.h. These include:
+
+<pre>  int bitSetAND (BitSet b1, BitSet b2) ;
+  int bitSetOR (BitSet b1, BitSet b2) ;
+  int bitSetXOR (BitSet b1, BitSet b2) ;
+  int bitSetMINUS (BitSet b1, BitSet b2) ;                       /* performs b1 = b1 OPERATOR b2, returns count (b1) */
+</pre>
+
+
+<a name="bitset_stuff"></a><H3>New vtxt operations</H3>
+
+<P>Jean has added some new vtxt calls:
+
+<pre>  int vtxtReplaceString (vTXT vtxt, char *a, char *b) ;     /* changes a into b, returns the number of replaced strings */
+  int vtxtRemoveBetween (char *txt, char *begin, char *end) ;    /* removes all occurences of begin...end, r
+</pre>
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>May monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Fri Jul  9 09:13:10 BST 2004
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

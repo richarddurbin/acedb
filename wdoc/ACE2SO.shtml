@@ -1,0 +1,355 @@
+<!--#set var="banner" value="The ZMap Remote Control Interface"-->
+<!--#include virtual="/perl/header"-->
+
+<!--#set var="author" value="edgrif@sanger.ac.uk" -->
+
+<!-- some colours for our boxes etc. -->
+<style>
+
+pre{ background-color: #DDDDDD; border-style: solid; border-width: 1px; padding: 10px }
+
+.request{ border-color: red;  border-width: medium }
+.response{ border-color: green; border-width: medium }
+.message{ border-color: blue; border-width: medium }
+
+table.zmap_actions{ background-color: #EFEFEF; border-width: 1px; border-style: solid; border-collapse: collapse }
+table.zmap_actions td{ border-width: 0px 1px 1px 0px; border-style: solid; padding: 2px }
+table.zmap_actions tr{ vertical-align: top; }
+table.zmap_actions th{ border-width: 0px 0px 1px 0px; border-style: solid; }
+
+fieldset
+{
+background-color: lightblue;
+border-style: solid; border-width: 3px; border-color: black;
+padding: 10px
+}
+
+legend{ font-weight: bold }
+
+</style>
+
+
+<h1 align="center">Linking Acedb features to SO terms</h1>
+
+
+<h2>The SO Term terminology</h2>
+
+<p>SO is nothing if not terminology so from the
+<A HREF="http://www.sequenceontology.org/">SO website</A>....</p>
+
+<ul>
+  <li><b>SO Accession:</b> an unchanging ID in the form SO:nnnnnnn which represents
+      some aspect of a feature or sequence e.g. "SO:0000147".
+  <li><b>SO Name:</b> the human readable name for the SO Accession e.g. "exon".
+
+  <li><b>SO Definition:</b> a brief sentence or two describing what the SO term represents e.g.
+      "A region of the transcript sequence within a gene which is not removed
+      from the primary RNA transcript by RNA splicing."
+</ul>
+
+<p>There are other elements to the description of a SO Term but they do not concern us here.</p>
+
+
+
+<h2>Introduction</h2>
+
+
+<p>The principal motivation for linking acedb features to SO terms is so that
+acedb can dump features in GFF version 3 format but it would also complete
+work that has already been started in forming links between acedb features
+and the ?SO_term class introduced into wormbase acedb several years ago.</p>
+
+<p>At first glance adding SO terms to acedb seems easy, just add an extra field
+here and there and it's done. There are at least of couple of issues that make
+this not so simple:</p>
+
+<ul>
+  <li>SO terms can be used to express a hierachy which is biological by nature and
+      therefore may not fit in with the database hierachy which is likely to be
+      arranged according to computing and user needs.
+  <li>Any one feature, e.g. an exon, may have several different SO interpretations
+      and therefore the way SO terms are assigned will be different for different
+      types of exons.
+  <li>Some features in acedb are represented by full acedb objects whereas others
+      are represented by sets of tags/data within an acedb object.
+</ul>
+
+
+<p>This document describes one approach to mapping acedb features to SO terms.</p>
+
+
+
+
+
+<h2>Implementation</h2>
+
+<p>Features in acedb are either represented by objects in their own right (e.g.
+a transcript) or where appropriate are sub-features of an object
+(e.g. homologies). Some feature objects also have their own subparts e.g. a
+transcript object will have Source_exons.</p>
+
+<p>The worm database includes a ?SO_term class which is used to specify various
+SO terms used by wormbase and also to some extent the SO hierachy and so our
+problem is in essence how to map acedb features on to this existing hierachy.</p>
+
+<p>The mapping needs to be able to cope with cases where a feature references a
+parent object (e.g. a transcript referencing a gene parent) for which a SO Term
+is needed and also with features that have subparts (e.g. the exons/introns for
+a transcript) for which SO Terms are also needed.</p>
+
+
+<p>In essence the gff version 3 dumping code runs through the SEGs array
+created for an FMap (whether on screen as in xace or "virtual" as in giface)
+and outputs GFF records for those SEGs. In practice it is a bit more complex
+than this because extra information pointed to by the SEGs must also be
+referenced.</p>
+
+<p>The SEGs are very like GFF in that they represent single parts (e.g. there
+is a SEG for every exon, intron etc) which presents some challenges in
+recording parent/child and to a lesser extent multiline features.</p>
+
+
+<h3>The Ace2SO Class</h3>
+
+<p>This mapping can be done relatively simply using the following new class:</p>
+
+<fieldset>
+<legend>?Ace2SO Class</legend>
+<pre><code>
+?Ace2SO Description UNIQUE Text
+        SO_term UNIQUE ?SO_term
+        SO_subpart_tags Text ?SO_term 
+        SO_parent_obj_tag UNIQUE Text
+        SO_children
+
+</code></pre>
+</fieldset>
+<br />
+
+
+<p>The tags have the following meaning:</p>
+
+<p><b>SO_term:</b> Gives the ?SO_term object for the feature that references
+this Ace2SO object. The name of the ?SO_term object is the SO Term Accession
+and the ?SO_term object may contain the SO term name, description and more.</p>
+
+<p><b>SO_subpart_tags:</b> Specifies as <i>simple text</i> the tag in the current
+feature object which identifies a subpart of the object, e.g. when a <b>?Sequence</b>
+class object represents a transcript the tag Source_exons defines the exons. The
+SO_subpart_tags can be used to give the SO term for an exon by specifying as
+plain text "Source_exons" followed by the ?SO_term for an exon. The use of a Text
+field allows the user the freedom to specify any tag in any class without having
+to enumerate the tag in the Ace2SO class.</p>
+
+<p><b>SO_subparts:</b> Users requested a more intuitive way to specify the common parts
+of a transcript than using SO_subpart_tags so there is also a SO_subparts tag:
+<pre>
+        SO_subparts Exons UNIQUE ?SO_Term
+                    Introns UNIQUE ?SO_term
+                    Coding_region UNIQUE ?SO_term
+
+e.g. for exons
+
+        SO_subparts Exons "SO:0000147"
+
+is exactly equivalent to
+
+        SO_subpart_tags "Source_exons" "SO:0000147"
+</pre>
+
+
+<p><b>SO_parent_obj_tag:</b> Specifies as simple text the tag in the current
+feature object which identifies another object which is semantically the SO
+parent of the feature, e.g. transcripts could identify a Gene class object that
+is their parent by giving the tag Gene as the Text field. The parent object
+must contain a method object identified by the tag "Method" which points to a
+?SO_term object for that parent.</p>
+
+<p><b>SO_children:</b> Plain tag with no data which flags that this object is
+referred to as a parent by other objects, e.g. A Gene class object is referred
+to as a parent by CDS class objects. The tag is needed because currently the
+models do not have a consistent way of signifying this parent/child
+relationship. The flag ensures that this object will have an "ID" tag in
+the GFF dump.</p>
+
+
+<p>Example Ace2SO object for a transcript:</p>
+
+<fieldset>
+<legend>Transcript object</legend>
+<pre><code>
+Ace2SO : "transcript"
+SO_obj	 "SO:0000185"
+SO_subpart_tags Source_exons "SO:0000147"
+SO_subpart_tags Source_introns "SO:0000188"
+SO_parent_obj_tag	 "Gene"
+</code></pre>
+</fieldset>
+<br />
+
+
+
+<h3>Referencing the Ace2SO Class</h3>
+
+
+<p>In all cases whether the feature is an object or a subpart of an object it
+references a Method Class object which specifies how that feature should be
+processed for display, export and so on. The Method class is the logical place
+to insert SO term support for features:</p>
+
+
+<fieldset>
+<legend>Ace2SO Tag in ?Method Class</legend>
+<pre><code>
+?Method	Remark ?Text #Evidence
+	Display No_display
+            .
+            .
+            .
+	GFF	GFF_source UNIQUE Text
+		GFF_feature UNIQUE Text
+                <font color="red">GFF_SO UNIQUE ?SO_term UNIQUE ?Ace2SO</font>                       // new tag to reference Ace2SO object.
+</code></pre>
+</fieldset>
+<br />
+
+
+<p>This encapsulates the "acedb -&gt; SO" mapping so it does not interfere with
+the existing ?Method or ?SO_term classes' meaning and associated function.</p>
+
+
+
+<h2>GFF dumping</h2>
+
+<p>The mechanism described here will allow the GFF dumper to automatically read
+the SO Terms from the database, the alternative is to have rules embedded in the
+code which is not attractive.</p>
+
+<p>GFF version 3 dumping will be selected by specifying the version option for
+the gif seqfeatures command as "-version 3".</p>
+
+<p>The default will be to dump the SO term names as the "type" in the GFFv3 file
+but specifying "-so_acc" allows the user to select to have
+the SO Accessions dumped rather than the SO Terms.</p>
+
+
+
+<h2>The ?SO_term class</h2>
+
+<p>In 2004 Keith Bradnam added a ?SO_term class to acedb wormbase for "initally
+just storing SOFA terms", this isn't quite true as it included XREF's to 
+?Feature objects.</p>
+
+<p>The existing ?SO_term class definition is:</p>
+
+<fieldset>
+<legend>?SO_term Class</legend>
+<pre><code>
+?SO_term SO_name ?Text
+         SO_definition ?Text
+
+         // the rest of the class is omitted as it is not referenced by
+         // the GFFv3 code.
+</code></pre>
+</fieldset>
+<br />
+
+<p>Note the name of a ?SO_term object is it's SO Accession, the other fields
+are as desribed at the beginning of this document.</p>
+
+<p>The acedb code that implements interpreting the Ace2SO objects and making
+the FMap feature to SO_term links currently only references the SO Accession
+and the SO_name data.</p>
+
+
+
+<h2>Ace2SO examples</h2>
+
+<p>Here are some ace format examples (only the tags that are relevant to the
+Ace2SO mapping are included):</p>
+
+<fieldset>
+<legend>Ace2SO Transcript Example</legend>
+<pre><code>
+Transcript B0024.13a
+  Structure   Source_exons    1   200
+                              251     399
+                              824     1015
+                              1062    1327
+                              1376    1587
+  Method      Coding_transcript
+
+
+Method Coding_transcript
+  Ace2SO      transcript
+
+
+Ace2SO transcript                                    or alternatively using SO_subparts:        Ace2SO transcript
+  SO_obj      SO:0000185                                                                          SO_obj      SO:0000185
+  SO_subpart_tags     Source_exons    SO:0000147                                                  SO_subparts  Exons    SO:0000147
+                      Source_introns  SO:0000188                                                               Introns  SO:0000188
+
+
+SO_term SO:0000185
+  SO_name    primary_transcript
+
+SO_term : "SO:0000147"
+  SO_name	 "exon"
+
+SO_term : "SO:0000188"
+SO_name          "intron"
+
+</code></pre>
+</fieldset>
+<br />
+
+
+<p>The transcript specifies the method, the method specifies the ace2so object,
+the ace2so object specifies SO_term objects for the transcript itself and for
+the transcripts exons/introns. <b>NOTE</b> the use of the Source_introns tag to
+specify a SO_term object for the introns which are implicit in acedb.</p>
+
+
+
+<fieldset>
+<legend>Ace2SO Transcript Example</legend>
+<pre><code>
+CDS B0024.13a
+  Structure   Source_exons    1   200
+                              251     399
+                              824     1015
+                              1062    1327
+                              1376    1498
+  Properties      Coding      CDS
+  Visible     Gene    B0024.13
+  Method      curated
+
+
+
+Method curated
+  Ace2SO      CDS
+
+
+Ace2SO CDS
+  SO_obj      SO:0000316
+  SO_subpart_tags     Source_exons    SO:0000316
+  SO_parent_obj_tag   Gene
+
+SO_term SO:0000316
+  SO_name     CDS
+</code></pre>
+</fieldset>
+<br />
+
+
+<p>The CDS specifies the method, the method specifies the ace2so object,
+the ace2so object specifies SO_term objects for the CDS itself and for
+the CDS exons. <b>NOTE</b> how Source_exons are pointed to a different
+SO_term object in this example so that they are exported as CDS and
+not exon. Also because Source_introns is not specified no introns are
+dumped for the CDS.</p>
+
+
+
+
+<!--#include virtual="/perl/footer"-->

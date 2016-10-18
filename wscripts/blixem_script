@@ -1,0 +1,5 @@
+#!/bin/csh -f
+
+# SCCS: $Id: blixem_script,v 1.1 1996-08-10 14:55:18 esr Exp $
+
+blixem - -

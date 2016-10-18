@@ -1,0 +1,137 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - September 2000</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<H1>ACEDB User Group Newsletter - September 2000</H1>
+
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+<a name="Apologies"></a><H3>Apologies</H3>
+
+<P>There have been no newsletters for too long, sorry, sorry, sorry. We have
+had a number of problems with the build/test system for acedb which have
+precluded the usual monthly releases of development code. This has
+ended up with me delaying sending out the newsletters because there seemed
+little point when they refer to new features/bug fixes in code that is not yet
+available.
+
+<a name="General"></a><H2>General News</H2>
+
+<p><b>Xref bug believed fixed...</b> a long standing bug in xref which resulted in
+"object locked" errors when trying to update databases with objects containing particular
+types of xrefs has now been fixed (see bugs section).
+
+<P>Most news this month is about bug fixes as we get ready for the next significant release
+which will be called Acedb 4_9.
+
+
+<a name="New"></a><H2>New Features</H2>
+
+<a name="tacecommand"></a><H3>tace command sets</H3>
+
+<p>If you issue the <code>"?"</code> command from within tace you get to see
+a list of the commands that you can issue. Previously in tace (and aceclient) this list was
+misleading because it included commands that the user would not be able to
+run because they did not have write access to the database. This has
+now been fixed so that if a user does not have write access they will not see
+commands that require write access.
+
+
+<a name="Bugs"></a><H2>Bugs Fixed</H2>
+
+<a name="tacebug"></a><H3>tace bug</H3>
+
+<p>When tace is run via a pipe (e.g. from a perl or shell script) it saves
+the database on quitting by default. This behaviour was broken in 4_8 and has
+now been restored. This is particularly important because running tace via
+scripts is one of the main mechanisms used at Sanger for doing large scale
+updates to databases.
+
+<a name="Expanding"></a><H3>Expanding database</H3>
+
+<p>There was a problem in 4_8 with databases growing enormously when a large
+number of separate updates were made to the database. This has been fixed
+and was caused by old sessions (a session is a record of the state of the database
+after a set up updates has been made) not being deleted correctly from the database.
+
+<P>To see the benefit from this fix you will need to rebuild the database.
+
+
+<a name="CDSstartend"></a><H3>CDS start/end positions</H3>
+
+<P>Perhaps not a bug, more a confusion in meaning. For a sequence object that is a CDS
+you can specify the start/end positions of the CDS within the accompanying Source_exons
+and here in lies the problem. The start/end positions must be specified in spliced DNA
+coordinates, <b>not</b> in Source_exon coordinates. This means you have to do some mental
+arithmetic if you are inserting the CDS positions by hand: you will need to add up the length of the
+Source_exon sections to get the size of the spliced DNA and work out where the CDS
+starts and ends within the single continuous section of exon DNA.
+
+<P>acedb will now output an error message if a CDS is displayed where the start/end positions
+lie outside of the spliced DNA and will display the CDS as if it occupied the entire length
+of the spliced DNA.
+
+
+<a name="CDSreverse"></a><H3>CDS start/end positions not working for reverse genes</H3>
+
+<P>There was an annoying bug whereby, for reverese genes only, acedb would ignore a CDS start position
+unless an end position was specified as well. This has been fixed so that a CDS for a reverse
+gene now behaves the same way as for forward genes.
+
+
+<a name="Obscure"></a><H3>Obscure socket server bug</H3>
+
+<p>When started by inetd, the socket server crashed inetd on some linux systems
+because it wrongly <b>"shutdown"</b> the listening socket when exitting. This has
+been fixed.
+
+
+<a name="XREF"></a><H3>XREF problem</H3>
+
+<p>There has been a bug in the XREF code when making updates to a database for a long time.
+In 4_8 this has manifested itself in the form of updates failing where they involve XREFs
+with UNIQUE tags. This seems now to be fixed at long last, if this is not so then please send
+reports to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+<P>This is an important bug to fix because it has been the principal reason for not releasing
+updates to large databases as "diffs". Currently databases such as the Worm database have
+to be released as complete new copies every time there is an update. Now the Xref bug is fixed it
+should be possible to release an update file which consists only of those parts of the database
+are different since the previous relase.
+
+
+<H2>No monthly build available.</H2>
+
+<P>Unfortunately, due to system problems at the Sanger Centre a monthly build has
+not been possible for September.
+
+<H2>Next User Group Meeting - D213, 2.30pm, Thursday, 14th September</H2>
+
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon May 21 15:39:52 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

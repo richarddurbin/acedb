@@ -1,0 +1,271 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - February 2003</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - February 2003</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<P>Some enhancements to existing commands and some completely new features
+such as DAS support and a the prototype of a new FMap like display which will
+form the basis of a client/server version of FMap.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+<a name="message_window"></a><H3>Message window changes in xace and the stand-alone blixem</H3>
+
+<P>If you are used to using the "Message window" which contains a scrolled list of
+information messages from acedb then you will see that the menu for this window
+contains a new "Close" button. This allows you to "Close" the message window to
+get rid of it from the screen temporarily but it will reappear next time there
+is a message. If you select the "Quit" button then the message window will be
+closed permanently and acedb will switch back to using individual popup windows
+for each message.
+
+<P>This change has been made so that the message window can be used in the same
+way from both xace and the stand-alone blixem program. If you use blixem as a
+separate/stand-alone program, rather than as part of
+xace, then you may have been irritated to find that you could not use the scrolled
+message window, now you can. When the first individual popup window comes up then select
+the "Switch to Scrolled Message Window" button, all future messages will appear in the
+single message window. If you want to swop back to the individual popup window, then
+select "Quit" from the scrolled message window menu.
+
+
+
+<a name="time_stamps"></a><H3>"Time_Stamps" command now prints out current time stamp status</H3>
+
+<P>A small enhancement to the <code>Time_Stamps</code> command
+(available in tace, giface or the server) means
+that you can now use the command without options to check what the current status of
+time stamp setting for the database:
+
+<P><pre><code>acedb&gt; ? time
+// ACEDB command: time
+Time_Stamps {on | off} : Show current setting or toggle time stamps creation
+// 0 Active Objects
+acedb&gt; time_stamps
+// Time-stamps currently ON
+// 0 Active Objects
+acedb&gt; time_stamps off
+// Time-stamps now OFF
+// 0 Active Objects
+acedb&gt; time_stamps
+// Time-stamps currently OFF
+// 0 Active Objects
+acedb&gt;
+</code></pre>
+
+
+<a name="das_dumping"></a><H3>DAS dumping from acedb</H3>
+
+<P>(<I>Note that this is work still under development.</I>
+
+<P>Acedb now supports some of the DAS 1.0 protocol and is able to dump
+both DASDNA and DASGFF format.
+
+<P>New "dasdna" and "dasgff" commands can be found in the "gif" submenu
+in giface or the giface version of the server. You could issue the following
+commands to get dna and gff in DAS format:
+
+<P><pre><code>acedb&gt; gif seqget myclone ; dasdna -file my.das
+
+
+acedb&gt; gif seqget myclone ; dasgff -file my.das
+</code></pre>
+
+<P>More DAS support will be added soon and in particular support will be provided for
+the DAS 2.0 protocol when it comes out.
+
+
+<a name="status_cmd"></a><H3>Status command now reports last database save date</H3>
+
+<P>You can now use the "status" command in any acedb program to
+find out when the database was last saved. The "database" section of the
+status output now gives this date in the "Last Save" field:
+
+<P><pre><code>acedb&gt; status -database
+ // ************************************************
+ // AceDB status at 2003-03-06_16:20:59
+ // 
+ // - Database
+ //               Title: You complete Wally
+ //                Name: <undefined>
+ //             Release: 4_0
+ //           Directory: /nfs/team71/acedb/edgrif/acedb/databases/bA404F10
+ //             Session: 19
+ //                User: edgrif
+ //           Last Save: 2002-06-12_14:32:07      <<<<<<<< last database save
+ //        Write Access: No
+ //      Global Address: 1890
+ // 
+ // ************************************************
+
+// 0 Active Objects
+acedb&gt; 
+</code></pre>
+
+
+<a name="HP_itanium"></a><H3>AceDB on the HP Itanium</H3>
+
+<P>If you build your own AceDB programs from the source code then
+you can now build on the HP Itanium based machines by setting
+<code>ACEDB_MACHINE</code> to "<code>HP_4_GCC</code>". Please send
+any problems/updates to the make files to
+<A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="temp_gene"></a><H3>Temp Gene on reverse strand off by 2</H3>
+
+<P>If you use the Gene Finder package from within FMap, there was a horrible
+bug that led to just the first temporary gene made on the reverse strand
+being off by 2 in position. This is now fixed, as a side effect the initial
+double recaculation that acedb was doing the first time an FMap was shown has
+also been fixed.
+
+
+<a name="huge_worm_blocks"></a><H3>Huge block files</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Mieg</I>
+<A HREF="mailto:mieg@ray.nlm.nih.gov">mieg@ray.nlm.nih.gov</A>)
+
+<P>Jean fixed a very old problem that sometimes meant blocks were created
+that were well over the limit given
+in database.wrm. There is now a hard limit of 1.8 Gb otherwise the database
+can end up with blocks that are too big to be read for 
+32-bit machines which have a hard limit at 2Gb for
+any disk file.
+
+
+<a name="smap_dna"></a><H3>Bug in sMapDNA</H3>
+
+<P>Fixed bug in sMapDNA(), the function truncates the dna array at wherever
+it gets up to in inserting the dna found in the database, this is
+incorrect. The function should reset arrayMax for the dna array
+to be the maximum size of the array otherwise this causes all sorts
+of problems not only in FMap but also in the interface presented by the dna
+exporting functions in tace and giface which end up outputting dna arrays
+that are clipped in length.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Future_Plans"></a><H2>Future Plans</H2>
+
+<a name="zmap"></a><H3>Client/server version of FMap</H3>
+
+<P>Simon Kelley has been working hard on the graphical part of the new proposed
+client/server version of FMap. So far the code can display crude sequences
+and allows multiple windows onto the same sequence and has much improved navigation.
+The column mechanism will remain much the same except that the special code that
+displayed alleles and other features will gradually be migrated to use methods.
+
+<P>Ask <A HREF="mailto:srk@sanger.ac.uk">Simon</A>
+if you want an early view of what the new FMap will look like.
+
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+<P>If you wish to make comments/suggestions about any of the below, please mail them
+to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>
+
+
+<a name="use_glib"></a><H3>Glib usage</H3>
+
+<P>Now that we make link in Glib it makes sense to use its many good functions,
+I recently made use of the string functions that provide dynamically growing
+and appendable strings for DAS-GFF dumping code.
+
+<P>Glib also provides very portable functions for getting hold of the program
+name, the strings corresponding to signal values and much else.
+
+<P>It's worth taking a look at what's available on the
+<A HREF="http://developer.gnome.org/doc/API/glib/index.html">Glib pages</A>.
+
+
+<a name="GFF_dumps"></a><H3>Change to GFF dumping code in acedb</H3>
+
+<P>To support both standard GFF and DASGFF output the dumping code in fmapcontrol.c
+has been rearranged.
+The main "<code>SEG -&gt; GFF</code>" code still remains in just one routine,
+but both the standard GFF and the DASGFF
+dumping routines register callbacks with this main routine. The main routine then
+calls the callbacks to output each GFF feature in the style of their respective formats.
+
+<P>The rationale for adding DAS support is to allow us to test the new FMap client
+using DAS format as soon as possible. Lincoln Stein has kindly offered to write
+some bridge code to translate DAS requests into corresponding acedb commands
+allowing acedb to act as a DAS server.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>February monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="User_Group"><H2>Next User Group Meeting - D319, 3.00pm, Thursday, 13th March, 2003</H2>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Thu Mar  6 17:39:38 GMT 2003
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

@@ -1,0 +1,64 @@
+/* $Id: README,v 1.2 1995-05-21 04:48:41 mieg Exp $ */
+
+Heidelberg 20.11.92
+
+Prototype RPC mechanism for a reliable client/server connection.
+Designed by Petr Kocab and Otto Ritter, DKFZ Heidelberg.
+Implemented by Petr Kocab [ dok416@cvx12.dkfz-heidelberg.de ].
+
+Abstract
+--------
+The client process uses the function ace_server_call(...) to
+transfer a data structure to the server process where a call_back
+function is called, and it returns the output data which are
+passed back to the ace_server_call(...). The client waits for
+this or for timeout. The server may run in the background or as
+a daemon, and it waits using the system call of select() - therefore
+no unnecessary CPU consumption.
+
+In the exapmle, the client "cnace" passes a simple text message
+to the server, "snace", who changes all characters into uppercase
+and returns back the modified message. We've tested messages of
+up to 2MB length. The 'transmission rate' between Heidelberg and
+London was practically the same as for FTP.
+
+For binary data the XDR encoding should be used if the client and 
+server have different byte order representations.
+
+Refer to the nace_com.h file for function prototypes and
+descriptions.
+
+Directory contents
+------------------
+nace.x			the source for rpcgen which defines 
+			the basic data structures and 
+			RPC's constants
+nace.h                  output from rpcgen
+nace_clnt.c             output from rpcgen
+nace_svc.c              output from rpcgen
+nace_xdr.c              output from rpcgen
+nace_com.h		include file for client and server processes
+nace_cp.c		source file with client's functions
+nace_sp.c		source file with server's functions
+snace.c			very simple server (example)
+cnace.c		 	very simple client (example)
+  
+Note: nace.h, nace_clnt.c, nace_svc.c and nace_xdr.c are not
+      modified anyhow ( they come out of rpcgen )
+
+      nace is a shortcut for "net ace"
+
+How to build the client / server :
+--------------------------------
+1)  rpcgen nace.x
+2)  gcc -g -o snace snace.c nace_sp.c nace_xdr.c
+3)  gcc -g -o cnace cnace.c nace_cp.c nace_clnt.c nace_xdr.c
+
+Known bugs :
+----------
+1)  I had to use gcc version 2.3.1 !  With my previous version (I think 1.4)
+    I had problems during runnig a client.
+2)  When the client's RPC function finishes with a timeout error, 
+    the server occassionally crashes. More research into RPC has to be done.
+
+

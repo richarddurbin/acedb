@@ -1,0 +1,462 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - September 2003</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - September 2003</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+
+<P>This month sees a change in the acedb staff at Sanger which will have
+some ramifications, a windows package of blixem and dotter, an article
+on text searching in acedb and a number of bug fixes.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="General_News"></a><H2>General News</H2>
+
+<P>A month of change for Acedb at the Sanger Institute.
+
+<P>Simon Kelley, who has been
+a stalwart of acedb development for years, is to move on to pastures new working
+in the systems group here at Sanger.
+
+<P>Simon has been responsible for a lot of very important acedb features over
+the years including the genetic map display and many which, being internal to acedb, have probably passed most
+people by. He has been the solver of many horrible bugs and introduced many good things,
+not least the move to using the Cygwin/GTK libraries which have enabled us
+to port acedb to Windows and the Mac in a sustainable way and use a more modern graphics
+system. He will be sorely missed.
+
+<P>Good luck in the new job Simon !
+
+<P><I>(Please see <A HREF="#acedb_future">"The Future of acedb"</A>
+for a discussion of what this all means for acedb support and development.)</I>
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="blixem_dotter"></a><H3>Blixem/Dotter for Windows</H3>
+
+<P>As a parting shot at Windows support Rob Clack has made a download
+package for blixem and dotter. You can grab these stand alone
+binaries (i.e. they are independent of acedb) from our
+<A HREF="http://www.acedb.org/Software/Downloads/">downloads page</A>.
+
+
+
+<a name="make_trouble"></a><H3>Troubles with "make"</H3>
+
+<P>If you build your own acedb then you should probably read this.
+
+<P>Our makefile creates a subdirectory named <b>"bin.XXXXX"</b> where <b>"XXXXX"</b>
+is a name representing your machine architecture. In this directory it
+makes symbolic links to all the source files to be compiled in the <b>w*</b>
+directories. There is a problem with this though in that some versions
+of <b>"ln"</b> (the command to create the link) support overwriting an existing
+link while others do not.
+
+<P>To fix this we put a test into the makefiles:
+
+<P>test -L xxx.c || ln -s ../wXXXX/xxx.c .
+
+<P>i.e. if the link doesn't exist then make it.
+
+<P>Unfortunately some versions of the sh shell don't support this use
+of "test", you can't win can you...sigh.
+
+<P>Now you can set the make macro <b>$(TEST)</b> in your <b>XXXXX_DEF</b> file
+to a version on your system that will support this and the makefile will work, e.g.
+
+TEST = /bin/test
+
+<P>and hey presto it should all work.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+<a name="acedb_future"></a><H3>The future of acedb</H3>
+
+<P>Owing to the current financial climate it is not anticipated that Simon will
+be replaced in the foreseeable future, this means that there will have to be some
+changes in what the acedb team at Sanger can do in the way of support, bug fixing
+and development.
+
+<P>After some dicussion we have decided to press ahead with the development of
+the new Zmap display which will in effect be a client-server version of the FMap. There
+are a number of reasons for doing this and there will be more discussion in the
+newsletters as we continue this work.
+
+<P>Clearly in order that we can do new development there must be some cuts in
+support and development of existing code. We have decided to essentially freeze
+our core acedb development and are currently finishing off existing "work in
+progress" before Simon leaves.
+
+<P>In more detail the implications of this are:
+
+<ul>
+  <li><b>Builds:</b>
+      <ul>
+	<li>Windows support will be dropped with no more Windows builds from
+	    this month.
+	<li>Un*x and Mac builds will continue.
+	<li>Builds will be done as and when new features are added or bugs fixed,
+	    there will no longer be the monthly build cycle.
+      </ul>
+  <li><b>Support:</b>
+      <ul>
+	<li>Newsletters will only appear when there is something to say.
+	<li>User group meetings here at Sanger will be when users need to
+	    discuss a bug or request new features or when we need to tell
+	    users about new code/features/fixes.
+	<li>We will continue to try to respond to users questions in the newsgroup
+	    and via emails.
+      </ul>
+  <li><b>Bug fixes:</b>
+      <ul>
+	<li>will be when necessary or time allows.
+      </ul>
+  <li><b>Acedb core development:</b>
+      <ul>
+	<li>All development that is not related to the new display will have to be agreed
+	    in advance.
+      </ul>
+</ul>
+
+<P>This probably all sounds a bit draconian and bleak but realistically we had more
+than we could possibly manage with 3 of us and with 2 of us this will be even more
+so. The choice is really between making progress or falling into a purely bug-fixing
+support role.
+
+
+
+<a name="Text_search"></a><H3>Searching text in acedb</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Mieg</I>
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)
+
+
+
+<P>A recent user question was:
+
+<blockquote>
+<p>Do you know how to query LongText?
+
+<p>It seem in the old versions of xace you can do TextSearch or Grep.  You                  
+can still do it now.                                                                     
+                                                                                         
+<p>Once you have stored LongText away in the database, then it is hard to                   
+query it.                                                                                
+                                                                                         
+<p><code><b>select l from l in class longText</b></code> will return all the keys for LongText.                 
+                                                                                         
+<p>Is there a way to say                                                                    
+                                                                                         
+<p><code><b>where l->content_of_longtext like "*my favorite word*"</b></code>
+or something like this ?                                                                                    
+</blockquote>
+
+<P>Jeans has written this reply which deals generally with querying text in acedb
+as well as with longtext specifically:
+
+
+<P><b>Text entry and text searches in acedb</b>
+
+<P>Acedb has 3 types of text fields                                                          
+                                                                                          
+<P><pre><code>Text
+?Text                                                                                     
+Longtext
+</code></pre>                                                                                  
+                                                                                          
+<P>None of these are limited in size, the daily aquila regression test reads and writes
+Text of 1 megabyte in a length.
+                                                                                          
+<P>The difference is in the way they are stored (the cost in memory)                                   
+the way they are searched and the way they are read in and out, to give an example:
+
+                                                                                          
+<P><b>1) Schema</b>
+                                                                                          
+<P>here is a minimal schema with the 3 types                                                 
+                                                                                          
+<pre><code>?Paper Title ?Text                                                                        
+       Citation Text                                                                      
+       Abstract ?LongText                                                                 
+</code></pre>
+
+
+<P><b>2) Here is a corresponding ace file</b>                                                       
+                                                                                          
+<pre><code>Paper p1                                                                                  
+Citation "PSWC, 1980, vol 12 pp 30-40"                                                    
+Title "About the hidden face of the moon"                                                 
+Abstract p1                                                                               
+                                                                                          
+LongText p1                                                                               
+The moon                                                                                  
+always shows                                                                              
+the same face...                                                                          
+***LongTextEnd***                                                                         
+</code></pre>
+
+<P>Notice that there is no difference between entering a Text and                            
+a ?Text. If you dump all papers, remove all citations, read                               
+a new model where Citation is declared as ?Text and parse the                             
+exact ace file you have just dumped, all citations will be promoted                       
+from Text to ?Text.                                                                       
+                                                                                          
+<P><b>3) Memory cost</b>                                                                            
+                                                                                          
+<P>The Text entry are stored on disk, inside the object they belong to. They cost            
+nothing.                                                                                  
+                                                                                          
+<P>The ?Text entries are constantly in RAM. Typically, they define the largest               
+dictionary in an acedb database. The size is given in the graphic interface by            
+going to status, then the submenu "number of object per class". To spend 10 to            
+100 Mb on that distionary is probably perfectly ok, depending on your machine.            
+Another important cost is that a ?Text is cross referenced in to all the objects          
+it belongs to. However acedb slows has linear algorithms and deep recursive               
+calls associated to the XREF system. It is therefore costly to XREF over a few            
+hundred objects, very costly over say 5000. Therefore, you must really avoid to           
+enter in ?Text some sentence shared by thousands of objects. The same is true of          
+any other objects. For example, consider the RNAi experiemnts. Well over 10,000           
+genes have been tested. About half have a special phenotype, you can store that           
+as a ?Text, but for the other half it is much preferable to have a special tag            
+called "No_RNAi_phenotype" then to enter those same words as a ?Text pointing             
+back to 5000 genes.                                                                       
+                                                                                          
+<P>?LongText is stored on disk as an independant object but point only to its                
+parent. The cost in RAM is the name of the LongText, not its content.                     
+                                                                                          
+<P><b>4) Querying</b>
+                                                                                          
+<P>There is always a trade of. The high cost of the ?Text is compensated by the              
+ease of querying. The following queries will work:                                        
+                                                                                          
+<pre><code>query find paper Title = *moon*                                                           
+                                                                                          
+query find paper Citation = *PSWC*                                                        
+</code></pre>
+
+<P>There is no difference in syntax or in speed between these 2 queries, the speed           
+is linear in the number of papers containing the relevant Tag. Each paper has to          
+be retreived from disk, so the whole search may be slow. However, for ?Text you           
+may also use                                                                              
+
+<pre><code>query grep *moon*                                                                         
+grep moon                                                                                 
+</code></pre>
+
+                                                                                          
+<P>This query is solved completelly in RAM, so it will be quasi instantaneous. A             
+contrario 'grep *PSWC*' will not work. Finally, longtext may only be queried           
+using the xace graphic long search button or the tace command:                            
+                                                                                          
+<pre><code>LongGrep "same face"                                                                      
+Longgrep moon                                                                             
+</code></pre>
+                                                                                       
+This search is linear in the number of LongText entries, one disk access per              
+LongText. Notice that "query longgrep " does not work, longrep must be issued at          
+the tace prompt, and that Longgrep retrieves ?LongText and ?Text but not Text.            
+
+                                                                                          
+<P><b>Conclusion.</b>
+
+<P>Use Text for things which amy be very repetitive or which do not have to be             
+searched out of context. Use ?Text if you wish to use that text as an entry               
+point, without knowing the exact class and tag where it is located, or if you             
+wish great speed of access.  Use ?LongText for abstarcts.                                 
+                                                                                          
+<P>We know that the whole system is confusing. In the draft version of acedb.5,            
+we have had for several years a system that no longer slows down on very large            
+Text, or on very large XREF, and we are working on direct indexing of LongText.           
+But for the moment, things work are described above.                                      
+
+                                                                                          
+<P><b>More on Querying longText</b>
+
+<P>In acedb, paper abstracts and other long documents are                                    
+stored in a special class called LongText. You can list                                   
+all those objects by using the query
+
+<pre><code>Find longtext                                                                           
+</code></pre>
+
+<P>either from xace or from tace.                                                            
+This may be usefull to create a .ace file, but otherwise                                  
+it is not very informative, since you just get the                                        
+identifiers.                                                                              
+                                                                                          
+<P>However, it is also possible to search them by content.                                   
+From the xace interface, type some words in the main window                              
+and select 'even in longtext'.  For example, typing the words                             
+'binding proteins' should bring back several papers containing                            
+these exact words in their abstract. Typing 'binding*hairpin'                             
+may bring back pubmed 9049306, if you have that abstract                                  
+in your database, because the * allows to find these 2 words                              
+although they are not contiguous, but are in this order.                                  
+                                                                                          
+<P>The same list can be found in tace by the command longrep, which                          
+is described in the command help:
+
+
+<pre><code>acedb> ?  // lists all commands                                                           
+acedb> ? longgrep  // to get help on longgrep                                             
+                                                                                          
+LongGrep template : searches for *template* also in LongTexts                             
+                                                                                          
+                                                                                          
+acedb>  longgrep protein*hairpin                                                          
+// I search for texts or object names matching *protein*hairpin*                          
+                                                                                          
+// Found 1 object                                                                         
+// 1 Active Object                                                                        
+acedb> list                                                                               
+                                                                                          
+KeySet : Answer_1                                                                         
+
+
+
+
+Paper:                                                                                    
+ pm9049306                                                                                
+// 1 object listed                                                                        
+// 1 Active Objects                                                                       
+</code></pre>
+
+                                                                                          
+<P>CAVEAT: in tace, after longgrep, do not use "" and do not add terminal white              
+spaces                                                                                    
+unless you mean it.                                                                       
+                                                                                          
+<P>HORRIBLE LIMITATION: longrep explores the longtexts and moves back to the parent          
+paper with the same identifier. It would be much better if it could move back to          
+the parent object of any type of longtext, not just abstract, and even if the             
+names differ.                                                                             
+                                                                                          
+<P>A much more complete text indexing system is in developement. It is driving               
+the query system of AceView (http://www.humangenes.org), but for the                      
+moment it is schema specific. Since it is wonderfully fast, I hope someday                
+to make it general and synchrone. The current implementation needs                        
+of line recalculation if the database is edited.                                          
+ 
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="dna_highlight"></a><H3>DNA highlighting lost in FMap</H3>
+
+<P>A perplexing and bamboozling bug, sometimes the highlighting of the DNA
+sequence in FMap just stopped working. This is now fixed.
+
+
+<a name="reverse_complement"></a><H3>Reusing an FMap and reverse-complementing</H3>
+
+<P>If the FMap code reused an existing FMap display and the old display was reverse-complemented,
+but the new object to be displayed was on the reverse strand, then the display needed to be
+flipped back from reverse complement mode.
+
+
+<a name="no_display"></a><H3>No_display tag in Method class</H3>
+
+<P>The Method class has two main uses in acedb, to provide options for displaying
+and for dumping any objects that reference that Method. To this end it is
+sometimes useful to specify that an object should never be displayed (although it
+may be dumped). After a request from Wormbase, the code has been around for some years
+to implement this but ironically the tag that controls this behaviour has been missing
+from our canonical models.wrm file that we distribute with acedb.
+
+<P>You need to update your Method class like this:
+
+<pre><code>?Method	Remark ?Text
+        // the Display information controls how the column looks.
+	Display No_display                                      // column is not displayed at all.
+                Colour #Colour
+                etc. etc.
+</code></pre>
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+
+<a name="vtxt"></a><H3>New vtxt functions</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Mieg</I>
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)
+
+<P>vtxt library is very convenient for preparing
+complex text documents
+it is simply a nice wrapper for printf to
+an elastic string buffer and getting the
+result data out of it
+
+<P>it ressembles aceOut a bit has a different purpose
+and is not a duplicate, at least i think it is not !
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>September monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="User_Group"><H2>Next User Group Meeting - D319, 3.00pm, Thursday, 9th October 2003</H2>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Fri Oct 24 08:23:16 BST 2003
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

@@ -1,0 +1,46 @@
+
+=========================================================================
+                 ACEDB: A C.elegans Database
+
+                R. Durbin and J. Thierry-Mieg
+
+       (supporting cast: Ed Griffiths, Simon Kelley, John Sturdy)
+
+                Last updated: 21 Mars 2001.
+=========================================================================
+
+
+This is the AceDB distribution directory.  The current release of the
+AceDB code is version 4_9.  This directory should contain at least
+
+README			This file.
+NOTES			Further notes - please get and read this file unless
+				you know exactly what you want to do.
+INSTALL			The installation script - get a new copy of this when 
+				getting updates or a new release
+ACEDB-NNN.tar.gz	Archives for download of binaries, docs, help, source,
+				 tools.
+
+You should read the NOTES file for descriptions of the various download
+files.
+
+Further information about AceDB can be obtained from:
+
+	- the bionet newsgroup bionet.software.acedb
+	- the AceDB web site http://www.acedb/org/
+
+**********************************************************************
+AceDB 4.9 is fully compatible with 4.7 & 4.8
+
+But when you install the new code, you should read-models
+from xace or from tace to benefit from the new fuller indexing.
+
+If you want to compile your own binaries then you should read the
+paragraphs about the incorporation of GNU software libraries into
+AceDB in the file NOTES mentioned above. In particular, the first time
+you do a build you will need to have read these notes.
+
+***********************************************************************
+
+
+========================= end of file ===================================

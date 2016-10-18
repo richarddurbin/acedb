@@ -1,0 +1,338 @@
+<HTML>
+
+
+<!-- Stuff you should alter is highlighted with "***" -->
+
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - December 2000</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<H1>ACEDB User Group Newsletter - December 2000</H1>
+
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+<P>This month sees: the announcement of ChickAce, a reminder for Unix users about
+environment limits and "out of memory" errors from Acedb, major reworking of the
+Acedb website, quite a number of bug fixes, and a proposal for some new variations
+of the Rename function.
+
+
+
+<a name="General"></a><H2>General News</H2>
+
+
+<a name="ChickAce"></a><H3>ChickAce</H3>
+
+<P>Martien Groenen emailed to say that he has been setting up an
+acedb database for the chicken:
+
+<pre><code>
+From: Martien.Groenen@Alg.VF.WAU.NL
+
+During the last 6 months I have set up ChickAce which now contains almost all 
+the mapping information that is available for chicken including the linked 
+data such as references (abstracts), sequences, Comparative mapping 
+information (human and mouse), primers, SNP's etc.
+Currently the database is running satisfactory under Windows in our lab, and 
+someone within my group is using the available CGI script to make the database 
+available on our website (hopefully running in the beginning of next year). 
+
+In one of the latest newsletters I also saw that URL's are now recognized 
+correctly from within AceDb. Can I use that to link data directly to other 
+databases that are available through the WWW (e.g. for all genes in ChickAce I 
+have also added an extra entry for the Locuslink ID for human and mouse. Can I 
+make a direct link with Locuslink?).
+
+Could you add me to the mailing list for the AceDb newsletter (you could also 
+mention that an AceDb database for chicken has been set up in wageningen).
+
+Best regards,
+Martien
+</code></pre>
+
+
+<!-------------------------------------------------------------------------->
+<a name="Articles"></a><H2>Articles</H2>
+
+<a name="User"></a><H3>User Environment Limits and Acedb on Unix</H3>
+
+<P>This is a brief reminder about user limits
+which can cause acedb to crash if they are set too low ( applies to unix not MS-Windows users).
+
+<P>All users who log on to a unix box (whether directly or via a network terminal)
+have a set of user limits which control the amount of memory/files etc. that they
+are allowed to use. You can look at these limits using the C shell command "<code>limit</code>":
+
+<pre><code>
+&gt; limit
+cputime         unlimited
+filesize        unlimited
+datasize        262144 kbytes
+stacksize       2048 kbytes
+coredumpsize    0 kbytes
+memoryuse       505664 kbytes
+descriptors     4096 
+</code></pre>
+
+<P>"<code>datasize</code>" and "<code>stacksize</code>" particularly affect Acedb
+and can cause it to crash
+by running out of memory. In the above example "<code>stacksize</code>" is about 2MB which is too
+low, whereas "<code>datasize</code>" is fine for most uses at about 260MB.
+
+<P>If Acedb crashes unexpectedly with either of these warnings:
+
+<pre><code>
+"Memory allocation failure when acedb requested NNNNNN bytes,
+ acedb has already allocated NNNNNN bytes...."
+
+or
+
+"ABORT : Fatal program fault, signal NN...."
+</code></pre>
+
+<P>then you should try increasing your limits using the "<code>unlimit</code>" C shell command:
+
+<pre><code>
+&gt; unlimit stacksize
+&gt; unlimit datasize
+</code></pre>
+
+If this does not fix the problem then report it either using the ddts bug reporting
+system:
+<ul>
+  <li>http://www.sanger.ac.uk/cgi-bin/webddts/WebDDTS.pl?Project=Acedb
+</ul>
+
+or by sending a description of the problem to the acedb developers at:
+
+<ul>
+  <li><A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>
+</ul>
+
+
+<a name="Acedb"></a><H3>Acedb Web Pages re-organisation</H3>
+
+<P>John Sturdy has been undertaking a major reorganisation of the acedb web pages
+and download site. If you visit the <A HREF="http://www.acedb.org"/>Acedb website</A>
+you will see that the front page has changed and will continue to change quite
+radically until about mid-January.
+
+<P>Of special interest are:
+<ul>
+  <li>Separate "User", "Administrator/Curator" and "Developer" sections.
+  <li>A Search box which allows you to make keyword searches of acedb
+      documents both on the  <A HREF="http://www.acedb.org/">Acedb website</A> and the
+      <A HREF="http://genome.cornell.edu/acedoc/">Acedb document library</A> in the States.
+      Please do try this and if you find notable omissions then either send mail
+      to the <A HREF="mailto:bionet-software-acedb@net.bio.net">Acedb newsgroup</A>
+      or to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+  <li>There is a new "downloads" set of pages under construction to give better access
+      to the ftp site (available in January).
+  <li>There is a new "Site map" link which gives a quick overview of the document structure
+      of the Acedb site as a whole.
+</ul>
+
+<P>John will be adding a lot of new material to the website over the next couple of weeks and
+our intention is to make it a lot more usable. Comments or suggestions are welcome, please
+send them to the <A HREF="mailto:bionet-software-acedb@net.bio.net">Acedb newsgroup</A>
+or <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+
+<a name="New"></a><H2>New Features</H2>
+
+<a name="position"></a><H3>New position readout in fmap</H3>
+
+<p>A small change courtesy of Jean Thierry-Mieg, fmap has a friendlier readout for the position on
+the sequence which will now be in kilo (kb) and Mega (Mb) bases,
+making it a little easier to read than
+1238749217498123794 as used to be displayed for long sequences.
+
+<a name="diagnostics"></a><H3>Better diagnotics from Rename/Alias failures</H3>
+
+<p>Previously Acedb has not reported the reason for these failures, only that they
+happened, now parsing will report in detail the reason for any Rename or Alias failures
+so that fixing them should be easier.
+
+<a name="Bugs"></a><H2>Bugs Fixed</H2>
+
+<a name="Colours"></a><H3>Colours bug with gifs</H3>
+
+<p>GIF images produced by Acedb 4_8c were sometimes in garish/hard to read colours,
+this is now fixed in the December monthly build.
+
+<a name="Dumping"></a><H3>Dumping objects with very large tag values</H3>
+
+<p>Some tag values can be very large (e.g. DNA) and this has caused acedb to overrun
+one of its internal buffers, this is now fixed with dynamically growing buffers.
+
+<a name="Filechooser"></a><H3>File Chooser irritations</H3>
+
+<p>Several irritating features of the File Chooser window have been fixed:
+
+<ul>
+  <li>If you want to go directly to a directory, you can do this by
+      typing the directory name in the bottom "selection" window
+      and pressing the &lt;tab&gt; key. This will point the file chooser
+      to this directory so you can then choose files from there. The
+      &lt;tab&gt; key also does filename completion like the C shell.
+  <li>The File Chooser window now shows a "busy" cursor when it cannot
+      respond to user input e.g. because its waiting to list an NFS
+      mounted directory.
+  <li>The default size of the window has been increased to make it
+      easier to see long filenames.
+</ul>
+
+<a name="Cut"></a><H3>Cut/Paste bug fixed</H3>
+
+<P>Cut and Paste of larger texts (e.g. DNA) was broken, this was a bug
+in the underlying Window System software (GTK) and is being fixed by
+installing updated versions of the software which include the bug fix.
+
+<a name="Main"></a><H3>Main Window reset after "Clean Up"</H3>
+
+<P>"Clean up" behaviour has been returned to how it was in 4_7, the local/global
+search is left as it was before the "Clean up".
+
+<a name="Socket"></a><H3>Socket Server Admin users permissions bug</H3>
+
+<P>If you noticed problems with Admin users not having access to some commands
+for the socket server, this is now fixed. Admin users should have access to
+all possible commands as they have the highest permission levels.
+
+
+<a name="Education"></a><H2>Education</H2>
+
+<P>HGMP are hosting an Acedb course in the week of 22nd-26th January 2001.
+
+<P>The next Sanger Centre course is likely to be in June 2001.
+
+<P>If you are interested in either please mail
+<A HREF="mailto:sylvia@sanger.ac.uk">Sylvia Martinelli (sylvia@sanger.ac.uk)</A>
+
+
+<a name="Future"></a><H2>Future Plans</H2>
+
+<P>If you wish to make suggestions about any of the below, please mail them
+to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>
+
+
+<a name="installRevised"></a><H3>Revised INSTALL script for Acedb</H3>
+
+<P>The current INSTALL script for acedb is being revised, the
+section for installing the worm database will be moved into a separate
+script (available from the
+<A HREF="http://www.sanger.ac.uk/Projects/C_elegans/">worm web site</A> in the January).
+The download site will include for each acedb release the following
+archives: compilable source code, binaries for selected platforms,
+help pages, docs and a test database.
+
+
+<a name="Enhancements"></a><H3>Enhancements to "Rename"</H3>
+
+<P>Discussions with a number of users have suggested that the
+"Rename" operation doesn't always so what they would like or expect.
+Currently it works like this:
+
+<P>Let's say we wish to rename Sequence object "A" to "B":
+
+<P>If the database does <b>not</b> contain a Sequence object with the name "B",
+the operation is straight forward: object "A" is simply given the new name
+of "B" and the name "A" ceases to exist.
+
+<P>If the database <b>does</b> contains a Sequence object with the name "B",
+things are more complicated, the two objects are combined to form a new
+"B" object following these rules:
+
+<pre><code>
+                                                    value used for
+tag type   tag in "A" ?    tag in "B" ?             tag in new "B"
+--------   ------------    ------------             --------------
+UNIQ           Y               N                      "A"s value
+               N               Y                      "B"s value
+               Y               Y                      "A"s value
+
+non-UNIQ       Y               N                      "A"s values
+               N               Y                      "B"s values
+               Y               Y                   (all of "A"s values
+                                                   + all of "B"s values)
+</code></pre>
+
+<P>In this case the original "A" and "B" objects will be replaced with the
+single new "B" object.
+
+
+<P>The new proposal is:
+
+<P>Given that we want to rename object "A" to "B" and that "B" already points
+to an object:
+
+<ol>
+  <li>The existing rename operation will combine "A" and "B" as before.
+  <li>New variants of rename will be provided:
+      <ul>
+	<li>safe-rename: will fail because "B" points to an existing object
+	<li>replace-rename: will delete "B" and then rename "A" to "B"
+	<li>overwrite-rename: will combine "A" and "B", where tags exist in
+	    both "A" will take preference.
+	<li>augment-rename: as for overwrite-rename, but where tags exist in
+	    both "B" will take preference.
+      </ul>
+      When implemented, the third and fourth operations will probably be called
+      "Merge-nnn".
+</ol>
+
+<P>This would allow users to do renames and choose how this should work. They
+could for instance do a "safe-rename" which would avoid any loss of data, or
+conversely do a "replace-rename" which would avoid any combining of objects.
+
+<P>A question remains about whether these operations should be inclusive or
+exclusive for non-UNIQ tags, i.e. should they be combined as before, or should
+one set of tags overwrite another. If you are regularly parsing in data to an Acedb
+database and have thoughts about how you would like Rename to work, then please
+mail <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+
+<H2>December monthly build available in first week of January 2001</H2>
+
+<P>Sorry, not time to do this before Christmas, build has been done
+and will be distributed first week in January.
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd>ftp://ftp.sanger.ac.uk/pub/acedb/Sanger-release.2000_12_22.tar.gz
+</dl>
+
+<H2>Next User Group Meeting - D319, 2.30pm, Thursday 18th January 2001</H2>
+
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon May 21 15:38:36 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

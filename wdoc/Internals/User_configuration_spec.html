@@ -1,0 +1,439 @@
+<HTML>
+
+<HEAD>
+<TITLE>Spec/Design For User Configuration Of Acedb Programs</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../wdoc.css"
+title="Style sheet for wdoc developer documents">
+
+</HEAD>
+
+<BODY>
+
+<H1>Spec/Design For User Configuration Of Acedb Programs</H1>
+
+
+
+<H2>General Configuration</H2>
+
+<H3>Design points</H3>
+
+<P>The following are a heavily randomised series of jottings/issues:
+
+<ul>
+  <li>We need database specific configuration files because some settings will
+      vary widely between databases, e.g. for FMap the columns (i.e. Method objects)
+      may be completely different between different databases.
+  <li>Configuration files should be simple text based files that follow the usual
+      stanza or .ini files type format.
+  <li>Need to remember that resources, while mostly set from and applying to xace,
+      may also be relevant to tace or the server, this may raise some implementation
+      issues, e.g. sometimes stanzas will need to be read and sometimes need to be
+      ignored, e.g. there's no point in the server or tace reading the "FMap" stanza.
+  <li>should each stanza need to have a complete list of the configuration for that
+      stanza ? Probably, otherwise we have to "know" which bits have been changed
+      from the hard coded defaults, probably easiest to save everything. Code
+      should probably complain about unknown keywords within stanzas.
+</ul>
+
+
+<H3>File and Directory structure</H3>
+
+<P>The current .acedbrc file should be replaced with a .acedbrc <b>directory</b>.
+The version of the code that uses the new directory structure
+should check whether .acedbrc is a
+file and if it is should refuse to run, issuing an error message to say that the
+user needs to run a script to update their defaults.. We should provide a perl script to
+convert .acedbrc files to the equivalent directories. Lets keep the actual acedb
+code as simple as possible.
+<p><strong>NB</strong> The Windows version uses the registry, so will need to be handled differently.</p>
+<P>I would envisage something like the following structure:
+
+<P><pre><code>
+                     ----------- Common_Defaults.conf
+                    |
+                    |
+                    |----------- C_elegans.conf
+     .acedbrc ------|
+                    |
+                    |----------- lace.conf
+                    |
+                    |
+                     ----------- zebra.conf
+
+</code></pre>
+
+<P>There are essentially two sorts of file here, a common set of defaults
+contained in Common_defaults.conf and database specific defaults contained
+in other configuration files.
+
+<P>The file Common_Defaults.conf would hold a set of defaults that would always be
+applied to xace when it starts up, but if the database was one that equated to
+"lace" for example, then defaults from lace.conf would override the common defaults.
+
+<P>(Note that our perl script to migrate users existing .acedbrc file to the .acedbrc
+directory would put the existing defaults into Common_Defaults.conf.)
+
+<P>It would probably be simplest to derive the names for the database specific defaults files
+directly from the database itself. The most obvious text in the database to use
+would be that given by the "NAME" keyword in wspec/database.wrm, this is much more
+constant than that given by the "TITLE" keyword. In general users tend to keep "NAME"
+constant while changing "TITLE" with each new release of their database. Here are the
+descriptions:
+
+<P><pre><code>
+// NAME is database name, this is set in the database super block when the database
+//   is rebuilt. It can only be changed by rebuilding the database and can be used
+//   as a reliable identifier for the database. This name is used in the main window
+//   header and in status output.
+//
+// TITLE is an additional database name that is reread each time the database is
+//   restarted. It can be used to give a more temporary title to a database to give
+//   more information about the database. This title is used in the main window
+//   and will override the main window title in wspec/displays.wrm, its also used in
+//   the status output.
+</code></pre>
+
+<P>One can imagine a really fancy system of configuration files that used both of the
+above but this seems overkill.
+
+<P>One point I haven't thought through: should we allow a configuration file to
+be stored in the wspec directory of the database itself ? This would allow the
+database administrator to supply some useful defaults with their database and save
+the user the trouble of setting up their own. I think this would be a worthwhile
+addition. Note that in the sequence of reading defaults, the users own configuration
+file for a particular database should take preference over the one stored in the
+database. This all works if we have a strict order of reading defaults along
+the lines of:
+
+<P><pre><code>
+                    defaults set in the code
+                                |
+                                V
+                   .acedbrc/Common_defaults.conf
+                                |
+                                V
+            defaults in &lt;user_database&gt;/wspec/database.conf
+                                |
+                                V
+                 .acedbrc/&lt;user_database_NAME&gt;.conf
+
+</code></pre>
+
+<P>This design of having multiple "layers" of defaults with each successive one
+overriding or augmenting the defaults of the previous one is a tried and trusted
+way of doing things in the XWindows/Xt world and one I think its worth us copying.
+
+
+<H3>File format</H3>
+
+<P>Should be a stanza per resource section of acedb, sections will probably
+be something like "Tree Display", "FMap display" etc. The precise format would
+probably be pretty much like that used in many unix utilities, here is an example
+from xinetd (the file is /etc/xinetd.d/chargen):
+
+<pre><code>
+# default: off
+# description: An xinetd internal service which generate characters. \
+# The xinetd internal service which continuously generates characters \
+# until the connection is dropped.  The characters look something like this: \
+#   !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefg \
+# This is the tcp version.
+
+service chargen
+{
+	type		= INTERNAL
+	id		= chargen-stream
+	socket_type	= stream
+	protocol	= tcp
+	user		= root
+	wait		= no
+	disable		= yes
+}                                                                               
+</code></pre>
+
+<P>Worth noting are the "#" for comments, acedb uses "//" so perhaps we should
+continue with that, whichever we do we must allow comments. Also note the
+stanza format with a stanza type, "service" and a stanza name, "chargen".
+Inside the stanza everything is a "keyword = value" pair.
+
+<P>We probably wouldn't have many stanza "type"s, but its probably worth
+having a "type" and a "name" as it allows greater flexibility and it may make it
+easier to parse for instance only non-"graphic" stanzas and so on.
+
+<P>An abbreviated (and fictious) example file for acedb might contain:
+
+<pre><code>
+// File generated by  Acedb 4_9q xace  on  <timestamp>
+// File last updated by  Acedb 4_9s tace  on  <timestamp>
+//
+// Warning: this file is automatically generated and maintained by Acedb code,
+//          do not hand edit.
+//
+
+all startup
+{
+      banner = no
+      splash_screen = no
+}
+
+graphic Key
+{
+      auto_display_of_single_key = no           // I've wanted to add this for ages !
+}
+
+graphic FMap
+{
+      columns = RNAi genefinder ....long list of column names
+      initial_zoom = 0.5
+}                                                                               
+</code></pre>
+
+<P>We should allow tabs and spaces interchangeably.
+
+
+<H3>How it would work</H3>
+
+<P>Should stanza reading be lazy or not ? That is, should we try to read all the
+stanzas at program startup or as they are needed ? I'm not sure, in some ways lazy
+evaluation would be simpler perhaps because there won't be issues about having to store
+stanzas in memory until they are needed etc. etc. One to think about.
+
+<P>To start off I think we should allow resource setting only from xace, we shouldn't
+worry about providing a command line interface for tace/giface/server. (but note that
+the command line programs will be reading the config files). People can always
+hand edit the files for now, with guidance !
+
+<P>Hence the following is all talking about xace.
+
+<P>It's very likely that a user would want to be able to set resources both from
+the main window and from individual windows, e.g. I may want to set FMap configuration
+without having an FMap actually on the screen. This implies that we need some functions
+that can be called both from some code attached to the main window and from individual
+windows.
+
+<P>The main window would need a new "Set Configuration" menu item which when selected
+would popup a submenu containing all the sections (i.e. stanzas) that could be set,
+the user would then select one and a GTK "notebook" would appear which allows editting
+of those resources.
+
+<P>Each individual window would need a new "Set Configuration" button of menu item that
+when selected would display the same GTK "notebook" as would appear from the main window.
+
+<P>The notebook section would need to provide the following buttons at least:
+<ul>
+  <li>"Cancel" - throw away all <b>unsaved</b> changes, i.e. return to the configuration as it was
+      before the user changed any configuration and quit the notebook.
+  <li>"Apply" - apply configuration to program but don't save
+  <li>"Save" - save the configuration to the appropriate stanza file (NOTE that user
+      should be offered the choice of saving to Common_defaults.conf or the database
+      specific configuration file <b>IF</b> the latter exist, we shouldn't force users
+      to have database specific configuration files).
+  <li>"Quit" - quit the notebook but leave in place any changes that have been made
+      whether they have been saved or not, should warn the user that changes have not
+      been saved yet.
+</ul>
+
+
+<P>Each section of acedb (e.g. FMap) needs to provide at least two routines
+(and probably some more !).
+
+<P>The first will be "internal" to that section of acedb
+and will be responsible for reading and applying the defaults when that section of
+acedb is called, e.g. when an FMap is displayed the Fmap stanza will need to be read. But
+note that if the user has already configured fmap, there may be a configuration in memory
+(see below).
+
+<P>The second will be "external" in that it will be callable both from the section itself
+and from the main window, it will need to do the following:
+
+<ul>
+  <li>read its particular stanza from the stanza file(s)
+  <li>create a GTK notebook from the settings in the stanza and by doing whatever
+      querying is required of the database etc, e.g. for FMap it would need to query
+      the names of all Method objects as these are in essence the available columns
+      for the FMap display.
+  <li>provide callback routines that will be called as the user interacts with the
+      notebook, this may need to do things like "Recalculate" the FMap when the user
+      clicks the "Apply" button for the FMap resources.
+  <li>The function would need to make sure that the configuration is held in memory
+      somewhere so it can be retrieved later, e.g. a user may configure fmap without
+      an fmap on the screen, then when the fmap starts up it needs access to the configuration
+      which may only be in memory because the user has not saved it.
+</ul>
+
+<P>When xace starts up it should call a function that sets up a table of callback functions
+for each stanza, this doesn't need to be terribly dynamic/sophisticated it can just be a
+hard coded table of "stanza_name : callback_function" pairs. This would be used by the main
+window code to call the appropriate function for editting each configuration stanza.
+
+
+<h3>Rob's Notes</h3>
+<p>The GTK Notebook widget gives you pages with tabs in typical Windoze style.  For many of the
+bits of xace which might need configuration I imagine a single page would be sufficient,
+but for fmap, frinstance, we might want several pages.  This means a generic configuration
+function would be harder to implement, so we might want one for each part of the display.
+
+Hence the list connecting the area of the display with the function.  Each function
+should then be callable from the individual area of the display to which it applies
+or from the main xace window.</p>
+
+<p>For fmap columns we might want a scrollable window of check boxes, one for each method.  So (don't
+know how practical this is) get all methods from db and populate the window on the cols page.
+
+The other bit, also covered above, is about a globally available config struct, held in
+memory, so if the user does some local configuration but doesn't save it, each time she revisits
+that area of the display, the configuration in memory is the one that's applied.  Once she
+exits and restarts, she'll get whatever's on disk, of course.
+
+
+<H2>Specific FMap issues</H2>
+
+<H3>READ THIS FIRST !</H3>
+
+<b><P>ROB, all of the following was from earlier thoughts about fmap specifically. Some of it
+clashes with the stuff above. I think the below is probably all too complex, I'm
+not sure users would really want lots of views per database. I think its likely they would
+prefer to have just one view per database which remove much complexity from below. I also
+think that storing fmap configuration in the database is a mistake because it would not then
+be per user (or not easily at least) !
+
+<P>I think we should take the good bits from below, e.g. the idea of setting up your fmap
+as you like it (size, columns etc) and then clicking a single "Save configuration" button
+would be a good addition to the way configuration could be done. Anything that no longer
+seems relevant we should junk.
+I have not tried to merge this section with the above, it would take too long and isn't worth
+it, we can talk through anything you are not sure of !
+</b>
+
+<H3>Requirements</H3>
+
+<p>The term "<CODE>View</CODE>" means a particular arrangement of fmap:
+the window size, which columns are on/off, how the columns are configured and
+so on. The <CODE>View</CODE> will be stored in a file so that subsequently it can be
+loaded into the fmap to produce an individually customised "look and feel".
+
+<p>Requirements for such <CODE>Views</CODE> include:
+
+<dl>
+  <dt><b>user specific -</b>
+  <dd>Each user needs to have their own set of defaults.
+  <dt><b>database specific -</b>
+  <dd>should be able to have a specific <CODE>View</CODE> for a database
+  <dt><b>interchangeable <CODE>Views</CODE> -</b>
+  <dd>the user should be able to switch between <CODE>Views</CODE> while in fmap
+  <dt><b>easy set up -</b>
+  <dd>it should be simple for the user to create a <CODE>Views</CODE> by arranging
+      an fmap in the way they would like and then saving that arrangement as a <CODE>View</CODE>
+  <dt><b>editting of <CODE>Views</CODE> -</b>
+  <dd>editting of a <CODE>View</CODE> should be as simple as displaying an fmap using
+      the <CODE>View</CODE> to be editted, changing the <CODE>View</CODE> and then saving it. Its
+      also important the the <CODE>View</CODE> should be saved as plain text to
+      allow experienced users to "hand-edit" the file.
+  <dt><b>location of <CODE>Views</CODE> -</b>
+  <dd>by default the <CODE>Views</CODE> will be stored in the users home directory,
+      but it should be possible to specify an alternative to this.
+</dl>
+
+
+<H3>Spec.</H3>
+
+<p>This is an initial design based on the preceding requirements.
+
+
+<H4>What should the <CODE>View</CODE> hold ?</H4>
+
+<dl>
+  <dt><b>fmap window size -</b>
+  <dd>this can only be customised per database at the moment,
+      the <CODE>View</CODE> will allow the user to specify a default size and position
+      of their own.
+  <dt><b>global flags -</b>
+  <dd>these are flags that apply to the whole of fmap, such
+      as "Preserve".
+  <dt><b>column on/off -</b>
+  <dd>the on/off state of all columns will be stored.
+  <dt><b>column config -</b>
+  <dd>will include "bumpable" setting etc.
+</dl>
+
+<H4>How will <CODE>Views</CODE> be stored ?</H4>
+
+<P><CODE>Views</CODE> will be held in a subdirectory of the users home
+directory called <b><code>.acedbrc</code></b>, this naming style is a
+de-facto standard on Unix. This is also where current acedb user defaults
+are held. (<b>NOTE</b> that <b><code>.acedbrc</code></b> is currently a file
+so acedb code will have to be rewritten to recreate it as a directory and move the
+existing <b><code>.acedbrc</code></b> into the directory.)
+
+<P>The user will be able to have as many different views as they want,
+each <CODE>View</CODE> will stored in its own subdirectory (probably a subdirectory, but maybe
+just a file) of the <b><code>.acedbrc</code></b> subdirectory. Each <CODE>View</CODE> will be identified
+by a unique name which will also be the name of the subdirectory so
+<CODE>View</CODE> names will be limited to valid characters for filenames.
+<CODE>View</CODE> names will be of the form <b><code>XXXXX.fmapview</code></b>.
+
+<P>An alternative <CODE>View</CODE> directory can be specified either via an environment
+variable or via a command line option to the acedb program.
+
+
+<H4>How will <CODE>Views</CODE> be manipulated by the user ?</H4>
+
+<P>The user will create new views by running xace on a database,
+displaying the fmap, configuring the fmap and then using a new "Save View"
+menu item to save the <CODE>View</CODE>.
+
+<P>A particular <CODE>View</CODE> will be selected using a variant of the "File Chooser"
+window to select the required <CODE>View</CODE>.
+
+<P>Existing <CODE>Views</CODE> will be altered by selecting the <CODE>View</CODE>
+from fmap, reconfiguring and resaving the <CODE>View</CODE>.
+
+<P>The user will be able to make one particular <CODE>View</CODE> their
+default <CODE>View</CODE> which will be used unless overidden in the way specified
+below, this view will be called <code><b>DEFAULT.fmapview</b></code>.
+
+<P>The user will be able to associate a <CODE>View</CODE> with a database when saving
+the <CODE>View</CODE>. The <CODE>View</CODE> will be given the
+name of the database as given by the "-t" field for _DDtMain in wspec/displays.wrm.
+This still leaves the NAME option in wspec/database.wrm as a
+changeable field for the curator to indicate different versions of a
+database without invaliding the <CODE>View</CODE> to database mapping.
+
+<P>Which <CODE>View</CODE> will be used by xace will be decided in this
+order:
+<ol>
+  <li>The default <CODE>View</CODE>
+  <li>the database specific <CODE>View</CODE>
+  <li>a <CODE>View</CODE> specified by the $ACEDB_FMAP_VIEW environment variable
+  <li>a <CODE>View</CODE> specified on the command line via the -fmapview flag
+</ol>
+
+<P>No blending of <CODE>Views</CODE> will be done, the code will simply
+use the last name from the above list to identify which <CODE>View</CODE to load.
+Note that the <CODE>View</CODE> finally loaded can subsequently be replaced
+by an alternative from within fmap.
+
+
+<H4>What format will <CODE>Views</CODE> be save in ?</H4>
+
+<P>Since much of the column configuration data is already held in the form
+of "<code>Method</code>" objects, <CODE>Views</CODE> will make use of this
+and be stored as ace files. This will require an addition to the models
+held by a database to include some kind of "fmap" model. This needs further
+discussion, on the face there is no reason not to have an fmap model, we already
+have method objects in the database, so why not an fmap object.
+
+<P>Storing the <CODE>Views</CODE> as fmaps will allow experienced users to
+hand-edit their <CODE>Views</CODE>. It also means that the existing acedb
+parse code can very simply be used to read in a <CODE>View</CODE>.
+
+
+<HR>
+<ADDRESS><a href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</a></ADDRESS>
+<!-- hhmts start -->
+Last modified: Fri Jun 13 16:45:43 BST 2003
+<!-- hhmts end -->
+</BODY>
+</HTML>

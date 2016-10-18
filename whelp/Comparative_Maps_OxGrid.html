@@ -1,0 +1,39 @@
+<HTML>
+<HEAD>
+<TITLE> The display of comparative mapping data using ACEDB</TITLE>
+</HEAD>
+<BODY>
+<H1>The Oxford Grid</H1>
+<P>We can compare the distributions of loci on the Maps (i.e. chromosomes) of two Map_sets (these are usually species) by means of an Oxford Grid. Each row or column of the grid represents a Map. The widths of these rows and columns are directly proportional to the sizes of the Maps, if these sizes have been specified in the Map_set class. Large Map sizes will produce large cells on the grid and small Map sizes will produce small cells. If Map sizes are not known, each cell will be of equal size to all others. Each homology between two loci is represented by plotting a point in the relevant cell, each cell being referenced by the Maps in each of the two Map_sets. For instance, if we have an homology concerning a gene on chromosome 4 in species 1 and another gene on chromosome 3 in species 2 then we place a point at random in the 4,3 cell. To give a general impression of the distribution similarity of loci on two Map_sets, it is simplest to plot each point randomly within the cell rather than according to the locations on each Map. A cell with a high point density <B>MAY</B> therefore be indicative of one or more conserved chromosomal segments between the two species.</P>
+<P>The grid is labelled by the Maps contained within each Map_set and by the Map_set names. These are all clickable. Double-clicking on a Map_set name will bring up text information relevant to it and on a Map name will bring up a graphical display of that Map. A single click on an Oxford Grid cell selects the cell, which is then coloured light green. Double-clicking on a chosen cell with the mouse brings up a text window with information on each of the homologies contained within it. Double-clicking on a locus name from this list will show its position on its Map, should this be known.</P>
+<P>
+Two search facilities are provided within the Oxford Grid, one to search for an homology and one to search for a locus. If the text entered in either of these fields matches an homology or a locus that is present in the grid, then the cell in which it is found will be selected.</P>
+<P>Button options available within the Oxford Grid are :<BR>
+<UL>
+<LI>Relative/Equal sizes - toggles between cell sizes equal and proportional to Map size
+<LI>Flip           - flips the grid to change the axes of the two Map_sets
+<LI>Highlight...   - a menu giving various highlighting options
+<LI>Statistics...  - a menu giving various statistics of genome reorganisation
+<LI>Zoom in        - increases the size of the graph
+<LI>Zoom out       - decreases the size of the graph
+</UL>
+<P>Menu options available within the Oxford Grid are :<BR>
+<UL>
+<LI>Quit             - destroys the Oxford Grid window
+<LI>Pairmap          - this option should be chosen after a cell has been selected with the mouse. A Pairwise Chromosome Map of the cell is brought up, showing the positions of the homologies relative to the two relevant Maps.
+<LI>One-to-Many      - this option should be chosen after a cell has been selected with the mouse. A One-to-Many Chromosome Map is brought up, either for the column or the row to which the cell belongs. The user is prompted for this choice.
+<LI>Highlight cell   - highlights all homologies in the selected cell
+<LI>Unhighlight cell - unhighlights all homologies in the selected cell
+<LI>Help             - displays this help information
+<LI>Print            - brings up the Print/Mail Selection tool
+<LI>Preserve         - preserves the current Oxford Grid
+<LI>Dump             - dumps out all data contained within the grid 
+</UL>
+<H1>Acknowledgments</H1>
+The term Oxford Grid was originally applied by V. A. McKusick to a diagram in the second of the series of papers from Harwell and Oxford on human-mouse homologies (Dalton et al. 1981 ; Buckle et al. 1984 ; Searle et al. 1987, 1989) and has been represented by figures in recent editions of Mendelian Inheritance in Man (McKusick, 1988). It is defined in the paper :
+<P>Edwards J H. 1991. The Oxford Grid. Ann. Hum. Genet. Vol. 55: 17-31.
+<P>The "Compute q" option in the Statistics menu calculates a statistic defined in the following paper :
+<P>Bengtsson B O, Klinga Levan K and Levan G. 1993. Measuring genome reorganization from synteny data. Cytogenet. Cell Genet. Vol. 64: 198-200.
+</BODY>
+</HTML>
+

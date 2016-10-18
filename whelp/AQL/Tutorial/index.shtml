@@ -1,0 +1,338 @@
+<!--#set var="title" value="AQL - Movie DB Tutorial" --> 
+<!--#set var="icon" value="aql.gif" --> 
+<!--#set var="author" value="fw" --> 
+
+<!--#exec cgi="/cgi-bin/header" -->
+
+<H2 ALIGN=CENTER>AQL - Movie DB Tutorial</H2>
+
+
+<HR ALIGN=LEFT WIDTH=60%>
+<H3>Simple key selection</H3>
+
+<DL COMPACT>
+<DT>(1) 
+<DD><CODE><B>select all from class movie</B></CODE> 
+<DD><CODE><B>select all class movie</B></CODE> (the same, just shorter) <BR> 
+<DD><SUB>(<I>list the key-values of all movies</I>)</SUB>
+        <P><DL><DD>
+	List all keys in the class <I>movie</I>. <BR>
+        Note the system is not case sensitive when referring to 
+        database related terms, such as class names or tags.
+	<BR><A HREF=result1.shtml>results</A>
+	</DL>
+
+<P><DT>(2) 
+<DD><CODE><B>select p from p in class person</B></CODE>
+<DD><SUB>(<I>list the key-values of all persons</I>)</SUB>
+        <P><DL><DD>
+	A locator-variable <I>p</I> is defined to loop over the key-values in class <I>person</I>.
+	The query works exactly like the (1), but this query can be extended easily,
+	as <I>p</I> can be referred to for tag-dereferencing, column-wise sorting etc..
+	<BR><A HREF=result2.shtml>results</A>
+	</DL>
+
+</DL>
+
+<P><HR ALIGN=LEFT WIDTH=60%>
+<H3>Tag dereferencing to access object attributes</H3>
+<DL COMPACT>
+
+<P><DT>(3)
+<DD><CODE><B>select m->Title, m->Director from m in class Movie</B></CODE>
+<DD><SUB>(<I>list the titles of movies and the key-values of their directors</I>)</SUB>
+         <P><DL><DD>
+	The <U>from-clause</U> defines a locator variable <I>m</I> that loops over all key-values of class movie.<BR>
+	The <U>select-clause</U> defines two <U>select-fields</U>, that are tags in the <I>movie</I> class.
+	The <I>Title</I> tag returns a string, whereas the <I>Director</I> tag returns another key from the <I>Person</I>
+	class. This key can be dereferenced further to gain access to the tags in the <I>Person</I>
+	class for all the stored values.
+	<BR><A HREF=result3.shtml>results</A>
+	</DL>
+	
+
+<P><DT>(4)
+<DD><CODE><B>select m->Title, m->Director->Full_name from m in class Movie</B></CODE>
+<DD><SUB>(<I>list the titles of movies and the names of their directors</I>)</SUB>
+        <P><DL><DD>
+	Basically the same as (3), but the result of <I>m->Director</I> has been dereferenced to
+	get the <I>Full_name</I> tag value for the particular key from the <I>Person</I> class.
+	<BR><A HREF=result4.shtml>results</A>
+	</DL>
+	
+
+<P><DT>(5)
+<DD><CODE><B>select a->Full_name from m in class Movie, a in m->Based_on->Author</B></CODE>
+<DD><SUB>(<I>list the names of authors of books that movies are based on</I>)</SUB>
+        <P><DL><DD>
+	The <U>from-clause</U> defines two locators - <I>m</I> loops over the <I>Movie</I> class
+	and <I>a</I> returns the <I>Person</I>-key, that is stored with the <I>Book</I>-key
+	for movies that are based on novels or plays.<BR>
+	The <U>select-clause</U> defines one result column that lists the <I>Full_name</I>
+	tag values for the key-values in <I>a</I>. Some authors names will be listed more than once, if
+	they've written a few novels on which movies were based.
+	<BR>
+	Note that is isn't important where the dereferencing is done. The above query is the same as
+	</DL>
+<DD><CODE><B>select m->Based_on->Author->Full_name from m in class Movie</B></CODE>
+        <DL><DD>
+        which performs the same without the need for an extra variable <I>a</I>.
+	<BR><A HREF=result5.shtml>results</A>
+	</DL>
+	
+<P><DT>(6)
+<DD><CODE><B>select p->Full_name, p->Address[2] from p in class person</B></CODE>
+<DD><SUB>(<I>list all people and all their address info</I>)</SUB>
+        <P><DL><DD>
+	This query makes use of <U>tag-positioning</U>. You will notice that the fields just right of the 
+	<I>Address</I> tag in the <I>Person</I> class contain no actual data, they just introduce
+	some more structure. This query will therefor return all lines that are stored 2 positions
+	to the right of <I>Address</I>, and list all <I>Mail</I>, <I>Email</I> or <I>Phone</I> information that is stored.
+	<BR><A HREF=result6.shtml>results</A>
+	</DL>
+
+
+<P><DT>(7)
+<DD><CODE><B>select p->Full_name, p->Phone from p in class person</B></CODE>
+<DD><SUB>(<I>list all people and their phone numbers</I>)</SUB>
+        <P><DL><DD>
+	In order to access specific items in the <I>Address</I> sub-field,
+	The required tag can be stated without having to refer to <I>Address</I>.
+	Such shortcuts come in handy in deeply nested class models, but the design
+	of the model needs to make sure that tag names aren't duplicated within a model.
+	<BR><A HREF=result7.shtml>results</A>
+	</DL>
+</DL>
+
+<P><HR ALIGN=LEFT WIDTH=60%>
+<H3>Conditional expressions in the where-clause</H3>
+<DL COMPACT>
+
+<P><DT>(8) 
+<DD><CODE><B>select m->Title, d->Full_name from m in class Movie, d in m->Director where exists d</B></CODE>
+<DD><SUB>(<I>for all movies that have directors, list with their title and the director's name</I>)</SUB>
+        <P><DL><DD>
+	Similar to (4), but omitting the <I>Movie</I>-keys in <I>m</I> for which the <I>Director</I>-tag doesn't exist.
+	As shown in (5), it is not necessary to define another locator <I>d</I> :-<P>
+	</DL>
+<DD><CODE><B>select m->Title, m->Director->Full_name from m in class movie where exists m->Director</B></CODE>
+        <DL><DD>
+	<P>
+	Note the difference to the output of (4) - this time AQL only lists movies where a director tag exists.
+	This demonstrates one of the basic philosophies about data storage in ACeDB - if a tag doesn't exist for an object
+	it doesn't store that fact (i.e. a NULL value for that tag) it simple doens't store it.
+	<BR><A HREF=result8.shtml>results</A>
+	</DL>
+
+
+<P><DT>(9)
+<DD><CODE><B>select m->Cast->Full_name from m in class Movie where m = "truerom"</B></CODE>
+<DD><SUB>(<I>list the names of cast members in "True Romance"</I>)</SUB>
+        <P><DL><DD>
+	By finding the key "truerom" in the <I>movie</I> class, it finds all <I>Person</I>-keys stored
+	under the <I>Cast</I>-tag. Those keys are dereferenced to be displayed as the full names.
+	The same result can be gathered by finding all the people that have starred in "True Romance".<BR>
+	Note that keys are compared to by their string value - i.e. in quotes.
+	</DL>
+<DD><CODE><B>select p->Full_name from p in class person where p->Stars_in->Title = "True Romance"</B></CODE>
+        <DL><DD>
+	<P>
+	This shows an interesting aspect of AQL - It ispossible to get the same result using totally different queries.
+	The same result can also be expressed using the <B>object</B> construct which will be explained later.
+<DD><CODE><B>select object("movie", "truerom")->cast->full_name</B></CODE>
+	<BR><A HREF=result9.shtml>results</A>
+	</DL>
+
+
+<P><DT>(10)
+<DD><CODE><B>select m->Title, year from m in class Movie, year in m->Released where year > `1990</B></CODE>
+<DD><SUB>(<I>list the movies that have been relased after 1990, i.e. in 1991 and from thereon</I>)</SUB>
+        <P><DL><DD>
+	This condition uses a date literal which is stated using the <CODE><B>`</B></CODE> syntax.
+	This query assumes automatically an <CODE><B>exists year</B></CODE> expression in the <U>where-clause</U>, 
+	because it couldn't otherwise evaluate the expression <CODE><B>year > `1990</B></CODE> 
+	for movies that have no <I>Released</I> date value.<BR>
+	Look at (14) for how AQL processes that query internally.
+	<BR><A HREF=result10.shtml>results</A>
+	</DL>
+
+<P><DT>(11)
+<DD><CODE><B>select m, m->Released from m in class movie where not exists m->Released</B></CODE>
+<DD><SUB>(<I>list the keys of all movies for which no release year information is stored</I>)</SUB>
+        <P><DL><DD>
+	Use of the <CODE><B>not</B></CODE> keyword negates the value of <CODE><B>exists m->Released</B></CODE>
+	and thereby shows all movies that failed the <U>where-clause</U> evaluation check of (10).
+	<BR><A HREF=result11.shtml>results</A>
+	</DL>
+
+</DL>
+<P>
+The subject of expression evaluation in the <U>where-clause</U> is properly explored in the
+<A HREF=../semantics.shtml>AQL semantics</A> document, which explores relationships between different value types
+and their use in expressions, such as comparisons and arithmetic expressions.
+
+
+<P><HR ALIGN=LEFT WIDTH=60%>
+<H3>Date functions</H3>
+<DL COMPACT>
+
+<P><DT>(12)
+<DD><CODE><B>select p->Full_name, yeardiff(p->Born, today) from p in class Person</B></CODE>
+<DD><SUB>(<I>list all people and their age</I>)</SUB>
+        <P><DL><DD>
+	This query uses the AQL keyword <CODE><B>today</B></CODE>, which will be rendered to
+	<CODE><B><!--#config timefmt="%C%y-%m-%d" --><!--#echo var="DATE_LOCAL" --></B></CODE>
+	(i.e. the current date) during evalaution. If time-of-day information is important,
+	the keyword <CODE><B>now</B></CODE>, will be rendered to 
+	<CODE><B><!--#config timefmt="%C%y-%m-%d_%H:%M:%S" --><!--#echo var="DATE_LOCAL" --></B></CODE>.<BR>
+	The function <CODE><B>yeardiff</B></CODE> acts on two date values and returns an integer.
+	<BR><A HREF=result12.shtml>results</A>
+	</DL>
+
+<P><DT>(13)
+<DD><CODE><B>select p->Full_name, yeardiff(p->Born, today) from p in class Person where yeardiff(p->Born, today) > 55</B></CODE>
+<DD><SUB>(<I>for all people over 55, list their name and age</I>)</SUB>
+        <P><DL><DD>
+	Same as (12), but restricts the list to people with ages greater than 55. <BR>
+	Note that only values for <I>p</I> can be included for which the <I>Born</I> tag exists.
+	<BR><A HREF=result13.shtml>results</A>
+	</DL>
+
+<P><DT>(14)
+<DD><CODE><B>select m->Title, year from m in class Movie, year in m->Released where yeardiff (year,`1990) > 0</B></CODE>
+<DD><SUB>(<I>list the movies that have been relased after 1990, i.e. in 1991 and from thereon</I>)</SUB>
+        <P><DL><DD>
+	Variation on (10), but this time using yeardiff explicitly.
+	<BR><A HREF=result10.shtml>results</A>
+	</DL>
+
+</DL>
+<P>
+Possible date-functions are :-
+<CODE><B>
+  <UL>
+    <LI>yeardiff
+    <LI>monthdiff
+    <LI>weekdiff
+    <LI>daydiff
+    <LI>hourdiff
+    <LI>mindiff
+    <LI>secdiff
+  </UL>
+</B></CODE>. 
+
+These functions will return a sensible result of the date/time value specifies the appropriate portion that the function requests.
+<P>
+No sensible result will be returned for <CODE><B>monthdiff (m->released, `1996)</B></CODE>, because although some 
+movies feature release dates with month information,
+the date literal <CODE><B>'1996</B></CODE> does not and therefore the evaluation will always fail.
+<P>
+All these functions return an integer value, which is positive if left argument is the smaller (i.e. earlier) date.
+
+
+<P><HR ALIGN=LEFT WIDTH=60%>
+<H3>Table functions</H3>
+<DL COMPACT>
+
+<P><DT>(15)
+<DD><CODE><B>select p->Full_name, count(select p->Stars_in) from p in class Person</B></CODE>
+<DD><SUB>(<I>list all people and how many movies they've starred in</I>)</SUB>
+        <P><DL><DD>
+	The <U>table-function</U> <CODE><B>count</B></CODE> acts on the subquery <CODE><B>select p->Stars_in</B></CODE>
+	and returns an integer value for all objects where the <I>Stars_in</I>-tag exists. It simply counts
+	the number of times the <I>Stars_in</I>-tag is contained in each object <I>p</I>.
+	<BR><A HREF=result15.shtml>results</A>
+	</DL>
+
+<P><DT>(16)
+<DD><CODE><B>select m->Title from m in class Movie where count(select m->Cast) > 3</B></CODE>
+<DD><SUB>(<I>list all movies with more than 3 cast members</I>)</SUB>
+        <P><DL><DD>
+	The <U>table-function</U> <CODE><B>count</B></CODE> acts on the subquery <CODE><B>select p->Stars_in</B></CODE>
+	and returns an integer value for all objects where the <I>Stars_in</I>-tag exists.
+	<BR><A HREF=result16.shtml>results</A>
+	</DL>
+
+<P><DT>(17)
+<DD><CODE><B>select avg(select yeardiff(p->Born, now) from p in class Actor)</B></CODE>
+<DD><SUB>(<I>returns the average age of all the actors</I>)</SUB>
+        <P><DL><DD>
+	This time a table function acts on the return-value of a table expression.
+	The inner <U>select-query</U> returns a list of ages, over which the average value
+	is computed.
+	<BR><A HREF=result17.shtml>results</A>
+	</DL>
+
+<P><DT>(18)
+<DD><CODE><B>select max(select m->released from m in class movie)</B></CODE>
+<DD><SUB>(<I>returns latest movie release date</I>)</SUB>
+        <P><DL><DD>
+	Similar to (17), <CODE><B>max</B></CODE> acts on a list of dates.
+	<BR><A HREF=result18.shtml>results</A>
+	</DL>
+	
+</DL>
+<P>
+Possible table-functions are :-
+<CODE><B>
+  <UL>
+    <LI>count (all tables)
+    <LI>min  (Int, Float, DateType) **should allow Strings
+    <LI>max  (Int, Float, DateType)
+    <LI>avg  (Int, Float)
+    <LI>sum  (Int, Float)
+    <LI>first (nyi)
+    <LI>last  (nyi)
+  </UL>
+</B></CODE>
+
+All table functions will work on either accumulated object attributes <SUP>(15),(16)</SUP> or on the table
+values of whole <U>select-queries</U><SUP>(17),(18)</SUP>. All such tables expression have to produce a table with only one column,
+and in most cases they have to be of a specific value-type for the <U>table-function</U> to work.
+
+
+<P><HR ALIGN=LEFT WIDTH=60%>
+<H3>Scalar variables</H3>
+<DL COMPACT>
+
+<P><DT>(19)
+<DD><CODE><B>$x := count(select all class movie)</B></CODE>
+<DD><SUB>(<I>how many movies are stored</I>)</SUB>
+        <P><DL><DD>
+	Scalar variable have a perl-like '$' syntax and can assume just one value.
+	This value is usually the return value of a table-function expression.
+	A variable assignment is treated as a whole query expression in itself.
+	<BR>
+	The result will be a table with one column and one row containing the single
+	return value that the variable <CODE><B>$x</B></CODE> will assume.
+	The query is therefore equivalent to
+	</DL><BR>
+<DD><CODE><B>select count(select all class movie)</B></CODE>
+        <DL><DD>
+	<BR><A HREF=result19.shtml>results</A>
+	</DL>
+
+<P><DT>(20)
+<DD><CODE><B>$x := avg(select m->rating from m in class movie); <BR>
+             select m->title, r from m in class movie, r in m->rating where r > $x</B></CODE>
+<DD><SUB>(<I>list movies with an higher than average rating</I>)</SUB>
+        <P><DL><DD>
+	The first query assigns a scalar variable to be the average rating of movie (ignoring
+	movie for which no such value is stored).
+	The second query then sues this value to list all movies for which the rating value is higher
+	that that.
+	<BR>
+	This demonstrates how queries can be concatinated using the semi-colon ';'. Usually
+	one or more queries will calculate variables, whereas the last query is a table expression
+	that uses those variables to generate the output.
+	<BR><A HREF=result20.shtml>results</A>
+	</DL>
+
+</DL>
+
+<P><HR ALIGN=LEFT WIDTH=60%>
+<H3>Table variables</H3>
+<DL COMPACT>
+
+<!--#config timefmt="%d-%b-%C%y, %I:%M %p" -->
+<!--#exec cgi="/cgi-bin/footer" -->

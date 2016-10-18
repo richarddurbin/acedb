@@ -1,0 +1,55 @@
+/* new sytem, just use any name, this is goood to prevent typos
+htis fil;e is NOT read at run time */
+
+
+/* $Id: disptype.wrm,v 1.6 1994-07-26 17:16:16 mieg Exp $ */ 
+#ifndef DEFINE_DISPTYPE_h
+#define DEFINE_DISPTYPE_h
+
+#define ZERO 0
+#define TREE "TREE"
+#define DtChrono "DtChrono"
+#define DtFile_Chooser "DtFile_Chooser"
+#define DtHelp "DtHelp"
+#define DtAce_Parser "DtAce_Parser"
+#define DtDump "DtDump"
+#define DtSession "DtSession"
+#define DtStatus "DtStatus"
+#define DtMain "DtMain"
+#define DtUpdate "DtUpdate"
+#define DtQuery "DtQuery"
+#define DtSpreadSheet "DtSpreadSheet"
+#define DtSpreadMap "DtSpreadMap"
+#define DtGel "DtGel"
+#define DtBiblio "DtBiblio"
+#define DtAlign "DtAlign"
+#define DtCodons "DtCodons"
+#define DtDnaTool "DtDnaTool"
+#define DtAlias "DtAlias"
+#define DtKeySet "DtKeySet"
+#define DtLongText "DtLongText"
+#define PMAP "PMAP"
+#define GMAP "GMAP"
+#define FMAP "FMAP"
+#define GRID "GRID"
+#define CMAP "CMAP"
+#define PEPMAP "PEPMAP"
+#define VMAP "VMAP"
+#define DtPmapPadSheet "DtPmapPadSheet"
+#define DtPmapFingerprint "DtPmapFingerprint"
+#define DtClass "DtClass"
+#define DtQueryBuilder "DtQueryBuilder"
+#define DtQueryByExample "DtQueryByExample"
+#define DtDNAcompare "DtDNAcompare"
+#define DtPlotPolygon "DtPlotPolygon"
+#define DtColControl "DtColControl"
+#define DtMultiTrace "DtMultiTrace"
+#define DtABI "DtABI"
+#define DtMULTIMAP "DtMULTIMAP"
+#define STSMap "STSMap"
+#define DtAction "DtAction"
+#define DtHistogram "DtHistogram"
+#define DtImage "DtImage"
+
+
+#endif

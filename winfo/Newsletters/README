@@ -1,0 +1,91 @@
+
+ACEDB newsletters
+=================
+
+Currently this newsletter is sent to:
+
+		acedbg		the acedb usergroup
+		<many other people...see my circulation list in pine>
+
+It is sent at the beginning of each month and its purpose to keep users in touch with
+whats going on in acedb. It's not supposed to long winded, just a quick summary.
+
+I keep the newsletters in CVS as html docs, they are copied nightly to the acedb
+web home page directories by the updateftpdoc script and can be viewed from the acedb
+homepage.
+
+
+Scripts for newsletters
+-----------------------
+Several scripts are used to prepare the newsletters and associated gubbins, they
+can all be found in this directory (winfo/Newsletters):
+
+	cvschanges	- use this to find out what's changed in cvs
+
+	html2txt	- use this to turn a newsletter into plain text
+			  for emailing to users.
+
+	mkindex.pl	- use this to prepare/update the index file for each
+			  directory containing a years worth of newsletters.
+
+
+
+
+1) Preparing a new newsletter
+-----------------------------
+Copy the newsletter template in this directory (Newsletter.template.html) into
+the appropriate file (e.g. Year2001/June.html). Then edit the newsletter making
+sure to replace all occurances of "***" with appropriate text.
+
+You can get an idea of what changes have been made to acedb by using the
+cvschanges script to look at the cvs change logs.
+
+Now add the new newsletter to the cvs repository.
+
+
+2) Turning a newsletter into plain text for emailing to users
+-------------------------------------------------------------
+The newsletter is sent out in plain text form in emails. This is accomplished in the
+following way:
+
+1) use the perl script html2txt to prepare a specially formatted copy
+   of the news letter, e.g.
+
+   >  html2txt < Jan.html > Jan.new.html
+
+2) View the new html document in netscape (don't worry that it looks a bit strange):
+
+   > netscape Jan.new.html
+
+3) Use the netscape "File" -> "Save as" menu option to save this file
+   as plain text.
+
+Now cut/paste this plain text file in to the email and send it out.
+
+The reason for using the html2txt script is that it will put in underlining of
+headings which netscape does not do (it also does bold).
+
+Once you've sent it out, you can chuck away the text version of the letter.
+
+
+3) Updating the index file in the Year subdirectory
+---------------------------------------------------
+Now you need to update the index file to include the new newsletter. You will
+need to check out the index.shtml file in the Year directory containing the
+new newsletter. Then run the mkindex.pl script against the directory:
+
+  > mkindex.pl YearNNNN
+
+Now check back in the index.shtml file.
+
+
+4) Updating the index file in the Newsletters directory
+-------------------------------------------------------
+Currently this is done by hand by simply cut/pasting the htmlised index for
+the current months newsletter from the YearNNNN/index.shtml file into the
+index file at this level. Just follow the laid out pattern, should take
+2 minutes to do. REMEMBER to change the links from e.g. ./May.html to
+./Year2001/May.html !!
+
+Really mkindex.pl should handle this as well and do it
+all in one go.

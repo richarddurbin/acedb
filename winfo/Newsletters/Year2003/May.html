@@ -1,0 +1,546 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - May 2003</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - May 2003</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<P>This month sees more work on the new "Genetic_code" class with support for
+the rare Selenocysteine added, more blixem/dotter work, an extension to the
+Query language, more work on the tree display find facility, LongText editting,
+and the usual bug fixes.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="selenocysteine"></a><H3>A rare addition to the new Genetic_code class</H3>
+
+<P><A HREF="http://www.acedb.org/winfo/Newsletters/Year2003/April.html#genetic_code">Last month</A>
+saw the addition of the new Genetic_code class to support specifying alternative genetic codes
+to be used in translating DNA to peptides. This month support is added for a rare variant
+of the genetic code found in <i>C. elegans</i> and perhaps other organisms. For at least
+one transcript in <i>C. elegans</i> the triplet <code>TGA</code> codes
+for the peptide <code>Selenocysteine</code>
+instead of its usual role as a stop codon. To ensure that acedb will translate this transcript
+correctly 
+(i.e. will translate TGA as a "U" and not a "*") you need to set the new
+<b>Selenocysteine</b> tag in the <code>Genetic_code</code> class:
+
+<P><pre><code>?Genetic_code   Other_name ?Text
+                Translation UNIQUE Text
+                Start UNIQUE Text
+                Base1 UNIQUE Text
+                Base2 UNIQUE Text
+                Base3 UNIQUE Text
+                Selenocysteine Remark Text   // Use the Remark to document your usage of this tag.
+</code></pre>
+
+<P>It is not known yet whether all such transcripts also use TGA as a stop codon as well,
+but acedb will as usual remove any trailing stop codon (including
+TGA) from the translation.
+
+<P>Note that way the existing <code>Genetic_code</code> class is handled by acedb
+allows you to specify any number of alternative codes within a single sequence hierachy
+so no additional work by the curator is needed to add these rare variants other than
+specifying the correct <code>Genetic_code</code> object for that transcript.
+
+
+
+<a name="blixem_dotter"></a><H3>A load of old pfetch-blixem-dotterness</H3>
+
+<P>A number of additions/fixes/features have been added to the blixem/dotter
+code:
+
+<P><b>EMBL sequence entries:</b>
+<ul>
+  <li>At last, after far too long you can now cut/paste EMBL entries from within the
+      text window displayed by selecting "Pfetch this sequence" from the menu displayed
+      in fmap when you right click on a homology.
+      
+      <P>Now we have the basic mechanism in place we will add cut and paste to other
+      text windows, if there are any that you would like this added to as a priority then
+      email <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>
+</ul>
+
+
+<P><b>Blixem:</b>
+<ul>
+  <li>Simon has fixed a subtle bug (to find, if not in its effects) in that
+      the gaps data for matches was not correctly passed to blixem when the area
+      being blixem'd was not the whole fmap. In this case the gap data was not
+      offset correctly relative to the sequence being viewed in fmap resulting
+      in incorrect positioning of gaps in blixem.
+      
+  <li>The blixem window title bar now shows the sequence name plus whether homologies are
+      nucleotides or peptides. <b>Note</b> that when the window is iconised you may not see
+      the full title in the icon unless you set up your window manager correctly (if you don't
+      know how to do this see your system administrator). For instance if you use the CDE
+      desktop with its dtwm window manager you will need to add the text
+      "<b>Dtwm*iconDecoration: activelabel label image</b>" to either your .XDefaults file or
+      your Dtwm resource file. If you don't do this then the icon title is a truncated
+      version of the full blixem title bar which is just about useless.
+      
+  <li>The bug has been fixed whereby blixem would display gap data correctly when run
+      "internally" from xace but not when run "externally" as a separate program. The SEQBL
+      file format was extended to include the gap data so that the external blixem could
+      read it from there.
+
+  <li>The default ordering of the matches is now "order by ID" which seems to be the most
+      commonly used.
+</ul>
+
+
+<P><b>Dotter:</b>
+<ul>
+  <li>Every now and then dotter seemed to display dot plots for a section of
+      sequence unrelated to the one selected, the mystery is over.
+      Dotter had been coded to display the widest possible plot starting at the
+      mid point of the set of selected matches. This seems sensible but doesn't work in
+      the case where the user is looking at only part of a set of matches and the
+      rest are much further down the sequence. In this case dotter shows the mid
+      point between the two parts where there may well be no matches at all !
+      You will now get to see a dot plot of just the section of matches
+      you are looking at on the screen.
+
+  <li>Previously the alignment window was only created displayed the first time
+      dotter was displayed, now it will be redisplayed each a new dotter window is
+      displayed.
+</ul>
+
+
+<a name="query_syntax"></a><H3>An extension to using Keysets in the ACEDB Query Language</H3>
+
+<P>(<I>Thanks to Dan Lawson <A HREF="mailto:dl1@sanger.ac.uk">dl1@sanger.ac.uk</A>
+who inspired this idea and wrote the below and to
+Jean Thierry-Mieg <A HREF="mailto:mieg@ray.nlm.nih.gov">mieg@ray.nlm.nih.gov</A>
+who did the original coding for this new feature.</I>)
+
+<p>ACEDB handles groups of objects in "Keysets" (you have 
+seen the xace window termed 'Main KeySet' or the tace 
+line '// 13 Active Objects'). We use Keysets all the 
+time during an ACEDB session as transient lists of 
+objects we are interested in but rarely save them to 
+the database for later retrival/use. 
+
+<P>Saved keysets can retrieved using standard queries on
+the KeySet class. In xace a keyset can be accessed by 
+double-clicking on the appropriate name to open a new
+keyset containing the appropriate objects. In tace the
+process is slightly more complex requiring the user to
+use query/find to select the keyset object and then use
+the separate 'follow' command to de-reference the list of objects:
+
+<pre><code>acedb&gt; query find Keyset CDS_with_RNAi
+
+// Found 1 objects
+// 1 Active Objects
+acedb&gt; follow
+// Follow without tag-name, enters active keySets
+
+// Found 18068 objects
+// 18068 Active Objects
+acedb&gt; 
+</code></pre>
+
+<P>A major limitation of the tace behaviour is that you 
+could not use the query language 'follow' keyword in the same way,
+i.e. the following would not work:
+
+<P><pre><code>acedb&gt; query find Keyset CDS_with_RNAi; follow
+// ERROR -  Nothing to the right of FOLLOW: find Keyset CDS_with_RNAi; follow
+
+// Found 0 objects
+// 0 Active Objects
+acedb&gt; 
+</code></pre>
+
+This is because the follow shown here is part of the query language and used
+to navigate an object using tag names, i.e. "follow &lt;tagname&gt;".
+A new "expand" keyword has been added to the
+query language to allow this dereferencing of a keyset into
+an object list as part of a more complex concatenated query.
+
+You can now use stored keysets in the query language as follows:
+
+<P><pre><code>acedb&gt; query find Keyset CDS_with_RNAi; expand; where From_laboratory = HX;
+
+// Found 8425 objects
+// 8425 Active Objects
+acedb&gt; quit
+</code></pre>
+
+<P>This new feature will be used in the WormBase website (should be available
+later this month) to allow you to 
+retrieve stored keysets,
+de-reference them and use them in queries within the single 
+line query language search box on the website 
+(http://www.wormbase.org/db/searches/query):
+
+<P><pre><code>find Keyset CDS_with_RNAi; expand; where From_laboratory = HX;
+</code></pre>
+
+<P>This will return those members of the CDS_with_RNAi keyset
+which were predicted by the Sanger Institute (n.b. the 
+keyset is stored in the database as part of the WormBase
+build process as a 'canned' query result).
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+
+<a name="treedisplay"></a><H3>An update to the tree display find facility</H3>
+
+<P>Rob has made some further updates to the tree display search facility, below
+is his revised description.
+
+<P>(<I>Thanks to Rob Clack
+<A HREF="mailto:rnc@sanger.ac.uk">rnc@sanger.ac.uk</A>
+for this.</I>)
+
+
+<P>Starting with release 4_9s, the old "Find Tag" or even older "Warp to 
+Tag"
+function has been replaced by a new, more generic "Find" which locates 
+any object you
+specify, whether a tag or not.
+
+<P>As with previous versions, you can use the right mouse button to drop 
+down the
+menu, from which you can choose Find. However, the new version has 
+various other
+ways of initiating the search.
+
+<p>Control/F and Control/B present you directly with the usual dialogue 
+box for you to
+enter your target (ie skipping the menu), and pressing OK then searches 
+forwards or
+backwards as you'd expect. The reverse search starts at the distal end 
+of the tree and
+works backwards, of course.
+
+<p>Alternatively, if you can see the first of several identical things 
+you want to find,
+you can click on that one, then use Next and Previous (see below) to 
+move through the tree.
+
+<P>The search is case-insensitive and leading and trailing wildcards are 
+supported.  Thus
+B033* finds everything starting with B033, for instance.
+
+<P>For performance reasons, only the expanded portion of the tree is 
+searched.
+Unfolding each node, searching it and folding it away was considered too 
+costly
+to be worth implementing, and users we consulted said that in general 
+they know the
+location of the objects they're seeking well enough to unfold the 
+necessary nodes
+manually.
+
+<P>If the object can't be found, you get a warning message.
+
+<P>Once it has been located, you can get to the next and previous 
+occurrences of
+your text using Control/. and Control/, buttons. I originally wanted to 
+use Control/N
+and Control/P but the latter was already in use for printing, and I 
+thought the
+appearance of the chevron keys was in keeping with the function, though 
+I've not
+insisted you also press Shift to get there.
+
+<P>When you reach the end/beginning of the tree, you get a warning message,
+after which a further Next/Prev wraps the search back to the point at 
+which it
+started.
+
+<P>Control/F and Control/B always give you back the Find dialogue box to 
+allow
+you to change the object you're looking for, but note that it will start 
+from the top
+of the tree rather than your current position if you do so.
+
+<P>Find also works in the UpdateTree display.
+
+<P><b>NEW HOTKEYS</b>
+
+<P>In the TreeDisplay, you can shift directly to the UpdateTree using 
+Control/U
+and then you can get back to the TreeDisplay using Control/T in UpdateTree.
+
+<P>Finally, this is old news but not everyone knows it. If you select a 
+tag in
+TreeDisplay and go from there to the UpdateTree display, that tag will be
+centred on the screen for you.
+
+
+
+
+<a name="longtext"></a><H3>Editting LongText</H3>
+
+<P>Do you know how to edit LongText objects in xace ? Following a recent bug report
+from a user, a missing script from our acedb distribution has been replaced in
+wscripts which is necessary for the LongText editting to work.
+
+<P>If you start xace and then display an object in a treedisplay window which contains
+LongText objects you will see the LongText objects displayed in a numbered
+list at the bottom of the tree display window. To edit one of these objects you need to
+double click on the LongText objects name in this numbered list, this will display the
+LongText object in a special LongText display window. The LongText window gives you a
+number of options including "Edit", if you select this option then an editor will be
+displayed containing the the LongText text and you can then edit the text to change it.
+On saving the text and exitting the editor the new text will be reread into acedb as
+the new LongText object.
+
+<P>For all this to work you need to have a small script on your path which will
+start up the editor of your choice. Acedb provides a sample script in wscripts/acedb_editor:
+
+
+<P><pre><code>#!/bin/ksh
+#
+# This script is called when you click the "Edit" button in the
+# LongText display window (reached by double clicking on the
+# name of any longtext displayed in the tree display).
+# You should copy it to a directory on your PATH otherwise acedb
+# will not be able to find it (N.B. make sure that its executable).
+#
+# If you haven't got ksh on your system then just adapt this script.
+#
+# Change "xemacs" to the editor of your choice.
+#
+#
+
+donename="$1.done"
+
+xemacs -q $1
+
+cp $1 $donename
+
+echo "***LongTextEnd***" &gt;&gt; $donename
+
+exit 0
+</code></pre>
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+
+<a name="big_blixems"></a><H3>Big sequence bug in blixem</H3>
+
+<P>Blixem is one of the examples of acedb that relies on fixed length buffers
+but does not check whether the buffers have overflowed, largely because the
+standard C library for calls such as <code>scanf()</code> do not allow checking
+in any easy way.
+
+<P>This has been causing blixem to overwrite existing sequence records read from
+SEQBL files with more sequence when the sequence was too long to fit in
+Blixems internal buffers.
+
+<P>The bug has now been fixed by using a dynamic buffer for SEQBL file reading.
+
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+
+<a name="catText"></a><H3>Bug in catText</H3>
+
+<P>Mark unwittingly introduced a bug into catText() a couple of weeks ago while fixing
+an existing bug in catBinary(), there are a couple of things to note here
+I think:
+<ol>
+  <li>we should all try to comment our code sufficiently that anyone coming along later
+      to modify the code can get a quick understanding of why the code works the way it
+      does. In general the acedb code is very poorly documented from this point of view, we
+      are making life difficult for ourselves.
+  <li>Marks modification changes the way catBinary() and catText() work, catText removes
+      trailing zeroes before cat'ing, catBinary() does not. Probably this will not change
+      anything but we should all note this.
+</ol>
+
+
+<a name="graphpick"></a><H3>Graph PICK and modifiers</H3>
+
+<P>In code where you register a callback function using the graphRegister() call for "PICK"
+(i.e. left button down), the callback function now takes an extra parameter which is 
+the modifier key (Alt, Cntl etc) pressed at the time of the left button down.
+This allows you to handle key combintations such as "Cntl-left button" which just gives
+a bit more flexibility to the way we handle keyboard interactions, especially given the
+current effort to provide more keyboard shortcuts.
+
+
+<a name="peptide"></a><H3>Rationalisation of peptide routines</H3>
+
+<P>During the introduction of the special case Selenocysteine translation code
+I spent a bit of time rationalising the code that does the translations to make it
+easier to maintain. There
+was code in both fmapfeatures.c and fmapsequence.c which essentially duplicates
+translation code in peptide.c. All this code is now in peptide.c, there is probably
+further rationalisation within peptide.c that can be done but its a start to have it
+all in one file.
+
+
+<a name="design_docs"></a><H3>New wdoc subdirectories for developer docs</H3>
+
+<P>Two new directories have been created in wdoc as repositories for developer documentation:
+
+<dl>
+  <dt><b>wdoc/Interfaces</b>
+  <dd>is for documentation of our programming interfaces, e.g. graph,
+      gex etc.
+  <dt><b>wdoc/Internals</b>
+  <dd>is for documentation of implementation details that are too verbose or inappropriate
+      for inclusion in source code.
+</dl>
+
+<P>I've been working on an adulteration of some emacs code that will allow us to put
+text like the following in our source code and then display the design document referred
+to in the comment (in this case "ServerDesign.html") in our own choice of browser:
+
+<P><pre><code>/* If you alter this bit of code first read ServerDesign.html as there are some
+ * non-obvious bits of coding. */
+</code></pre>
+
+<P>When this is finished I'll put in cvs so we can all access it.
+
+<P><b>NOTE</b> I don't think these directories are for fantastically finished documents, they
+should simply be a repository of what we have, please add to it when you can.
+
+
+<a name="makefile"></a><H3>Small makefile change</H3>
+
+<P>The default compilation of dotter has been changed to non-optimised. Compiling
+optimised by default makes debugging hard, its easy for any users to override this
+by changing the makefile as they wish.
+
+
+
+<a name="disknew"></a><H3>Fixing Database partition size in AceDB</H3>
+
+<P>(<I>Thanks to Mark Sienkiewicz
+<A HREF="mailto:sienkiew@ncbi.nlm.nih.gov">sienkiew@ncbi.nlm.nih.gov</A>
+for this.</I>)
+
+<P>Occasionally AceDB creates one off huge database/blockNN.wrm files (reaching sizes
+of 2GB and more) for
+"no apparent reason", there have been various theories about this but
+Mark has done the work to crack this problem. He has fixed the code in acedb 4_7
+(Jeans working code) but the code needs importing into 4_9. Here is what he has
+to say:
+
+<blockquote>Since then, I discovered the mechanism
+for Jean's problem of seeing the files go over 2 gig.
+
+<P>When you allocate a block, it finds a free slot in the BAT (block
+allocation table).  When there are no free slots, it appends 64 megabytes
+of data to the last data file and extends the BAT in memory.  When you
+issue a "save" command, it writes the updated BAT into blocks in the data
+file.
+
+<P>BUT-- suppose tacembly crashes when you try to assemble genes from clones.
+It writes data to the database, which forces the file to be extended.
+BUT because it crashes <b>before</b> you save, the updated BAT is never written
+to the file.
+
+<P>Ok, it crashed, so you hack on it a little and run it again.  It finds the
+most recent saved session, which includes the old BAT.  It starts creating
+the same data again (remember the first run was never saved), and so again
+it overflows the old BAT and extends the file.
+
+<P>Now, it extends the file by <b>appending</b> 64 meg of data, <b>not</b> by writing
+64 meg to the file beginning at the last block in the BAT.  So if I had a
+500 meg file that needs to extend by 500 meg, I have
+
+<P><pre><code>        500 meg before the first run
+        1000 meg after the first run crashes
+        1500 meg after the second run crashes
+        2000 meg after the third run crashes
+        2500 meg after the fourth run
+</code></pre>
+
+<P>Each time, the BAT still thinks there is only 500 meg in the file, so it
+believes it is ok to extend the file.  Instead of just going 64 meg over
+the file size limit (which happens all the time), the file can grow
+arbitrarily large.
+
+<P>And, of course, when it goes over 2 gig, lseek() with signed 32 bit
+numbers starts failing, and the database crashes.  When you run it again,
+it tries to make the file bigger...
+
+<P>b.t.w. I looked in your disknew.c, you do have this bug, but you
+probably never noticed it because you only see it if the database crashes
+between a big write and a save.  Presumably, you could also see it if you
+parse a very large file and then quit without saving.
+</blockquote>
+
+<P>Nice one Mark !
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>May monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="User_Group"><H2>Next User Group Meeting - D319, 3.00pm, Thursday, 12th June 2003</H2>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Wed Jun  4 11:55:46 BST 2003
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

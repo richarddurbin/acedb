@@ -1,0 +1,307 @@
+<HTML>
+
+<HEAD>
+<TITLE>User Guide To ACEDB ace2line & line2ace utilities</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../wdoc.css"
+title="Style sheet for wdoc developer documents">
+
+</HEAD>
+
+
+<BODY>
+
+<BLOCKQUOTE>
+<DIV ALIGN=CENTER>
+ <IMG SRC="../acedb-logo.gif" ALT="[ACEDB 4_9 DOCUMENTATION]" align=middle>
+ <H3>
+  ACEDB Version 4_9
+ </H3>
+</DIV>
+
+
+<DIV ALIGN=CENTER>
+
+<H1 align=center>
+User Guide To ACEDB ace2line & line2ace utilities
+</H1>
+
+<ADDRESS>Originally written by<BR>
+Cornel Lee & Dave Matthews &lt;matthews@greengenes.cit.cornell.edu&gt;, 1992</ADDRESS>
+
+</DIV>
+
+<h2>Acknowledgements</h2>
+
+<P>The scripts were written in 1992 by Cornel Lee at the Lawrence Berkeley
+Lab.  His address at that time was clee@genome.lbl.gov.
+
+<P>Dave Matthews kindly forwarded the scripts to be included with the
+AceDB CVS repository.
+
+
+<h2>Synopsis</h2>
+
+<P>ace2line.awk converts ACEDB .ace files to tab-delimited tables.
+line2ace.awk performs the reverse conversion.
+
+<P>Documentation is at the top of the scripts.
+
+<h2>Description</h2>
+
+<P>This is a widely useful functionality and there is a script to do it.
+It was written for our project by Cornel Lee at LBL some years ago.
+
+<P>It's called ace2line.awk and its purpose is to
+select fields in arbitrary order from .ace file and create
+line-records.
+
+<P>The hard part about converting .ace data to CSV/tab-delimited is dealing
+with 1) multivalued fields and 2) compound (vector) fields.  The script
+seems to do reasonable things for these.
+
+
+<h2>A short example</h2>
+
+<pre><code><b>INPUT -</b>
+  Sequence :
+  DNA_homol
+
+  Sequence : "Contig5002"
+  DNA_homol BE443570 Phrap 587 1 587 1 587
+  DNA_homol BE446512 Phrap 200 1 200 1 200
+
+  Sequence : "Contig5003
+  DNA_homol BE492786 Phrap 456 1 456 1 456
+  DNA_homol BF473179 Phrap 538 157 692 4 538
+  DNA_homol BE444401 Phrap 629 382 1010 1 629
+
+<b>OUTPUT -</b>
+  Sequence        DNA_homol
+  Contig5002      BE443570 Phrap 587 1 587 1 587$BE446512 Phrap 200 1 200 1 200
+  Contig5003      BE492786 Phrap 456 1 456 1 456$BF473179 Phrap 538 157 692 4 538$BE444401 Phrap 629 382 1010 1 629
+</code></pre>
+
+
+<h2>and a longer one</h2>
+
+<pre><code><b>INPUT -</b>
+/* Sample.ace: a sample input file for ace2line.awk */
+
+
+ // Class Paper 
+/***** Specification record for ace2nal.awk *****/
+
+Paper :
+
+Title
+Author
+
+Year
+
+/***** end of the spec record  *****/
+
+
+/************ .ace data ***********/
+Paper : "?Paper"
+
+Paper : "mazur-1987-aaaqb"
+Title	 "Acetolactate synthase, the target enzyme of the sulfonylurea \
+	herbicides"
+So	 \
+	"NATO-advanced-science-institutes-series-:-Series-A-:-Life-sciences \
+	(USA). (1987). v. 140 p. 339-349"
+DNAL	 "QH301.N32"
+Year	 1987
+Author	 "Mazur-B-J"
+Author	 "Falco-S-C"
+Author	 "Knowlton-S"
+Author	 "Smith-J-K"
+Language	 "English"
+
+Paper : "knowl-1988-aaauc"
+Title	 "Creation and field testing of sulfonylurea-resistant crops"
+So	 "Fraley,-R.T.; Frey,-N.M.; Schell,-J. (eds.). Genetic \
+	improvements of agriculturally important crops : progress and issues. \
+	Cold Spring Harbor, N.Y. (USA). Cold Spring Harbor Laboratory. 1988. \
+	p. 55-60"
+DNAL	 "QK981.5.G464"
+Year	 1988
+Author	 "Mazur-B-J"
+Author	 "Knowlton-S"
+Author	 "Arntzen-C-J"
+Language	 "English"
+
+Paper : "mazur-1987-aaadc"
+Title	 "Acetolactate synthase, the target enzyme of the sulfonylurea \
+	herbicides"
+So	 "Plant molecular biology. Proceedings of a NATO Advanced Study \
+	Institute, 10-19 June, 1987, Carlsberg Lab., Copenhagen, Denmark \
+	[edited by Wettstein, D. von; Chua, N. H.]. 1987, 339-349; 18 ref., \
+	in NATO ASI Series A, Life Sciences Vol. 140. New York, USA; Plenum \
+	Press"
+Year	 1987
+Author	 "Mazur-B-J"
+Author	 "Falco-S-C"
+Author	 "Knowlton-S"
+Author	 "Smith-J-K"
+Language	 "English"
+
+Paper : "mazur-1987-aaapv"
+Title	 "Isolation and characterization of plant genes coding for \
+	acetolactate synthase, the target enzyme for two classes of \
+	herbicides"
+So	 "Plant-physiology (USA). (Dec 1987). v. 85(4) p. 1110-1117"
+DNAL	 "450 P692"
+Year	 1987
+Author	 "Mazur-B-J"
+Author	 "Smith-J-K"
+Author	 "Chui-C-F"
+Language	 "English"
+
+Paper : "smith-1989-aaauz"
+Title	 "Functional expression of plant acetolactate synthase genes in \
+	Escherichia coli"
+So	 \
+	"Proceedings-of-the-National-Academy-of-Sciences-of-the-United-States-o\
+	f-America (USA). (Jun 1989). v. 86(11) p. 4179-4183"
+DNAL	 "500 N21P"
+Year	 1989
+Institution	 "Agric. Prod. Dep., E.I. du Pont de Nemours & Co., Exp. \
+	Stn. E402,Wilmington, DE 19880-0402, USA"
+Author	 "Mazur-B-J"
+Author	 "Smith-J-K"
+Author	 "Schloss-J-V"
+Type	 "Journal Article"
+Language	 "English"
+Keyword	 "algae"
+Keyword	 "Escherichia coli"
+Keyword	 "expression of cloned genes"
+Keyword	 "gene expression"
+Keyword	 "Gene manipulation"
+Keyword	 "Genetic engineering"
+Keyword	 "acetolactate synthase"
+
+Paper : "haugh-1987-aabsb"
+Title	 "AN ARABIDOPSIS ACETOLACTATE SYNTHASE GENE IN TOBACCO CONFERS \
+	RESISTANCE TO SULFONYLUREA HERBICIDES"
+Journal	 "INTERNATIONAL BOTANICAL CONGRESS ABSTRACTS"
+So	 "XIVTH INTERNATIONAL BOTANICAL CONGRESS, BERLIN, WEST GERMANY, \
+	JULY  24-AUGUST 1, 1987. INT BOT CONGR ABSTR 17. 1987. 71"
+Year	 1987
+Author	 "Mazur-B-J"
+Author	 "Smith-J-K"
+Author	 "Somerville-C-R"
+Author	 "Haughn-G-W"
+Keyword	 "selectable marker"
+Keyword	 "plant transformation"
+
+Paper : "chui--1987-aadad"
+Title	 "ISOLATION AND CHARACTERIZATION OF PLANT GENES CODING FOR \
+	ACETOLACTATE SYNTHASE THE TARGET ENZYME FOR TWO CLASSES OF HERBICIDES"
+Journal	 "PLANT PHYSIOLOGY (BETHESDA)"
+Year	 1987
+Volume	 85
+Page	 1110 1117
+Author	 "Mazur-B-J"
+Author	 "Smith-J-K"
+Author	 "Chui-C-F"
+Keyword	 "Nicotiana tabacum"
+Keyword	 "yeast"
+Keyword	 "bacterial isozymes"
+Keyword	 "homology"
+Keyword	 "valine"
+Keyword	 "isoleucine"
+Keyword	 "leucine"
+Keyword	 "sulfonyl urea"
+Keyword	 "imidazolinones"
+Keyword	 "amino acid sequences"
+
+Paper : "mazur-1989-aadew"
+Title	 "FUNCTIONAL EXPRESSION OF PLANT ACETOLACTATE SYNTHASE GENES IN \
+	ESCHERICHIA-COLI"
+Journal	 "PROCEEDINGS OF THE NATIONAL ACADEMY OF SCIENCES OF THE \
+	UNITED STATES OF AMERICA"
+Year	 1989
+Volume	 86
+Page	 4179 4183
+Author	 "Mazur-B-J"
+Author	 "Smith-J-K"
+Author	 "Schloss-J-V"
+Keyword	 "EC 4.1.3.18"
+Keyword	 "chloroplast"
+Keyword	 "transit peptide"
+Keyword	 "herbicide"
+Keyword	 "amino acid biosynthesis"
+
+Paper : "marti-1987-aabrk"
+Title	 "TRANSCRIPTION OF ACETOLACTATE SYNTHASE GENES IN HIGHER PLANTS"
+Journal	 "PLANT PHYSIOLOGY (BETHESDA)"
+So	 "ANNUAL MEETING OF THE AMERICAN SOCIETY OF PLANT PHYSIOLOGISTS, \
+	ST.  LOUIS, MISSOURI, USA, JULY 19-23, 1987. PLANT PHYSIOL (BETHESDA) \
+	83 (4  SUPPL.). 1987. 16"
+Year	 1987
+Author	 "Smith-J-K"
+Author	 "Martin-S-J"
+Keyword	 "Nicotiana tabacum"
+Keyword	 "regulation"
+
+Paper : "hepbu-1987-aaaqc"
+Title	 "DNA methylation in plants"
+So	 "Developmental-genetics (USA). (1987). v. 8(5/6) p. 475-493"
+DNAL	 "QH426.D32"
+Year	 1987
+Author	 "Hepburn-A-G"
+Author	 "Belanger-F-C"
+Author	 "Mattheis-J-R"
+Language	 "English"
+
+Paper : "belan-1987-aadaj"
+Title	 "DNA methylation in plants"
+Journal	 "DEVELOPMENTAL GENETICS"
+Year	 1987
+Volume	 8
+Page	 475 494
+Author	 "Hepburn-A-G"
+Author	 "Belander-F-C"
+Author	 "Mattheis-J-B"
+Keyword	 "Zea sp"
+
+ /*#########################*/ 
+
+
+
+<b>OUTPUT -</b>
+Paper	Title	Author	Year
+
+?Paper			
+mazur-1987-aaaqb	Acetolactate synthase, the target enzyme of the sulfonylurea herbicides	Mazur-B-J$Falco-S-C$Knowlton-S$Smith-J-K	1987
+knowl-1988-aaauc	Creation and field testing of sulfonylurea-resistant crops	Mazur-B-J$Knowlton-S$Arntzen-C-J	1988
+mazur-1987-aaadc	Acetolactate synthase, the target enzyme of the sulfonylurea herbicides	Mazur-B-J$Falco-S-C$Knowlton-S$Smith-J-K	1987
+mazur-1987-aaapv	Isolation and characterization of plant genes coding for acetolactate synthase, the target enzyme for two classes of herbicides	Mazur-B-J$Smith-J-K$Chui-C-F	1987
+smith-1989-aaauz	Functional expression of plant acetolactate synthase genes in Escherichia coli	Mazur-B-J$Smith-J-K$Schloss-J-V	1989
+haugh-1987-aabsb	AN ARABIDOPSIS ACETOLACTATE SYNTHASE GENE IN TOBACCO CONFERS RESISTANCE TO SULFONYLUREA HERBICIDES	Mazur-B-J$Smith-J-K$Somerville-C-R$Haughn-G-W	1987
+chui--1987-aadad	ISOLATION AND CHARACTERIZATION OF PLANT GENES CODING FOR ACETOLACTATE SYNTHASE THE TARGET ENZYME FOR TWO CLASSES OF HERBICIDES	Mazur-B-J$Smith-J-K$Chui-C-F	1987
+mazur-1989-aadew	FUNCTIONAL EXPRESSION OF PLANT ACETOLACTATE SYNTHASE GENES IN ESCHERICHIA-COLI	Mazur-B-J$Smith-J-K$Schloss-J-V	1989
+marti-1987-aabrk	TRANSCRIPTION OF ACETOLACTATE SYNTHASE GENES IN HIGHER PLANTS	Smith-J-K$Martin-S-J	1987
+hepbu-1987-aaaqc	DNA methylation in plants	Hepburn-A-G$Belanger-F-C$Mattheis-J-R	1987
+belan-1987-aadaj	DNA methylation in plants	Hepburn-A-G$Belander-F-C$Mattheis-J-B	1987
+
+</code></pre>
+
+
+
+<HR>
+<H3 ALIGN="CENTER">ACEDB Version 4_8</H3>
+
+
+<HR>
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Fri Feb 15 09:45:15 GMT 2002
+<!-- hhmts end -->
+
+</BLOCKQUOTE>
+</BODY>
+</HTML>

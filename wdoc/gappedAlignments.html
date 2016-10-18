@@ -1,0 +1,139 @@
+<HTML>
+
+<HEAD>
+<TITLE>User Guide To Display of Gapped Alignments</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="./wdoc.css"
+title="Style sheet for wdoc developer documents">
+
+</HEAD>
+
+
+<BODY>
+
+<BLOCKQUOTE>
+<DIV ALIGN=CENTER>
+ <IMG SRC="./acedb-logo.gif" ALT="[ACEDB 4_9 DOCUMENTATION]" align=middle>
+ <H3>
+  ACEDB Version 4_9
+ </H3>
+</DIV>
+
+
+<DIV ALIGN=CENTER>
+
+<H1 align=center>
+User Guide To Display of Gapped Alignments
+</H1>
+
+<ADDRESS>Originally written by<BR>
+Simon Kelley &lt;srk@sanger.ac.uk&gt;, May 2001</ADDRESS>
+
+</DIV>
+
+<H2>Gapped Alignments</H2>
+
+<P>Acedb now supports the storage and display of gap information with
+alignments.
+
+<P>The Homol tag in ?Sequence and ?Protein now has a model which looks
+like this:
+
+<pre><code>Homol DNA_homol ?Sequence XREF DNA_homol ?Method Float Int Int Int Int #Homol_info
+      Pep_homol ?Protein XREF DNA_homol ?Method Float Int Int Int Int  #Homol_info
+      Motif_homol ?Motif XREF DNA_homol ?Method Float Int Int Int Int #Homol_info
+</code></pre>
+
+<P>and the Homol-info class looks like this:
+
+<pre><code>#Homol_info Segs #Match_seg     // old way to give gapped alignment -  used in pephomolcol for Belvu call
+            Align Int UNIQUE Int UNIQUE Int     // correct way to give gapped alignments for FMAP
+             // for each ungapped block, self_start target_start [length]
+             // if no length then until next block (so no double gap) 
+             // if no Align assume ungapped
+            AlignDNAPep Int UNIQUE Int UNIQUE Int
+            AlignPepDNA Int UNIQUE Int UNIQUE Int
+             // These two tags are analogous to Align, but scale length
+	     // for the case of a dna alignment to peptide or vice-versa.
+</code></pre>
+
+<P>This system is backwards compatible since if the Homol_info data is
+not present, the Homologies are interpreted as before. (For reference,
+the Float parameter is a score and the four Ints are start and end
+co-ordinates in this sequence followed by start and end coordinates in
+the homologous sequence.
+
+<P>The gap information is stored as blocks of ungapped alignment. This is
+probably best illustrated by example:
+
+<pre><code>Homol DNA_homol somesequence somemethod 100 2732 2809 29233 29310 Align 2732 29233
+                                                                  Align 2742 29253
+                                                                  Align 2752 29273
+                                                                  Align 2762 29276
+</code></pre>
+
+<P>Gives and alignment which looks like this:
+
+
+<pre><code>            2732      2741      2742      2751      2752     2762                                    2809
+self     ----|---------|.........|---------|.........|---------|------------------~~-------------------|-----
+
+target       |-------------------|-------------------|--|......|------------------~~-------------------|
+           29233               29253              29273 29275 2976                                  29310
+</code></pre>
+
+<P>The third (length) integer is only required when the end of a gap in one sequence coincides
+with the start of a gap in the other:
+
+<pre><code>
+Homol DNA_homol somesequence somemethod 100 2732 2809 29233 29310 Align 2732 29233 10
+                                                                  Align 2752 29253
+                                                                 
+
+            2732      2741      2742           2752                                         
+self     ----|---------|.........|--------------|-------
+
+
+target       |-------------------|..............|----------
+
+           29233               29252           29253 
+</code></pre>
+
+
+<H2>Displays</H2>
+
+<P>The gaps are not displayed in the fMap, but they are displayed in blixem.
+
+<P>Gaps in the query sequence (ie where there are bases in the target 
+with corresponding bases in the query) are shown by omitting the un-matched bases
+and drawing a vertical red bar. Gaps in the target sequence are shown with dots.
+
+
+<H2>Peptide homolgies</H2>
+
+<P>For homologies of DNA versus Peptide, the two sets of coordinates  need to be
+scaled, since a block length of x in amino acid residues corresponds to 3x in
+DNA bases. To tell acedb when and how to scale, use the AlignDNAPep and AlignPepDNA 
+tags. For instance in a DNA object, to record a homology to a peptide, do:
+
+
+<pre><code>Homol Pep_homol  somepeptide somemethod 200 2777 2699 100 133 AlignDNAPep 2777 100
+                                                                          2753 104
+                                                                          2738 120
+</code></pre>
+
+
+<HR>
+<H3 ALIGN="CENTER">ACEDB Version 4_9</H3>
+
+
+<HR>
+<ADDRESS><A href="mailto:srk@sanger.ac.uk">Simon Kelley &lt;srk@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Wed May 16 10:29:36 BST 2001
+<!-- hhmts end -->
+
+</BLOCKQUOTE>
+</BODY>
+</HTML>

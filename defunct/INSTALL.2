@@ -1,0 +1,293 @@
+#!/bin/csh
+# $Id: INSTALL.2,v 1.1 1995-06-21 13:30:01 mieg Exp $
+##########################################################################
+#################      A C.elegans database    ###########################
+#################   R.Durbin and J.Thierry-Mieg  #########################
+#################                                #########################
+#################   Installation script, june 91 #########################
+##########################################################################
+
+# To install ACeDB, this file and the appropriate distribution tar.Z files
+# should be in the same directory. See the NOTES file to find out which
+# distribution tar.Z files you need for your site. You must have write
+# access in the directory to be able to run the INSTALL script.
+
+# We can provide executables for most X11-Unix platforms, like SUN
+# DEC stations, Next, Alliant, Silicon Graphics, IBM
+# and for PC-compatibles running the freeware Unix-OS called LINUX
+
+# Go to the directory and, omitting the leading #, type the command
+#  source  INSTALL
+
+###################################################################
+
+echo ' '
+echo 'ACEDB installation script'
+echo ' '
+
+if ($USER == "root") then
+ echo 'You should not be root when installing ACEDB'
+ echo 'su to some other user name and try again'
+ exit
+endif
+
+echo -n $USER
+echo ' will be known as the acedb-administrator'
+echo
+
+echo 'We are going to install the acedb system in the present directory: '
+echo -n "      "
+pwd
+echo 'This is your available disk space in this directory: '
+df .
+echo ' '
+echo "We need 100 MB for installation, 70 MB final."
+echo -n "Should we proceed?  Please answer yes/no : "
+
+switch("$<")
+case "yes":
+	breaksw
+default:
+	echo 'You did not answer yes, I quit'
+        exit
+        breaksw	
+endsw
+
+echo 'Starting the installation'
+
+if (-e wspec/passwd.wrm ) then 
+  echo 'I save the old wspec/passwd.wrm file as wspec/passwd.old'	
+  \mv wspec/passwd.wrm  wspec/passwd.old
+  echo ' '
+endif
+
+# next items fix problems in the tar.Z files
+if (-d wdoc/code) then
+  chmod 755 wdoc/code
+endif
+if (-d wmake/others) then
+  chmod 755 wmake/others
+endif
+
+# Next two lines commented out 17/4/94 because switched foreach syntax
+# echo 'Ignore the "No match." information messages'
+# echo ''
+
+foreach i ( 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0A 0 )
+  if (-e source.2_$i.tar.Z) then
+    echo -n 'Restoring files from '
+    echo source.2_$i.tar.Z
+    zcat source.2_$i.tar.Z | tar xf -
+    break
+  endif
+end
+
+foreach i ( 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0A 0 )
+  if (-e doc.2_$i.tar.Z) then
+    echo -n 'Restoring files from '
+    echo doc.2_$i.tar.Z
+    zcat doc.2_$i.tar.Z | tar xf -
+    break
+  endif
+end
+
+foreach i ( 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0A 0 )
+  if (-e proteins.2_$i.tar.Z) then
+    echo -n 'Restoring files from '
+    echo proteins.2_$i.tar.Z
+    zcat proteins.2_$i.tar.Z | tar xf -
+    break
+  endif
+end
+
+foreach j ( alpha dec iris solaris sparc nec linux )
+  foreach i ( 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0A 0 )
+    if (-e bin.$j.2_$i.tar.Z) then
+      echo -n 'Restoring files from '
+      echo bin.$j.2_$i.tar.Z
+      zcat bin.$j.2_$i.tar.Z | tar xf -
+      break
+    endif
+  end
+end
+
+foreach i ( 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 \
+		23 23 25 26 27 28 29 30 )
+  if (-e update.2-$i.tar.Z && ! -e rawdata/update.2-$i) then
+    echo -n 'Restoring files from '
+    echo update.2-$i.tar.Z
+    zcat update.2-$i.tar.Z | tar xf -
+  endif
+end
+
+# next items fix problems in the tar.Z files
+if (-d wdoc/code) then
+  chmod 755 wdoc/code
+endif
+if (-d wmake/others) then
+  chmod 755 wmake/others
+endif
+
+if (! -d database) then
+  mkdir database
+endif
+if (! -d PS) then
+  mkdir PS
+endif
+
+touch database/lock.wrm
+touch database/log.wrm
+echo -n "ACEDB installed " >> database/log.wrm
+echo `date` >> database/log.wrm
+
+if (! -d bin) then
+  mkdir bin ;
+endif
+if (! -e 'bin/xace') then 
+  echo "No executables - you will have to recompile - see the manual" 
+  echo ' '
+endif
+
+if (-e 'wspec/passwd.old' ) then 
+  echo 'I restore the old passwd file'
+  \mv wspec/passwd.old wspec/passwd.wrm  
+  echo ' '	
+endif
+
+echo 'I am now setting the authorizations as explained in the users guide'
+echo 'in section Installation: Granting authorizations/recommended scheme'
+
+chmod 755 bin database w*
+chmod 777 PS
+chmod 644 database/log.wrm w*/*
+if (-d wdoc/code) chmod 755 wdoc/code
+
+if (-e 'bin/xace') then 
+  chmod 4755 bin/xace 
+endif
+if (-e 'bin/tace') then 
+  chmod 755 bin/tace 
+endif
+if (-e 'bin/fetch') then 
+  chmod 755 bin/fetch 
+endif
+if (-e INSTALL) then 
+  chmod 755 INSTALL
+endif
+
+if (-e xace) then 
+  \rm xace
+endif
+if (-e tace) then 
+  \rm tace
+endif
+if (-e makefile) then 
+  \rm makefile
+endif
+ln -s wmake/makefile  makefile
+
+# Add administrator in the  passwd file
+
+echo ' ' >> wspec/passwd.wrm
+echo '// Login name of the administrator installing acedb ' >> wspec/passwd.wrm
+echo `whoami` >> wspec/passwd.wrm
+echo ' ' >> wspec/passwd.wrm
+echo '// ' >> wspec/passwd.wrm
+
+# Prepare shell scripts that should eventually be moved into /usr/local/bin
+
+echo '#\!/bin/csh' >! acedb
+echo "setenv ACEDB $cwd" >> acedb
+echo "setenv DBDIR $cwd/database/" >> acedb
+echo "set path = ($cwd/bin $path)" >> acedb
+echo "xace" >> acedb
+chmod 755 acedb
+
+echo '#\!/bin/csh' >!  textace
+echo "setenv ACEDB $cwd" >> textace
+echo '$ACEDB/bin/tace' >> textace
+chmod 755 textace
+
+echo ' '
+echo 'Before running the program, each user must define the'
+echo 'environment variable ACEDB and put bin/xace in his path.'
+echo 'Do this either by copying into their .login or .cshrc file the commands:'
+echo ' '
+echo -n "setenv ACEDB "
+echo `pwd`
+echo 'set path = ($path $ACEDB)'
+echo  ' '
+
+## Warn the manager to mv acedb and textace into /usr/local/bin
+echo 'or preferably, by moving into /usr/local/bin the files'
+echo -n 'acedb and textace that I just created in the directory'
+pwd
+echo 'To do this, su to root and use the commands:'
+echo ' '
+echo 'mv acedb /usr/local/bin/acedb'
+echo 'mv textace /usr/local/bin/textace'
+echo ' '
+
+echo 'If you need to recompile you need also:'
+echo -n "  setenv ACEDB_SRC "
+echo `pwd`
+echo 'and also'
+echo '  setenv ACEDB_MACHINE one of SUN, DEC etc, see wmake/truemake'
+echo ' '
+echo -n 'Hit return to proceed'
+switch("$<")
+default:
+        breaksw	
+endsw
+echo ' '
+echo 'If users other than yourself need write access:'
+echo 'Add into wspec/passwd.wrm the login name of write-authorized users'
+echo ' '
+echo 'For more information :'
+echo 'a) Use the on-line help (help key or F1 or F10), while running acedb'
+echo 'b) Read the manuals in directories doc and wdoc:'
+ls wdoc/*.tex wdoc/*.PS doc/*.doc doc/*.PS
+echo 'c) Use e-mail :  mieg@kaa.cnrs-mop.fr or rd@mrc-lmb.cam.ac.uk'
+echo ' '
+echo 'Let us know if this installation script does not work.'
+echo ' '
+echo 'If you received no error message the installation is complete'
+echo ' '
+echo 'The command acedb will start the program.'
+echo 'The first time you run you must choose the "Add Update"' 
+echo 'option from the main menu.'
+echo ' '
+echo 'After testing the program, archive and remove the tarfiles'
+echo ' '
+echo 'A record of your installation will now be mailed to the authors'
+echo 'and you will be added to the Acedb mailing list.  Send email to'
+echo 'one of us if you do not want to be added to the mailing list.'
+echo
+echo 'The installation is complete'
+echo 'Au revoir'
+
+## Report attempt to Acedb authors 
+
+echo 'acedb 2 install attempt' > ! toto
+echo `hostname` >> toto
+echo `date` >> toto
+echo `whoami` >> toto
+echo `pwd` >> toto
+ls bin.*.Z source.*.Z update.*.Z >> toto
+
+echo 'This is an automatically generated report of the installation of' >! toto1
+echo 'the ACEDB database and software.' >> toto1
+echo ' ' >> toto1
+echo 'This report was also sent to the developers of ACEDB so that we can' >> toto1
+echo 'better determine the environments of our users.  it may also help' >> toto1
+echo 'detect errors in the installation at your site.' >> toto1
+echo ' ' >> toto1
+
+cat toto >> toto1
+mail root < toto1
+mail mieg@ncbi.nlm.nih.gov < toto
+mail rd@mrc-lmb.cam.ac.uk < toto
+
+\rm toto toto1
+
+## end of Installation script ##

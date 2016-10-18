@@ -1,0 +1,308 @@
+<!--#config timefmt="%d-%b-%C%y, %I:%M %p" -->
+<!--#set var="title" value="The AC Package" --> 
+<!--#set var="icon" value="acedb.gif" --> 
+<!--#set var="author" value="fw" --> 
+<!--#set var="keywords" value="acedb, CVS, ac scipts, source code control, change management, checkin, checkout, changelog" -->
+<!--#set var="description" value="The AC-package is a set of scripts providing easy access to version management and change tracking of the Acedb source code. " -->
+
+<!--#exec cgi="/cgi-bin/header" -->
+
+<H1 ALIGN=CENTER> Management of the Acedb source code </H1>
+
+<P>The <CODE>AC package</CODE> is an internal set of scripts for
+   managing the acedb source code. The Acedb code is under CVS
+   management. For ease of use and safety several scripts have been
+   written to control the cvs functions. The CVS system is only
+   accessible on the local system to users in the 'acedb' user-group. For
+   consistency reasons, users are being discouraged from using cvs
+   commands directly.</P>
+
+<H2 ALIGN=CENTER> Operations on individual source files </H2>
+
+<P>All AC commands have a command line argument
+   &lt;file(s)&gt;.  It allows to perform the same action on multiple
+   files. There are various ways is to specify the filename and its
+   subdirectory, e.g.&nbsp;:
+</P>
+
+<BLOCKQUOTE>
+aco w2/graphxt.c graph.h graphsubs.c
+</BLOCKQUOTE>
+
+
+<P>This will check out w2/graphxt.c wh/graph.h and w2/graphsubs.c. The
+   subdirectory is optional. The script will first try to find the find
+   the file in the current directory or look for it across all
+   subdirectories (might take slightly longer).
+</P>
+
+
+<H3> <CODE>aco</CODE> - checkout</H3>
+<P>
+  aco &lt;file(s)&gt; checks out a file for editing. <br>
+
+  First grabs the latest version from the repository, then registers 
+  the user as an editor and gives permission to edit the files locally. 
+</P>
+
+
+<H3> <CODE>aci</CODE> - checkin</H3>
+<P>
+  aci &lt;file(s)&gt; checks in a file to the repository after editing.<br>
+
+  The user is prompted for log information about the nature of the changes.
+  The environment variable <CODE>$CVSEDITOR</CODE> specifies an editor to be 
+  used to enter the change-log text.<BR>
+
+  The modified user's copy is comitted to the repository and edit permissions
+  are removed form the user's working directory. Other users editing this
+  file at the same time are notified by mail about this action.
+</P>
+<P>
+  NOTE: Just in case the file was created in a DOS/Windows environment,
+  all redundant PC-style control characters are removed prior to the
+  "commit" action.
+</P>
+
+<H3> <CODE>acu</CODE> - unedit</H3>
+<P>
+  acu &lt;file(s)&gt; removes edit permissions on a file.<br>
+
+  The user's local working copy is reverted back to the
+  latest repository version and his edit permissions are revoked.
+  Any modifications since checkout are therefor lost.
+</P>
+
+<H3> <CODE>acg</CODE> - get latest</H3>
+<P>
+  acg &lt;file(s)&gt; update/get new version of file from repository.<BR>
+
+  If the file already exists locally, the user's working copy is brought
+  up to the date with the repository version. The user is warned
+  if the file is being edited locally at the time.<BR>
+  If the file doesn't yet exist locally (another user has just recently created the file)
+  the subdirectory in which it is supposed to appear has to be specified.
+  Warnings are given if such file doesn't exist in the repository.
+</P>
+
+<H3> <CODE>acr</CODE> - create</H3>
+<P>
+  acr &lt;file(s)&gt; adds the new file to the repository.<br>
+
+  The file is expected to already exist locally. A new repository
+  entry is committed for the file with a default log message saying
+  <CODE>"initial revision"</CODE>.
+  The file is then set to read-only premissions locally. And from then
+  on, <CODE>aco</CODE> has to be used to check out a editable copy
+  of this file.
+</P><P>
+  NOTE: Just in case the file was created in a DOS/Windows environment,
+  all redundant PC-style control characters are removed prior to the
+  "commit" action.
+</P>
+
+<H3> <CODE>acx</CODE> - remove</H3>
+<P>
+  acx &lt;file(s)&gt; removes the file locally and from the repository.<BR>
+
+  The user is queried for safety, and after a positive answer
+  the file is removed in the user's working copy and then marked
+  deleted from the repository. 
+</P>
+<P>
+  NOTE: The files doesn't realy disappear. All its old changelogs
+  will continue to reside in the so-called <I>attic</I> of the
+  repository, but it won't show up in the active copy.
+  <CODE>acetree</CODE> will remove a local copy of a dead file
+  in another user's working copy to reflect that change throughout
+  all copies of the source tree.
+</P>
+
+<H3> <CODE>acd</CODE> - diff</H3>
+<P>
+  acd &lt;file(s)&gt; reports the differences between the users local
+  working copy of the file(s) and the repository version.
+</P>
+
+
+
+<H3> <CODE>acm</CODE> - move/rename</H3>
+<P>
+  amv &lt;newpath&gt; &lt;file(s)&gt; moves/renames the the file  <BR>
+
+  This command behaves similarly to the UNIX command '<CODE>mv</CODE>', but
+  the new path is specified first. This is slightly unusual, but it
+  brings this command in line with all the others in term of the variable-length
+  &lt;file(s)&gt; parameter list.
+  If a file is to be renamed, only one filename is allowed in this parameter-list.
+</P>
+<P>
+  amv &lt;wnew&gt; file1.c w2/file2.c - finds which subdir file1.c is in and moves it to wnew, then moves w2/file2.c to wnew <BR>
+  amv &lt;wnew/newfile.c&gt; oldfile.c - finds the subdir of oldfile.c, then moves it to wnew and renames it. If no new directory is specified, oldfile.c is renamed within its present directory.
+</P>
+
+
+
+<H3> <CODE>aclog</CODE> - log</H3>
+<P>
+  aclog -d"timeformat" &lt;file&gt; will report all log reports for this 
+  file during the timeformat. If no timeformat then all log reports are
+  given.
+</P>
+<P>
+  <DL>
+   <DT>Example :</DT>
+
+   <DD><KBD>aprs -d">yesterday" call.c</KBD><BR>
+       gives all log reports since yesterday for file call.c
+       </DD>
+
+   <DD><P>
+       <KBD>aprs -d"<10/19/97" call.c </KBD><br> 
+       gives all log reports before 19th October 1997 for file call.c
+       </P></DD>
+  </DL>
+</P>
+
+<H3> <CODE>acw</CODE> - set watch</H3>
+<P>
+  acw &lt;file&gt; sets a watch on the files. <BR>
+  Watches will cause the system to send out an email to the
+  <I>watcher</I> if anything is being done about that
+  file (e.g. a file is being edited, unedited, checked in etc.)
+  <BR>
+  Although it does introduce some kind of ownership
+  over a file it might be useful.
+  <BR>
+  Any user who is trying to edit (check out) a <I>watched</I>
+  file will be informed of who is watching it. 
+  Although the user is given the choice to abort the 
+  attempt to edit, it doens't impede anyone's right to 
+  edit a file anyway.
+</P>
+
+<H3> <CODE>acwx</CODE> - remove watch</H3>
+<P>
+  acx &lt;file&gt; removes the watch on the files. <BR>
+  This command will fail, if you are not currently watching the file.
+</P>
+
+
+<HR>
+
+<H2 ALIGN=CENTER>Operations spanning the whole tree</H2>
+
+<P>
+  In addition to the AC commands which operate on single files
+  there is a set of commands, that operate on entire directories
+  or even the entire tree.
+</P>
+<P>
+  All ACE commands have an optional parameter list :-
+</P>
+
+ <DL>
+  <DT>&lt;dir(s)&gt;</DT>
+  <DD>list of directories to include in operation, e.g.<BR>
+         <KBD>aceinfo  w1 w2 w4 wh</KBD></DD>
+
+  <DD><P>Use -a option as the &lt;dir&gt; parameter to include all
+      system-defined directories in the operation.</P></DD>
+
+  <DD><P>By default, the list specified in the user-defined file
+         $ACEDB_SRC/DIRECTORIES is used.
+	 </P></D>
+
+  <DD><P>If no such user-defined default exists, the list in
+         ~acedb/ALL_DIRECTORIES is used instead (as for the -a option)
+	 </P></DD>
+ </DL>
+
+
+<H3> <CODE>acetree</CODE> - update</H3>
+<P>
+  acetree [&lt;dir(s)&gt;] Updates user-copy of acedb-sourcetree from 
+  the CVS repository. Reports change-logs and gets new CVS 
+  master-versions. Lists currently checked out files.
+  <DL>
+   <DT>Example :</DT>
+
+   <DD><KBD>mkdir ~/acedb</KBD></DD>
+   <DD><KBD>setenv ACEDB_SRC ~/acedb</KBD></DD>
+   <DD><KBD>acetree -a</KBD></DD>
+   <DD>Creates a local user copy of all source-tree directories
+       in ~/acedb/. If specific directories are given on the command
+       line instead of <KBD>-a</KBD>, only those directories
+       will be copied locally.</DD>
+  </DL> 
+</P>
+
+
+
+<H3> <CODE>aceinfo</CODE> - changelog</H3>
+<P>
+  aceinfo [&lt;dir(s)&gt;]  reports any differences between your version
+  of the code and the repository's. It will also list who currently has
+  checked out any of those files.
+</P>
+
+
+
+<H3> <CODE>acegrep</CODE> - source-code search</H3>
+<P>
+  acegrep &lt;searchword&gt; [&lt;dir(s)&gt;] performs global 
+  source-code search for <searchword> in user-copy 
+  of acedb-sourcetree. In source-code directories, only C files
+  will be considered (includes C++ and header files), but
+  all files are searched in other directories (like whelp/).
+  <BR>
+  If only lower-case letters are used in the searchword, grep is
+  run with the -i flag (case-insensitivity). Upper-case letter
+  force a case-sensitive search (similar to the regular search in emacs).
+  <BR>
+  NOTE: for this command the optional &lt;dir(s)&gt; list
+  starts with the second command line argument.
+  <DL>
+    <DT>Example:</DT>
+    <DD><KBD>acegrep '\ main\ *(' -a</KBD><BR>
+	lists all files containing a main function over
+	all directories in the local tree (overriding the
+	personal DIRECTORIES list).
+	</DD>
+  </DL>
+</P>
+
+<H3> <CODE>acewho</CODE> - who has what? </H3>
+<P>
+  acewho [&lt;searchword&gt;] [&lt;dir(s)&gt;] - list the
+  editors of all files.<BR>
+  The check-out signatures of all files in the specified (or all)
+  directories are listed. Optionally the output list can be search for
+  a string or regex (passed on to grep internally).
+  <BR>
+  NOTE: If command line arguments are specified, the first one
+  is takend to be the &lt;searchword&gt; parameter, if it isn't
+  a local directory name.
+  <DL>
+    <DT>Example:</DT>
+    <DD><KBD>acewho fw w2 wh</KBD><BR>
+	lists the files that are edited in w2/ and wh/ and
+	only displays lines containing the string <KBD>fw</KBD>.
+	It is just shorter for :<BR>
+	<KBD>acewho w2 wh | grep fw</KBD>
+        <DD>
+
+    <DD><P>
+        <KBD>acewho w1</KBD><BR>
+        lists all files in w1/ that being edited.
+	</P></DD>
+
+    <DD><P>
+        <KBD>acewho edgrif -a</KBD><BR>
+	lists files edited by edgrif across all local directories
+	(overriding the personal DIRECTORIES list).
+	</P></DD>
+  </DL>
+</P>
+
+<!--#exec cgi="/cgi-bin/footer" -->

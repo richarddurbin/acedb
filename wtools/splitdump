@@ -1,0 +1,11 @@
+#!/usr/local/bin/gawk -f
+#
+# script to split up ACEDB dump output into classes
+#
+# $Id: splitdump,v 1.3 1997-07-23 14:48:20 rd Exp $
+
+($1 == "//" && $2 == "Class") { if (file) close(file)
+				file = $3 ".ace" }
+
+{ if (file) print > file }
+ 

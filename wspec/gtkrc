@@ -1,0 +1,7 @@
+style "fixed_font"
+{
+  font = "7x13"
+}
+
+widget "acedb editor window.*GtkText" style "fixed_font"
+

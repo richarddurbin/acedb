@@ -1,0 +1,38 @@
+================================================================================
+                              AceDB/ZMap - August MAR
+
+
+Executive summary.                                                                        
+------------------                                                                        
+
+Acedb: new commands for accessing smap functions, new code to support wormbase
+and some bug fixes.
+
+ZMap: consolidation of GFF parsing, user interface and server interface. Start
+of mini-project for Richard Durbin to display read-pair information using
+ZMap.
+
+
+Acedb
+-----
+
+SMap is the component in acedb that constructs virtual sequences and positions
+features on that virtual sequence. Two new commands (smapdump and smaplength)
+provide more access to smap.
+
+Various modifications and fixes have been made to the code to support
+wormbase, e.g. new models for accession numbers, GFF dumping tags.
+
+Various fixes have been made to the AQL code to fix a number of reported bugs.
+
+
+ZMap
+----
+
+Improvements to GFF parser, navigator part of the user interface and the
+underlying server interface.
+
+Richard Durbin has provided a mini-project that will make use of ZMap to
+display read-pairs across a chromosome. This will provide the first proper
+use-case of the ZMap code and interface.
+

@@ -1,0 +1,742 @@
+<HTML>
+
+<HEAD>
+<TITLE>AcedB "Magic" tags used for making virtual sequences</TITLE>
+</HEAD>
+
+<BODY>
+
+
+<H1>AcedB "Magic" tags used for making virtual sequences</H1>
+
+<h2>"Old" v.s. "New"</h2>
+
+<H3>Overview</H3>
+
+<P>Up until the advent of the SMap tags and associated code, it used to be that
+the virtual sequences were only built in the context of a Feature Map (FMap)
+and only Sequence class objects could be mapped. This meant that the
+Sequence class contained <b>everything</b>, genes, homologies, everything.
+This document refers to this as the "Old" style of mapping.
+
+<P>With the arrival of SMap a number of changes were made:
+
+<ul>
+  <li>building of the virtual sequence was physically separated out from the FMap,
+      display via FMap is just one of the things that might be done with a virtual sequence.
+  <li>any class can now be mapped on to a virtual sequence using the SMap tags
+  <li>tags that specify individual features are being moved out of the Sequence
+      class into other SMap'd classes.
+</ul>
+
+<P>In this document we will distinguish between tags that are
+used by the code for building a virtual sequence and mapping features on to it,
+as opposed to tags that are used by FMap in the display of the virtual sequence.
+
+<P>We will also look at tags that are being moved out of the Sequence class in to
+their own classes, this has already happened for homologies with some very useful
+consequences as we shall see later.
+
+<H3>Tag Sets</H3>
+
+<P>A "tag set" is a set of tags and data that occur in a defined order and can be processed
+by acedb code regardless of the class they appear in.
+These tag sets are colour coded in this document to help
+identify the significant parts of the tag set:
+
+<P><pre><code><font color=red>feature_tag</font> <font color=green>[anonymous tag and object reference]</font> <font color=purple>[feature specific tags and data]</font>
+</pre></code>
+
+<P>Where:
+
+<P><font color=red>feature_tag</font> is the tag that the code searches for and locates
+on to find out what sort of feature it is processing.
+
+<P><font color=green>anonymous tag and object reference</font> are sometimes included
+to allow insertion in to the tag set of object references of arbitrary class (this is also known
+as the "tag2 system"). Although this tag must be present, the code does not use it, hence both it and
+the object reference following it at completely user defineable.
+
+<P><font color=purple>feature specific tags and data</font> are the tags and data that specify the feature.
+
+<P>Some examples:
+
+<P><pre><code><font color=red>Source_Exons</font><font color=purple> Int UNIQUE Int</font>
+
+<font color=red>Homol</font> <font color=green>DNA_homol ?Sequence XREF DNA_homol</font> <font color=purple>?Method Float Int Int Int Int #Homol_info</font>
+</pre></code>
+
+
+
+<h2>The "Old" Sequence class Tag Sets</h2>
+
+<P>The sequence class contains a number of tags used by the code to prepare virtual
+sequences, they are highlighted in the sequence class below as:
+
+<P><pre><code>?Sequence <b>DNA</b> UNIQUE ?DNA UNIQUE Int		// Int is the length
+	  Structure  From	<font color=red>Source</font><font color=purple> UNIQUE ?Sequence</font>
+				<font color=red>Source_Exons</font><font color=purple> Int UNIQUE Int</font> // start at 1
+		     <font color=red>Subsequence</font><font color=purple> ?Sequence XREF Source UNIQUE Int UNIQUE Int</font>
+
+                     <font color=red>Clone_left_end</font><font color=purple> ?Clone XREF Clone_left_end UNIQUE Int</font>
+		     <font color=red>Clone_right_end</font><font color=purple> ?Clone XREF Clone_right_end UNIQUE Int</font>
+
+          Origin  <font color=red>Genetic_code</font><font color=purple>  UNIQUE ?Genetic_code</font>    // specify a different genetic coding.
+                  <font color=red>Method</font><font color=purple> UNIQUE ?Method UNIQUE Float</font>	// score
+
+	  <font color=red>Visible</font>	Title UNIQUE ?Text
+	  		Other_name ?Text	// for repeats
+			<font color=purple>Matching_Genomic ?Sequence XREF Matching_cDNA</font>
+		 	<font color=purple>Matching_cDNA ?Sequence XREF Matching_Genomic</font>
+			<font color=purple>Corresponding_protein UNIQUE ?Protein XREF Corresponding_DNA</font>
+		  	<font color=red>Clone</font><font color=purple> ?Clone XREF Sequence </font>
+          	        <font color=purple>Locus ?Locus XREF Sequence</font>
+			<font color=red>Paired_read</font><font color=purple> ?Sequence XREF Paired_read</font>          // dl 020110
+
+                                  etc.
+	  		<font color=purple>Reference ?Paper XREF Sequence</font>
+			<font color=purple>Expression_construct ?Clone</font>	// archaic
+			<font color=purple>Expr_pattern ?Expr_pattern XREF Sequence</font>
+		// tag2 system: names of all objects following next tag are shown in the 
+		//   general annotation display column as "tag:objname"
+
+
+          Properties    <font color=red>Genomic_canonical</font>
+			cDNA cDNA_EST
+			     <font color=red>EST_5</font>		       // Indicate whether this is a 5' or 3' read [010423 dl]
+			     <font color=red>EST_3</font>
+			Coding	<font color=red>CDS</font><font color=purple> UNIQUE Int UNIQUE Int</font> // start, end in spliced DNA coords,
+                                                          // default:  1, end-of-CDS
+			<font color=red>Start_not_found</font><font color=purple> UNIQUE  Int</font> // Gives position of start frame for protein
+                                                    // translation when start of CDS is before first
+                                                    // exon in this object (should be in range 1 -> 3).
+			End_not_found
+                        <font color=red>Show_in_reverse_orientation</font>    // Draw 3' reads in reverse orientation [010423 dl]
+
+
+          <font color=red>Splices</font>	<font color=red>Confirmed_intron</font><font color=purple>  Int Int #Splice_confirmation</font>
+			<font color=red>Predicted_5</font><font color=purple> ?Method Int Int UNIQUE Float</font> // (x, x+1) or (x, x-1)
+			<font color=red>Predicted_3</font><font color=purple> ?Method Int Int UNIQUE Float</font> // (x, x+1) or (x, x-1)
+
+          <font color=red>Oligo</font><font color=purple> ?Oligo XREF In_sequence Int UNIQUE Int</font>	// for OSP and human mapping mostly
+
+          <font color=red>Assembly_tags</font><font color=purple>	Text Int Int Text</font> // type, start, stop, comment
+
+          <font color=red>Allele</font><font color=purple> ?Allele XREF Sequence UNIQUE Int UNIQUE Int UNIQUE Text</font>
+		// start, stop, replacement sequence
+		// if an insertion point Text is transposon name (distinguished
+		// by containing non ACTG letters), and (n, n+1) = T A, so indicates 
+		// direction (if known).
+		// if a deletion, put '-' as the replacement sequence
+
+          <font color=red>EMBL_feature</font><font color=purple>  CAAT_signal	Int Int Text #EMBL_info</font>
+			<font color=purple>GC_signal	Int Int Text #EMBL_info</font>
+			<font color=purple>allele_seq	Int Int Text #EMBL_info</font>
+                                   etc.
+                        <font color=purple>conflict	Int Int Text #EMBL_info</font>
+			<font color=purple>LTR             Int Int Text #EMBL_info</font>
+			<font color=purple>terminator      Int Int Text #EMBL_info</font>
+		// EMBL_features are for legitimate EMBL feature table entries only
+
+          <font color=red>Homol</font>	<font color=green>DNA_homol</font>   <font color=purple>?Sequence XREF DNA_homol ?Method Float Int Int Int Int #Homol_info</font>
+		<font color=green>Pep_homol</font>   <font color=purple>?Protein XREF DNA_homol ?Method Float Int Int Int Int #Homol_info</font>
+		<font color=green>Motif_homol</font> <font color=purple>?Motif XREF DNA_homol ?Method Float Int Int Int Int #Homol_info</font>
+		// We will generate a column for each distinct ?Method.  So for
+		// distinct Worm_EST and Worm_genomic columns, use ?Method objects
+		// Worm_EST_Blastn and Worm_genomic_Blastn.
+
+          <font color=red>Feature</font><font color=purple> ?Method Int Int UNIQUE Float UNIQUE Text #Feature_info</font>
+		// Float is score, Text is note
+		// note is shown on select, and same notes are neighbours
+		// again, each method has a column double-click shows the method.
+		// Absorb Assembly_tags?
+
+
+
+
+?Splice_confirmation <font color=red>cDNA</font>
+		     <font color=red>EST</font>
+		     <font color=red>Homology</font>
+		     <font color=red>UTR</font>
+		     <font color=red>False</font>
+
+</code></pre>
+
+
+
+<h2>The "New" SMap and Feature Tag Sets</h2>
+
+
+<pre>=======================================================================================
+Here is something to be discussed, with the addition of new classes we have a problem
+we didn't have so much with the sequence stuff....with sequence class, the use of
+allele tag was already defined and so unlikely to be changed.....
+
+This is not now so true...the tag allele can be used in other contexts, like following
+an SMap tag......it all becomes more tricky....
+
+      /* Really we should check that the Allele tag is in the correct format here,
+       * there is a big question about how/if we want to go down this road.....
+       * We don't want to do this sort of checking at this level because the
+       * performance implications are BAD....but we do have a problem because with Smap
+       * the same tag may be used in one object as part of the Smap tags and in another
+       * to signify that an object is an allele etc.... */
+
+
+- we could do nothing which the approach the old code took......
+
+- we could check the models every time we call smapconvert and make sure that the tags
+  we need to process are in the correct format...complex but possible
+
+- we could take Keiths suggestion of having "Properties" tag which basically says that
+  anything following is a magic tag so if you change it you may screw things up.
+
+The last sounds like a workable half way house.....
+=======================================================================================
+</pre>
+
+
+
+<P>The new tags can be neatly split into tags that give the mapping of the feature on the
+virtual sequence and those that specify the type and attributes (as required by the acedb code)
+of a feature.
+
+
+<H2>Feature Mapping Tag Sets</H2>
+
+<h3>The Old Style Tags: supported but deprecated</h3>
+
+<P>The Sequence class contains two mapping tag sets:
+
+<P><pre><code>?Sequence
+
+     Structure From <font color=red>Source</font> <font color=purple>UNIQUE ?Sequence</font>
+                    <font color=red>Subsequence</font> <font color=purple>?Sequence XREF Source UNIQUE Int UNIQUE Int</font>
+</pre></code>
+
+<P>These tags are <b>only</b> recognised within a Sequence class object, acedb will continue to process
+them but they are maintained for backwards compatibility only.
+
+<P>See <a href="#source_exons">below</a> for a discussion of the Source_exons tag.
+
+
+<h3>The New SMap Tags</h3>
+
+<P>The new SMap tag set provides a much more flexible and sophisticated mechanism for creating virtual
+sequences. The full tag set is:
+
+<P><pre><code>SMap <font color=red>S_Parent</font> <font color=green>UNIQUE &lt;anonymous parent tag&gt; UNIQUE &lt;anonymous parent object&gt; XREF &lt;xref tag in parent object&gt; </font>
+     <font color=red>S_Child</font> <font color=green>&lt;anonymous child tag&gt; &lt;anonymous child object&gt; XREF &lt;xref tag in child object&gt;</font> <font color=purple>UNIQUE Int UNIQUE Int #SMap_info</font>
+</code></pre>
+
+<P>It is a core assumption of SMap that each child object has just one parent, hence the plethora of UNIQUE
+tags following <font color=red>S_Parent</font>, note that you do need to make <b>both</b>
+the anonymous tag and the anonymous object reference UNIQUE.
+
+<P>The <font color=red>S_Child</font> tag set specifies the mapping of a child object in its parent but can also
+specify other information about the child including any gaps in the alignment of child to parent. This information
+is specified in the <font color=purple>SMap_info</font> sub-model described <a href="#smap_info">below</a>.
+
+<P>Here is an example of how to specify the tags for some fictious classes, the XREFs are a bit arcane but are
+very important as an aid to curation in ensuring that all the correct child-parent tags are created and maintained
+as objects are added to the database. (Note that only the SMap tags have been included.)
+
+<P><pre><code>// Chromosome has no parent and can only have link objects as children.
+//
+?Chromosome Remark Text
+            SMap  S_Child  Link_child ?Link XREF Chromosome_parent  UNIQUE Int UNIQUE Int #SMap_info
+
+// Link can have chromosome or link as parent, and link, sequence or allele as children.
+//
+?Link Remark Text
+      SMap  S_Parent  UNIQUE Chromosome_parent  UNIQUE ?Chromosome XREF Link_child
+                             Link_parent        UNIQUE ?Link       XREF Link_child
+            S_Child   Sequence_child ?Sequence XREF Link_parent  UNIQUE  Int  UNIQUE Int  #SMap_info
+                      Link_child     ?Link     XREF Link_parent  UNIQUE  Int  UNIQUE Int  #SMap_info
+                      Allele_child   ?Allele   XREF Link_parent  UNIQUE  Int  UNIQUE Int  #SMap_info
+
+// Sequence can have sequence or link as parent and sequence or allele as children.
+//
+?Sequence
+          SMap  S_Parent  UNIQUE  Sequence_parent  UNIQUE  ?Sequence  XREF Sequence_child
+                                  Link_parent      UNIQUE  ?Link      XREF Sequence_child
+                S_Child   Sequence_child ?Sequence XREF Sequence_parent  UNIQUE Int UNIQUE Int #SMap_info
+                          Allele_child   ?Allele   XREF Sequence_parent  UNIQUE Int UNIQUE Int #SMap_info
+
+// allele can have sequence or link as parent and no children.
+//
+?Allele Remark Text
+        DNA  UNIQUE  ?DNA  UNIQUE  Int
+        SMap  S_Parent  UNIQUE Sequence_parent UNIQUE ?Sequence XREF Allele_child
+                               Link_parent     UNIQUE ?Link     XREF Allele_child
+        Genetic_code UNIQUE ?Genetic_code
+        Method UNIQUE ?Method
+	CDS UNIQUE Int UNIQUE Int
+</code></pre>
+
+<P>A couple of points are worth making here. In this example the anonymous tags have "_parent" and "_child" suffices,
+this is for clarity only, you can call these tags what you like.
+Also note how the UNIQUE tags following S_Parent ensure there is only ever one parent object, while the tags following
+S_Child allow an arbitrary number of child objects.
+
+
+<P><a name="smap_info"></a>The intention of SMap_info is two fold: to provide additional information
+about the way that a child maps to a parent (i.e. gaps, scaling and mismatches) but also to provide a
+mechanism for optimising the way virtual sequences are constructed by allowing the acedb code
+to find out certain crucial bits of information about the contents of a child object without having to go to the
+expense of loading the object from disk.
+
+<P><pre><code>
+#SMap_info Mapping Align Int UNIQUE Int UNIQUE Int 
+                         // if no Align assume whole alignment is ungapped starting at 1 in child
+			 // Otherwise one row per ungapped alignment section of parent_start child_start [length]
+			 // first int is position in parent, second in child
+			 // third int is length - only necessary when gaps in both sequences align
+	           AlignDNAPep Int UNIQUE Int UNIQUE Int
+                   AlignPepDNA Int UNIQUE Int UNIQUE Int
+                         // These two tags are analogous to Align, but scale length
+	                 // for the case of a dna alignment to peptide or vice-versa.
+                   Mismatch Int UNIQUE Int
+                         // start end of mismatch region in child coords
+                         // mismatches from this sequence or children are ignored
+                         // if no end then only the specified base
+                         // if no Ints then mismatches OK anywhere in this sequence
+	   Content Homol_only               // useful for -nohomol gff option
+		   Feature_only             // useful for -nofeature gff option
+                   Method UNIQUE ?Method    // methods used in child (optional)
+		   No_DNA                   // child contains no dna, SMap can be more efficient in building dna sequence.
+	   Display Max_mag UNIQUE Float	// don't show if more bases per line
+		   Min_mag UNIQUE Float	// don't show if fewer bases per line
+</code></pre>
+
+<P>Currently only the Mapping tags are supported by acedb as these are essential for supporting gapped alignments
+and mismatches. The Content and Display tags would provide good optimisations but do not provide extra function.
+
+
+
+<a name="source_exons"></a><h3>The Source_exons Tag Set, Feature mapping or Feature Type ?</h3>
+
+<P>The Source_exons tag set is given as part of the mapping tag set in the Sequence class:
+
+<P><pre><code>Structure From Source UNIQUE ?Sequence
+               Source_Exons Int UNIQUE Int // start at 1
+          Subsequence ?Sequence XREF Source UNIQUE Int UNIQUE Int
+</code></pre>
+
+<P>and should properly be added to the SMap tag set since the SMap code must use the Source_exons
+tag both to position exons and also to retrieve the spliced DNA for the exons. The tag set is almost
+meaningless without the context of a parent object, although it is possible to specify a Sequence
+class object that contains DNA and also Source_exons and in this case the Source_exons tag could be
+interpreted in the context of the DNA.
+
+<P>The tag is also used however by the acedb code to recognise an object that is "gene-like" and should be
+dumped, displayed etc in that style. So to some extent the tag has a double purpose and is described both here
+and in the following section on <a href="#type_tag_sets">Type</a> tag sets.
+
+<P>In summary then the Source_exons tag set conveys both mapping and type information.
+
+
+
+<a name="type_tag_sets"></a><H2>Feature Type Tag Sets</H2>
+
+<P>The purpose of these tags is to tell acedb what <b>type</b> of feature it is going to
+map onto the virtual sequence. The code needs this information for several reasons:
+
+<ul>
+  <li>The code needs to know what type of feature it is going to create.
+  <li>The code needs to know the format of the data it is to read in, this is different
+      for different features etc., the tag tells the code which format to expect.
+  <li>Different User interactions are required for different features.
+  <li>Different drawing styles are required for different features, this requirement
+      could be removed if more styles were added to the method but it is currently
+      true that the drawing style is triggered by the type tag.
+</ul>
+
+<P>i.e. something has to tell the code what sort of thing it is supposed to produce and what
+format the data it needs will be in.
+
+<P>Each tag set has tags and data in a predefined and constant format, provided the tag and
+data format are preserved, this tag set can be embedded in any class that is to be
+smapped onto the virtual sequence. The following sections describe each tag set that
+can be used for virtual sequence building.
+
+<!-- cut/paste this...
+<H3>Feature</H3>
+
+<P><pre><code>
+</code></pre>
+
+<P>
+
+<P><pre><code>
+Example:    
+</code></pre>
+-->
+
+<H3>Source_exons</H3>
+
+<P><pre><code><font color=red>Source_Exons</font><font color=purple> Int UNIQUE Int</font>
+</code></pre>
+
+<P>Used to specify a set of exons (and by implication introns) for genes, pseudogenes, transcripts and
+all things gene like. Each pair of integers specifies the start/end coordinates of an exon.
+The coordinates are local, i.e. run from 1 to
+length of span of exons. Although the order the pairs come in doesn't matter
+(they are sorted by the code), each pair must be given smallest coordinate first.
+You can specify a length of 1 by putting the same coordinate twice.
+
+<P><pre><code>
+Example:    Source_Exons  1  25    // first exon starts at 1
+                         58  72
+                        157 178
+                        200 200    // exon of length 1.
+                        345 379    // last exon end coordinate is also the span of the exons.
+</code></pre>
+
+
+<H3>Confirmed_intron</H3>
+
+<P><pre><code><font color=red>Confirmed_intron</font><font color=purple>  Int Int #Splice_confirmation</font>
+
+?Splice_confirmation <font color=purple>cDNA</font>
+		     <font color=purple>EST</font>
+		     <font color=purple>Homology</font>
+		     <font color=purple>UTR</font>
+		     <font color=purple>False</font>
+</code></pre>
+
+<P>Used to specify an intron that has been confirmed alignment data from various sources (EST, cDNA etc.).
+
+<P><pre><code>
+Example:    Confirmed_intron  Int Int #Splice_confirmation</font>
+</code></pre>
+
+
+
+<H3>Allele</H3>
+
+<P><pre><code><font color=red>Allele</font>
+</code></pre>
+
+<P>Specifies an allele, alleles are drawn in various styles to indicate transposon insertions,
+other insertions or deletions.
+
+<P><pre><code>
+Example:    errrr... Allele (!)
+</code></pre>
+
+
+
+<H3>Homol</H3>
+
+<P><pre><code><font color=red>Homol</font> <font color=green>&lt;anonymous homol tag&gt; &lt;anonymous homol object&gt; XREF &lt;xref tag in homol object&gt;</font> <font color=purple>?Method Float Int Int Int Int #Homol_info</font>
+</code></pre>
+
+<P>		// We will generate a column for each distinct ?Method.  So for
+		// distinct Worm_EST and Worm_genomic columns, use ?Method objects
+		// Worm_EST_Blastn and Worm_genomic_Blastn.
+   
+
+
+<P><pre><code>
+Example:    <font color=red>Homol</font> <font color=green>DNA_homol   ?Sequence XREF DNA_homol</font> <font color=purple>?Method Float Int Int Int Int #Homol_info</font>
+                  <font color=green>Pep_homol   ?Protein  XREF DNA_homol</font> <font color=purple>?Method Float Int Int Int Int #Homol_info</font>
+                  <font color=green>Motif_homol ?Motif    XREF DNA_homol</font> <font color=purple>?Method Float Int Int Int Int #Homol_info</font>
+</code></pre>
+
+<H3>Feature</H3>
+
+<P><pre><code><font color=red>Feature</font> <font color=purple>?Method Int Int UNIQUE Float UNIQUE Text #Feature_info</font>
+
+I dont' know what uses this at the moment.....
+#Feature_info	EMBL_dump UNIQUE EMBL_dump_YES
+				 EMBL_dump_NO
+			// overrides for embl dump based on method
+	        EMBL_qualifier Text
+			// additional to those in the method, includes '/'
+		Frame UNIQUE	Frame_0 /* in frame */
+				Frame_1	/* 1 base then codon */
+				Frame_2 /* 2 bases then codon */
+</code></pre>
+
+<P>Used for any feature that can be positioned on a virtual sequence and may have some sort of score and text
+for display. The text is a note describing the feature and will be dumped or displayed.
+
+<P><pre><code>
+Example:    
+</code></pre>
+
+<H3>Feature</H3>
+
+<P><pre><code>
+</code></pre>
+
+<P>
+
+<P><pre><code>
+Example:    
+</code></pre>
+
+<H3>Feature</H3>
+
+<P><pre><code>
+</code></pre>
+
+<P>
+
+<P><pre><code>
+Example:    
+</code></pre>
+
+<H3>Feature</H3>
+
+<P><pre><code>
+</code></pre>
+
+<P>
+
+<P><pre><code>
+Example:    
+</code></pre>
+
+<H3>Feature</H3>
+
+<P><pre><code>
+</code></pre>
+
+<P>
+
+<P><pre><code>
+Example:    
+</code></pre>
+
+
+<H3>Feature</H3>
+
+<P><pre><code>
+</code></pre>
+
+<P>
+
+<P><pre><code>
+Example:    
+</code></pre>
+
+
+<H3>Feature</H3>
+
+<P><pre><code>
+</code></pre>
+
+<P>
+
+<P><pre><code>
+Example:    
+</code></pre>
+
+<H3>Feature</H3>
+
+<P><pre><code>
+</code></pre>
+
+<P>
+
+<P><pre><code>
+Example:    
+</code></pre>
+
+
+<H3>Feature</H3>
+
+<P><pre><code>
+<font color=red>Clone_left_end</font><font color=purple> ?Clone XREF Clone_left_end UNIQUE Int</font>
+<font color=red>Clone_right_end</font><font color=purple> ?Clone XREF Clone_right_end UNIQUE Int</font>
+</code></pre>
+
+<P>Specifies what exactly...I can't remember....look this up.....
+
+<P><pre><code>
+Example:    Clone_left_end B0303 XREF Clone_left_end 425
+</code></pre>
+
+
+
+
+<H3>"Feature"</H3>
+
+<P><pre><code>
+Feature ?Method Int Int UNIQUE Float UNIQUE Text #Feature_info
+
+// Float is score, Text is note
+		// note is shown on select, and same notes are neighbours
+
+
+
+      _Transcribed_gene = str2tag("Transcribed_gene") ;
+NOT IN CVS MODELS.WRM
+
+
+
+      _Clone_left_end = str2tag("Clone_left_end") ;
+      _Clone_right_end = str2tag("Clone_right_end") ;
+
+		     Clone_left_end ?Clone XREF Clone_left_end UNIQUE Int
+		     Clone_right_end ?Clone XREF Clone_right_end UNIQUE Int
+
+
+      _Splices = str2tag("Splices") ;
+      _Confirmed_intron = str2tag("Confirmed_intron") ;
+      _Predicted_5 = str2tag("Predicted_5") ;
+      _Predicted_3 = str2tag("Predicted_3") ;
+
+	  Splices	Confirmed_intron  Int Int #Splice_confirmation
+			Predicted_5 ?Method Int Int UNIQUE Float // (x, x+1) or (x, x-1)
+			Predicted_3 ?Method Int Int UNIQUE Float // (x, x+1) or (x, x-1)
+
+
+
+      _EMBL_feature = str2tag("EMBL_feature") ;
+	  EMBL_feature  CAAT_signal	Int Int Text #EMBL_info
+			GC_signal	Int Int Text #EMBL_info
+			TATA_signal	Int Int Text #EMBL_info
+			allele_seq	Int Int Text #EMBL_info
+			conflict	Int Int Text #EMBL_info
+			mat_peptide	Int Int Text #EMBL_info
+			misc_binding	Int Int Text #EMBL_info
+			misc_feature	Int Int Text #EMBL_info
+			misc_signal	Int Int Text #EMBL_info
+			misc_recomb	Int Int Text #EMBL_info
+			modified_base	Int Int Text #EMBL_info
+			mutation	Int Int Text #EMBL_info
+			old_sequence	Int Int Text #EMBL_info
+			polyA_signal	Int Int Text #EMBL_info
+			polyA_site	Int Int Text #EMBL_info
+			prim_binding	Int Int Text #EMBL_info
+			prim_transcript Int Int Text #EMBL_info
+			promoter	Int Int Text #EMBL_info
+			repeat_region	Int Int Text #EMBL_info
+			repeat_unit	Int Int Text #EMBL_info
+			satellite	Int Int Text #EMBL_info
+			sig_peptide	Int Int Text #EMBL_info
+			variation	Int Int Text #EMBL_info
+			enhancer	Int Int Text #EMBL_info
+			protein_bind	Int Int Text #EMBL_info
+			stem_loop	Int Int Text #EMBL_info
+			primer_bind	Int Int Text #EMBL_info
+			transit_peptide Int Int Text #EMBL_info
+			misc_structure  Int Int Text #EMBL_info
+			precursor_RNA   Int Int Text #EMBL_info
+			LTR             Int Int Text #EMBL_info
+			terminator      Int Int Text #EMBL_info
+		// EMBL_features are for legitimate EMBL feature table entries only
+
+
+
+
+      _Method = str2tag("Method");
+
+
+
+      if (bsFindTag(obj, str2tag("Source_Exons")))
+	convertExons(conv_info, &exons_found) ;
+
+Source_Exons Int UNIQUE Int // start at 1
+
+  
+      if (bsFindTag(obj, str2tag("CDS")))
+	convertCDS(conv_info, &cds_min, exons_found);
+
+			Coding	CDS UNIQUE Int UNIQUE Int // start, end in spliced DNA coords,
+                                                          // default:  1, end-of-CDS
+				CDS_predicted_by ?Method Float // score of method
+
+
+
+
+  if (bsFindTag(obj, str2tag("Start_not_found")))
+    convertStart(conv_info, cds_min) ;
+
+
+			End_not_found
+			Start_not_found UNIQUE  Int // Gives position of start frame for protein
+                                                    // translation when start of CDS is before first
+                                                    // exon in this object (should be in range 1 -> 3).
+
+
+
+
+      if (bsFindTag(conv_info->obj, str2tag("Assembled_from")))
+	sinf->flags |=  SEQ_VIRTUAL_ERRORS ;
+
+NOT IN CVS MODELS
+	  
+
+      if (bsFindTag(conv_info->obj, str2tag("Genomic_canonical")) ||
+	  bsFindTag(conv_info->obj, str2tag("Genomic")))
+	sinf->flags |=  SEQ_CANONICAL ;
+
+	  Properties    Genomic_canonical
+
+
+
+
+
+      Clone = str2tag("Clone") ;
+		  	Clone ?Clone XREF Sequence 
+
+
+      Show_in_reverse_orientation = str2tag("Show_in_reverse_orientation") ;
+      Paired_read = str2tag("Paired_read") ;
+NOT IN CVS MODELS
+
+
+in method obj
+      Join_blocks = str2tag("Join_blocks") ;
+
+
+
+      _Tm = str2tag ("Tm") ;
+      _Temporary = str2tag ("Temporary") ;
+
+        Status Temporary (in ?Oligo)
+
+
+	  _EST = str2tag("EST") ;
+	  _cDNA = str2tag("cDNA") ;
+	  _Homology = str2tag("Homology") ;
+	  _UTR = str2tag("UTR") ;
+	  _False = str2tag("False");
+?Splice_confirmation cDNA
+		     EST
+		     Homology
+		     UTR
+		     False
+
+
+
+		seg->key = _CDS ;
+
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<HR>
+<ADDRESS><a href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</a></ADDRESS>
+<!-- hhmts start -->
+Last modified: Thu Oct 23 15:37:46 BST 2003
+<!-- hhmts end -->
+</BODY>
+</HTML>

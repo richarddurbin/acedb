@@ -1,0 +1,123 @@
+
+======================================================================
+                  ACEDB ftp/distribution site
+======================================================================
+
+----------------------------------------------------------------------
+Reorganisation:
+
+The AceDB ftp site has been reorganised, the recommended way to
+download acedb software is via the web site pages. In the future most
+news about new versions will be put on the web pages and only minimal
+README & NOTES files will be available on the ftp site. To use the
+web-based downloads go to:
+
+	http://www.acedb.org/Software/Downloads/
+
+This will not prevent you from using the ftp site directly but you
+should read the below notes on the reorganisation:
+
+There are now three main directories for downloads:
+
+
+./SUPPORTED    	- The full public release of stable AceDB code (currently 4_9a),
+		  you can use this code with confidence as it has been thoroughly
+		  tested and used. This code will not however have all the latest
+		  features/bug fixes.
+
+./MONTHLY	- This is the latest monthly build of our development code, we test
+		  all monthly builds and many annotators/researchers at the Sanger
+		  Centre use these builds as their standard code.
+
+./DAILY		- This is a snapshot of the development code, there is NO GUARANTEE
+		  that this code will work or is safe to use. You can look at the
+		  latest code here and perhaps use it to test some new feature that
+		  you have requested. You should NOT use this code on your most
+		  cherished and loved database.....
+
+
+The directories contain README files giving further guidance to their
+contents.
+
+
+----------------------------------------------------------------------
+AceDB 4_7, 4_8 and 4_9:
+
+We have just released AceDB 4_9a, this is the latest, stable, supported
+version of AceDB. 4_9 is a release version of the 4_8 code and is
+fully compatible with 4_8 and 4_7. 4_9a replaces 4_7l completely.
+
+All of these versions should be fully compatible, we have encountered no
+problems here at Sanger, if you do find a problem please mail
+acedb@sanger.ac.uk giving as many details as you can.
+Always include:
+
+	- the output of  "uname -a" (so we have OS details)
+
+	- the version of ace you are using including compile date
+	  (the "-version" command line option will print out this
+	   information for any AceDB program).
+
+	- the database you were using
+
+	- what you were doing when the problems arose
+
+
+----------------------------------------------------------------------
+Current downloads:
+
+As well as the aforementioned downloads you will also find -
+
+README		this file (there are further README's inside each
+	 	subdirectory).
+
+ace.4_7l/	The previous release of AceDB, look in the directory
+		for README/NOTES/INSTALL files (ace.4 & ace.4_7 are
+		pointers to this directory).
+
+celegans/	pointer to the C. elegans wormbase ftp site.
+
+cygwin/		contains the cygwin code used to provide winace
+
+doc/		Assorted AceDB documentation.
+
+extras/		Various Acedb add-on's, e.g. AcePerl, AcePython etc.
+
+training/	Acedb course materials.
+
+
+
+----------------------------------------------------------------------
+Obsolete:
+
+The following will be phased out:
+
+macace/		Macintosh version of AceDB, now seriously out of
+		date, when the Mac provides a more Unix-like
+		interface we will provide a more up to date
+		version of AceDB.
+
+archive, junk,	These will all either be replaced or updated.
+oldversions,
+useful, webace,
+winace,
+winace.old,
+xv
+
+
+
+----------------------------------------------------------------------
+Information:
+
+Further information about AceDB can be obtained from
+
+	- the bionet newsgroup bionet.software.acedb
+	- the AceDB web site http://www.acedb/org/
+	- the AceDB document archive at http://probe.nalusda.gov:8000/acedocs/index.html.
+
+	- you can mail questions to developers to acedb@sanger.ac.uk
+
+
+======================================================================
+                  ACEDB ftp/distribution site
+======================================================================

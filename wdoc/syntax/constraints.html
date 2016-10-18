@@ -1,0 +1,30 @@
+<head>
+<title>AceDB constraints.wrm syntax</title>
+
+<LINK rel=stylesheet type="text/css"
+href="../wdoc.css"
+title="Style sheet for wdoc documents">
+
+</head>
+
+<body>
+<h2>AceDB constraints.wrm syntax</h2>
+
+<p>A constraint given on a class will be checked
+before saving an object while parsing an ace file
+if an object does not satisfy the constraint,
+you will get a parse error</p>
+
+<h3>Example</h3>
+
+<pre>Class Paper
+Constraints "Year:1"</pre>
+
+<p>This will imply that you cannot edit a paper that does not have a
+Year value, i.e. field 1 right of Year must be non void</p>
+
+<p>any acedb query <code>LOCAL</code> to a single object is valid
+don t use: <code>FIND</code> or <code>FOLLOW</code> constructions</p>
+
+</body>
+</html>

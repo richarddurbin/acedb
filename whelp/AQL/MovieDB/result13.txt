@@ -1,0 +1,8 @@
+"Marlon Brando"	75
+"Al Pacino"	59
+"Robert De Niro"	56
+"Martin Sheen"	59
+"Dennis Hopper"	63
+"Harrison Ford"	57
+"Sean Connery"	69
+"Anthony Perkins"	67

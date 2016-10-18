@@ -1,0 +1,10 @@
+// $Id: tables,v 1.2 1994-08-23 14:55:01 srk Exp $
+newnem.codon
+newnem.intron3
+newnem.intron5
+zk637.trinuc
+newnem.atg
+zk637.intron3
+zk637.intron5
+zk637.atg
+ref.hist

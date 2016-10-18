@@ -1,0 +1,30 @@
+# $Id: SGI_GCC_DEF,v 1.1 1996/04/25 14:22:10 fw Exp $
+ 
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+########### for the SGI Silicon Graphics & gcc ##################
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+NAME = SGI 
+# Compiler used to build 3rd party libraries 
+LIBCC = gcc
+
+COMPILER = gcc -g -DNO_LEFT_CASTING -Wall -DACEDB4 `../w3rdparty/include-config -I/usr/local/include`
+LINKER = gcc -g
+
+LIBS = `../w3rdparty/libs-config -L/usr/local/lib` -lm -lreadline -lcurses
+RANLIB_NEEDED = false
+
+.c.o:
+	$(CC) -c $*.c
+
+#################################################################
+#################################################################

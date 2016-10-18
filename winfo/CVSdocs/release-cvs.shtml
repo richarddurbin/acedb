@@ -1,0 +1,288 @@
+<!--#config timefmt="%d-%b-%C%y, %I:%M %p" -->
+<!--#set var="title" value="Management of the Acedb releases" --> 
+<!--#set var="icon" value="acedb.gif" --> 
+<!--#set var="author" value="fw" --> 
+<!--#set var="keywords" value="acedb, CVS, source code control, change management, branch, patches" -->
+<!--#set var="description" value="Information about how to use the CVS source code repository for making releases and bug-fix patches." -->
+
+<!--#exec cgi="/cgi-bin/header" -->
+
+<H1 ALIGN=CENTER> Management of the Acedb releases </H1>
+
+Ensure these three environmental variables are set correctly.
+
+<PRE>
+<B>CVSROOT</B> /nfs/disk100/acedb/CVS_ACEDB
+<B>CVSEDITOR</B> emacs
+<B>CVSREAD</B>
+</PRE>
+
+<HR>
+
+<H2>Make a release from the main branch</H2>
+
+<P>The current development is happening in acedb version "4.8". The
+ number 4 is the version number, and '8' is the release number. 
+ We use even release numbers for the inhouse development, and odd release 
+ numbers for the public releases. (e.g. 4.5 or 4.7)</P>
+
+<P>The next public release will carry the acedb-version stamp "4.9", which
+ will be a stable and tested version of our 4.8 development tree.
+ These instructions are for the case that we will officially release
+ that version 4.9 into the public domain. </P>
+
+<P><B>Note</B>, that the words <I>check in</I> and <I>check out</I> are used in
+ the way RCS used to deal with those actions, under CVS they have
+ slightly different meanings and the names of CVS commands don't match
+ the original meaning from RCS.</P>
+
+<P>Check the file wnq/aceversion.c and make sure it shows the version
+ number that your release is about to carry. If not, edit the file and 
+ check it back in.</P>
+
+<P>Make sure all collaborators have checked in and tested their last set of changes
+ that are to be present in the release. Ask all of them to stop checking in changes
+ for the day the release is being made.</P>
+
+<P>Note that they can start checking out files and continue to work on new things
+ for the next release straight away, just keep everybody from checking files back in for
+ a half a day or so.</P>
+
+<P>All of the following instructions should be carried out on a disk
+ with quite a bit of disk-space left.</P>
+
+<PRE>
+% mkdir acedb4_9
+% cd acedb4_9
+% cvs checkout `cat $CVSROOT/DIRECTORIES.full-release`
+% ln -s wmake/makefile .
+</PRE>
+
+<P>This will give you a working copy of the up-to-date status of the repository.
+You are hereby duplicating your working directory in a different directory.</P>
+
+<P>The advantage is that you'll only be given files that have a current entry in the repository.
+All those files like emacs leftovers (<CODE>#filename.c#</CODE> or <CODE>filename.c~</CODE>)
+are thereby excluded from that new working copy.</P>
+
+<P>You are now ready to freeze the source code tree in the version
+that you have just retrieved :</P>
+
+<PRE>
+% cvs tag RELEASE-4_9 `cat $CVSROOT/DIRECTORIES.full-release`
+</PRE>
+
+The CVS manual explains this command as follows:
+
+<I>
+<P>Use this command to assign symbolic tags to the nearest repository
+versions to your working sources. The tags are applied immediately to
+the repository ...</P>
+
+<P>One use for tags is to record a snapshot of the current sources
+when the software freeze date of a project arrives. As bugs are fixed
+after the freeze, only those changed sources that are to be part of
+the release need to be re-tagged.</P>
+
+<P>The symbolic tags are meant to permanently record which revisions
+of which files were used in creating a software distribution. The
+<B>checkout</B> and <B>update</B> commands allow you to extract an
+exact copy of a tagged release at any time in the future, regardless
+of whether files have been changed, added, or removed since the
+release was tagged.</P>
+</I>
+
+<P>This working copy you have is now exactly what the release is going to
+ contain. Please do not run the tag command on your own everyday working copy
+ as it may contain temporary files or your local versions may not
+  be exactly what's represented in the repository. We have experienced
+  problem with tagging local working copies, so <B>please</B> make
+  sure you tag a working copy that you have just pulled out of the repository.</P>
+
+<P>The temporary <CODE>acedb4_9/</CODE> working directory can be
+ removed. It was only used to tag the repository more precisely.
+ Now that the tag is in the CVS system, the files for the release can be
+ pulled out of the repository directly based on the
+ version tag in the CVS tree.</P>
+
+<P>The repository is now in a post-release state, which increases the
+ current minor release number by one to the next even number.  The
+ post-release state is therefor reflected by the even number, which
+ marks the latest version of the repository as an inhouse development
+ version.<P>
+
+<P>Go to your normal working copy and ...
+<PRE>
+ update your normal working copy from the repository.
+ check out <CODE>wnq/aceversion.c</CODE>
+ edit the ACEDB_RELEASE number to be the next even number ('10' in this example)
+ check the file back in
+</PRE>
+
+<P>Now is a good time to ask every collaborator to <B>update their normal working copy</B> 
+ of the main-trunk as the tagging is complete now.  They are now free to
+ continue working on the tree, but all edits from now on won't be part
+ of this new release.</P>
+
+
+
+<P>Now tar up the directories and pre-compile the binaries as usual.
+ I will describe a tried and tested way that works for me.</P>
+
+<P>Log in as user 'acedb'. You will now have access to a set of 
+ commands in ~acedb/cvs_scripts/ . I use the script <CODE>makerelease</CODE>
+ which will compile the specified release. Type :</P>
+<PRE>
+% makerelease 4_9 4_8 &lt;username&gt;
+</PRE>
+
+<P>This command will extract the previously tagged version of the source
+ tree (i.e. <CODE>RELEASE-4_9</CODE>) from the repository and compile
+ a set of given programs. It uses the same script used in the overnight-build
+ to do this. The resulting directories will be
+<PRE>
+  ~acedb/RELEASE.4_9/bin.ALPHA_4
+                     bin.SOLARIS_4
+                     ...
+  ~acedb/RELEASE.4_9.BUILD/w1
+                           w2
+                           w...
+			   ...
+</PRE>
+<P>The second argument given to <CODE>makerelease</CODE> is the version-id
+ of the last release. This is used to create a file containing changes
+ between the current release and the previous one.<BR>
+ The third argument is your username, which will be used to mail
+ error reports to, if something goes wrong.
+</P>
+
+
+<BR>
+<BR>
+
+<H2>Applying bugfixes to an existing release</H2>
+
+<P>Once a version has been frozen and released, you will probably receive
+bug-reports from users. Without disturbing the main development it is possible
+to fix those bugs in the released version and re-release a patched version.</P>
+
+<P>If the bug fix is going to impact the current development code, apply and test the fix 
+there first. You will be working in your normal working directory, which you use with the
+<A HREF="acedb-cvs.shtml">AC scripts</A>.</P>
+
+<P>Carefully choose which changes are really necessary to be included in the patch-release,
+simple changes that otherwise crash the program are a good candidate, but changes in the
+layout of buttons or new functions should wait till the next major release.</P>
+
+<P>First you need to create a branch from the main trunk of the tree which is rooted
+at the previous release tag, in this case <CODE>RELEASE-4_9</CODE>. The commands are:</P>
+
+<PRE>
+% cd &lt;anywhere&gt;
+% cvs rtag -b -r RELEASE-4_9 release-4_9-patches `cat $CVSROOT/DIRECTORIES.full-release`
+</PRE>
+
+This is what the CVS manual has to say about the last command :
+
+<I>
+<P>The <B>rtag</B> command can be used to create a branch.  The
+ <B>rtag</B> command is much like <B>tag</B>, but it does not require
+ that you have a working copy of the module. ...</P>
+<P>The '<B>-b</B>' flag makes <B>rtag</B> create a branch (rather than a symbolic revision name).
+'<B>-r RELEASE-4_9</B>' says that this branch should be rooted at the node (in the revision tree) that
+corresponds to the tag '<B>-r RELEASE-4_9</B>'. Note that the numeric revision number that matches '<B>-r RELEASE-4_9</B>'
+will probably be different from file to file. The name of the new branch is '<B>-r RELEASE-4_9-patches</B>', ...</P>
+</I>
+
+To fix a problem with the public 4.9 release you need a working copy of the branch you've just created :
+
+<PRE>
+% mkdir acedb4_9-patches
+% cd acedb4_9-patches
+% cvs checkout -r RELEASE-4_9-patches `cat $CVSROOT/DIRECTORIES.full-release`
+</PRE>
+
+<P>All patch-level bugfixes happen in this working directory. The state
+ of this branch will be frosen at regular intervals, and the different stages
+ of the patch-branch will get the ACEDB_UPDATE letter 'a', 'b' 'c' etc.</P>
+
+<P>Assume a user has reported a problem in
+ <CODE>w4/parse.c</CODE>. You know of a quick fix, but you have more
+ elaborate changes in mind for future releases.  Apply all those
+ elaborate changes (which may involve restructuring modules, renaming
+ files etc.)  in the main trunk of the development. This is the normal
+ working copy of your tree normally accessed by the <A
+ HREF="acedb-cvs.shtml">AC scripts</A>.</P>
+
+<P>In order to apply the quick-fix version of the fix to the patch-branch, go to the
+<CODE>acedb4_9-patches</CODE> working copy you've just created.</P>
+
+<PRE>
+% cd acedb4_9-patches/w4
+% cvs edit parse.c
+% emacs parse.c
+----- apply the quick fix in the file ------
+% cvs commit parse.c
+</PRE>
+
+<P>If you want to more or less duplicate a main trunk change in the patch-branch, it is
+ helpful to use the split-screen mode of emacs, when you have a read-only main trunk
+ version in the left screen-half, and you're editing the checked out branch copy in the
+ right half, whilst comparing the two side-by-side.</P>
+
+<P>Normal rules apply to this working directory of the patch-branch,
+ make sure you are up-to-date with the modifications other people are
+ making to the patch-branch.  Communicate to other collaborators which
+ fixes should be applied and when. Keep a record of your fixes for the
+ <B>release notes</B>. It is important to maintain a <B>well-kept
+ changelog</B> for the patch-branch, so users know if there bug has been
+ fixed in the next patch level.</P>
+
+<BR>
+<BR>
+
+<H2>Releasing a bug-fixed patch-version</H2>
+
+Once you have applied all the necessary bug-fixes to patch-branch, it may be time to
+release a patched version, In this case RELEASE-4_9a. You need to freeze the
+current state of the branch and give this frozen state a letter code.
+
+<PRE>
+% cd acedb4_9-patches
+% cvs edit wnq/aceversion.c
+% emacs wnq/aceversion.c
+----- change ACEDB_UPDATE letter to 'a' ------
+% cvs commit wnq/aceversion.c
+% cvs tag RELEASE-4_9a `cat $CVSROOT/DIRECTORIES.full-release`
+</PRE>
+
+
+Now tar up the directories and pre-compile the binaries as usual, but this time
+based on the new RELEASE-4_9a tag.
+<PRE>          -------- Instructions to follow ---------</PRE>
+
+
+<P>The working copy of the patch-branch should be treated in the same way as the
+normal working directory. That means all collaborators who have worked on patch-level
+bug-fixes should update their working copy of the patch-branch.</P>
+
+<PRE>
+% cd acedb4_9-patches
+% cvs update w*
+</PRE>
+
+<P>You can now apply more bugfixes and free the patch-branch some
+ other time, with a new update letter, and re-release by repeating the
+ steps above.</P>
+
+
+<P><B>NOTE :</B> There will only ever be one patch branch per major release number, it's name
+ will be <CODE>&lt;public-release-tag&gt;<I>-patches</I></CODE>. The different states
+ of this branch are tagged as update-release 'a', 'b' 'c' etc.</P>
+
+<BR><BR>
+
+<!--#exec cgi="/cgi-bin/footer" -->
+
+
+

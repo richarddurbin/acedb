@@ -1,0 +1,176 @@
+<HTML>
+
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - May 2000</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<H1>ACEDB User Group Newsletter -  May 2000</H1>
+
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+<P>This month includes a tip about what to do if your queries seem not to be
+working correctly (thanks to Lisa French for raising this), a change to the
+way acedb programs find their help files, yet more fmap stuff (cascading menus
+for column configuration) and a change to acedb user group meetings.
+
+<a name="General"></a><H2>General News</H2>
+
+<p>The latest monthly release is now available from <code>~acedb/RELEASE.DEVELOPMENT</code>.
+
+
+<a name="New"></a><H2>New Features</H2>
+
+<a name="Finding"></a><h3>Finding acedb configuration and help files...</h3>
+
+<p>Simon Kelley has added code to help with providing common configuration/help files
+for multiple databases.
+Acedb programs will now search in two directories: the database directory
+itself and an installation-wide directory where
+default copies of help files and config files and scripts can exist.
+These are used when the files cannot be found in the database directory.
+
+<P>The database directory is found as before from the command line, or the
+value of $ACEDB. The installation-wide directory is found on unix from the value of $ACEDB_COMMON, or
+/usr/share/acedb, or /usr/local/acedb (in that order), on windows it is found from a
+registry entry set up by the installation program on windows.
+
+<p>This now makes it possible to put common acedb files in to a single directory on the
+system and find them by setting $ACEDB_COMMON in the users shell environment. This can be
+used to replace the existing mechanism of maintaining symbolic links within database
+directories.
+
+<p>The following resources will be searched for in the installation-wide directory if not
+found in the database:
+
+<pre><code>
+wspec/wingtkrc
+wspec/gtkrc
+wspec/winfonts.wrm
+wspec/xfonts.wrm
+wspec/psfonts.wrm
+wspec/acedbrc
+wspec/table.menu
+wspec/sysclass.wrm
+wspec/displays.wrm
+wspec/table.menu
+wscripts/*
+whelp/*
+</code></pre>
+
+<p>Note that acedb will use only the contents of $ACEDB/whelp or
+$ACEDB_COMMON/whelp, <b>it won't mix files from both</b>.
+
+<p>The following are searched for only in the database dir.
+
+<pre><code>
+database/*
+rawdata/*
+wquery/*
+rawdata/*
+wgf/*
+wspec/layout.wrm
+wspec/models.wrm
+wspec/constraints.wrm
+wspec/subclasses.wrm
+wspec/lock.wrm
+wspec/serverconfig.wrm
+wspec/serverpasswd.wrm
+wspec/server.wrm
+wspec/datainfo.wrm
+wspec/options.wrm
+wspec/passwd.wrm
+wspec/database.wrm
+</code></pre>
+
+
+<a name="Specifying"></a><h3>Specifying a database directory from xace...</h3>
+
+<p>Simon has also introduced a new command line option to xace which allows you
+to choose a database when you start xace.
+
+<p>If you type:
+
+<pre><code>
+xace -promptdb
+</code></pre>
+
+<p>you will prompted to choose a database directory via the usual "file chooser"
+type window.
+
+
+<a name="fmap"></a><h3>fmap cascading menus...</h3>
+
+<p>Fmap column configuration via <B>Column pull down menus</B> was covered in the
+last newsletter but this unfortunately did not work correctly. If several columns of
+different kinds were drawn over the top of each other, only one of the columns could
+be manipulated via the pull down menus. This months code fixes this by providing
+a cascading pull down menu which shows all the columns drawn in one position and
+allows separate configuration of all those columns. Try it out and if you have
+problems send mail to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<a name="Query"></a><H2>Query not working any more...</H2>
+
+<p>Lisa French reported a problem with a number of queries just not working
+correctly. Investigation showed that the database indexing (which provides rapid
+accessing of object field/tags) was incorrect, this does not mean the database
+will lose data but it does mean that queries do not work correctly until the next
+full reindex of the database.
+
+<p>tace provides a "read models" command optionally with a full reindex, this option
+has now been added to xace as well (on the main panel, click the "Edit.." button
+and select the "Read Models and full reindex" option). If you are having
+problems with queries clearly not working correctly then you should try reindexing
+the database. Before you do this you should note two points:
+<ol>
+  <li>You must be able to get write access to the database.
+  <li>A complete reindex can take some time and no one else
+      will be able to update the database while this is happening.
+</ol>
+
+<p>This problem shouldn't happen and we hope to fix it soon, you should only suspect
+that your database is corrupted if reindexing does not fix the problem.
+
+
+<a name="User"></a><H2>User Group meetings</H2>
+
+<p>Acedb user group meetings happen every month and are a chance to talk to
+acedb developers and to other users. Dan Lawson suggested that it would be
+good if we could have some short overviews in these meetings of various
+parts of acedb. He has volunteered to start with an overview of
+"super link" and "link" objects as used in the worm database in Junes
+user group meeting. If you would like to contribute an overview or would like
+to see some topic covered then send suggestions to
+<A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+
+<H2>Next User Group Meeting - D213, 2.30pm, Thursday 11th May</H2>
+
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon May 21 15:39:25 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

@@ -1,0 +1,51 @@
+
+		The ACEDB Documentation directory.
+		==================================
+
+Documents in acedb come in three flavours:
+
+      wdoc - is for documentation of all interfaces to acedb code, should contain
+             descriptions of programming interfaces (how to use routines,
+             tricks/tips etc.), descriptions of command & config file interfaces
+             (e.g. how to set up the the server etc.). These files are distributed
+             with the source.
+             CURRENTLY this directory contains some specs, I think these would be
+             better placed in winfo.
+
+     whelp - is for online help for acedb. These files are distributed with the
+             source.
+
+     winfo - is for all other types of acedb documentation, e.g. the "Futures"
+             documents that describe possible future directions for acedb, in
+             depth design documents etc.
+             These documents are not usually distributed with the source.
+
+Documents that you add to this directory should fall in the last category above.
+The intention of this directory is act as a repository for the many different bits
+of acedb documentation that are just floating around.
+
+Do not just chuck stuff in at the winfo level. Instead use an existing
+sub-directory, if you can't find one then add a new one and add a comment
+to the list at the bottom of this document explaining its contents.
+
+If your document is referenced from the acedb home page, you can have the latest
+copy from CVS made available on the acedb home page automatically. You need to
+edit the script ~acedb/cvsscripts/updateftpdoc, see the examples of the "Futures"
+documents or whelp etc.
+
+
+
+
+sub-directory		Contents
+-------------		--------
+
+CVSdocs			Various documents about how to use our CVS repository,
+			do builds/tagging of releases etc.
+
+Futures			html pages displayed from acedb homepage describing
+			possible future developments of acedb.
+
+Newletters		repository of the monthly newsletters.
+
+Proposals		for proposals for code or whatever. A better place than
+			wdoc for specs.

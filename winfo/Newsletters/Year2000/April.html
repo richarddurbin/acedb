@@ -1,0 +1,268 @@
+<HTML>
+
+
+<!-- Stuff you should alter is highlighted with "***" -->
+
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - April 2000</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<H1>ACEDB User Group Newsletter - April 2000</H1>
+
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+<P>This month includes news about the release of the socket based version of the
+acedb server/client, BioJava, new web pages, NFS and acedb, and how to find out what
+version of an acedb program you are using.
+
+
+<!-- delete any headings that are not needed for this month -->
+
+<a name="General"></a><H2>General News</H2>
+The latest monthly build is acedb 4_8c and this code can be found in the
+<B><CODE>~acedb/RELEASE.DEVELOPMENT</CODE></B> directories. This code
+introduces some new features in to acedb and fixes a number of bugs
+reported by users.
+
+
+
+<a name="New"></a><H2>New Features</H2>
+
+<a name="web"></a><H3>New web pages</H3>
+
+<P>Acedb has a number of useful utility programs which can be found
+in the <CODE><B>wtools</B><CODE> directory of a distribution. These
+include a number of useful programs to do things like:
+
+<dl>
+  <dt><b>tagsInModel:</b>
+  <dd>count the number of classes and tags in a models file.
+  <dt><b>modelCheck:</b>
+  <dd>checks your wspec/models.wrm for inconsistencies.
+</dl>
+
+<p>
+You can find a description/listing of these utilities at:
+<b>http://www.acedb.org/Development/wdoc/acetools.html</b>
+
+
+
+<a name="sockets"></a><H3>The sockets based server</H3>
+
+<P>A beta test release of the new socket based server is now available for
+testing. This version will eventually replace the RPC version that existed before.
+
+<P>Main highlights are:
+<ul>
+  <li>Uses standard sockets instead of RPC which has meant that we have been
+      able to do a Windows port.
+  <li>New password system for authentificating users means that NFS mounts
+      of password directories are no longer required between client and server.
+</ul>
+
+<P>See http://www.acedb.org/Development/wdoc/SOCKET_aceserver.html for further details,
+including how to set the new server up.
+
+<P>See http://www.acedb.org/Development/wdoc/SOCKET_interface.html for detail of how
+to interface to the server via sockets (perhaps from Perl or from Java - see next item).
+
+
+<a name="BioJava"></a><H3>BioJava and acedb</H3>
+
+<P>Matthew Pocock and Thomas Down have been doing to Java what BioPerl did to Perl (!),
+that is providing some useful BioInformatics packages/functions for access from Java
+code. Here's a summary from them of what BioJava does:
+
+<p>Among the first clients for the ACeDB socket server is the BioJava socket client.
+BioJava is an open source Java library for representing biological information, such
+as sequences, and for interfacing with commonly used biological programs.
+
+<P>As ACeDB is a
+very common database for storing genomic information, we decided to write a client so
+that all of this information can be accessed.
+BioJava attempts to be pure-java where
+possible, and as Java already provides a socket library, the new Acedb socket-based server is
+ideal for us.
+The
+BioJava socket client can be used to view the ACeDB objects either as Java objects
+or alternatively as BioJava sequences, features and annotation bundles.
+The BioJava client is fast, with nearly all the overhead being in the
+server. It was also easy to implement a multi-session client, requiering about 600 lines
+of code for both the client implementation and the Java representation of the ACeDB
+object
+model.
+
+<p>In combination with the BioCorba and ensemble initiatives, this provides a strong
+foundation for platform-independant biological visualisation and data-processing.
+
+
+
+<a name="fmap"></a><H3>fmap</H3>
+Aprils monthly build code (available from <B><CODE>~acedb/RELEASE.DEVELOPMENT</CODE></B>)
+has some changes to fmap and its also probably worth including a
+reminder here about a facility that has been in fmap for a while now:
+
+<P><B>New stuff</B>
+<UL>
+  <LI><B>Column pull down menus:</B> columns in fmap are now displayed with a
+      pull down menu at the top of each column signified by a small down pointing
+      triangle. Pressing the right mouse button with the pointer over this triangle
+      will display a menu of features that can toggled on/off for that column (overlap,
+      bump, cluster etc). So its now possible to configure an fmap interactively
+      via menus.
+  <LI><B>No redraw on column selection:</B> Ian Dunham pointed out that it is moderately to
+      very irritating that the entire fmap gets redrawn every time that you turn on/off
+      a particular column. This is especially so if you want to turn off several columns
+      and then see the fmap displayed. Well now you can do this, use the right button
+      to display the main fmap menu and select the "No Automatic Redraw of Columns" item.
+      Now you can turn on/off columns and fmap will not be redrawn. To get the fmap redrawn,
+      again display the main fmap menu and select the "Recalculate" item. You can return
+      to the automatic redrawing after every column selection by selecting the
+      "Automatic Redraw of Columns" item from the main fmap menu.
+</UL>
+
+<P><B>Reminder</B>
+<UL>
+  <LI><B>Preserve column settings:</B> fed up with turning on/off the same old settings
+      each time you display an fmap ? Make sure you are running xace 4_8b or later and
+      by default fmap will remember column settings so that they are retained with each
+      new sequence displayed in the fmap window.
+</UL>
+
+
+<a name="NFS"></a><H3>NFS & acedb</H3>
+<P>From time to time there have been problems with database corruption that are not caused
+by bugs in acedb (no honestly its true...), they are caused by problems with NFS
+when the network is very heavily loaded. In normal use acedb cannot detect when
+NFS fails to write data to a disk because the network is jammed up, this can result
+in the database getting corrupted because only partial updates are performed or
+sometimes because NFS ends up writing NULL bytes (i.e. junk) into the database.
+
+<P>What can be done ?
+
+<P>As a user we recommend that you do not do updates to a database when the network is very slow (i.e.
+it takes perhaps a minute or more for xace and other programs to respond). As an administrator, if you
+notice that acedb applications have started crashing with a particular database
+and that this coincides with a period of network trouble you should suspect database
+corruption.
+
+<P>If updates have to be made and the network is giving trouble it is possible to
+set the database up so that NFS will signal acedb if a write to a disk fails, this has
+a severe performance penalty in that all updates take 5 to 10 times longer.
+It has the
+advantage that acedb will be able to detect and warn the user about updates that have
+failed.
+You should only resort to this if you absolutely have to update the database and the
+network is very bad.
+To set up the database for this you need to edit the file wspec/database.wrm
+and uncomment the "SYNC_WRITE" line (note that this only available from acedb 4_8c onwards)
+and restart any programs you want to access the database with.
+As soon as the network is stable you should
+comment out this line again otherwise performance will be very poor, especially with
+multiple users of the database.
+
+
+
+<a name="Bugs"></a><H2>Bugs</H2>
+
+<a name="version"></a><H3>What version of acedb am I using ?</H3>
+
+<P>Crucial to a bug report is for the developers to know what version of acedb you were
+using, but how do you find this out ? In Acedb 4_8c there are serveral ways to find out.
+
+<P>If you normally start your acedb program from some kind of menu
+(e.g. Carol Scotts program for accessing the human databases) then:
+
+<p><b>xace - the graphical program:</b> Usually the version you are
+using is displayed in the title bar of the
+main window (you will see something like "ACEDB 4_8c, current_database", where
+"current_database" is your working database, e.g. humace).
+If not, then click on the "Admin.." button in the main window, then click on "Program Status"
+in the popup window that appears, this will show a text window which shows the version at the
+top as "Program xace....." followed by "Using ACEDB 4_8c,....".
+
+<p><b>tace - the command line program:</b> At the <code>"acedb&gt;"</code> prompt,
+type in <code>"status"</code>
+and tace will display current program status, at the top is the version information:
+<code>" //    ACEDB 4_8c,....."</code>.
+
+
+<P>If you normally start your acedb program directly by typing <code>"xace"</code>,
+<code>"tace"</code> etc. then:
+
+<p>For any Acedb program (e.g. tace, xace, saceserver etc.) you can use the
+<code><b>"-version"</b></code> command line flag to see what version of code
+you are running:
+<pre>
+&gt; xace -version
+ACEDB 4_8c compiled on: Apr 10 2000 12:07:51
+&gt;
+</pre>
+
+<p>If the program won't even run (so you can't use the <code><b>"-version"</b></code>
+option), you can use the unix <code><b>what</b></code> command like this:
+<pre><code>
+&gt; what /your/path/to/the/program/xace
+/your/path/to/the/program/xace:
+
+         ------------------------------------------------------------------------
+         ACEDB 4.8c,  compiled on: Apr 10 2000 12:07:51 
+         Copyright (c):  J Thierry-Mieg and R Durbin, 1998 
+
+                (loads more stuff which you can ignore)
+
+&gt;
+</code></pre>
+
+
+<a name="Debugging"></a><H3>Debugging - advanced users</H3>
+
+<P>tace is often used from scripts and this makes debugging of tace difficult because
+how do you start a debugger running against tace when its started perhaps by a nest
+of perl scripts ?
+
+<p>A simple technique for doing this is to put a <code>sleep()</code> call into tace
+so that the program will pause giving you enough time to attach a debugger (e.g. gdb,
+ddd etc.) to the process that the program is running in. You will find the debugger
+will show you tace paused at the <code>sleep()</code> call, you can then instruct
+the debugger to run until this call finishes and then stop. You can now step
+through the program in the debugger.
+
+<p>To help with this tace now has a <code><b>"-sleep"</b></code> command line flag
+which allows you to set a delay at the start of the tace <code>main()</code> function,
+e.g. to get tace to wait for 60 seconds:
+<pre>
+&gt; tace -sleep 60 /my/database
+
+</pre>
+
+
+<H2>Next User Group Meeting - D213, 2.30pm, Thurs, 13th April</H2>
+
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon May 21 15:35:43 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

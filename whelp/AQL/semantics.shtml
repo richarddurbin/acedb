@@ -1,0 +1,211 @@
+<HTML>
+
+<HEAD>
+  <TITLE>AQL - operators and types (Version 4_7h)</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="./aql.css" TITLE="Style sheet for AQL docs">
+</HEAD>
+<BODY>
+
+
+<H2>AQL - operators and types (Version 4_7h)</H2>
+
+<H3>Arithmetic operators `+' `-' `*' `/'</h3>
+
+<P>The table shows which combinations of value types are allowed for arithmetic operators.</P>
+
+<TABLE BORDER=1 WIDTH=100%>
+
+<TR ALIGN=CENTER>  <TH></TH>
+        <TH WIDTH=13%>Int</TH>
+	<TH WIDTH=13%>Float</TH>
+	<TH WIDTH=13%>Object</TH>
+	<TH WIDTH=13%>String</TH>
+	<TH WIDTH=13%>Date Type</TH>
+	<TH WIDTH=13%>Boolean</TH>
+</TR>
+
+<TR ALIGN=CENTER> <TH>Int</TH>   
+      <TD BGCOLOR=#a0a0a0>*</TD>      <!-- int/int -->
+      <TD BGCOLOR=#e0e0e0>O<SUP>(1)</SUP></TD>      <!-- int/float -->
+      <TD>-</TD>                      <!-- int/obj -->
+      <TD>-</TD>                      <!-- int/string -->
+      <TD>-</TD>                      <!-- int/date -->
+      <TD>-</TD>                      <!-- int/boolean -->
+</TR>
+
+<TR ALIGN=CENTER> <TH>Float</TH> 
+      <TD BGCOLOR=#e0e0e0>O<SUP>(1)</SUP></TD>      <!-- float/int -->
+      <TD BGCOLOR=#a0a0a0>*</TD>      <!-- float/float -->
+      <TD>-</TD>                      <!-- float/Object -->
+      <TD>-</TD>                      <!-- float/string -->
+      <TD>-</TD>                      <!-- float/date -->
+      <TD>-</TD>                      <!-- float/boolean -->
+</TR>
+
+<TR ALIGN=CENTER> <TH>Object</TH>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-</TD>
+</TR>
+
+<TR ALIGN=CENTER> <TH>String</TH>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-</TD>
+</TR>
+
+<TR ALIGN=CENTER> <TH>Date Type</TH>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-<SUP>(2)</SUP></TD>
+      <TD>-</TD>
+</TR>
+
+<TR ALIGN=CENTER> <TH>Boolean</TH>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-</TD>
+</TR>
+
+</TABLE>
+
+<P>Value type combinations showing a '-' will raise error code <A HREF=errorcodes.shtml#ERRNO896>896</A>.</P>
+
+<UL>
+  <LI>(1) - Integers are treated as Floats in mixed expressions.
+  <LI>(2) Special <A HREF=overview.shtml#DATE_FUNC>date-functions</A> 
+     to provide operations on date/time values.
+</UL>
+
+<P>
+
+<H3>Unary minus operator -</H3>
+
+Only numeric value-types (i.e. Int, Float) are allowed to be negated in this way.
+
+<H3>Modulo operator %</H3>
+
+<P>Both sides of the modulo expression have to be integers. 
+   Other value types will raise error code <A HREF=errorcodes.shtml#ERRNO897>897</A>.</P>
+
+<P>The modulo operator can be written as an infix operator as :<BR>
+ <TT>&nbsp;x % y</TT><BR>
+or as a function :<BR>
+ <TT>&nbsp;<EM>modulo</EM> (x, y)<BR>
+       &nbsp;<EM>mod</EM> (x, y)</TT>
+
+<P>All versions are evaluated in the same way.</P>
+
+<H3>Comparison operators `==' `!=' `&gt;' `&lt;' `&gt;=' `&lt;=' (and 'like')</H3>
+
+<P>The table shows which combinations of value types are allowed for comparisons.</P>
+
+<TABLE BORDER=1 WIDTH=100%>
+
+<TR ALIGN=CENTER>  <TH></TH>
+        <TH WIDTH=13%>Int</TH>
+	<TH WIDTH=13%>Float</TH>
+	<TH WIDTH=13%>Object</TH>
+	<TH WIDTH=13%>String</TH>
+	<TH WIDTH=13%>Date Type</TH>
+	<TH WIDTH=13%>Boolean</TH>
+</TR>
+
+<TR ALIGN=CENTER> <TH>Int</TH>   
+      <TD BGCOLOR=#a0a0a0>*</TD>      <!-- int/int -->
+      <TD BGCOLOR=#e0e0e0>O<SUP>(1)</SUP></TD>      <!-- int/float -->
+      <TD>-</TD>                      <!-- int/Object -->
+      <TD>-</TD>                      <!-- int/string -->
+      <TD>-</TD>                      <!-- int/date -->
+      <TD BGCOLOR=#e0e0e0>O<SUP>(5,6)</SUP></TD>    <!-- int/boolean -->
+</TR>
+
+<TR ALIGN=CENTER> <TH>Float</TH> 
+      <TD BGCOLOR=#e0e0e0>O<SUP>(1)</SUP></TD>      <!-- float/int -->
+      <TD BGCOLOR=#a0a0a0>*</TD>      <!-- float/float -->
+      <TD>-</TD>                      <!-- float/Object -->
+      <TD>-</TD>                      <!-- float/string -->
+      <TD>-</TD>                      <!-- float/date -->
+      <TD BGCOLOR=#e0e0e0>O<SUP>(6,7)</SUP></TD>    <!-- float/boolean -->
+</TR>
+
+<TR ALIGN=CENTER> <TH>Object</TH>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD BGCOLOR=#a0a0a0>*<SUP>(4)</SUP></TD>	<!-- Object/Object -->
+      <TD BGCOLOR=#e0e0e0>O<SUP>(2,3)</SUP></TD>  <!-- Object/String -->
+      <TD>-</TD>
+      <TD BGCOLOR=#e0e0e0>O<SUP>(6,7)</SUP></TD><!-- Object/Boolean -->
+</TR>
+
+<TR ALIGN=CENTER> <TH>String</TH>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD BGCOLOR=#e0e0e0>O<SUP>(2,3)</SUP></TD><!-- String/Object -->
+      <TD BGCOLOR=#a0a0a0>*<SUP>(3)</TD>        <!-- String/String -->
+      <TD>-</TD>
+      <TD BGCOLOR=#e0e0e0>O<SUP>(6,7)</SUP></TD>
+</TR>
+
+<TR ALIGN=CENTER> <TH>Date Type</TH>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD>-</TD>
+      <TD BGCOLOR=#a0a0a0>*</TD>
+      <TD BGCOLOR=#e0e0e0>O<SUP>(6,7)</SUP></TD>
+</TR>
+<TR ALIGN=CENTER> <TH>Boolean</TH>
+      <TD BGCOLOR=#e0e0e0>O<SUP>(5,6)</SUP></TD>
+      <TD BGCOLOR=#e0e0e0>O<SUP>(6,7)</SUP></TD>
+      <TD BGCOLOR=#e0e0e0>O<SUP>(6,7)</SUP></TD>
+      <TD BGCOLOR=#e0e0e0>O<SUP>(6,7)</SUP></TD>
+      <TD BGCOLOR=#e0e0e0>O<SUP>(6,7)</SUP></TD>
+      <TD BGCOLOR=#a0a0a0>*<SUP>(6)</SUP></TD>
+</TR>
+</TABLE>
+
+<P>Value type combinations showing a '-' will raise error code <A HREF=errorcodes.shtml#ERRNO884>884</A>.</P>
+
+<UL>
+<LI>(1) - integers are treated as floats.
+<LI>(2) - The object's name is compared to the text value.
+<LI>(3) - The operator <B>like</B> is allowed for comparisons involving string-types to perform wildcard matching.<BR>
+          Possible wildcards are '*' which matches any number of any characters, and '?' which matches any one character.
+<LI>(4) - Only '=' and '!=' operators are allowed, when two Object values are compared to each other,
+          otherwise error code <A HREF=errorcodes.shtml#ERRNO886>886</A> is raised.
+<LI>(5) - Integers are converted to Booleans - zero = FALSE, non-zero is TRUE. A NULL integer value is FALSE.
+<LI>(6) - Only '=' and '!=' operators are allowed, when a comparison involves a boolean value,
+          otherwise error code <A HREF=errorcodes.shtml#ERRNO885>885</A> is raised.
+<LI>(7) - Comparison between a Boolean and a non-boolean value (Float/Object/String/DateType) :
+          <BR>
+	  Any non-boolean value is said to be TRUE if a value exists, a NULL-value is treated as FALSE.
+</UL>
+
+<P>The value type of the comparison itself is Boolean. Therefore expressions such as 
+   'not ((val1 = val2) = false)' are legal. </P>
+
+
+
+<H3>Boolean operators `and' `or' `xor'</H3>
+
+<P>Rules (4) and (6) about comparison operators apply also to boolean operators.
+   The operator's result is itself an expression returning a boolean value.</P>
+
+
+<HR>
+<ADDRESS><A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A></ADDRESS>
+
+</BODY>
+</HTML>

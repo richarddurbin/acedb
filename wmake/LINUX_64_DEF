@@ -1,0 +1,74 @@
+# $Id: LINUX_64_DEF,v 1.7 2012-10-23 13:33:38 edgrif Exp $ #
+
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+############### ported to Linux by Ken Letovski    ##############
+############### wmake/LINUX_DEF    Feb-2-1993      ##############
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+###########    for generic intel-based LINUX   ##################
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+
+
+NAME = OPTERON
+
+
+# Set up pkg-config/gtk etc compile stuff...
+#PKGPATH = -local /software/acedb/gtk
+
+# while we need /software/acedb/gtk we also need to set the path for the pkgconfig:
+#
+# setenv PKG_CONFIG_PATH /software/acedb/gtk/lib/pkgconfig/:/usr/lib/pkgconfig:/usr/share/pkgconfig
+#
+
+
+
+
+# Compiler used to build 3rd party libraries 
+LIBCC = gcc
+
+COPT = -g
+
+#LOPT = -g -Xlinker -rpath -Xlinker /software/acedb/lib
+LOPT = -g
+
+GLIB_VER = glib-2.0
+GLIB_LIBS = `../w3rdparty/libs-config $(PKGPATH) $(GLIB_VER)` -lm -lcurses -lreadline
+
+GTKVER = gtk+-2.0
+#LIBS = -L/usr/X11R6/lib `../w3rdparty/libs-config $(PKGPATH) $(GTKVER)` -lm -lcurses -lreadline
+LIBS = -L/usr/X11R6/lib `../w3rdparty/libs-config $(PKGPATH) $(GTKVER)` -lX11 -lm -lcurses -lreadline
+
+COMPILER = gcc $(COPT) -Wall  -DACEDB4 `../w3rdparty/include-config $(PKGPATH) $(GTKVER)`
+
+LINKER = gcc $(LOPT)
+
+### Linux uses flex to emulate the standard 'lex' program
+LEX_LIBS = -lfl
+### flex -l emulates AT&T lex as accurately as possible
+LEX = flex
+LEX_OPTIONS = -l
+
+### linux may use bison with flag -y if yacc doesn't exist
+YACC = yacc
+YACC_OPTIONS =
+
+RPCGEN_FLAGS = -b -I -K -1
+
+AR_COMMAND = ar
+AR_OPTIONS = cru
+RANLIB_NEEDED = true
+
+#################################################################
+#################################################################
+ 
+ 
+ 
+ 

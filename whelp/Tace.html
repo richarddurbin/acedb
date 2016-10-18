@@ -1,0 +1,145 @@
+<!--  $Id: Tace.html,v 1.2 1999-06-25 14:50:41 fw Exp $  -->
+<HEAD>
+<TITLE> ACEDB user guide: tace </TITLE>
+</HEAD>
+
+<BODY BGCOLOR=#ffffff>
+
+<H1> Acedb user guide: tace </H1>
+
+<STRONG>tace</STRONG> is a command line interface to acedb.
+To start tace, set the environment variable ACEDB to point
+to your database directory and simply type
+<PRE>
+ % tace 
+</PRE>
+You can also override the environment setting and specify the
+database directory as the first command line argument :
+<PRE>
+ % tace /home/wormdb
+</PRE>
+
+The program will then open up the database and show the tace prompt
+"acedb&gt;". The fundamental concept in tace is the notion of an 
+<B>active KeySet</B>. A KeySet is a list of objects, which can be
+operated upon. The user could use a query to select a set of objects
+for the active keyset and then apply an edit command to all those 
+objects.<P>
+The next chapter list the possible commands that can be typed
+after the prompt.<BR>
+(command options inside [brackets] are optional, the vertical bar '|' indicates a choice of possible options, words in <I>italics</I> are values specified by the user.)<BR>
+All commands can be abbreviated to a certain point where they become
+ambigious. Command are not case-sensitive.
+
+<H2>Commands</H2>
+
+
+<DL>
+<DT><B>Quit</B></DT>
+  <DD>Exits the program without saving any changes.</DD>
+  <P>
+
+<DT><B>Classes</B></DT>
+  <DD>Give a list of all the visible class names and how many objects they contain. <BR>
+      See the document on <A HREF="Class_Configuration.html">Class
+      Configuration</A> to learn how the visibility of classes
+      can be configured.
+  </DD>
+  <P>
+
+<DT><B>Show [-h | -a | -p | -j] [-T] [-b <I>begin</I>] [-c <I>max</I>] [-f <I>filename</I>]  [-C] [[-t] <I>tag</I>] </B></DT>
+   <DD>
+   Shows the objects in the active set.<BR>
+   -T shows time stamps<BR>
+   -C ignore comments</BR>
+   </DD>
+   <P>
+
+<DT><B>Table-Maker <I>options</I></B></DT>
+   <DD>This command has a number of options that can be used to load/execute/manipulate 
+       <A HREF="Table_Maker.html">table-maker</A> definitions. The order of
+       options is important, not all options are valid with every mode of use.
+
+       <P><B>-active</B> : run the query over the active keyset
+	    rather than the whole class of column 1 of the definitions.</P>
+	    
+
+       <P><B>-j | -p | -h | -a</B> : use either of these options to display the
+          result table in one of the formats in the familiar choice of 
+	  Java/Perl/Human-readable/Acedb respectively</P>
+
+       <P><B>-o <I>outfile</I></B> : the result table will be written
+           to the specified file, rather than to the screen.</P>
+
+       <P><B>-b <I>start</I></B> : specify the start-point in the range 
+           of the calculation over the first column.</P>
+
+       <P><B>-c <I>max</I></B> : maximum number of objects to be included
+           in the calculation of the first column. If there are 200
+	   objects in column 1 you can range over objects 100 to 150
+	   using the options <CODE>-b 100 -c 50</CODE></P>
+       
+       <P><B>-title</B> : if this option is set, the names of column headers
+           are also printed in the output.</P>
+
+       <P><B>-s <I>objname</I></B> : this options saves a table-maker definition
+           to the database. The definitions have to be read from a file
+           or from an object. No calculations are performed, the program
+	   will simply report back saying &quot;<CODE>Table saved</CODE>&quot;.
+	   The object is written to Class <B>Table</B> under the given name.
+	   You need write access for this function to work.</P>
+
+       <P>You can use one of three ways to specify which table-definitions to load.</P>
+
+       <P><B>[-f] <I>filename</I></B> : load the definitions from a file.
+           Such files would typically be created by the function "Export defs"
+           in Table-Maker. The -f is optional. The <I>filename</I> will be
+	   treated relative to the current working directory.
+	   Command line parameters (see below) can be specified with this option.</P>
+
+       <P><B>-n <I>objname</I></B> : read the definitions from an existing object
+           in the database. The object with the name <I>objname</I> has to exist
+           in class <B>Table</B>. This is convienient way to access pre-defined
+	   definitions. 
+	   Command line parameters (see below) can be specified with this option.</P>
+
+       <P><B>= <I>def_command<CODE>\n</CODE>def_command<CODE>\n</CODE>def_command</I></B> :
+           a mode of loading definitions that is probably reserved for automatic scripts etc.
+           The entire edefinition can be specified literally on the command line.
+           The <I>def_commands</I> are separated by the escaped line-feed characters '\n'
+           The commands would be each line from the result of showing the Table-object
+	   in ace-format (see show -a). As the rest of line is taken as definitions
+	   no command line parameters can be substituted.</P>
+
+
+        <P>The rest of the line is taken as command line parameters. Such parameters are used
+	to substitue all %1, %2 %3 etc.. substitution directions in the text of the definitions.
+	If a parameter should contain multiple words is has to be quoted (i.e. object names containing spaces).
+	If the definitions contain parameters %1 and %2 the following command line can be issued :</P>
+
+	<P><CODE>acedb>  table-maker wquery/example.def "aa c" dddd</CODE></P>
+
+        <P>which will replace the directive %1 with 'aa c' and %2 with 'dddd'. Without
+	the quotes, dddd would have been treated as a third parameter.</P>
+
+	<P>The definitions are then parsed and executed, and the resulting table
+	is output in the specified format. At the end of the table a comment
+	states how many lines the table contains. The objects in the first column
+	become the new active keyset, so another column will state how many
+	different object are contained in column 1, before the "acedb&gt;" prompt returns
+	
+   </DD>
+
+
+</DL>
+
+<P>
+
+to <a href="TOC.html">Table of Contents</a><p>
+
+last edited: June 1999<p>
+
+
+</BODY>
+
+

@@ -1,0 +1,260 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - July 2002</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - July 2002</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<P>Several new features this month including a "-tsuser" option so you can
+fake who is doing the updates to a database (!), a "nosave" command so you
+can test scripts without destroying your favourite database, the fixing of
+numerous bugs and some stuff about the coming of Smap.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="General_News"></a><H2>General News</H2>
+
+<P>We continue to wade through the introduction of SMap into FMap and it
+continues to produce unexpected bugs but we are getting there.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="tsuser_option"></a><H3>New <code>-tsuser</code> command line option</H3>
+
+<P>All AceDB programs now accept a <code>-tsuser</code> commandline option
+of the format:
+
+<pre><code>-tsuser "new_username"</code>
+</pre>
+
+<P>By default the username for a database session is the userid you logged in with.
+You can use <code>-tsuser</code> to set a different username for the session. This is
+useful in at least two situations:
+
+<ol>
+  <li>If you are using various scripts to interface to tace or giface to make updates
+      to the database, you can use the <code>-tsuser</code> option to use the name of
+      the script instead of your login name for the updates, that way you can be sure
+      which updates were made by which scripts.
+  <li>If you have a number of developers who all access
+      the database from the same userid for access permissions reasons, by setting the
+      username for each database user you can keep track of the updates made by the
+      different users.
+</ol>
+
+
+<a name="nosave"></a><H3>New "Nosave" command</H3>
+
+<P>You can now turn on and off saving by acedb using the "Nosave" command:
+
+<pre><code>NoSave [-stop | -start]
+   Stop or start all database saving, the -stop option prevents any saving by any command,
+   you must use the -start option to turn saving on again.
+      -stop   (default) turn saving off
+      -start  turn saving on.
+</code></pre>
+
+<P>This is particularly useful if you want to test scripts that use tace for large
+scale database updates without accidentally altering the database during testing. By setting
+saving off at the start of the script, you can get all your data parsed by acedb so see if
+its correct but it won't be saved in the database.
+
+
+<a name="smap_command"></a><H3>New giface "smap" command</H3>
+
+<P>SMap has been made available via the giface interface so it's possible to find out the
+positions of one feature in its parent. The command interface is:
+
+<pre><code>smap -coords x1 x2 -from class:object -to class:object
+</code></pre>
+
+<P>The command maps the coordinates x1, x2 (default is the whole object)
+in the "-from object" to coordinates in the "-to object", the former must be a
+child of the latter via SMap or Sequence tags.
+
+<P>The command returns a string in the following format:
+
+<pre><code>"SMAP  class:name y1 y2 nx1 nx2 status"
+</code></pre>
+
+<P>Where
+<ul>
+  <li><b>class:name</b> is the class and name of the parent object.
+  <li><b>y1 y2</b> are the coordinates of the child in the parent object.
+  <li><b>nx1 nx2</b> are the coordinates in the child that were actually mapped
+      to produce <b>y1</b> and <b>y2</b>, these will have changed if the original
+      coordinates had to be clipped to fit in the range of the parent object.
+  <li><b>status</b> is an smap status code which indicates whether the mapping
+      was perfect or clipped in some way.
+</ul>
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+
+<a name="match_table"></a><H3>Removal of Match_Table support</H3>
+
+<P>Prior to the introduction of SMap, there was a problem with large numbers
+of homologies being processed/displayed in the FMap because the homologies had to be
+embedded in the Sequence objects. The Match_Table tags could be
+used to specify which homologies were processed/displayed.
+Few users made use of this tag and since the SMap now allows
+homologies to be held outside of the sequence objects, support for these tags has
+been removed from the code (as advertised in the acedb newsgroup some months ago).
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="gff_dump"></a><H3>Bug in GFF dumper</H3>
+
+<P>Code was added to flip the strand of ESTs that were sequenced in reverse
+so that they were displayed on the correct strand in Fmap. These were not
+flipped back for GFF dumping, this is now fixed.
+
+
+<a name="confirmed_intron"></a><H3>Bug in Confirmed Intron code</H3>
+
+<P>A bug in the code that allocated segs for confirmed introns
+<b>sometimes</b> corrupted the parent sequences reference to its seqinfo struct,
+this caused the genomic canonical column to be incomplete.
+
+
+
+<a name="CDS"></a><H3>Bug in CDS positioning</H3>
+
+<P>The CDS positioning code did not handle exons of length 1, now fixed.
+
+
+<a name="blixem"></a><H3>Bug in blixem call to pfetch sequence</H3>
+
+<P>Code was giving wrong args to pfetch to get <b>just</b> the sequence,
+now fixed.
+
+
+<a name="CDS_draw"></a><H3>Bug in CDS drawing code</H3>
+
+<P>Obscure bug, a wrongly initialised variable led to incorrect drawing of the CDS, but
+only when two sequence objects with same method,
+on same strand in same position with CDS's were being displayed.
+
+<a name="Temp_Gene"></a><H3>Bugs in Temp Gene</H3>
+
+<P>A number of bugs have surfaced in the Temp Gene code caused by
+changing the code to recalculate after a new gene is made rather
+than just redraw. This included problems with working out reverse
+complement coords, initialise() no longer being called in the necessary
+places, a bug in corrupting the dna array surfaced, a bug in fMapFindSpan()
+and so on. All fixed now.
+
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+<P>This month has seen a lot of bugs discovered and fixed which come down to
+problems with interactions between SMap and FMap and also the problems
+of introducing "recalculates" into parts of FMap where their used to be redraws
+which has revealed that FMap contains quite a lot of state that goes stale
+when this happens and produces bugs that are hard to notice and find the cause
+of.
+
+<P>I include the below simply as pointers to the type of things that have been going
+on:
+<ul>
+  <li>Bug in sMapLength, if there are mixed sMap and ACE4 tags, we should
+      use both.
+  <li>Fix up sMapFindSpan so that it knows only about 1-based coords, this is
+      the standard for smap stuff.
+      Make sure that other smap calls used sMapFindSpan correctly.
+  <li>Fix bug in sMapFindSpan(), meant that it would never find the span for
+      the given coords.
+  <li>clear look->chosen hash on recalculate - it contains stale data.
+  <li>fix setStartstop to cope with 1,0 coords - as when called in giface
+  <li>Fix code that does coords for recalculate, it was broken because we don't
+      use fmapFindDNA any more which used to frig the coords. The new rules
+      are encapsulated in setStartStop().
+  <li>Add code to fMapDoRecalculate() to make sure that any new start/stop
+      include current active zone, this became a problem with smap code because
+      we get hold of the sequence a bit differently, but was also a problem as
+      far back as 4_7 if you scrolled in just the right way.
+  <li>Fix up setTempGene() so that it works out reverse complement coords
+      correctly because we now use keys, not segs, to do coords stuff.
+  <li>Fix bad bug which sometimes corrupted the dna array by inserting a C
+      "end of string" char but then not removing it.
+  <li>initialise() was not called from all the places it should have been, this
+      did not matter previously because bsUpdate() and other operations were
+      done on _VSequence, now a static holds the class, if the static is not
+      initialised the code eventually crashes because the key does not have the
+      correct class for the bsNNN calls.
+  <li>fMapFindSpan() is now really a call to sMapFindSpan() but this is all
+      messed up because of confusion over coordinate systems: smap stuff should
+      ALL BE ONE BASED. Otherwise you get bugs
+      like the one in fmapgene where everything is suddenly off by one.
+  <li>fix bug in seg flipping for complementing when something is clipped by smap,
+      need to reverse which end is clipped.
+  <li>
+</ul>
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<H2>July monthly build not available.</H2>
+
+<P>Apologies, once again there was no build this month due to the major
+SMap development work.
+
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Thu Dec 19 09:38:51 GMT 2002
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

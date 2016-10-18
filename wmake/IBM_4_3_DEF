@@ -1,0 +1,35 @@
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+############### wmake/IBM_DEF    Jan-12-1992       ##############
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+###########  for the IBM work stations         ##################
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+########################################################################
+# $Id: IBM_4_3_DEF,v 1.1 2001-09-21 16:52:27 srk Exp $
+
+NAME = IBM
+
+# COMPILER = xlc -DACEDB4 -D_ALL_SOURCE -O2
+COMPILER = cc -DACEDB4 -D_ALL_SOURCE -I/usr/local/include -I/usr/local/include/glib-1.2 -I/usr/local/include/gtk-1.2 -I/usr/local/lib/glib/include
+
+# LINKER = xlc -L/usr/local/lib
+LINKER = cc -L/usr/local/lib -bdynamic -brtl
+
+# LIBS = -lmass 
+LIBS = -lm -lreadline -lcurses -lglib -lgtk -lgdk -lhistory
+
+# RPCGEN_FLAGS = -b -I -K -1
+RPCGEN_FLAGS = 
+
+.c.o:
+	$(CC) -c $*.c
+
+#  -D_ALL_SOURCE: flag needed by xlc compiler in /usr/include
+#################################################################
+#################################################################

@@ -1,0 +1,164 @@
+<HTML>
+
+
+<!-- Stuff you should alter is highlighted with "***" -->
+
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - July 2000</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<H1>ACEDB User Group Newsletter - July 2000</H1>
+
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+<P>In this months newsletter: new help files,
+read-only databases, bug fixes and something you need to know about "parse".
+
+
+<!-- delete any headings that are not needed for this month -->
+
+<a name="General"></a><H2>General News</H2>
+
+<P>Some of the discussions from the Acedb2000 meeting are beginning to filter through
+to the code, xml dumping is being added, the new AcePerl that talks directly to the
+socket server is on the way.
+
+<P>A report of what happened at Acedb2000 is now on the acedb web site
+(<A href="http://www.acedb.org/winfo/Conferences/acedb2000/">http://www.acedb.org/winfo/Conferences/acedb2000/</A>)
+- with photos !
+
+
+<a name="New"></a><H2>New Features</H2>
+
+<a name="helpfiles"></a><h4>New help files for Comparative maps</h4>
+<P>Courtesy of Jo Dicks we have some new help files for Comparative maps, so
+acedb administrators should get a new copy of the whelp directory to pick
+up these files (they are called whelp/Comparative_Maps_*).
+
+
+<a name="dumpformat"></a><h4>New dump formats</h4>
+<P>There are two new dump options, -k and -K, these act like -j -J except
+data types are written as below:
+<pre><code>
+        int -> #Int
+      float -> #Float
+        txt -> #Text
+       date -> #Date
+       BOOL -> #BOOL
+
+      dates are written in native acedb form YYYY-MM-DD_HH:MM:SS
+        (with truncations allowed)
+</code></pre>
+<P>These apply to commands "list", "show", "table-maker", "aql" and "select".
+
+
+<a name="Read"></a><h4>Read only databases with socket server</h4>
+<P>Its now possible to set a new option, <code><b>READONLY_DATABASE</b></code>
+in wspec/serverconfig.wrm that allows the administrator to set unix file
+permissions for the entire database directory to "read only". The server
+will not write any logging information and the database cannot be altered
+by any user. This allows administrators to more securely set up "read only" databases
+for web access. But note that the server will <b>not</b> record any logs of connecting clients
+or requests.
+
+<a name="parse"></a><H2>"parse"</H2>
+
+<P>If you have used the <code><b>parse</b></code> command from <code>tace</code>, or its equivalent
+from <code>xace</code> you will probably be aware that you can choose either to stop at the
+first error in the your ace file or to continue to the end of the file. What you may not
+have realised is that if you choose to stop at the first error, then any objects/updates
+parsed in before that error will have been added to the database. But what if you
+didn't want those changes made (i.e. you either wanted all the updates made or,
+if there was an error, none of them) ??
+
+<P>In fact when you parse an ace file, the database is only updated in your programs
+local copy of the database held in memory, <b>not</b> the actual database held on disk.
+This means that you can avoid making permanent updates to the database by
+simply quitting the program without saving any of your changes.
+
+<P>Future versions of acedb (see last months newsletter) may offer transaction support
+which would mean that changes like this could be reversed without having to quit the program.
+But for now you should make sure that you quit without saving if you want the
+<b>"all or nothing"</b> style of database update via ace file parsing.
+
+
+
+<a name="Bugs"></a><H2>Bugs Fixed</H2>
+
+<a name="Huge"></a><h4>Huge log files after parsing with server</h4>
+<P>Both aceserver and saceserver log all requests, this is fine for commands
+but not good when the request is raw ace data because the amount of data can be very
+large which makes the logs grow alarmingly. This has been fixed so that
+the log file records that ace data has been parsed to the server but the
+data itself is not stored in the log.
+
+<a name="aceclient"></a><h4>aceclient (RPC & socket versions) bugs</h4>
+<P>Two bugs have been fixed in the parse/pparse commands:
+<ul>
+  <li><code><b>"parse &lt;filename&gt;"</b></code> - previously aceclient would ignore
+      the filename and wait for input from the terminal, this has been corrected.
+      The filename will now be recognised and ace data read from the file. Input is
+      only taken from the terminal if you just type <code><b>"parse"</b></code>.
+  <li><code><b>"pparse &lt;filename&gt;"</b></code> - should report all errors encountered
+      in parsing the file, this got broken in acedb 4_8c, it's fixed now.
+</ul>
+
+
+<a name="aceserver"></a><h4>aceserver bug</h4>
+<P>You will only have noticed this bug if you used the development (4_8c) version of aceserver.
+The bug prevented any clients being authorised to connect. The bug is fixed in the July monthly
+build (see below for where to get this).
+
+<a name="xace"></a><h4>xace - Solaris 5.7 only bug</h4>
+<P>This bug affects xace 4_7l code on Solaris 5.7 machines. There is an xace bug
+whereby the entire X server seems to
+freeze if the acedb main window is covered and then uncovered. The cause of the bug
+has been found and we now have a fix for it, it will be applied to 4_7l but shouldn't
+be a problem in 4_8 code. The fix should be available from the acedb ftp site in
+the next week or so, if you need it more urgently than that please contact either
+<A href="mailto:mieg@ray.nlm.nih.gov">Jean Thierry-Mieg &lt;mieg@ray.nlm.nih.gov&gt;</A>
+or
+<A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A>.
+
+<a name="Education"></a><H2>Education</H2>
+<P>Sylvia Martinelli's acedb course was run again in June in the HGMP, this
+was the first course that included material on the new socket client/server.
+See the <A href="http://www.acedb.org">acedb home page</A> for future courses.
+
+<H2>July monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+
+<P><b>Sanger users:</b> ~acedb/RELEASE.DEVELOPMENT
+<P><b>External users:</b> ftp://ftp.sanger.ac.uk/pub/acedb/Sanger-release.2000_07_14.tar.gz
+
+
+<H2>Next User Group Meeting - D213, 2.30pm, Thursday, 10th August</H2>
+
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon May 21 15:38:48 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

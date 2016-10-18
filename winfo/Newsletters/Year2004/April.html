@@ -1,0 +1,298 @@
+<HTML>
+
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - April 2004</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - April 2004</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+
+<P>This month sees the latest AceDB builds now available on the Mac, a change to
+AceDB version number format, improvements to the Tag Chooser, improvements to
+DNA exporting and improvements/bug fixes for the AceC interface.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+<a name="acedb_mac"></a><H3>Latest AceDB builds on MAC OSX</H3>
+
+<P>(<I>This work is courtesy of Rob Clack</I>
+<A HREF="mailto:rnc@sanger.ac.uk">rnc@sanger.ac.uk</A>)
+
+<P>After a great deal of effort fiddling with compiler options, the OSX environment
+and FINK, the latest AceDB builds are available on the Mac. Go to the
+<A HREF="http://www.acedb.org/Software/Downloads/">downloads page</A> to get
+hold of the new binaries.
+
+
+<a name="acedb_version"></a><H3>AceDB Version Numbering</H3>
+
+<P>Conventionally Acedb versions have been given as:
+
+<pre>        &lt;version&gt;_&lt;release&gt;&lt;update&gt;    e.g.  "4_9t"
+</pre>
+
+<P>We have finally run out of update letters for 4_9 so we have switched to the
+now recognised convention of:
+
+<pre>        &lt;version&gt;.&lt;release&gt;.&lt;update&gt;   e.g.  "4.9.27"
+</pre>
+
+<P>You should take note of this if you have code that in any way parses the AceDB
+version number and uses it.
+
+
+
+<a name="tag_chooser"></a><H3>Improvement in Tag Chooser</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Mieg</I>
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)
+
+<P>The tag chooser is used in 2 situations, when you update an                               
+object or  when you contruct a Table-Maker query.                                         
+                                                                                          
+<P>In both cases, a window pops up with light blue boxes                                     
+showing the complete acedb model for the releavant class.                                 
+The only thing you have to do, is to select the relevant                                  
+box and double click it with the left mouse button.                                       
+In object update mode, this will add the tag to your object,                              
+in Table-Maker, this will select it for display in the                                    
+column you are constructing.                                                              
+                                                                                          
+<P>Unfortunately, it is sometimes frustratingly hard to locate                               
+the relevant tag, because some of the acedb models are very                               
+large, even though, in your database, you may well only use a small                       
+number of them.                                                                           
+                                                                                          
+<P>However, a few months ago, I introduced in the Tree display                               
+a new toggle, available from the right mouse, which shows                                 
+for each tag present in your object, how many times it                                    
+is present in the complete database. This is particularily                                
+useful when you display the Model, since it then shows how many                           
+times each tag present in the database is used, and hence                                 
+how many tags are never used !                                                            
+                                                                                          
+<P>Well, this month, we decided to use the Tag-Count facility                                
+to improve the interface of the tag-Chooser. From now on,                                 
+when you update and object (CTRL-U) or when you choose                                    
+a Tag in the Table-Maker graphic interface, the tag chooser                               
+will skip the Tags which are never used in your database.                                 
+Moreover, in Table-Maker, when you are searching                                          
+Right-of a previous column (Button From/Right of), the                                    
+tag chooser will now only propose the relevant section                                    
+of the schema, i.e. the branch right of tag selected                                      
+in the parent column.                                                                     
+                                                                                          
+<P>In both cases, you may still access all possible tags by using                            
+the new button 'Show all tags/Limit to known tags'                                        
+proposed in the tag-chooser window. This is handy when                                    
+you wish to add for the first time a new tag in                                           
+object-update mode or when you construct a Table                                          
+definition to be used in the future when the data                                         
+will actually be present.                                                                 
+                                                                                          
+<P>The same facility could be added in query by example or                                   
+in query builder if there were some demand.                                               
+                                                                                          
+<P>Please send feedback if you like or dislike this new option to
+<A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.                              
+ 
+
+
+<a name="Exporting_a_stretch_of_DNA"></a><H3>Exporting a stretch of DNA</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Mieg</I>
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)
+
+<P>Let us recall that, given an active set of objects having DNA, either
+directly or indirectly, the command
+
+<pre>  acedb&gt; dna
+</pre>
+
+<p>dumps the corresponding DNA in fasta format. For example, if you have a mixed 
+keyset containing for example mRNA sequences, genes, cosmids, chromosomes 
+assembled from BACs or so, the above command dumps in a single fasta file all 
+the corresponding sequences. This command may be used for example to 
+reconstruct the sequence of a complete chromosome which has been entered in 
+acedb as just a scaffold of cosmids, provided the sequence of most of the 
+cosmids are known in the database. Unsequenced cosmids will then be 
+represented as --- . If there are overlapping cosmids and they disagree in 
+some places, the program will report an error. But using the option
+
+<pre>  acedb&gt; dna -mismatch
+</pre>
+
+<p>will lead to dumping the whole chromosome with clear indication of the 
+mismatches (e.g T OR C will be represented by the corresponding letter Y, A OR 
+T by W , following the standard sixteen letter code)
+
+<p>Three other options allow to restrict the export to specific parts of the 
+transcript(s): you can choose to export the spliced transcript (this is the 
+default option) using the command
+
+<pre>  acedb&gt; dna -spliced
+</pre>
+
+the premessenger (unspliced transcribed region) using
+
+<pre>  acedb&gt; dna -unspliced
+</pre>
+
+<p>or the protein coding part of the transcript using
+
+<pre>  acedb&gt; dna -cds .
+</pre>
+
+<p>Finally, the option
+
+<pre>  acedb&gt; dna -f filename
+</pre>
+
+<p>redirects the output to the named file.
+
+<P>  --------
+
+<P>  We have encountered 
+the need to export only selected fragments of sequences, for example the 100 
+last basepairs of a collection of transcripts, say to analyse polyadenylation 
+signals. To support this option, we added to the dna command a new pair of 
+parameters -x1 and -x2 that specify the beginning and end of the fragments to 
+export.
+
+<pre>  acedb&gt; dna -x1 u1 -x2 u2
+</pre>
+
+<p>The values u1 and u2 are either base numbers and they will be automatically 
+limited to be within the DNA fragment (value from 1 to DNA length),
+or the word 'begin' or the word 'end' . If you choose to specify -x1 or -x2,
+you must specify both.&nbsp; 
+Also, the strand of the fragments exported are determined by the values of u1 
+and u2. If u1 &lt; u2, the exported sequence is direct; if u1 &gt; u2,
+the sequence is reverse complemented before the dump.
+  
+<pre>examples:
+
+  acedb&gt; find sequence dna1
+  // 1 Active Objects
+  acedb&gt; dna  // the complete sequence in fasta format
+  &gt;dna1
+  tcagtcagtcagtcagtcag  
+  acedb&gt; dna -x1 end -x2 begin // same, but reverse complemented
+  &gt;dna1
+  ctgactgactgactgactga  
+  acedb&gt; dna -x1 12 -x2 end  // the end of the sequence
+  &gt;dna1
+  gtcagtcag  
+  acedb&gt; dna -x1 5 -x2 1 // the first 5 bp, reverse complemented
+  &gt;dna1
+  actga 
+</pre>
+
+
+<p>This option is also available from the AceC interface, using the new command:
+
+<pre>ac_zone_dna (sequence, u1, u2, memory_handle)
+</pre>
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+<a name="AceC_enhancement"></a><H3>AceC enhancement</H3>
+
+<P>The AceC, C language programmers interface to acedb, has
+been upgraded. There are minor modifications to a few function calls and a few bugs have been 
+found and fixed.
+
+<P>For details, please read wac/ac.h wac/README or contact Jean Thierry-Mieg
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+
+<a name="proposals_dir"></a><H3>The CVS directory for AceDB proposals</H3>
+
+<P>Just a brief reminder that if you have written up a proposal for AceDB then
+a good place to put it is in:
+
+<pre>    winfo/Proposals/     e.g. 
+</pre>
+
+<P>try to put the file into one of the existing subdirectories:
+
+<pre>    winfo/Proposals/session/rotating_logs
+</pre>
+
+
+<a name="cvs_tool"></a><H3>A good tool for parsing changes in the CVS repository</H3>
+
+<P>In constructing this newsletter I scan all the changes made in the last month,
+recently I have been using a free tool found on the web called "cvs2cl". This is
+a perl script which turns the output from CVS into something more readable. You can see
+how I make use of this tool by looking in the script I run it from:
+
+<pre>    winfo/Newsletters/cvschanges
+</pre>
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>April monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Thu Jul  1 14:56:49 BST 2004
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

@@ -1,0 +1,107 @@
+<html>
+<head><title>ACeDB2000 conference proceedings: Day 2</title></head>
+<body bgcolor=white>
+ 
+<blockquote>
+<div align=center>
+<h5><a href="index.html">Back to conference overview</a></h5>
+<h2>ACeDB2000: Day 2</h2>
+</div>
+<h3>The Good, the Bad and the Ugly about ACeDB</h3>
+
+<p>A free form discussion about features that we like about ACeDB and should (probably) be classified as 'vital' organs, features that could be classified as 'vestigial' (a L.Stein term) and could (should?) be removed surgically.
+<blockquote>
+<h4>The Good</h4>
+<p>Features that we like about ACeDB and should (probably) be classified
+as 'vital' organs. May be a bit sketchy since this is jotted down on a laptop during the meeting: 
+<ul>
+<li><b>Data:</b> easy to mass-import and -export data. Aceformat is convenient. XML may be a viable option as an alternative input/output format. Ease of complete dumps of datasets, data transfers, FTP-setup or distribution by CD. Also query dumps to Acefile convenient.
+<li><b>Data models:</b> easy to manipulate in the text format, even for non-programmers.
+<li><b>Queries</b>: AQL + classical queries both available (version 4.8). Tablemaker powerful
+<li><b>Output formats:</b> FASTA, Acefile, Embl.
+<li><b>Prefixes in Acefiles:</b> -J, -P, -R, -D, quite useful stuff for batch processing.
+
+<li><b>Performance:</b> Handles complexity of biological data  well. Most comprehensive package for working with genomic data. Relatively fast, indexing in code improved speed in queries.
+<li><b>Cost issues:</b>Open source and free. May be a turnoff for some parties.
+<li><b>Portability:</b> Linux, Solaris, binaries or source => compile.
+<li><b>Displays:</b> flexible displays, configurability, user views saveable..
+<li><b>Keysets:</b>good concept, nice to  work with and saving.
+<li>Blixem & Dotter
+<li><b>Tool integration:</b> pick-me-to-call to run programs & scripts. FetchSeq-concept cool but won't work oftentimes.
+<li><b>AcePerl:</b> nice in itself!
+</ul>
+
+<h4>The Bad</h4>
+
+<p>-<b>models.wrm:</b> not well documented, needs better formalism, better metalanguage necessary? Hard to see how parts of classes work, especially for display functions. Discussions going into more technical display thoughts. Whitespace dependencies annoying
+<p>-<b>Documentation:</b> þarf að skipuleggja og koma effort af stað. Wiki? DocBook a la O'Really? XML? Latex? Sylvia Martinelli's course manual to Web.
+<p>-<b>Table maker:</b> parameters different in xace vs. tace.
+<p>-<b>tace:</b> command line partial show of objects (less?)
+<p>-Reverse upload of data. Can get around by using acediff or  perl-script.
+<p>-<b>Acediff:</b> bug, strips out // from URL's
+
+<h4>The Ugly</h4>
+
+<p>-<b>Politics & publicity:</b> may need more exposure. Connect 
+with SourceForge, and/or Freshmeat for better visability code releases?
+ Better docs of course.
+
+<p>-<b>Professionalism:</b> Performance, docs, open source and other issues 
+that pertain to the status of ACeDB in the eyes of the world. 
+
+<p>Some known comments from outsiders on ACeDB (Ed Griffiths): 
+<ol>
+  <li> -it won't scale to large projects
+  <li> -It is not concurrent
+  <li> -sparse publications (docs?)
+  <li> -old technology, rather homegrown
+  <li> -GUI & dbase not seperated
+  <li> -Lack of modern concurrency tools
+  <li> -No replication tools
+  <li> -Retrofitting, not reusing.
+  <li> -Limited to 1 Gb in size (really??!..)
+</ol>
+</blockquote>
+<hr><h5><a href="index.html">Back to conference overview</a></h5>
+
+
+<h3>Improvements thoughts from Ed Griffiths</h3>
+<p><b>Threading:</b> would mean better IO-performance
+<p><b>Transactions:</b> not possible in current ACeDB kernel form. Rollback/recovery, safe multistage  something...can't read transparencies here.
+<p><b>Reliability:</b> NFS problems, indexes, object lockes, database recovery strategy..all important in scaling up to larger projects.
+<p><b>Interface issues:</b> online help for Gmap. ToolTips for Gmap. Drag & drop. More configuration possilities for displays. Better scrolling. A whole lot of stuff that would be good to have.
+<p><b>Curation issues:</b> Tools for model checking. Dbase verification. Tools for annotation, edit windows Data entry validation. Developers should perhaps spend some time annotating and curating, so that they'll be sick of the interface and really dive into changing it :) 
+
+<p><b>Data issues:</b> AcePerl the best bet currently. XML straigth from Ace does look promising. Need of 'modern' data interchange format, preferably self-describing.
+
+<p><b>Documentation issues:</b>  Need of technical papers brought up to date and collected from the various README-files. Maintainance information, FAQ-maintainance.
+
+<p><b>Tech stuff:</b> storing lumps of data in relational dbase that would control threading and access. Ace would be  layer on top of the relational one. See Richard's comments on this issue please and ZAce-stuff later this week...
+<h5><a href="index.html">Back to conference overview</a></h5><hr>
+
+<h3>First results from task group discussions</h3>
+
+<br>The programming group is going to discuss the XML and SMAP issue Wednesday afternoon, and Richard is working on the ZAce-stuff. Simon has a working MacOS GTK port, so the MAC-port seems to be rising from the ashes.
+<br>After lunch, we split up into an AcePerl-discussion and a website/documentation-organization discussion. The plan is to make
+<a href="http://www.acedb.org">http://www.acedb.org</a> a free-standing website (get rid of the Sanger-headers) and reorganize it to
+make it easier to navigate. Especially for newcomers looking for a tool to try out and read about. 
+The documentation stuff was also prominent,
+and it is clear that to do a proper job, a full time doc person is necessary. But a WIKI-style  multi-contributor 
+effort should be sufficient to begin with...
+<p>
+The AcePerl-group talked about some 'gripes', more specifically the problem of getting data from fields beyond the
+first field after the tag (e.g. the <b>Homol</b> tag in Sequence). I will ask Lincoln to post the solution (if there
+was one) to some good place.
+<h5><a href="index.html">Back to conference overview</a></h5><hr>
+
+<h3>The dendrogram display</h3>
+
+<p>Richard Bruskiewich did a small talk on the Dendrogram-display and the Peptide-display. Apparently he is importing 
+phylogenetic data  from ClustalW with various colour-coding extras. He had some overheads that I hope he will put on the 
+web if contain information that is not already in the help-file in /whelp.
+<p>And finally, Dave Matthew distributed this <a href="curatorsPlans.html">list  for the curators' plans</a> involving presentations,
+ feature requests and documentation writing.
+<hr><h5><a href="index.html">Back to conference overview</a></h5>
+</blockquote>
+</body>
+</html>

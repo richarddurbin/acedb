@@ -1,0 +1,66 @@
+All modules in this directory where copied from 
+Staden Package's ftp site:
+  ftp://ftp.mrc-lmb.cam.ac.uk/pub/staden/io_lib-1.7.tar.gz
+
+They contain the following copyrigth
+
+/*
+ * Copyright (c) Medical Research Council 1994-1998. All rights reserved.
+ *
+ * Permission to use, copy, modify and distribute this software and its
+ * documentation for any purpose is hereby granted without fee, provided that
+ * this copyright and notice appears in all copies.
+ *
+ * This file was written by James Bonfield, Simon Dear, Rodger Staden,
+ * as part of the Staden Package at the MRC Laboratory of Molecular
+ * Biology, Hills Road, Cambridge, CB2 2QH, United Kingdom.
+ *
+ * MRC disclaims all warranties with regard to this software.
+ */
+
+The modifications i have done are:
+
+1) i wrote my own makefile as a section inside the acedb makefile
+2) i modified a few file names to prevent conflicts with acedb file names
+3) i added a few () to please the compiler 
+4) i modified a little os.h (under #ifdef ACEDB) to simplify portability
+
+All these modifications are trivialities which do not alter the original code
+The modules are compiled by the acedb makefile in a static library: libstaden
+which is then used in acedb applications like acembly by linking -lstaden
+
+Jean Thierry-Mieg, octobre 1998
+
+=====================================================================
+
+In addition, in march 2000, i added CTF support to the preexisting
+support of ABI SCF ALF and PLAIN formats
+
+CTF is a new more compact format that i constructed
+
+so i added a CTF case to a the Staden switches in about 8 files
+(this is done the local conventions)
+and i added the code
+  scf2ctf.c ctf.scf.c  : simple main() of a few lines
+  ctfCompress.c : the real work
+  makefile, makefile.staden: to compile a la acedb in multi platforms
+
+As of today, ctfCompress.c needs acedb libfree.a because it uses acedb
+arrays, but this is historic and this dependancy could be removed AND
+the scf->ctf->scf transform conserves the basecall and traces but is
+not exact something should still be fixed in the code
+
+
+Jean Thierry-Mieg, march 2000
+
+To test the system:
+
+setenv ACEDB_MACHINE LINUX_4
+make libfree.a
+cd wstaden
+make all
+cd ..
+bin.LINUX_4/scf2ctf < foo.scf > foo.ctf
+bin.LINUX_4/scf2ctf < foo.ctf > foo.ctf.scf
+
+=====================================================================

@@ -1,0 +1,249 @@
+libpfetch_a-libpfetch-cmarshal.o libpfetch_a-libpfetch-cmarshal.o:  \
+ libpfetch-cmarshal.c /software/acedb/include/glib-2.0/glib-object.h \
+  /software/acedb/include/glib-2.0/gobject/gboxed.h \
+  /software/acedb/include/glib-2.0/gobject/gtype.h \
+  /software/acedb/include/glib-2.0/glib.h \
+  /software/acedb/include/glib-2.0/glib/galloca.h \
+  /software/acedb/include/glib-2.0/glib/gtypes.h \
+  /software/acedb/lib/glib-2.0/include/glibconfig.h \
+  /software/acedb/include/glib-2.0/glib/gmacros.h \
+  /usr/lib/gcc/i486-linux-gnu/4.1.2/include/stddef.h \
+  /usr/lib/gcc/i486-linux-gnu/4.1.2/include/limits.h \
+  /usr/lib/gcc/i486-linux-gnu/4.1.2/include/syslimits.h \
+  /usr/include/limits.h /usr/include/features.h /usr/include/sys/cdefs.h \
+  /usr/include/gnu/stubs.h /usr/include/bits/posix1_lim.h \
+  /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
+  /usr/include/bits/posix2_lim.h \
+  /usr/lib/gcc/i486-linux-gnu/4.1.2/include/float.h \
+  /software/acedb/include/glib-2.0/glib/garray.h \
+  /software/acedb/include/glib-2.0/glib/gasyncqueue.h \
+  /software/acedb/include/glib-2.0/glib/gthread.h \
+  /software/acedb/include/glib-2.0/glib/gerror.h \
+  /software/acedb/include/glib-2.0/glib/gquark.h \
+  /software/acedb/include/glib-2.0/glib/gatomic.h \
+  /software/acedb/include/glib-2.0/glib/gbacktrace.h \
+  /software/acedb/include/glib-2.0/glib/gbase64.h \
+  /software/acedb/include/glib-2.0/glib/gbookmarkfile.h \
+  /usr/include/time.h /usr/include/bits/time.h /usr/include/bits/types.h \
+  /usr/include/bits/wordsize.h /usr/include/bits/typesizes.h \
+  /software/acedb/include/glib-2.0/glib/gcache.h \
+  /software/acedb/include/glib-2.0/glib/glist.h \
+  /software/acedb/include/glib-2.0/glib/gmem.h \
+  /software/acedb/include/glib-2.0/glib/gslice.h \
+  /software/acedb/include/glib-2.0/glib/gcompletion.h \
+  /software/acedb/include/glib-2.0/glib/gconvert.h \
+  /software/acedb/include/glib-2.0/glib/gdataset.h \
+  /software/acedb/include/glib-2.0/glib/gdate.h \
+  /software/acedb/include/glib-2.0/glib/gdir.h \
+  /software/acedb/include/glib-2.0/glib/gfileutils.h \
+  /software/acedb/include/glib-2.0/glib/ghash.h \
+  /software/acedb/include/glib-2.0/glib/ghook.h \
+  /software/acedb/include/glib-2.0/glib/giochannel.h \
+  /software/acedb/include/glib-2.0/glib/gmain.h \
+  /software/acedb/include/glib-2.0/glib/gslist.h \
+  /software/acedb/include/glib-2.0/glib/gstring.h \
+  /software/acedb/include/glib-2.0/glib/gunicode.h \
+  /software/acedb/include/glib-2.0/glib/gutils.h \
+  /usr/lib/gcc/i486-linux-gnu/4.1.2/include/stdarg.h \
+  /software/acedb/include/glib-2.0/glib/gkeyfile.h \
+  /software/acedb/include/glib-2.0/glib/gmappedfile.h \
+  /software/acedb/include/glib-2.0/glib/gmarkup.h \
+  /software/acedb/include/glib-2.0/glib/gmessages.h \
+  /software/acedb/include/glib-2.0/glib/gnode.h \
+  /software/acedb/include/glib-2.0/glib/goption.h \
+  /software/acedb/include/glib-2.0/glib/gpattern.h \
+  /software/acedb/include/glib-2.0/glib/gprimes.h \
+  /software/acedb/include/glib-2.0/glib/gqsort.h \
+  /software/acedb/include/glib-2.0/glib/gqueue.h \
+  /software/acedb/include/glib-2.0/glib/grand.h \
+  /software/acedb/include/glib-2.0/glib/grel.h \
+  /software/acedb/include/glib-2.0/glib/gscanner.h \
+  /software/acedb/include/glib-2.0/glib/gshell.h \
+  /software/acedb/include/glib-2.0/glib/gspawn.h \
+  /software/acedb/include/glib-2.0/glib/gstrfuncs.h \
+  /software/acedb/include/glib-2.0/glib/gthreadpool.h \
+  /software/acedb/include/glib-2.0/glib/gtimer.h \
+  /software/acedb/include/glib-2.0/glib/gtree.h \
+  /software/acedb/include/glib-2.0/gobject/genums.h \
+  /software/acedb/include/glib-2.0/gobject/gobject.h \
+  /software/acedb/include/glib-2.0/gobject/gvalue.h \
+  /software/acedb/include/glib-2.0/gobject/gparam.h \
+  /software/acedb/include/glib-2.0/gobject/gclosure.h \
+  /software/acedb/include/glib-2.0/gobject/gsignal.h \
+  /software/acedb/include/glib-2.0/gobject/gmarshal.h \
+  /software/acedb/include/glib-2.0/gobject/gparamspecs.h \
+  /software/acedb/include/glib-2.0/gobject/gsourceclosure.h \
+  /software/acedb/include/glib-2.0/gobject/gtypemodule.h \
+  /software/acedb/include/glib-2.0/gobject/gtypeplugin.h \
+  /software/acedb/include/glib-2.0/gobject/gvaluearray.h \
+  /software/acedb/include/glib-2.0/gobject/gvaluetypes.h
+
+/software/acedb/include/glib-2.0/glib-object.h:
+
+/software/acedb/include/glib-2.0/gobject/gboxed.h:
+
+/software/acedb/include/glib-2.0/gobject/gtype.h:
+
+/software/acedb/include/glib-2.0/glib.h:
+
+/software/acedb/include/glib-2.0/glib/galloca.h:
+
+/software/acedb/include/glib-2.0/glib/gtypes.h:
+
+/software/acedb/lib/glib-2.0/include/glibconfig.h:
+
+/software/acedb/include/glib-2.0/glib/gmacros.h:
+
+/usr/lib/gcc/i486-linux-gnu/4.1.2/include/stddef.h:
+
+/usr/lib/gcc/i486-linux-gnu/4.1.2/include/limits.h:
+
+/usr/lib/gcc/i486-linux-gnu/4.1.2/include/syslimits.h:
+
+/usr/include/limits.h:
+
+/usr/include/features.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/gnu/stubs.h:
+
+/usr/include/bits/posix1_lim.h:
+
+/usr/include/bits/local_lim.h:
+
+/usr/include/linux/limits.h:
+
+/usr/include/bits/posix2_lim.h:
+
+/usr/lib/gcc/i486-linux-gnu/4.1.2/include/float.h:
+
+/software/acedb/include/glib-2.0/glib/garray.h:
+
+/software/acedb/include/glib-2.0/glib/gasyncqueue.h:
+
+/software/acedb/include/glib-2.0/glib/gthread.h:
+
+/software/acedb/include/glib-2.0/glib/gerror.h:
+
+/software/acedb/include/glib-2.0/glib/gquark.h:
+
+/software/acedb/include/glib-2.0/glib/gatomic.h:
+
+/software/acedb/include/glib-2.0/glib/gbacktrace.h:
+
+/software/acedb/include/glib-2.0/glib/gbase64.h:
+
+/software/acedb/include/glib-2.0/glib/gbookmarkfile.h:
+
+/usr/include/time.h:
+
+/usr/include/bits/time.h:
+
+/usr/include/bits/types.h:
+
+/usr/include/bits/wordsize.h:
+
+/usr/include/bits/typesizes.h:
+
+/software/acedb/include/glib-2.0/glib/gcache.h:
+
+/software/acedb/include/glib-2.0/glib/glist.h:
+
+/software/acedb/include/glib-2.0/glib/gmem.h:
+
+/software/acedb/include/glib-2.0/glib/gslice.h:
+
+/software/acedb/include/glib-2.0/glib/gcompletion.h:
+
+/software/acedb/include/glib-2.0/glib/gconvert.h:
+
+/software/acedb/include/glib-2.0/glib/gdataset.h:
+
+/software/acedb/include/glib-2.0/glib/gdate.h:
+
+/software/acedb/include/glib-2.0/glib/gdir.h:
+
+/software/acedb/include/glib-2.0/glib/gfileutils.h:
+
+/software/acedb/include/glib-2.0/glib/ghash.h:
+
+/software/acedb/include/glib-2.0/glib/ghook.h:
+
+/software/acedb/include/glib-2.0/glib/giochannel.h:
+
+/software/acedb/include/glib-2.0/glib/gmain.h:
+
+/software/acedb/include/glib-2.0/glib/gslist.h:
+
+/software/acedb/include/glib-2.0/glib/gstring.h:
+
+/software/acedb/include/glib-2.0/glib/gunicode.h:
+
+/software/acedb/include/glib-2.0/glib/gutils.h:
+
+/usr/lib/gcc/i486-linux-gnu/4.1.2/include/stdarg.h:
+
+/software/acedb/include/glib-2.0/glib/gkeyfile.h:
+
+/software/acedb/include/glib-2.0/glib/gmappedfile.h:
+
+/software/acedb/include/glib-2.0/glib/gmarkup.h:
+
+/software/acedb/include/glib-2.0/glib/gmessages.h:
+
+/software/acedb/include/glib-2.0/glib/gnode.h:
+
+/software/acedb/include/glib-2.0/glib/goption.h:
+
+/software/acedb/include/glib-2.0/glib/gpattern.h:
+
+/software/acedb/include/glib-2.0/glib/gprimes.h:
+
+/software/acedb/include/glib-2.0/glib/gqsort.h:
+
+/software/acedb/include/glib-2.0/glib/gqueue.h:
+
+/software/acedb/include/glib-2.0/glib/grand.h:
+
+/software/acedb/include/glib-2.0/glib/grel.h:
+
+/software/acedb/include/glib-2.0/glib/gscanner.h:
+
+/software/acedb/include/glib-2.0/glib/gshell.h:
+
+/software/acedb/include/glib-2.0/glib/gspawn.h:
+
+/software/acedb/include/glib-2.0/glib/gstrfuncs.h:
+
+/software/acedb/include/glib-2.0/glib/gthreadpool.h:
+
+/software/acedb/include/glib-2.0/glib/gtimer.h:
+
+/software/acedb/include/glib-2.0/glib/gtree.h:
+
+/software/acedb/include/glib-2.0/gobject/genums.h:
+
+/software/acedb/include/glib-2.0/gobject/gobject.h:
+
+/software/acedb/include/glib-2.0/gobject/gvalue.h:
+
+/software/acedb/include/glib-2.0/gobject/gparam.h:
+
+/software/acedb/include/glib-2.0/gobject/gclosure.h:
+
+/software/acedb/include/glib-2.0/gobject/gsignal.h:
+
+/software/acedb/include/glib-2.0/gobject/gmarshal.h:
+
+/software/acedb/include/glib-2.0/gobject/gparamspecs.h:
+
+/software/acedb/include/glib-2.0/gobject/gsourceclosure.h:
+
+/software/acedb/include/glib-2.0/gobject/gtypemodule.h:
+
+/software/acedb/include/glib-2.0/gobject/gtypeplugin.h:
+
+/software/acedb/include/glib-2.0/gobject/gvaluearray.h:
+
+/software/acedb/include/glib-2.0/gobject/gvaluetypes.h:

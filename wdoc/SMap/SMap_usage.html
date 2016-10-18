@@ -1,0 +1,344 @@
+<HTML>
+
+<HEAD>
+<TITLE>User Guide To SMap</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../wdoc.css"
+title="Style sheet for wdoc developer documents">
+
+</HEAD>
+
+<BODY>
+
+<BLOCKQUOTE>
+<DIV ALIGN=CENTER>
+ <IMG SRC="./acedb-logo.gif" ALT="[ACEDB 4_9 DOCUMENTATION]" align=middle>
+ <H3>
+  ACEDB Version 4_9
+ </H3>
+</DIV>
+
+
+<DIV ALIGN=CENTER>
+
+<H1 align=center>User Guide To SMap</H1>
+
+<ADDRESS>
+Originally written by<BR>
+Simon Kelley &lt;srk@sanger.ac.uk&gt; and
+Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;, February 2002
+</ADDRESS>
+
+</DIV>
+
+
+<H2>Background</H2>
+
+<P>To be written.
+
+
+
+<H2>How it works</H2>
+
+
+<H3>Smap: what does it do?</H3>
+
+<ul>
+  <li>Represents relationship between DNA sequences.
+  <li>Maps co-ordinates in one sequence on to co-ordinates in another related sequence.
+  <li>Maps co-ordinates in spliced sequences onto co-ordinates in unspliced sequences
+      (ie removes introns.)
+  <li>Assembles long DNA sequences from short DNA sequences and manage mismatches,
+      insertions and deletions.
+</ul>
+
+
+<H3>The basic idea.</H3>
+
+<p>Database stores co-ordinate mapping from PARENTS to CHILDREN as a hierachy of objects:
+
+<p><img src="./tree.jpg" align="center">
+
+<p>SMap calculates co-ordinate mapping from CHILDREN to PARENTS.
+
+<p>SMap then projects DNA sequence from CHILDREN to PARENTS:
+
+<p><IMG SRC="./map.jpg" align="center">
+
+
+
+
+<h3>How it works at the moment.</H3>
+
+<pre><code>?Sequence DNA UNIQUE ?DNA Int
+          Subsequence ?Sequence Int Int
+          Source_Exons Int Int
+</code></pre>
+
+<P><IMG SRC="old.jpg" align="center">
+
+<pre><code>             Subsequence A  1 20
+             Subsequence B 21 33
+             Subsequence C 30 40
+</code></pre>
+
+<p>Bases 11-13 in sequence "B" must match bases 1-3 in sequence "C"
+
+
+<P>The Source_Exons tag modifies the co-ords for children on this
+object so that introns are mapped out of the co-ordinate system:
+
+<P><IMG SRC="exon.jpg" align="center">
+
+
+<P>Problems.
+
+<ul>
+  <li>Cannot build longer sequence from parts of child sequences.
+  <li>Cannot cope with mismatches when more than one child sequence has DNA for a region.
+  <li>Cannot represent insertions and deletions between child and parent sequences, apart from exons special case.
+</ul>
+
+ 
+<h3>Aims for Smap.</H3>
+
+<ul>
+  <li>Be free to represent biological data in the database without needing to modify it to allow assembly into aggregate sequence objects.
+  <li>Keep information on how to modify underlying sequence objects to make aggregate objects separately from those objects.
+  <li>Allow flexibility for curators in how they store sets of features which map onto DNA sequence.
+</ul>
+
+ 
+
+<h3>The Smap models.</H3>
+
+<pre><code>?Sequence DNA UNIQUE ?DNA UNIQUE Int
+          S_Child Subsequence ?Sequence Int Int #SMap_info
+                  Homol_data ?Homol_data Int Int #SMap_info
+                  Feature_data ?Feature_data Int Int #Smap_info
+                   .
+                   .
+                   .
+
+?SMap_info  Align Int UNIQUE Int UNIQUE Int
+            Mismatch Int UNIQUE Int
+</code></pre>
+
+
+<pre><code>Align tag 	
+	first Int is position in parent, 
+	second Int is position in child, 
+	third Int is length (optional in almost all cases).
+
+Mismatch tag
+	no Ints - whole sequence,
+	one Int - single base,
+	two Ints - range.
+</code></pre>
+
+
+<h3>Insertions, deletions.</H3>
+
+<P>Insertion in child sequence.
+
+<P><IMG SRC="ins.jpg" align="center">
+
+<pre><code>Parent: S_Child Subsequence Child P1 P4 Align P1 C1
+                                              P3 C3
+</code></pre>
+
+
+
+<h3>Insertions, deletions.</H3>
+
+<P>Deletion in child sequence.
+
+<P><IMG SRC="del.jpg" align="center">
+
+<pre><code>Parent: S_Child Subsequence Child P1 P4 Align P1 C1
+                                              P3 C3
+</code></pre>
+
+
+
+<h3>Mismatches</H3>
+
+<P>For each base position in the final sequence, there will exist zero or more bases
+in the child sequences with the "mismatch" property set, and zero or more bases in the
+child sequences without the "mismatch" property set.
+
+<ol>
+  <li>All "no mismatch" bases at a position must match, and they take prioriy over
+      "mismatch" bases.
+  <li>If there are zero "no mismatch" bases at a position, but all the "mismatch" basess
+      agree, the result is an unambiguous base code.
+  <li>If there are zero "no mismatch" bases at a position and the "mismatch" bases
+      disagree, the result is an ambiguous IUPAC code.
+</ol>
+
+
+
+<h3>Mismatches - example</H3>
+
+<pre>Mismatch = lower case
+No mismatch = UPPER case
+
+Child 1        Child 2          Result
+
+  A              A                A
+  A              C              error
+  A              c                A
+  a              C                C
+  a              a                A
+  a              c                M
+</pre>
+
+
+
+<h3>Source Exons are just an SMap.</H3>
+
+<P><IMG SRC="exon.jpg" align="center">
+
+<P>Current implementation uses Source_exons tags for backwards compatibility.
+
+
+
+<h3>Smap object need not contain DNA.</H3>
+
+<pre><code>?Sequence DNA UNIQUE ?DNA UNIQUE Int
+          S_Child Subsequence ?Sequence Int Int #SMap_info
+                  Homol_data ?Homol_data Int Int #SMap_info
+                  Feature_data ?Feature_data Int Int #Smap_info
+
+
+?Homol_data  Homol DNA_homol ?Sequence ?Method Float Int Int Int Int
+                   Pep_homol ?Protein ?Method Float Int Int Int Int
+
+
+?Feature_data Feature ?Method Int Int Float Text
+</code></pre>
+
+<P>An important SMap function is calculating mappings of objects other than DNA sequence.
+
+
+
+<h3>Applications</H3>
+
+<ul>
+  <li>Overlaps with allowed mismatches and indels in contigs.
+  <li>Build a "Golden Path"
+  <li>Map an EMBL record onto a reference sequence.
+</ul>
+
+
+
+<h3>Golden Path</H3>
+
+<P><IMG SRC="gold.jpg" align="center">
+
+
+<pre><code>Path: S_Child Subsequence Child1 start1 end1 Align start1 offset1
+                          Child2 start2 end2 Align start2 offset2
+                          Child3 start3 end3 Align start3 offset3
+                          Child4 start4 end4 Align start4 offset4
+</code></pre>
+
+
+
+<h3>Representation of EMBL record.</H3>
+
+<pre><code>Chromosome: S_Child Embl_data 10000 11000 Align ......
+                                          Mismatch
+
+Embl_data: DNA .......
+           Homol DNA_homol seq1 method1 3.0 1 100 121 221
+                           seq2 method2 4.0 300 340 400 440
+           Feature method3 500 550 6.0 "Repeat"
+</code></pre>
+
+
+
+<h3>Summary</H3>
+
+
+<ul>
+  <li>Flexible method for mapping co-ordinate systems.
+  <li>Represents insertions and deletions.
+  <li>Controls sequence mismatches.
+  <li>Allows grouping of data about a DNA sequence to suit the needs of the database
+      administrators and users.
+</ul>
+
+
+
+<H2>Changes in Behaviour</H2>
+
+<P>This chapter briefly documents the changes in behaviour in the virtual sequence
+building mechanism that underlies fmap, giface, gff dumping etc., i.e. the central
+AceDB mechanism for composing sequences and their associated features.
+
+<P>This work used to be done by fMapConvert(), a monolithic and huge routine
+in w7/fmapcontrol.c. This routine has been replaced by a set of routines in
+w7/smapconvert.c which use the new Smap code from w6/smap.c.
+
+
+<H3>Principle changes in behaviour</H3>
+
+
+<H4>All features</H4>
+
+<P>The old code was forgiving but also inaccurate in that features with incorrect
+or missing coordinates were often mapped, but mapped inaccurately or inappropriately.
+These features will not now be mapped, e.g. features with coordinates
+partly or wholly outside that of their parents will not now be mapped.
+
+
+<H4>Allele</H4>
+
+<P>Section from Sequence class:
+<pre>	  Allele ?Allele XREF Sequence UNIQUE Int UNIQUE Int UNIQUE Text
+		// start, stop, replacement sequence
+		// if an insertion point Text is transposon name (distinguished
+		// by containing non ACTG letters), and (n, n+1) = T A, so indicates 
+		// direction (if known).
+		// if a deletion, put '-' as the replacement sequence
+</pre>
+
+
+<P>Alleles will not be mapped unless they have both start and end coordinates, as
+before the allele does not have to text attached to it.
+
+
+<H4>Assembly_tags</H4>
+
+<P>Section from Sequence class:
+<pre>	  Assembly_tags	Text Int Int Text // type, start, stop, comment
+</pre>
+
+<P>Assembly_tags will not be mapped unless they have both start and end.
+
+
+<H4>Oligo</H4>
+
+<P>Section from Sequence class:
+<pre>Oligo ?Oligo XREF In_sequence Int UNIQUE Int  // for OSP and human mapping mostly
+</pre>
+
+<P>fMapConvert() used to call fMapOspPositionOligo() if the Oligo had no coordinates,
+this routine attempted to position the oligo by matching its dna to the look->dna.
+It would then insert this data into the object (with the potential that it could
+update the database). Its also bad because it relies on having the dna, which
+will not always be true.
+
+
+<HR>
+<H3 ALIGN="CENTER">ACEDB Version 4_9</H3>
+
+<HR>
+<ADDRESS><a href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</a></ADDRESS>
+<!-- hhmts start -->
+Last modified: Wed Jun  5 14:16:49 BST 2002
+<!-- hhmts end -->
+</BODY>
+</HTML>

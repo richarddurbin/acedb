@@ -1,0 +1,29 @@
+These are Acedb fink packages for use on Mac OS X, version 10.1 and above.
+
+Before use you will need to install Fink, from
+http://fink.sourceforge.net/
+
+then run the command
+
+sudo fink install x11 gtk+2 readline
+
+to install other software needed by acedb.
+
+Finally download the acedb package file and run the command 
+
+sudo dpkg -i acedb_4.9j-1_darwin-powerpc.deb
+
+to install acedb. (Obviously, substitute the name of the actual 
+file you download in the above command.)
+
+
+Actually, these instructions are a little out of date.  If you
+use fink to build and install acedb, you should find that the
+dependencies built into its mkinfo file will take care of all
+that.  Fink should get x11, readline and gtk+2 first, then
+go on and install acedb.
+
+So fink install acedb should be all you need.
+
+Rob Clack <webmaster@acedb.org>
+

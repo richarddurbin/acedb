@@ -1,0 +1,10 @@
+
+This item has been shelved because the patent held by Unisys on GIF images is
+about to run out anyway so we just forget all this.
+
+Start the process to swap to PNG instead of gif images:
+
+- consult with acedb developers
+- warn acedb users via acedbg, newsgroup, newsletter
+- archive the old libgd code
+- swop to the new stuff.

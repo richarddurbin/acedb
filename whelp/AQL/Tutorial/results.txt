@@ -1,0 +1,446 @@
+select all from class movie 
+Result table with 23 lines
+------------------------------
+godf1
+casino
+godf2
+goodfellas
+capefear
+cityhall
+tdriver
+rbull
+bronxtale
+binstinct
+apclypnow
+showgirls
+faceoff
+meanstreets
+truerom
+deerhunter
+easyrider
+fan
+pulpfiction
+resdogs
+nbk
+doors
+redrockwest
+------------------------------
+select p from p in class person 
+Result table with 41 lines
+------------------------------
+deniro
+stone1
+pesci
+woods1
+scorsese
+pileggi
+pacino
+duvall
+coppola
+puzo
+macdonald
+webb
+strick
+cusack
+fonda3
+becker
+schrader
+palminteri
+douglas2
+verhoeven
+eszterhas
+conrad
+brando
+sheen1
+goldman1
+gershon
+woo
+slater
+parquette
+hopper
+oldman
+walken
+tscott
+tarantino
+avary
+fonda1
+southern
+nicholson
+travolta
+stone2
+cage
+------------------------------
+select m->Title, m->Director from m in class Movie 
+Result table with 23 lines
+------------------------------
+The Godfather	coppola
+Casino	scorsese
+The Godfather : Part II	coppola
+Goodfellas	scorsese
+Cape Fear	scorsese
+City Hall	becker
+Taxi Driver	scorsese
+Raging Bull	
+A Bronx Tale	deniro
+Basic Instinct	verhoeven
+Apocalypse Now	coppola
+Showgirls	verhoeven
+Face/Off	woo
+Mean Streets	scorsese
+True Romance	tscott
+The Deer Hunter	
+Easy Rider	hopper
+The Fan	tscott
+Pulp Fiction	
+Reservoir Dogs	
+Natural Born Killers	stone2
+The Doors	stone2
+Red Rock West	
+------------------------------
+select m->Title, m->Director->Full_name from m in class Movie 
+Result table with 23 lines
+------------------------------
+The Godfather	Francis Ford Coppola
+Casino	Martin Scorsese
+The Godfather : Part II	Francis Ford Coppola
+Goodfellas	Martin Scorsese
+Cape Fear	Martin Scorsese
+City Hall	Harold Becker
+Taxi Driver	Martin Scorsese
+Raging Bull	
+A Bronx Tale	Robert de Niro
+Basic Instinct	Paul Verhoeven
+Apocalypse Now	Francis Ford Coppola
+Showgirls	Paul Verhoeven
+Face/Off	John Woo
+Mean Streets	Martin Scorsese
+True Romance	Tony Scott
+The Deer Hunter	
+Easy Rider	Dennis Hopper
+The Fan	Tony Scott
+Pulp Fiction	
+Reservoir Dogs	
+Natural Born Killers	Oliver Stone
+The Doors	Oliver Stone
+Red Rock West	
+------------------------------
+select a->Full_name from m in class Movie, a in m->Based_on->Author 
+Result table with 7 lines
+------------------------------
+Mario Puzo
+Nicholas Pileggi
+Nicholas Pileggi
+Mario Puzo
+John D. MacDonald
+Chazz Palminteri
+Joseph Conrad
+------------------------------
+select p->Full_name, p->Address[2] from p in class person 
+Result table with 67 lines
+------------------------------
+Robert de Niro	New York
+Robert de Niro	USA
+Robert de Niro	deniro@hollywood.com
+Robert de Niro	1-800-ROBERT
+Sharon Stone	Meadville
+Sharon Stone	Pennsylvania, USA
+Sharon Stone	0891-SHARON
+Joe Pesci	Newark
+Joe Pesci	New Jersey
+Joe Pesci	USA
+James Woods	
+Martin Scorsese	Flushing
+Martin Scorsese	New York
+Martin Scorsese	USA
+Martin Scorsese	martin.scorses@aol.com
+Nicholas Pileggi	
+Al Pacino	
+Robert Duvall	
+Francis Ford Coppola	Detroit
+Francis Ford Coppola	Michigan
+Francis Ford Coppola	USA
+Mario Puzo	New York
+Mario Puzo	USA
+Mario Puzo	m.puzo@aql.com
+John D. MacDonald	
+James R. Webb	
+Wesley Strick	New York, USA
+John Cusack	
+Bridget Fonda	
+Harold Becker	New York City
+Harold Becker	New York, USA
+Paul Schrader	Grand Rapids
+Paul Schrader	Michigan
+Paul Schrader	USA
+Chazz Palminteri	
+Michael Douglas	New Brunswick
+Michael Douglas	New Jersey
+Michael Douglas	USA
+Paul Verhoeven	
+Joe Eszterhas	
+Joseph Conrad	
+Marlon Brando	Omaha
+Marlon Brando	Nebraska
+Marlon Brando	USA
+Martin Sheen	Dayton
+Martin Sheen	Ohio, USA
+Bo Goldman	
+Gina Gershon	
+John Woo	
+Christian Slater	
+Patricia Arquette	sexybabe@hollywood.com
+Dennis Hopper	Dodge City
+Dennis Hopper	Kansas
+Dennis Hopper	USA
+Gary Oldman	New Cross
+Gary Oldman	South London
+Gary Oldman	England, UK
+Christopher Walken	
+Tony Scott	
+Quentin Tarantino	
+Roger Avary	
+Peter Fonda	
+Terry Southern	
+Jack Nicholson	
+John Travolta	
+Oliver Stone	
+Nicholas Cage	
+------------------------------
+select p->Full_name, p->Phone from p in class person 
+Result table with 41 lines
+------------------------------
+Robert de Niro	1-800-ROBERT
+Sharon Stone	0891-SHARON
+Joe Pesci	
+James Woods	
+Martin Scorsese	
+Nicholas Pileggi	
+Al Pacino	
+Robert Duvall	
+Francis Ford Coppola	
+Mario Puzo	
+John D. MacDonald	
+James R. Webb	
+Wesley Strick	
+John Cusack	
+Bridget Fonda	
+Harold Becker	
+Paul Schrader	
+Chazz Palminteri	
+Michael Douglas	
+Paul Verhoeven	
+Joe Eszterhas	
+Joseph Conrad	
+Marlon Brando	
+Martin Sheen	
+Bo Goldman	
+Gina Gershon	
+John Woo	
+Christian Slater	
+Patricia Arquette	
+Dennis Hopper	
+Gary Oldman	
+Christopher Walken	
+Tony Scott	
+Quentin Tarantino	
+Roger Avary	
+Peter Fonda	
+Terry Southern	
+Jack Nicholson	
+John Travolta	
+Oliver Stone	
+Nicholas Cage	
+------------------------------
+select m->Title, d->Full_name from m in class Movie, d in m->Director where exists d 
+Result table with 18 lines
+------------------------------
+The Godfather	Francis Ford Coppola
+Casino	Martin Scorsese
+The Godfather : Part II	Francis Ford Coppola
+Goodfellas	Martin Scorsese
+Cape Fear	Martin Scorsese
+City Hall	Harold Becker
+Taxi Driver	Martin Scorsese
+A Bronx Tale	Robert de Niro
+Basic Instinct	Paul Verhoeven
+Apocalypse Now	Francis Ford Coppola
+Showgirls	Paul Verhoeven
+Face/Off	John Woo
+Mean Streets	Martin Scorsese
+True Romance	Tony Scott
+Easy Rider	Dennis Hopper
+The Fan	Tony Scott
+Natural Born Killers	Oliver Stone
+The Doors	Oliver Stone
+------------------------------
+select m->Cast->Full_name from m in class Movie where m = "truerom" 
+Result table with 5 lines
+------------------------------
+Christian Slater
+Patricia Arquette
+Dennis Hopper
+Gary Oldman
+Christopher Walken
+------------------------------
+select m->Title, year from m in class Movie, year in m->Released  where year > `1990 
+Result table with 9 lines
+------------------------------
+Casino	1995
+City Hall	1996-02-16
+A Bronx Tale	1993
+Basic Instinct	1992-03-20
+Showgirls	1996
+Face/Off	1997
+True Romance	1993
+The Fan	1996
+Red Rock West	1992
+------------------------------
+select m, m->Released from m in class movie where not exists  m->Released 
+Result table with 8 lines
+------------------------------
+godf1	
+godf2	
+rbull	
+deerhunter	
+pulpfiction	
+resdogs	
+nbk	
+doors	
+------------------------------
+select p->Full_name, yeardiff(p->Born, today) from p in class Person 
+Result table with 41 lines
+------------------------------
+Robert de Niro	55
+Sharon Stone	40
+Joe Pesci	55
+James Woods	
+Martin Scorsese	56
+Nicholas Pileggi	
+Al Pacino	
+Robert Duvall	
+Francis Ford Coppola	59
+Mario Puzo	78
+John D. MacDonald	
+James R. Webb	
+Wesley Strick	
+John Cusack	
+Bridget Fonda	
+Harold Becker	
+Paul Schrader	52
+Chazz Palminteri	
+Michael Douglas	54
+Paul Verhoeven	
+Joe Eszterhas	
+Joseph Conrad	
+Marlon Brando	74
+Martin Sheen	58
+Bo Goldman	
+Gina Gershon	
+John Woo	
+Christian Slater	
+Patricia Arquette	
+Dennis Hopper	62
+Gary Oldman	40
+Christopher Walken	
+Tony Scott	
+Quentin Tarantino	
+Roger Avary	
+Peter Fonda	
+Terry Southern	
+Jack Nicholson	
+John Travolta	
+Oliver Stone	
+Nicholas Cage	34
+------------------------------
+select p->Full_name, yeardiff(p->Born, today) from p in class Person where yeardiff(p->Born, today) > 55 
+Result table with 6 lines
+------------------------------
+Martin Scorsese	56
+Francis Ford Coppola	59
+Mario Puzo	78
+Marlon Brando	74
+Martin Sheen	58
+Dennis Hopper	62
+------------------------------
+select m->Title, year from m in class Movie, year in m->Released where yeardiff (year,`1990) > 0 
+Result table with 4 lines
+------------------------------
+Taxi Driver	1976
+Apocalypse Now	1979
+Mean Streets	1973
+Easy Rider	1969
+------------------------------
+select p->Full_name, count(select p->Stars_in) from p in class Person
+Result table with 41 lines
+------------------------------
+Robert de Niro	10
+Sharon Stone	2
+Joe Pesci	4
+James Woods	1
+Martin Scorsese	
+Nicholas Pileggi	
+Al Pacino	2
+Robert Duvall	2
+Francis Ford Coppola	
+Mario Puzo	
+John D. MacDonald	
+James R. Webb	
+Wesley Strick	
+John Cusack	2
+Bridget Fonda	1
+Harold Becker	
+Paul Schrader	
+Chazz Palminteri	1
+Michael Douglas	1
+Paul Verhoeven	
+Joe Eszterhas	
+Joseph Conrad	
+Marlon Brando	2
+Martin Sheen	1
+Bo Goldman	
+Gina Gershon	2
+John Woo	
+Christian Slater	1
+Patricia Arquette	1
+Dennis Hopper	4
+Gary Oldman	1
+Christopher Walken	2
+Tony Scott	
+Quentin Tarantino	1
+Roger Avary	
+Peter Fonda	1
+Terry Southern	
+Jack Nicholson	1
+John Travolta	2
+Oliver Stone	
+Nicholas Cage	2
+------------------------------
+select m->Title from m in class Movie where count(select m->Cast) > 3
+Result table with 4 lines
+------------------------------
+Casino
+Apocalypse Now
+Face/Off
+True Romance
+------------------------------
+select avg(select yeardiff(p->Born, now) from p in class Actor) 
+Result table with 1 line 
+------------------------------
+52
+------------------------------
+select max(select m->released from m in class movie) 
+Result table with 1 line 
+------------------------------
+1997
+------------------------------
+$x := count(select all class movie) 
+Result table with 1 line 
+------------------------------
+23
+------------------------------
+$x := avg(select m->rating from m in class movie); select m->title, r from m in class movie, r in m->rating where r > $x
+Result table with 2 lines
+------------------------------
+A Bronx Tale	8.6
+Red Rock West	8.2
+------------------------------

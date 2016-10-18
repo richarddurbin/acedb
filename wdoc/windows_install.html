@@ -1,0 +1,174 @@
+<HTML>
+
+<HEAD>
+
+<TITLE> ACEDB documentation: packaging databases for windows and
+making CD-ROMS.</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="./wdoc.css"
+title="Style sheet for wdoc developer documents">
+
+</HEAD>
+
+<BODY>
+
+<DIV ALIGN=CENTER>
+
+<H1 align=center>Packaging Acedb databases for windows and making CD-ROMS.</H1>
+
+
+<ADDRESS>Originally written by<BR>
+Simon Kelley &lt;srk@sanger.ac.uk&gt, September 2000</ADDRESS>
+
+</DIV>
+
+<H2> Packaging an Acedb database for easy installation on
+windows. </H2>
+
+The aim is to make a single executable file which can be distributed
+by FTP, and easily installed on a computer running windows. The
+installation process involves unpacking all the files comprising the
+database and creating start-menu and desktop icons which will open the
+database. 
+<p>
+Note that this archive does not include the Acedb programs. These
+should be installed from a suitable installable archive before
+installing any databases.
+
+<H3>Tools</H3>
+
+You will need to download and install "Inno Setup" available from 
+
+<A HREF=http://www.jordanr.dhs.org/isinfo.htm>http://www.jordanr.dhs.org/isinfo.htm</A>
+
+<H3>Control File</H3>
+Inno Setup uses script files to control how it creates the program
+archive. Below is an example with commentary on how to customise it
+for your needs. The script files have names ending in .iss You can
+edit them either on Inno Setup or using the text editor of your
+choice. <font color=red>Red</font> text is things you'll probably want
+to change. <font color=green>Green</font> text is my comments, don't
+include that in your control file.
+<PRE>
+
+[Setup]
+Bits=32
+AppName=<font color=red>MyDatabase</font>    <font color=green> Used to name the program in the install wizard. </font>
+AppVerName=<font color=red>MyDataBase</font>   <font color=green> Used to name the program in the install wizard. </font>
+DefaultGroupName=<font color=red>Acedb Databases</font> <font color=green> The group in the start menu where the database will be installed. </font>
+DefaultDirName=<font color=red>{sd}\Acedb Databases\MyDatabase</font> <font color=green> Where the files will be installed when the archive is installed - {sd} means system disk. </font> 
+MinVersion=4,4
+OutputBaseFileName=<font color=red>MyDatabase</font> <font color=green> The archive will be called MyDatabase.exe </font>
+OutputDir=<font color=red>e:\</font> <font color=green> Where to put the finished archive. </font>
+SourceDir=<font color=red>e:\dbDir</font>; <font color=green>Where to look for the files specified in [Files] below.</font> 
+
+[Files]
+Source: <font color=red>"database\*";</font> DestDir: "{app}\<font color=red>database</font>"; <font color=green> Include all the files you want here. </font>
+Source: <font color=red>"wspec\*";</font> DestDir: "{app}\<font color=red>wspec</font>"; <font color=green> Don't forget pictures and wgf, if needed. </font>
+
+[ini]
+Filename: "{app}\<font color=red>MyDatabase</font>.adb"; Section: "ACEDB"; Key: "path"; String: "{app}"; <font color=green> This creates the .adb file used in [Icons} below. </font>
+
+[Icons]
+<font color=green>Line below makes an entry in the start menu in the sub-menu specified by DefaultGroupName.</font>
+Name: "{group}\<font color=red>MyDatabase</font>"; Filename:"{app}\<font color=red>MyDatabase</font>.adb"  
+<font color=green>Line below makes an icon on the desktop.</font>
+Name: "{userdesktop}\<font color=red>MyDatabase</font>"; Filename: "{app}\<font color=red>MyDatabase</font>.adb"
+
+<font color=green>Don't change the section below or the uninstall function may not work.</font>
+[UninstallDelete]
+Type: filesandordirs; Name: "{app}";
+
+</PRE>
+
+Once you have the correct control file, save it using the File/Save
+menu, and then hit File/Compile. Inno Setup will grind through its
+stuff and you will end up with a single .exe file which when executed
+will install your database. Copy that to your FTP site and then go and have a nice
+cup of tea.
+
+<H2> Making a CDROM. </H2>
+
+Once you have an install-archive of your database it is quite simple
+to go on and make a CD-ROM which allows for automatic installation of
+both Acedb and you database with only a few clicks. The recommended
+strategy is to make a CD containing three files.
+<ul>
+
+<li> The relevant install archive for Acedb itself, as distributed by
+the Acedb Team.
+
+<li> The install archive for your database, created by following the
+instructions above.
+
+<li> A small master installer, which guides the user through
+installing first Acedb, and then your database.
+
+</ul>
+
+If you call the master installer Setup.exe, then windows will
+even run it automatically when the user inserts the CD-ROM.
+<p>
+To create the master installer, use Inno Setup, in the way
+described above, with a control file which looks like this.
+
+<pre>
+[Setup]
+Bits=32
+AppName=<font color=red>C Elegans Database CDROM</font>
+AppVerName=<font color=red>the 7th January 2000 beta release</font>
+CreateAppDir=0
+MinVersion=4,4
+OutputDir=.
+OutputBaseFileName=Setup
+InfoBeforeFile=<font color=red>cdromblurb.txt</font>
+Uninstallable=0
+
+[Run]
+Filename: "{src}\<font color=red>Acedb-4_8c.exe</font>"; Parameters: "/SP-";
+Filename: "{src}\<font color=red>MyDatabase.exe</font>"; Parameters: "/SP-";
+
+</pre>
+
+Compiling the  above with Inno Setup will create Setup.exe, which will in turn run Acedb-4_8c.exe
+and MyDatabase.exe from the CD-ROM. 
+<p>
+The file cdromblurb.txt contains
+text which is displayed to the user as part of the install
+process. Note that this is copied into Setup.exe when you compile the
+control file with Inno Setup, so it needs to be available then: it
+does not have to be on the CD-ROM. Here is an example I used, customise
+it as necessary.
+
+<pre>
+Welcome to the C. elegans Acedb database CD-ROM distribution.
+
+This installation program will install both the Acedb software
+and, when that is complete, the C. Elegans database. If you wish 
+to install only one of these components (for instance if you
+already have the Acedb software installed) then click the 
+Cancel button now and use the separate installation programs 
+on this CD-ROM
+
+Acedb.exe - to install the acedb software.
+Wormace.exe - to install the C. Elegans data.
+
+If you wish to install both components, click the next button,
+which will take you first through installing the Acedb 
+software, and then the C. Elegans data.
+</pre>
+
+Burn Setup.exe, the Acedb installer, and your database installer onto
+a CD-ROM and all is complete. Inno Setup compresses the data, so even
+rather large databases will fit on a single CD-ROM. If you database is
+too large, Inno setup has a spanning feature to
+allow it to be spread over more than one CD-ROM. See the documentation
+which comes with Inno Setup for details on this. 
+ 
+
+
+
+</BODY>
+</HTML>
+

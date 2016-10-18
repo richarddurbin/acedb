@@ -1,0 +1,412 @@
+<HTML>
+
+<HEAD>
+<TITLE>User Guide To ACEDB Tools</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="./wdoc.css"
+title="Style sheet for wdoc developer documents">
+
+</HEAD>
+
+
+<BODY>
+
+<BLOCKQUOTE>
+<DIV ALIGN=CENTER>
+ <IMG SRC="acedb-logo.gif" ALT="[ACEDB DOCUMENTATION]" align=middle>
+ <H3>
+  ACEDB Tools
+ </H3>
+</DIV>
+
+
+<DIV ALIGN=CENTER>
+
+<H1 align=center>
+User Guide To Acedb Tools
+</H1>
+
+<ADDRESS>Originally written by<BR>
+Ed Griffiths &lt;edgrif@sanger.ac.uk&gt, March 2000</ADDRESS>
+
+</DIV>
+
+
+<H2>Background</H2>
+
+<P>The ACEDB tools are a collection of shell, perl and python scripts and C executables
+that are useful for the curating/administration of databases. The tools can all be
+found in the <B>/wtools</B> directory.
+
+
+<H2>The Tools</H2>
+
+<UL>
+  <LI><B><A href="./acetools.html#XXXX">INSTALL</A></B>
+       - Acedb installation.
+  <LI><B><A href="./acetools.html#XXXX">INSTALL.acembly</A></B>
+      -  Acedb installation.
+  <LI><B><A href="./acetools.html#XXXX">INSTALL.xclient</A></B>
+      -  Acedb installation.
+  <LI><B><A href="./acetools.html#XXXX">MAKE_ACEMBLY</A></B>
+      -  Acedb installation.
+  <LI><B><A href="./acetools.html#XXXX">MAKE_ACEMBLY_BIN</A></B>
+      -  Acedb installation.
+  <LI><B><A href="./acetools.html#XXXX">MAKE_OTHERS</A></B>
+      -  Acedb installation.
+  <LI><B><A href="./acetools.html#XXXX">MAKE_SERVER</A></B>
+      -  Acedb installation.
+  <LI><B><A href="./acetools.html#XXXX">MAKE_SOURCE_DISTRIBUTION</A></B>
+      -  Acedb installation.
+  <LI><B><A href="./acetools.html#XXXX">MAKE_TAR_FILES</A></B>
+      -  Acedb installation.
+  <LI><B><A href="./acetools.html#Restriction2Motif">Restriction2Motif</A></B>
+      - convert ace2 Restriction objects to ace4 Motif
+  <LI><B><A href="./acetools.html#aceExtract">aceExtract</A></B>
+      - extract objects from an ace file
+  <LI><B><A href="./acetools.html#aceGetVersion">aceGetVersion</A></B>
+       - read the acedb kernel version from the source file that
+       holds the version number
+  <LI><B><A href="./acetools.html#ace_perl">ace_perl.pl</A></B>
+      - 
+  <LI><B><A href="./acetools.html#acecsplit">acecsplit</A></B>
+      - split a .ace file into parts according to mapping file
+  <LI><B><A href="./acetools.html#acesplit">acesplit</A></B>
+      - read a .ace file and split it every n objects
+  <LI><B><A href="./tools/ace2line.html">ace2line & line2ace</A></B>
+      - read a .ace file and convert into line records and vice versa.
+  <LI><B><A href="./acetools.html#classCount">classCount</A></B>
+      - 
+  <LI><B><A href="./acetools.html#embl2ace">embl2ace</A></B>
+      - script to process EMBL entry to ACEDB4 .ace file
+  <LI><B><A href="./acetools.html#fmap2_4">fmap2_4</A></B>
+       - convert Sanger ace files containing Sequence/DNA
+       objects to ACEDB4 models.
+  <LI><B><A href="./acetools.html#homol2match">homol2match</A></B>
+      - 
+  <LI><B><A href="./acetools.html#homonym">homonym</A></B>
+      - 
+  <LI><B><A href="./acetools.html#html2txt">html2txt</A></B>
+      - decorate an html file with text characters for prettier plain text output.
+  <LI><B><A href="./acetools.html#modelcheck">modelcheck</A></B>
+      - check a model file for correctness
+  <LI><B><A href="./acetools.html#models2tags">models2tags</A></B>
+      - parse models.wrm and generate tags.tmp and classes.tmp from it
+  <LI><B><A href="./acetools.html#parsecode">parsecode</A></B>
+      - 
+  <LI><B><A href="./acetools.html#rm-O">rm-O</A></B>
+      - removes -O usersession data and big pointless keysets
+  <LI><B><A href="./acetools.html#rsort">rsort</A></B>
+      - sort ace dump
+  <LI><B><A href="./acetools.html#split">split.c</A></B>
+      - split big ace files in a naive way
+  <LI><B><A href="./acetools.html#splitdump">splitdump</A></B>
+      - split up ACEDB dump output into classes
+  <LI><B><A href="./acetools.html#tace2table">tace2table</A></B>
+      - process dumped tables so fields are not lost when split
+  <LI><B><A href="./acetools.html#tagCount">tagCount</A></B>
+      - 
+  <LI><B><A href="./acetools.html#tagsInModel">tagsInModel</A></B>
+      - lists tags and classes used in a model
+  <LI><B><A href="./acetools.html#xcl">xcl</A></B>
+      - Launches a graphic acedb xace working as a client on an ace-server
+</UL>
+
+
+<H2><A name="XXXX">Not Written Yet</A></H2>
+<PRE>
+Sorry, there is no description of this item yet.
+</PRE>
+
+
+<H2>Tools decriptions</H2>
+
+<H3><A name="Restriction2Motif">Restriction2Motif</A></H3>
+<PRE>
+#
+# awk script to convert ace2 Restriction objects to ace4 Motif
+#
+</PRE>
+
+<H3><A name="aceExtract">aceExtract</A></H3>
+<PRE>
+# perl script to extract objects from an ace file
+#
+# usage: aceExtract class:name acefile ...
+#
+# perl regexp allowed in name (but protect from shell globbing)
+#
+</PRE>
+
+<H3><A name="aceGetVersion">aceGetVersion</A></H3>
+<PRE>
+#
+# Perl script to read the acedb kernel version from the source file that
+# holds the version number:   aceversion.c
+#
+# The idea is that only the version.c source file will be altered when changing
+# the ACEDB version number, then the scripts that produce the public tar files
+# will use this script to get that version number.
+#
+# The script returns the version, release and update read from aceversion.c
+# in the form:    <version>_<release><update>     e.g.  4_6d
+#
+# it must be given the name of the directory where aceversion.c can be found.
+#
+</PRE>
+
+
+<H3><A name="ace_perl">ace_perl</A></H3>
+<PRE>
+#  File: ace_perl.pl
+#   Author: Jean Thierry-Mieg, Steve Rosen, Gabor Marth
+# -------------------------------------------------------------------
+#  This file is part of the client/server interface to
+#       the ACEDB genome database package, written by
+#  	Richard Durbin (MRC LMB, UK) rd@mrc-lmba.cam.ac.uk, and
+#	Jean Thierry-Mieg (CRBM du CNRS, France) mieg@kaa.cnrs-mop.fr
+#   Copyright (C) J Thierry-Mieg and R Durbin, 1989-
+#
+#  Description:
+#  Exported functions:
+#   ace_in, ace_new, ace_count, ace_table, ace_script
+# -------------------------------------------------------------------
+</PRE>
+
+<H3><A name="acecsplit">acecsplit</A></H3>
+<PRE>
+# This file is part of the IGD project
+#
+# Description: split a .ace file into parts according to mapping file
+# usage: acecsplit [-c <configfile>] [-p <prefix>] [<filename>...]
+# Inputs: .ace data from files or stdin
+#         if option -c is given, then
+#         split according to config file,
+#         else split by class name
+# Output: .ace data is distributed into files according to config
+#         if <prefix> is given then all output files start with it,
+#         default for <prefix> is "split."
+</PRE>
+
+<H3><A name="acesplit">acesplit</A></H3>
+<PRE>
+# read a .ace file and split it every n objects
+# contributed by Detlef Wolf, DKFZ
+#
+# Fri Feb  3 10:54:04 MET 1995  dok256
+# - comments may start anywhere on a line
+# Thu Feb  2 10:28:53 MET 1995  dok256; bugs fixed:
+# - DNA tags are no longer treated as objects
+# - .ace commands -D -R -A are recognized
+# - terminates even if last line of last file does not end with a newline
+</PRE>
+
+<H3><A name="classCount">classCount</A></H3>
+<PRE>
+There is no help...sigh...
+</PRE>
+
+<H3><A name="embl2ace">embl2ace</A></H3>
+<PRE>
+# script to process EMBL entry to ACEDB4 .ace file
+</PRE>
+
+<H3><A name="fmap2_4">fmap2_4</A></H3>
+<PRE>
+# Script to convert Sanger ace files containing Sequence/DNA
+#   objects to ACEDB4 models.
+# May assume sometimes layout of .ace file dumped from acedb.
+</PRE>
+
+<H3><A name="homol2match">homol2match</A></H3>
+<PRE>
+There is no help...sigh...
+</PRE>
+
+<H3><A name="homonym">homonym</A></H3>
+<PRE>
+#
+# Replacement of old homonym C program
+#
+# Format of homfile:
+#	// any line starting with '//' is ignored
+#	Full name 1 =
+#	Variant A of 1
+#	Variant B_of_1
+#	Full_name 2 =
+#	Variant of 2
+#	etc.
+# i.e. the correct names come first, followed by an '=' sign
+# all names on subsequent lines up until the next '=' sign are treated 
+# as homonyms.  NOTE THAT THIS IS DIFFERENT FROM THE OLD FORMAT.
+#
+# By default Author lines are substituted, but you can apply to any other 
+# tag using option "-T tag"
+#
+# Option -c will just output information on changes that will be made
+#
+# Option -2 is like -T, but looks for items 2 in from the tag
+#
+# Lines ending with '// fix' will not be changed
+
+$usage = "Usage: homonym [-T tag] [-c] [-2 tag] homfile [files]\n" ;
+</PRE>
+
+<H3><A name="html2txt">html2txt</A></H3>
+<PRE>
+
+Don't be fooled, this doesn't really translate html -> plain text !!
+
+Now read on...
+
+
+html2txt - decorate an html file with text characters for prettier plain text output.
+
+
+     html2txt &lt; inputfile &gt; outputfile
+
+
+This perl module decorates an HTML file in such a way that
+when it is saved from Netscape (other browsers untested) as
+plain text then headings will be underlined so they still
+stand out in the text.
+
+You have some html that you want to translate to text but you have
+noticed that when you do this with Netscape ("Save as" menu option)
+none of the headers are marked in any way. This script takes an
+html file and adds underlining to headers using ordinary text
+characters to produce a new decorated html file. View this new
+file in Netscape and save it as plain text. If you now look at
+the plain text file you will see that all the headings are now
+underlined. (The script also marks bold text as well.)
+
+e.g. headings:
+
+&lt;H1&gt; A Heading &lt;/H1&gt;
+
+would become:
+
+A Heading
+*********
+
+e.g. bold:
+
+&lt;B&gt;Some text&lt;/B&gt;
+
+would become:
+
+_Some text_
+
+
+If you want more details then you can use the perl pod2XXX commands to
+extract the man page in the html2txt perl script.
+
+Currently this script is used to prepare a plain text version of
+acedb monthly newsletter (which is in html).
+
+</PRE>
+
+
+<H3><A name="modelcheck">modelcheck</A></H3>
+<PRE>
+To run the program:
+
+> modelcheck models.wrm
+
+
+Output is written densely to stdout so you will probably want to capture it into a file.
+
+<B>NOTE</B> that you need python version 1.5 or later to run this script.
+</PRE>
+
+<H3><A name="models2tags">models2tags</A></H3>
+<PRE>
+# parse models.wrm and generate
+# tags.tmp and classes.tmp from it
+</PRE>
+
+<H3><A name="parsecode">parsecode</A></H3>
+<PRE>
+You are beyond all help...
+</PRE>
+
+<H3><A name="rm-O">rm-O</A></H3>
+<PRE>
+#
+# removes -O usersession data and big pointless keysets
+# particularly good for dumps
+#
+</PRE>
+
+<H3><A name="rsort">rsort</A></H3>
+<PRE>
+#
+# rsort was written to sort ace dump but
+# is general enough to be used for
+# other purposes.
+#
+</PRE>
+
+<H3><A name="split">split</A></H3>
+<PRE>
+ * Description: stand alone, will split big ace files in a naive way
+"Usage split prefix, splits stdin into n files of max 10^5 lines called prefix.n
+</PRE>
+
+<H3><A name="splitdump">splitdump</A></H3>
+<PRE>
+#
+# script to split up ACEDB dump output into classes
+#
+</PRE>
+
+<H3><A name="tace2table">tace2table</A></H3>
+<PRE>
+# tace2table
+#
+#  tace dumps tables with ; separating the fields.
+#
+#  Typically : "E77B4";;"95-06-08";;;;
+#
+# Convert ;; to ;""; so don't lose fields when split
+#
+</PRE>
+
+<H3><A name="tagCount">tagCount</A></H3>
+<PRE>
+No help here...
+</PRE>
+
+<H3><A name="tagsInModel">tagsInModel</A></H3>
+<PRE>
+#
+# lists tags and classes used in a model
+#
+</PRE>
+
+<H3><A name="xcl">xcl</A></H3>
+<PRE>
+#-------------------------------------------------------------------
+# Usage: xcl host port
+#  example: xcl beta 20000100
+#-------------------------------------------------------------------
+# Description: 
+#   Launches a graphic acedb xace working as a client on an ace-server
+#
+</PRE>
+
+
+<HR>
+<H3 ALIGN="CENTER">ACEDB Tools</H3>
+
+
+<HR>
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Fri Feb 15 09:50:28 GMT 2002
+<!-- hhmts end -->
+
+</BLOCKQUOTE>
+</BODY>
+</HTML>

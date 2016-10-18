@@ -1,0 +1,35 @@
+  /* wspec/options.wrm
+     
+     Options names can be abbreviated, recognized options are
+     -Hidden    : this class will be listed in the Main Window triangle.
+     -Visible   : this class will be listed in the acedb Main Window.
+     -Array     : this class is of type A, (Array or tuple).
+     -Btree     : this class is of type B, it must be further defined in models.wrm
+     -Display  displayType : The preferred display type of the class,
+		             as enumerated in wspec/disptype.wrm
+     -Title  Tag : Tag must be a tag name listed in wspec/tags.wrm (or systags)
+	           If present in some object of that class, the text following it
+                   will be used preferentially when referring to that object.
+     -Symbol Tag : Tag must be a tag name listed in wspec/tags.wrm (or systags)
+                   If present in some object of that class, the text
+                   or key following it will be used preferentially
+                   when referring to that object in Maps.
+     -Rename otherName : Other name will show in lists, old and new
+                         name will be recognized in ace files and queries, old
+                         is used in the code. In case some newName
+			 matches some old name, the new name takes precedence.
+     -CaseSensitive : The names in this class will be case sensitive.
+                      Never undo this option once it has been used.
+     -Known : Prevents indirect creation of new object in ace files
+              You can't enter a new object in this class directly
+              but not by quoting it in another object.
+  */
+
+
+_VPerson		-Visible
+_VMovie			-Visible
+_VBook			-Visible
+_VCompany		-H
+
+_VTable			-H -D DtSpreadSheet
+_VTableResult		-Visible

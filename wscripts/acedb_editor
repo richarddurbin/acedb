@@ -1,0 +1,23 @@
+#!/bin/ksh
+#
+# This script is called when you click the "Edit" button in the
+# LongText display window (reached by double clicking on the
+# name of any longtext displayed in the tree display).
+# You should copy it to a directory on your PATH otherwise acedb
+# will not be able to find it (N.B. make sure that its executable).
+#
+# If you haven't got ksh on your system then just adapt this script.
+#
+# Change "xemacs" to the editor of your choice.
+#
+#
+
+donename="$1.done"
+
+xemacs -q $1
+
+cp $1 $donename
+
+echo "***LongTextEnd***" >> $donename
+
+exit 0

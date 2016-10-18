@@ -1,0 +1,62 @@
+<html>
+<body>
+<h2>New FIND functionality in TreeDisplay.</h2>
+
+<p>
+Starting with release 4_9r, the old "Find Tag" or even older "Warp to Tag" function has
+been replaced by a new, more generic "Find" which locates any object you specify, whether
+a tag or not.
+</p>
+<p>
+As with previous versions, you use the right mouse button to drop down the menu, from
+which you can choose Find.  However, the new version also responds to Control/F to
+initiate a forward search and Control/B for a reverse direction search.  The reverse
+search starts at the distal end of the tree and works backwards, of course. In all cases,
+the same dialogue box appears for you to enter the text you want.
+</p>
+<p>
+For performance reasons, only the expanded portion of the tree is searched.  Unfolding
+each node, searching it and folding it away was considered too costly to be worth
+implementing, and users we consulted said that in general they know the location of
+the objects their seeking well enough to unfold the necessary nodes manually.
+</p><p>
+If the object can't be found, you get an error message. 
+</p>
+<p>
+Once it has been located, you can get to the next and previous occurrences of your text
+using Control/. and Control/, buttons.  I originally wanted to use Control/N and Control/P
+but the latter was already in use for printing, and I thought the appearance of the chevron
+keys was in keeping with the function, though I've not insisted you also press Shift to get
+there.
+</p>
+<p>
+When you reach the end/beginning of the tree, you get a warning message, after which
+a further Next/Prev wraps the search back to the point at which it started.
+</p>
+<p>
+Control/F and Control/B always give you back the Find dialogue box to allow you to change
+the object you're looking for, but note that it will start from the top of the tree rather
+than your current position if you do so.
+</p>
+<p>
+Find also works in the UpdateTree display.
+</p>
+<h2>New HotKeys</h2>
+In the TreeDisplay, you can shift directly to the UpdateTree using Control/U and
+then you can get back to the TreeDisplay using Control/T in UpdateTree.
+</p><p>
+I've also added Control/U to UpdateTree to save your work.  This doesn't actually write
+the changes back to disc, but it does save them in the cache, so when you exit the window
+they're not lost, ie the same as the menu Save function.  Also as with the Save
+function on the menu, you're automatically returned
+to the TreeDisplay after using Control/U.
+
+This is quite distinct from the Control/S Save function which exists in the whole of
+AceDB.
+<p>
+Finally, this is old news but not everyone knows it.  If you select a tag in
+TreeDisplay and go from there to the UpdateTree display, that tag will be centred on the
+screen for you.
+</p>
+<hr>
+</body>

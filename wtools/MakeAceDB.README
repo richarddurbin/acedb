@@ -1,0 +1,40 @@
+
+    MakeAceDB - setting up a new ace database from scratch
+
+
+Setting up an ace database is not particularly arduous, but there is no
+reason not to automate it, which is what MakeAceDB does. MakeAceDB is
+part of AceDB standard release and as such comes as part of the download
+package available from this site. It is located in the wtools
+subdirectory, along with all other files referred to in this document.
+
+MakeAceDB is a perl script which creates the necessary directories,
+copies the required files into place and initialises the database. If
+you specify the path to an ace file, then MakeAceDB will load that into
+the new database. The run-time parameters may be given either on the
+command line, which does tend to make for rather a long command, or in a
+file, in which case you identify the command file with the -f flag.
+Examples of how to run MakeAceDB are given in the files MADC an MADF.
+There is also an example of a command file, MakeAceDB.com.
+
+You will need to provide the location of a set of .wrm files, but
+individual ones can be overridden with local copies if you wish. If
+running with command line parameters, just list the .wrm files after the
+--tace option. If running with a command file, specify them with
+wrm=filename. If your userid doesn't exist in the passwd.wrm file, it
+will be added. If you don't specify a passwd.wrm file, a new one will be
+created with just your userid in it. You can supply as many .ace files
+as you like, and these will be loaded into the new database.
+
+MakeAceDB is written with the intention that you be able to specify
+different userid and groupid, in which case the userid will be used in
+the passwd.wrm file, for example.
+
+NB Be aware that the code to override userid and groupid has not been
+tested as I'm not a superuser. If you find bugs, please email
+acedb@sanger.ac.uk.
+
+Some time I'll change it so it gives a running commentary detailing what
+it's doing, but I don't have the time right now.
+
+===================== end of file ===================================

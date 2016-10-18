@@ -1,0 +1,307 @@
+<HTML>
+<HEAD>
+<TITLE>ACEDB for Windows ('WinAce')</TITLE>
+</HEAD>
+<BODY>
+<A NAME="TOP"></A>
+<H1>ACEDB for Microsoft Windows</H1>
+
+<P>This document provides &quot;platform-specific&quot; documentation on the installation,
+configuration and operation of ACEDB for the Microsoft Windows '95 ('98) or NT (4.0)
+(formerly also called 'WinAce', however, 'WinAce' was recently discovered <B>not</B> to be 
+the name for several software applications on the WWW! Therefore, <STRONG>'ACEDB for Windows'</STRONG>
+is now the official name of this software). 
+Development work on ACEDB for Windows is ongoing at the Sanger Centre.
+
+<P ALIGN="CENTER"><B><FONT size=5 color="#C04040">New! New! New! October 1999 ACEDB for Windows 4.8 Release</FONT></B></P>
+
+For the latest release news about ACEDB for Windows, go to the
+ <A HREF="http://www.sanger.ac.uk/Software/Acedb/CurrentWinAce.shtml">current release information page</A>. 
+For information on previous releases, go to the 
+<A HREF="http://www.sanger.ac.uk/Software/Acedb/PreviousWinAce.shtml">previous releases information page</A>.</P>
+
+<P>For further information about this software (questions not answered in this document or 
+the main ACEDB documentation repository - see below; or errors/omissions in the documentation), contact 
+<A HREF="mailto:srk@sanger.ac.uk">Simon Kelley</A>.
+</P>
+<Hr>
+
+<a NAME="Copyright"></A><H2>Copyright</H2>
+ACEDB Copyright (C) 1990-1999 - R Durbin and J Thierry-Mieg.</P>
+<P>All rights reserved; primary code written by Jean Thierry Mieg 
+and Richard Durbin, 1990-1999; Contributions by others too numerous to note here,&nbsp; but
+a special mention to <STRONG>Richard Bruskiewich</STRONG> who spearheaded the original ('Classical')
+ACEDB for Windows port, and who has now gratiously abdicated his throne as the 'King of WinAce'
+to Simon Kelley (with his new gnu/GTK port) :-)
+</P>
+<P>Current maintenance and extension of the Windows port of ACEDB is now 
+supported at the Sanger Centre.</P>
+<P>Redistribution and use of source, documentation and binary forms are 
+freely permitted provided that the above copyright notice and attribution and 
+date of work and this paragraph are duplicated in all such forms and that neither 
+this software nor software based in whole or in part on this software is sold for profit.</P>
+<P>THIS SOFTWARE AND DOCUMENTATION IS PROVIDED &quot;AS IS&quot; AND WITHOUT 
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE 
+IMPLIED WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+</P>
+<Hr>
+
+<A NAME="Background"></A><H2>Background</H2>
+
+<P>Welcome to the home page for the (Intel box) Microsoft Windows version of the
+&quot;A Caenorhabditis elegans Database (ACEDB)&quot; software. ACEDB is a 
+multi-platform supported, object-oriented
+scientific database engine specialized for the management and representation of genomic data 
+(maps and sequences) and associated biological (including bibliographical) data. ACEDB has
+deep knowledge about the biological nature of the data it stores and has a very rich
+interactive graphical representation of such data.</P>
+
+<P>This readme provides platform specific details on
+how to set up a ACEDB for Windows ('WinAce') database upon your PC. It does NOT dwell upon the complete 
+details of operating ACEDB per say (WinAce is by and large almost identical to the well 
+established UNIX versions of the program). Rather, for further details on ACEDB, novice
+ users are directed towards to consult the rich available documentation resource about 
+ACEDB on the WWW at:</P>
+
+<P ALIGN="CENTER"><A HREF="http://www.acedb.org/Documentation/">http://www.acedb.org/Documentation/</A></P>
+
+<P>Back to <A HREF="#TOP">Top of Page</A></P>
+<HR>
+<A NAME="Requirements"></A><H2>System Requirements</H2>
+<A NAME="Basic_Hardware"></A>
+<H3>Basic Hardware:</H3>
+
+<P>This program should run on any WIN32 O/S compatible Intel Pentium microprocessor based personal computer 
+ with the recommended base amount of RAM and hard drive storage; however, 
+ACEDB was designed (under UNIX) to expect a bountiful memory space which 
+it exploits with abandon (JTM) so more RAM is better (shoot for 32 - 64 mb, 
+or better, depending upon the size of your database).
+The ACEDB database will require essentially the same hard drive space as 
+currently publicized for UNIX versions.</P>
+
+<P><A NAME="Video_Graphics_Hardware"></A>
+<H3>Video Graphics Hardware:</H3>
+
+<P>The program requires a minimum of 256 color VGA; 800 x 600 pixels is a desired MINIMUM screen resolution. 
+WinAce now runs well under larger color palettes (i.e. 64K or &quot;True Color&quot; palettes); The graphics 
+DEFINITELY works better upon higher pixel resolution displays and larger monitors. This writer now runs the 
+software upon a 1600 x 1200 pixel display on a 19&quot; monitor, with very appealing results. Running the 
+program at lower resolutions is found to be progressively less satisfying, with great disappointment at 
+640 x 480 VGA bordering on frustration. Moral of the story: get the highest resolution mode possible 
+running upon your machine.</P>
+
+<P><A NAME="Ancillary_Hardware"></A>
+<H3>Ancillary Hardware:</H3>
+
+<P>Other than the standard windows mouse, the program doesn't absolutely rely upon any &quot;special&quot; 
+peripherals and inherits its computing functionality (i.e. printing and networking) from the Windows O/S. </P>
+
+<A NAME="Installation_and_Configuration"></A>
+<H2>Program Installation and Configuration</H2>
+
+<P>This section outlines ACEDB configuration details under Windows.</P>
+
+<H3>*** STEP 1 - Decide where you want to put your database</H3>
+
+<P> You need to provide the program with the path name location of your database. The basic ACEDB database 
+directory structure is as follows:</P>
+<font size="2">
+<Pre>
+\acedb ---|-- database----| ; (required) location of the  binary database
+     	|		|-- new ; (created by ACEDB) used to collect update log
+     	|		|-- touched ; (created) used to collect changes log
+     	|-- wspec    ; (required) location of the *.wrm configuration files
+     	|-- rawdata  ; (optional) location of.ace or (mandatory) update files
+		 	 	specified by the ACEDB_DATA environment variable
+     	|-- whelp    ; (optional) location of HTML files (online help, etc.)
+     	|-- wscript  ; (optional) command line scripts, perl, etc. 
+     	|-- pictures ; optional - for *.jpg, *.gif pictures, etc.
+ </pre>
+</font>
+
+<P>Specify the latter &quot;pictures&quot; directory as an additional (semi-colon delimited) 
+path value in the ACEDB environment variable (see below).</P>
+<P>\acedb can be ANY path name you like, but you must ensure that you start
+the program from within that directory, provide a full path to the directory,
+<B>OR</B> set the ACEDB  environment variable (see below) is set to this path name.</P>
+
+<H3>*** STEP 2 - Obtain programs and data</H3>
+
+<P>The most recent updates for this program may generally be obtained by anonymous ftp from the Sanger Centre or NCBI:</P>
+<P align="center"><A HREF="ftp://ftp.sanger.ac.uk/pub/acedb/winace">
+ftp://ftp.sanger.ac.uk/pub/acedb/winace</A></P>
+<P align="center">or</P>
+<P align="center"><A HREF="ftp://ncbi.nlm.nih.gov/repository/acedb/winace">
+ftp://ncbi.nlm.nih.gov/repository/acedb/winace</A></P>
+<P>
+Previous releases (4.5.6 or earlier) were Winzip self extracting archives. The current releases use
+the Gnu gzip and UNIX style tar facilities, which you should be able to extract using either Gnu tools or
+using Winzip or similar utilities. Extract these files into a suitable subdirectory (e.g. your c:\acedb\bin)
+<B>AND</B> ensure that that subdirectory is entered onto your Windows program 'PATH' (i.e. in the
+'Environment' tab of the Systems applet in the Windows Control Panel...).
+</P>
+<P>
+For those of you upgrading from release 4.5.6 or earlier versions of ACEDB for Windows, it is well advised
+to use the Add/Remove applet in the Windows Control Panel to remove any such previous WinAce version, prior
+to attempting to run the new program.
+</P>
+<P><STRONG>Note that from October 1999 onwards, ACEDB for Windows is a
+new version built upon cross-platform software tools spanning UNIX/Windows (and possibly Mac's)
+(see the <A HREF="http://www.sanger.ac.uk/Software/Acedb/CurrentWinAce.shtml">
+current release information page</A>) which is essentially identical in look and feel to its UNIX variant,
+hence, the graphical version is now called 'xace' (the UNIX graphical version name) rather than 'winace'.
+Of course, 'tace' refers to the non-graphical version of ACEDB (as in UNIX).</STRONG>
+</P>
+<A NAME="SOFTWARE_LOCATION"></A>
+<H3>*** STEP 3 - Obtain Database Schema and Data</H3>
+
+<P>It is assumed that users of the software will separately obtain the required configuration and data files
+ essential for running ACEDB (as in the UNIX version); however, a copy of the current C. elegans wspec 
+configuration files may be &quot;custom&quot; installed during WinAce setup. </P>
+<P>Databases must be reconstructed from scratch by loading update* or .ace files into an initialized 
+database. Any model schema, display specs, etc. currently debugged on a UNIX system should work fine 
+within WIN32, with no modifications. The most important thing is to ensure that a &quot;wspec&quot; 
+subdirectory (e.g. c:\acedb\wspec) is created and all the *.wrm configuration files are placed in 
+this &quot;wspec&quot; subdirectory. The &quot;database&quot; directory (e.g. c:\acedb\database) 
+must also be created prior to first execution of the program.</P>
+<P>For Caenorhabditis elegans, the full current release of update* files may be obtained by 
+anonymous ftp from:</P>
+<P align="center"><A HREF="ftp://ncbi.nlm.nih.gov/repository/acedb/celegans">
+ftp://ncbi.nlm.nih.gov/repository/acedb/celegans</A></P>
+<P>Consult your system documentation on ftp details (or use a WWW browser). 
+Again, the files will be compressed (as UNIX update*.tar.Z files). Although 
+these are UNIX files, the shareware WinZip program :-) is fully equipped to extract such archives. 
+Simply place the .tar.Z file in your designated primary directory (e.g. c:\acedb) then 
+extract the entire archive using WinZip. WinZip should create a &quot;wspec&quot; and 
+&quot;rawdata&quot; subdirectory for the configuration and dataset (update*) files 
+respectively, plus any other files in the update. Should you experience difficulties 
+in reading the update files, please verify that you have made a proper unix to dos 
+translation of the files. Using the update (uncompressed, untar'd) files off unix 
+sometimes causes problems, as do update files ftp'd using some (older) utility programs.</P>
+<P>Unix to DOS Conversions: As many folks will know, UNIX and DOS have different 
+conventions for file structure, in particular, the end of line (EOL) character(s) 
+in files. Some difficulties may be experienced when using UNIX files (such as wspec 
+or update files) in the Windows/DOS world. The extent that this causes malfunctions
+ within ACEDB for Windows has not yet been fully assessed. On UNIX machines, a 
+&quot;unix2dos&quot; utility program may be available which converts unix (text) 
+files into DOS formatted files (and vice versa, using dos2unix). This program should 
+be used when transferring most (text) files such as wspec and update files from Unix 
+to Windows/DOS. Alternatively, &quot;tar&quot; and &quot;Z&quot; compress your files 
+on the UNIX machine then use the WinZip utility (or other similar utility) which works
+ properly with tar.Z files on PC's) to extract the files onto your PC (Note: this is 
+probably the preferred approach).</P>
+<P>Special Note: Windows FTP may inadvertently rename files (i.e. substitute &quot;_&quot;
+ for &quot;.&quot; In the file names). This can be a source of problems during standard 
+(Unix) update file extraction. Users should rename files back to their original names 
+if this occurs, then extract the &quot;.z&quot; files using Winzip (or equivalent) by specifying 
+the proper &quot;.tar&quot; archive name, i.e. &quot;update.WS4.4-1.tar.z&quot; should be called
+ &quot;update.WS4.4-1.tar&quot;. Then, extract the update files into your primary database directory.</P>
+<U>Loading Large C.elegans Update Files</U>: Rumors from the field (David Baillie, SFU) suggest 
+that you can speed up your database creation/update process by locating the rawdata\update* 
+(or .ace) files on an independent physical (not merely logical) hard drive distinct from the 
+one upon which you are creating your binary database (e.g.. the hard drive containing your
+ c:\acedb\database and c:\acedb\wspec directories). This avoids the time lags of hard drive 
+read/write head &quot;thrashing&quot; associated with ACEDB reading a data object from the 
+rawdata\update then writing it out to a binary database\blockx.wrm file the same physical device.</P>
+
+<H3>*** STEP 4 - Program Configuration</H3>
+
+<P>After the programs have been installed on a user's machine, some program icons will have 
+been installed in the Windows &quot;Start Menu&quot;; however, they are not guaranteed to 
+work perfectly unless correctly configured, as follows. Please review these details
+ carefully and make the necessary changes to your database configuration files (under wspec) 
+and to your tace and winace &quot;Start Menu&quot; shortcut icons.</P>
+
+<H4>Write Access:</H4>
+
+<P>For write access to the database (essential for database creation!), ACEDB consults 
+the wspec\passwrd.wrm configuration. </P>
+<P>You should ensure that this file lists all write permitted computer user names. NOTE: 
+Check this file after you WinZip extract new updates, in case the your passwrd.wrm gets 
+overwritten with another update* copy... </P>
+<P>For Windows '95 (which doesn't care about user accounts), add &quot;acedb&quot; as the 
+user name. For Windows NT, you should put the actual user account name(s) of all users to
+ whom you wish to grant write permission (e.g. &quot;Administrator&quot; if that is your
+ NT account).</P>
+
+<H4>Environment Parameter Settings:</H4>
+
+<P>The following environment variables may be so set:</P>
+<UL>
+<LI>ACEDB: Set to the pathname of your primary subdirectory (e.g. c:\acedb) plus any 
+ancillary search directories (i.e. for image files). UNC names (i.e. \\&lt;hostname\&lt;path&gt;) 
+are NOT yet supported; however, mapping a drive letter to an UNC path then using the drive 
+letter root path (i.e. x:\ where &quot;x&quot; is the mapped drive letter) should work.
+ There are, however, peculiarities in LAN access permissions that may cause problems 
+(see &quot;Networking&quot; in this document).</LI>
+</UL>
+
+<H4>Miscellaneous Configuration Items:</H4>
+
+<U>'wspec' Files</U>
+
+<P>The &quot;wspec&quot; subdirectory contains *.wrm configuration files (some self documenting) 
+which may be customized for better operation of ACEDB in general and WinAce in particular.</P>
+<P>By and large, the *.wrm files obtained from a UNIX ACEDB database will port directly, with few 
+modifications, to WinAce; however, there are a few *.wrm which are best readjusted to the WinAce 
+environment,specifically:</P>
+<UL>
+<LI>options.wrm - controls the number and order of classes displayed in the ACEDB main window 
+(see also layout.wrm)</LI>
+<LI>displays.wrm - controls the default size and location of ACEDB display windows (note: some
+ ACEDB windows such as the main class display window are text font size sensitive. Changing 
+the default width and height	of such windows for WinAce may be helpful, especially after font changes (below))</LI>
+</UL>
+
+<H3>*** STEP 5 - Initializing and Loading the Database ***</H3>
+
+<P>Once you have configured the database, double click your shortcut icon to load the program. 
+The first time it is loaded (and everytime you delete the database\ACEDB.wrm file for your 
+database), the program will encounter an &quot;empty&quot; database and ask your permission 
+to (re-)initialize the database. </P>
+<P>Say Yes! The database models will then be loaded and the database (re-)constructed.</P>
+<P>Once initialized, the database will be empty. To load a large standard dataset (e.g. C.
+ elegans data) into the database, you have two options (A or B):</P>
+
+<P><B>Option A.</B>	Execute a &quot;Add Update File&quot;: from the ACEDB main window 
+pop-up menu. This method uses a formal &quot;update&quot; file such as the C.elegans 
+update* files. At present, we have occasional problems with this method: sometimes the 
+UNIX source files have a read error (not reproducible in all contexts...) and the system 
+may also crash at the end of the session; however, it is the preferred method for 
+C.elegans (and other projects issuing such updates). </P>
+
+<P><B>Option B.</B>Execute the following sequence of operations (which simulates the 
+&quot;Add Update&quot; 
+operations) invoked from the main window popup menu:</P>
+<OL>
+<LI>Read models</LI>
+<LI>Read .ace files</LI>
+<LI>Align maps (click on all the buttons for all the types of alignments...)</LI>
+<LI>Save the changes.</LI>
+</OL>
+<P>Note: you should ensure that all your input data files are renamed to 	have the &quot;.ace&quot; 
+file extension, in order for them to be visible by the file open dialog box for &quot;Read .ace&quot; files.</P>
+<P>If you are loading a non-standard dataset (not structured as an &quot;update&quot; file format)
+ then use Option &quot;B&quot;. You can also input data directly into the database using the main 
+window popup menu &quot;Add-Alias-Rename&quot; command, or by using the &quot;Update&quot; menu 
+command while inside a tree graph object display.</P>
+
+<H3>*** STEP 6 - Use the Database ***</H3>
+
+<P>The database should now be fully operational. General 
+<a href="http://www.sanger.ac.uk/Software/Acedb/">ACEDB documentation</A> should be consulted 
+for further details.</P>
+<P>The recommended way to start ACEDB for Windows up from the command line is to change directory
+into your database directory, then run the program, giving the current directory ('.') as the path, e.g.</P>
+<PRE>
+
+    c:\>       cd c:\acedb
+    c:\acedb\> xace .
+
+</PRE>
+<P>(Substitute 'tace' for 'xace' if you wish to run the textonly version of the software).</P>
+<P>ACEDB for Windows should behave more or less like the UNIX version, with reasonable performance, 
+except as noted below.</P>
+<P>Back to <A HREF="#TOP">Top of Page</A></P>
+</BODY>
+</HTML>

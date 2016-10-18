@@ -1,0 +1,36 @@
+================================================================================
+                              AceDB - May MAR
+
+Executive summary.                                                                        
+------------------                                                                        
+
+AceDB has now been ported to the AMD Opteron 64-bit Intel compatible chip.
+
+Latest AceDB release now available via Fink on the Mac.
+
+ZMap now uses foocanvas, a high performance open source drawing package used
+in gnumeric and other popular programs. A single ZMap can now have multiple
+windows showing one sequence or multiple window showing different sequences.
+
+
+AceDB function
+--------------
+
+AceDB ported to AMD Opteron 64-bit Intel compatible chip in collaboration with
+David Baillies group who are using Opterons.
+
+AceDB, dotter and blixem 4.9.27 now available via Fink on the Mac.  
+
+
+ZMap
+----
+
+Introduction of the "foocanvas" package for drawing, this is very efficient
+and used for Gnumeric and other open source packages that need to draw large
+numbers of objects fast. We have added some extras to the foocanvas package
+such as asymmetric zooming and hiding of very small objects. This package has
+been integrated into the window splitting/zooming code.
+
+ZMap code has been rearranged/added to allow multiple views of a single
+sequence or multiple sequences via split windows in a single zmap.
+

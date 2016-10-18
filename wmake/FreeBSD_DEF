@@ -1,0 +1,28 @@
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+############### wmake/FreeBSD_DEF    Jan-12-1992       ##############
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+###########  for the FreeBSD work stations         ##################
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+########################################################################
+# FreeBSD_4_DEF,v 1.1.1.1 2000/01/15 16:11:23 gonter Exp
+
+NAME = FreeBSD
+
+COMPILER = cc -DACEDB4 -I/usr/X11R6/include
+LINKER = cc
+
+LIBS = -lm -L/usr/X11R6/lib
+
+.c.o:
+	$(CC) -c $*.c
+
+#  -D_ALL_SOURCE: flag needed by xlc compiler in /usr/include
+#################################################################
+#################################################################

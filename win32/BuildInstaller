@@ -1,0 +1,13 @@
+#!/bin/bash
+# This script substitutes in the acedb version into installer.iss.
+# It used to be done in WIN32_4_DEF but when I upgraded to Cygwin 1.3.22-1
+# this process went wrong.  The sed command broke the end-of-line 
+# character which then meant compil32 saw installer.iss as one long line
+# rather than separate lines with stuff on each.
+# The expedient way to fix that is the second sed command on line 3 in
+# this file, but this only works outside the context of the make command,
+# which is why we now have this as a separate script file.
+#
+	rm -f installer.iss; cat ../win32/installer.iss | \
+	sed 's/xxxx/'`/usr/bin/perl ../wtools/aceGetversion ../wnq`'/g' |\
+	sed 's/$/\r/' >installer.iss

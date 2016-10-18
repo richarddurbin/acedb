@@ -1,0 +1,46 @@
+# $Id: ALPHA_CHRONO_4_DEF,v 1.2 2000-04-11 13:06:48 srk Exp $
+
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+########### wmake/DEC_ALPHA_DEF    March-18-1993       ##########
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+####### for the DEC-Alpha 3000 model 500 running Unix ###########
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+NAME = ALPHA
+
+# Compiler used to build 3rd party libraries 
+LIBCC = cc
+
+COMPILER = cc -g -std1 -ieee_with_inexact -DACEDB4 -DCHRONO `../w3rdparty/include-config -I/usr/local/include`
+
+LINKER = cc -g
+
+# On DEC binaries complied with gcc + ev6 specific options crawl on pre
+# ev6 machines. Add opion to emulate ev5, specifying the ev6 options only
+# gains about 10% anyway. This is probably only used for the Image
+# external modules since the default compiler/linker for DEC is cc
+CCCFLAGS = -O2 -g3 -Wall -mcpu=ev5
+
+# On DEC the library does not need to be ranlib'd
+RANLIB_NEEDED = false
+
+# need /usr/local/lib for GNU software, e.g. readline package.
+LIBS = `../w3rdparty/libs-config -L/usr/local/lib` -lreadline -lm -lcurses 
+
+
+
+.c.o:
+	$(CC)  $*.c
+
+#################################################################
+#################################################################
+
+ 

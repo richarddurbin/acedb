@@ -1,0 +1,74 @@
+================================================================================
+                              AceDB - November MAR
+
+
+Executive summary.                                                                        
+------------------                                                                        
+
+ - Acedb can now be compiled with either GTK version 1 or 2 now that GTK2 is
+   available on the Alphas.
+
+ - ZMap can now be compiled into xace/Acedb or run as a stand alone client.
+
+ - Several significant FMap/GFF enhancements/fixes to support Wormbase.
+
+ - A number of fixes to Blixem to support the Otter/lace system.
+
+
+GTK on the Alphas
+-----------------
+
+Thanks to Simon Kelley we now have a provisional/testable installed GTK2 and
+acedb can be compiled and run with this new version of the toolkit.
+
+Acedb users users can choose to build with GTK1 or 2 and either from our own
+distributed versions of the libraries or from the system installed ones.
+
+
+ZMap
+----
+
+The stand alone library has been reworked so that the ZMap window code can be
+compiled either into xace or into the stand alone client without code
+modification. This will allow testing of the interface from within xace and
+the existing Otter/lace system in parallel with continuing development of the
+stand alone client.
+
+The stand alone client is threaded and can be compiled as a C++ executable to
+allow use of the more extensive C++ libraries available for handling XML
+datastreams.
+
+Work is also continuing on providing acedb routines to interface to the ZMap
+code when compiled directly into xace.
+
+
+GFF
+---
+
+Improvements/fixes should lead to substantial throughput gains for worm builds
+as non-essential data is filtered out. A number of improvements have been made
+to the way the Method object and Feature object data is handled, especially
+for features that have a parent-child structure such as transcripts.
+
+
+SMap
+----
+
+Work continues to support the introduction of new classes into wormbase for
+virtual sequence building, annotation and dumping.
+
+
+Build/Test
+----------
+
+There have been a number of general build/test improvements to provide better
+automation of testing in line with slimming down the effort required for daily
+maintenance of Acedb.
+
+
+Blixem
+------
+
+A number of fixes have been made to Blixem code revealed by the introduction
+of the Otter/lace system and the display of gapped alignments in Blixem.
+

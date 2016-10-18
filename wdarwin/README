@@ -1,0 +1,71 @@
+Notes: 
+With version 4.9u, dotter and blixem have been split off and
+are now shipped as a separate distribution on the Mac.  The standard
+AceDB is shipped with blixem built-in, but there is an option to
+run it standalone.  Dotter is not part of acedb. 
+
+If you want to run blixem standalone or dotter, you'll need to install
+them separately.  The package can be downloaded from our website,
+www.acedb.org.
+
+If you're running the binary prepared by the AceDB development team,
+you don't need to run aceinstall.  However, if you want to download
+the source and build your own binary, aceinstall is designed to
+automate the process as much as possible.
+
+To install the binaries, use the debian package manager:
+
+dpkg -i acedb_4.9p-1_darwin-powerpc.deb
+
+To build and install AceDB:
+
+
+Run the csh script aceinstall at the command prompt as follows:
+
+	aceinstall <version> <revision> [gtk]
+    eg  aceinstall 4.9p 1 gtk
+    or  aceinstall 4.9p 1
+
+The script can handle either a dot or underscore in the version, 
+but the final result is always a dot, as debion requires that.
+
+If xfree86 etc are already installed, leave off the final "gtk".
+
+If you've done the installation before and the .deb file already exists,
+the script will need to know how to proceed.  You can quit, skip to the 
+next phase using the existing .deb file or remove the file and proceed 
+as for a clean install.
+
+You may be prompted for your password once or twice.  
+
+######################################################################
+The script should do everything for you.  In case it doesn't, here are
+the old instructions.  It's the same as what the script does, only
+you have to do everything by hand. 
+
+If it's broken, please let me know - webmaster@acedb.org.
+######################################################################
+
+To build:
+
+Make a .info file for the latest version using command
+
+mkinfo <version> <revision>
+
+
+Put the .info file in /sw/fink/dists/local/main/finkinfo/database
+run fink build acedb which leaves a .deb file in
+
+/sw/fink/dists/local/main/binary-darwin-powerpc/database
+
+You can copy this to a convenient location or run the install from 
+there.
+
+To install:
+
+fink install x11 gtk+2 readline
+
+Obviously you don't need to to that if they're already there.
+
+dpkg -i acedb_4.9p-1_darwin-powerpc.deb
+

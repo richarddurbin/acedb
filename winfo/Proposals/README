@@ -1,0 +1,10 @@
+
+The directory holds descriptions of possible work on parts of acedb that while
+desireable cannot currently take place for various reasons. It is a
+placeholder or memory aid so that we don't have to keep rediscovering things
+that have gone wrong and design shortcomings.
+
+Files should have a name that is suggestive. If a file of items already exists
+for a part of acedb then please add to it in a sensible way, don't go creating
+new files just for the sake of it.
+

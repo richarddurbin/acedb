@@ -1,0 +1,518 @@
+
+=========================================================================
+                 ACEDB: A C.elegans Database
+
+                R. Durbin and J. Thierry-Mieg
+
+       (supporting cast: Ed Griffiths, Simon Kelley, John Sturdy)
+
+                Last updated: 23 Avril 2001.
+=========================================================================
+
+
+-------------------------------------------------------------------------
+List of distribution files
+
+
+  README	brief list/description of files
+  NOTES		this file
+  INSTALL	first time installation script
+
+  ACEDB-BuildVersion.shtml
+		machine generated file summarsing build details for this
+		release.
+
+
+  All other files are tar'd/gzip'd files files with the common file suffix
+  of
+	.V_RU.tar.gz
+
+  where V = AceDB version, R = AceDB release and U = AceDB update level,
+  e.g. 
+	.4_9a.tar.gz
+
+
+  ACEDB-binaryXXXXX.V_RU.tar.gz
+		executables for various platforms including Dec ALPHA,
+		Intel LINUX, Silicon Graphics SGI and Sun SOLARIS.
+		(Other ports can be compiled by getting the source code
+		 and compiling.)
+		Also contains documentation, tools and other useful stuff.
+
+  ACEDB-serverXXXXX.V_RU.tar.gz
+		server executables for various platforms including Dec ALPHA,
+		Intel LINUX, Silicon Graphics SGI and Sun SOLARIS.
+		(Other ports can be compiled by getting the source code
+		 and compiling.)
+		Also contains documentation, tools and other useful stuff.
+
+  (see comments below for explanation of "STATIC" binaries)
+
+  ACEDB-demo.4_9a.tar.gz
+  ACEDB-demo.4_9a.exe
+		a demonstration database, based on the C. elegans
+		database for you to try out.
+		(The .exe file is for easy installation on Windows)
+
+  ACEDB-doc.4_9a.tar.gz
+		various documentation files, in particular
+		WRITE_ACCESS, which explains about how to manage write
+		access for multiple users.
+
+  ACEDB-help.4_9a.tar.gz
+		all of the online help files available from xace.
+
+  ACEDB-source.4_9a.tar.gz
+		a complete build tree for all AceDB programs including
+		the makefile + variations for different platforms.
+
+  ACEDB-tools.4_9a.tar.gz
+		a collection of shell, perl, python programs for working
+		with AceDB.
+		
+  ACEDB-windows.4_9a.exe
+                The AceDB for Microsoft windows installer. This
+                includes everything in the binary, server, doc, help
+                and tools files above.
+
+
+All files except NOTES, README and INSTALL and the windows .exes  
+are tar.gz files.  They will be uncompressed and untarred
+automatically by the INSTALL script if you are using it to install, 
+which is recommended.
+
+Note that the binary files come in two flavours, STATIC and non-static
+versions. The acedb programs make use of the following GNU Software
+libraries: readline, Glib, GDK, GTK. If you know your system already
+has these installed then you can download the non-static versions which
+are smaller and quicker to download. If your system does not have these
+libraries installed then you can either:
+
+	- download the static binaries which include these libraries
+	  and then you can just run the programs
+
+	- or you can install readline, Glib, GDK & GTK on your system
+	  and then download the non-static binaries.
+
+If you are uncertain about this then you should contact your system
+administrator, or if you don't have one you can:
+
+	ask on the acedb newsgroup (send mail to bionet-software-acedb@net.bio.net)
+
+	ask the acedb developers (send mail to acedb@sanger.ac.uk)
+
+
+
+		     ******* IMPORTANT ******* 
+
+When downloading code/help files for an existing database, the Version
+number of what you are downloading should match the Version number
+of your database. You can find out the version of your database
+using the "Program Status" item of the "Admin" menu button on the
+xace main window.
+
+If this is not so, you will need to dump your database into ace files
+and then rebuild it using the new code.
+
+		     ******* IMPORTANT ******* 
+
+
+-------------------------------------------------------------------------
+Current state of the system
+
+The current release, is 4_9a.
+
+This new release is fully compatible with 4_7 & 4_8. The new release also
+includes a windows version.
+
+There is a new client/server package which makes use of TCP sockets
+rather than RPC and so is portable to Windows. The new client/server
+also uses a user/passwd system to give users access to the database
+rather than the previous system of shared files. This means that
+users on remote sites can be given controlled access to the server
+and database. The RPC server is not available in 4_9.
+
+The new release also incorporates the new AQL query language that
+allows much finer grained and more complex queries than the existing
+query language.
+
+Thus, we strongly urge you to upgrade from 4_7 or 4_8 to the new 4_9.
+
+Note that this software comes under the GNU General Public License,
+this means that its free and that you can do lots of things with it
+but that you should not try to make money from it. See the file
+wdoc/GNU_GENERAL_PUBLIC_LICENSE in this distribution or go to
+http://www.uk.gnu.org/ to see the original copy.
+
+Note especially that this software does not come with any
+guarantee of any kind.
+
+
+-------------------------------------------------------------------------
+How to get the latest release
+
+
+You are welcome to copy AceDB from a friend, but if you have access to
+internet then it may be best to get your own version to be sure it is
+up to date. You can get the latest version in several ways:
+
+1) Visit the downloads pages at the AceDB web site:
+
+	http://www.acedb.org/Software/Downloads/
+
+2) Visit one of several ftp sites on public servers.
+   In each case log in as user "anonymous" and give your userid
+   as password.
+
+	- ncbi.nih.gov (130.14.20.1) in the USA, in repository/acedb
+	- ftp.sanger.ac.uk in England, in pub/acedb
+
+
+Under each of these there should be archives for binaries, tools,
+source code, help files, documentation.
+
+An example session would be:
+				# comments
+ftp ncbi.nlm.nih.gov
+login: anonymous
+password: your user id or email address
+cd repository/acedb             # change to relevant directoy
+binary				# IMPORTANT
+dir				# display files in this directory
+get README
+get NOTES
+get INSTALL
+get ACEDB-help.4_9a.tar.gz	# get help files archive
+quit
+
+
+-------------------------------------------------------------------------
+How to install AceDB on UNIX
+
+If installing for the first time, make a new home directory for AceDB
+and place all the .tar.Z files you need plus INSTALL into this
+directory. 
+
+The INSTALL script will install packages in your current working
+directory, it will install the package as a sub-directory of the
+current directory. If such a directory exists you will be given
+a chance to not install that package or abort the install altogether.
+
+Since all packages are installed in sub-directories you should not
+
+	INSTALL
+
+In our default configuration the AceDB database can only be updated by
+the user who installed it.  If you want other people than the
+installer to be able to edit AceDB, please read the document
+WRITE_ACCESS (in doc/).
+
+IMPORTANT: DO NOT INSTALL AS ROOT: this would create a security loophole. 
+
+
+-------------------------------------------------------------------------
+How to build AceDB on UNIX
+
+You need to install the source code on your system (see above).
+
+From 4_8 onwards, AceDB makes use of the following GNU software:
+
+	readline, Glib  (all AceDB programs)
+	GDK, GTK	(graphical programs only)
+
+If these are not already installed on your system then either you can
+get and install them, or you can use private copies which come with
+the AceDB source (they are in the w3rdparty subdirectory). The latter
+option is simpler if you just need these libraries for AceDB, but if
+you might need then for anything else it is better to install a shared copy.
+
+If you want to install the libraries you can down load the single GTK+
+package from from www.gtk.org which includes Glib, GDK and GTK.
+Note that AceDB needs the 1.2.x version, where x is the latest
+release.
+
+You can get readline from ftp://ftp.gnu.org/gnu/readline, make sure you
+get readline 4.x.
+
+(If you are running linux, your distribution will certainly have
+packages for all of these, don't forget to install the -dev packages
+as well as the run-time ones.)
+
+
+Building AceDB with the private copies of the GNU software:
+-----------------------------------------------------------
+
+> cd directory_where_you_installed_source_code
+> setenv ACEDB_MACHINE something_like_ALPHA_4 (see available files in wmake/)
+> make all_static
+
+
+Building AceDB with the system wide copies of the GNU software:
+---------------------------------------------------------------
+
+The system wide copies will have been put in directories that the
+compiler searches by default so you can build AceDB more simply:
+
+> cd directory_where_you_installed_source_code
+> setenv ACEDB_MACHINE something_like_ALPHA_4  (see available files in wmake/)
+> make all
+
+
+
+If the above descriptions, "make all" & "make all_static" will make all the executables
+for AceDB. If you want to build single programs then you should do the
+following (the example builds tace and xace but you could select any combination
+of the acedb programs):
+
+Building single programs with the private copies of the GNU software:
+---------------------------------------------------------------------
+
+> cd directory_where_you_installed_source_code
+> setenv ACEDB_MACHINE something_like_ALPHA_4 (see available files in wmake/)
+> make gnulibs
+> make tace xace
+
+
+Building single programs with the system wide copies of the GNU software:
+-------------------------------------------------------------------------
+
+The system wide copies will have been put in directories that the
+compiler searches by default so you can build AceDB more simply:
+
+> cd directory_where_you_installed_source_code
+> setenv ACEDB_MACHINE something_like_ALPHA_4  (see available files in wmake/)
+> make tace xace
+
+
+The above examples assume that you either want to build using the private
+copies of the GNU software of the system wide copies. If you want to
+switch from doing one to doing the other you should first "clean" out
+existing binaries/libraries by doing this:
+
+> make clean
+
+
+
+-------------------------------------------------------------------------
+How to install AceDB on MicroSoft-Windows
+
+The installation of AceDB on Microsoft Windows is very
+simple. Download the installer from http://www.acedb.org/Software/Downloads/
+and run it. The simplest way to so this is probably to download the
+installer onto the desktop, and then double-click on its icon. You
+will then be launched into a standard windows installshield-type
+interactive installation which will install all the AceDB files and
+make entries for AceDB in your start menu.
+
+AceDB has been tested on Windows 95, 95, and NT by us. It is known to
+be functional as well in W2k and Windows ME.
+
+-------------------------------------------------------------------------
+Macintosh version  *** No New Version ***
+
+The Macintosh version has not been updated for a least 3-4 years, we hope
+to produce a fully compatible version once the new Unix-like version
+of the OS-X operating system is stable. This may initially only be
+the command line versions of the program, e.g. tace, giface, client/server.
+
+The older version of AceDB is still available from the ftp site, look
+in the /pub/acedb/macace directory. You need a Macintosh with absolute
+mimimum 16Mb of memory and a decent monitor.  You also need some way of
+obtaining the files from an ftp site (e.g. Mosaic, Netscape, NCSA
+telnet, Versaterm Pro...).
+
+Please note that this version is totally unsupported.
+
+
+
+-------------------------------------------------------------------------
+Directory structure
+
+You will typically have $ACEDB (the home directory) layed out
+something like as follows:
+
+       acedb   		# executable script to be moved in /usr/local/bin
+       textace  	# executable script to be moved in /usr/local/bin
+       database/
+	  ACEDB.wrm	# little file needed for AceDB to run
+          block1.wrm	# the database
+          block2.wrm etc.   ""
+	  database.map	# info on all the block* files
+	  log.wrm	# log file
+		# all these files in database/ are only created after
+		# running AceDB the first time
+       bin/		# the executable(s)
+	  xace		# X graphics version (usual interface)
+	  tace		# command line version
+	  acediff	# for comparing two ace files
+       wspec/		# database dependent specification files.
+	  GraphPackage	# X resources file - not needed
+          cachesize.wrm # You may want to edit this file
+	  copyright	
+	  options.wrm   # You may want to edit this file
+	  database.wrm	# specifies chunk sizes to split the database into
+	  displays.wrm  # You may want to edit this file
+	  models.wrm 	# database schema
+	  help.wrm	# help
+	  passwd.wrm    # User access control - see doc/WRITE_ACCESS
+	  server.wrm	# control file for server/client version
+	  subclasses.wrm # subclass schema information
+	  xfonts.wrm    # Edit this to change screen fonts
+	  psfonts.wrm   # Edit this file to change printing fonts
+       rawdata/
+	  update files
+
+The minimal requirements for running AceDB are that the database/ and
+wspec/ directories exist, and wspec/ contains cachesize, options,
+displays, models, passwd.  The files in database/ will be made as
+necessary by the program - do not try to edit them yourself.  For
+update files to load properly they must be in $ACEDB/rawdata.  The
+executables can be somewhere other than $ACEDB/bin.  Sites with
+multiple AceDB databases can use the same executables for all of them.
+Conversely, the same database files can be read by executables for
+multiple machine types (at least within Unix systems), which will
+require some reorganising of directories and/or file names.
+
+To run the program you must either set the environment variable ACEDB
+to the absolute path to the ACEDB home directory (by e.g.  "setenv
+ACEDB ~acedb"), or make the home directory the first argument of xace
+or tace on the command line (e.g. "xace ~acedb").  Of course xace must
+be in your path.  All this is done most easily by moving the shell
+scripts acedb and textace prepared by the INSTALL script into
+/usr/local/bin, where they are set up for any user, who can then type
+"acedb" or "textace" to run the X or command line versions,
+respectively.
+
+
+-------------------------------------------------------------------------
+Help system
+
+The help system has been revised. We know have an in-lined html viewer
+for local files. It is much fatser than Mosaic, and defaults to Mosaic
+(or netscape as defined in wscripts/Mosaic) on http references.  The
+help pages will be searched 1) in $ACEDB/whelp/*.html, 2) in
+wspec/help.wrm. In case 1, we use the Prilusky system so you can
+register help to a particualr class or tag in trre displays for
+axemple wdir/Tree_Author_Paper.html, gives help oon tag paper in class
+Author in Tree display.
+
+
+-------------------------------------------------------------------------
+Server Client
+
+AceDB now has a socket version of the server client which is much
+better integrated with AcePerl. The new version also offers proper
+user id/password facilities so that the client/server can be used for
+controlled access across the internet. You can download the server/client
+separately using the  ACEDB-serverXXXXX.V_RU.tar.gz  archives.
+
+There is a user guide to setting up/using the new socket server in:
+
+	wdoc/SOCKET_aceserver.html
+
+and a programmers guide to how to communicate with the socket server in:
+
+	wdoc/SOCKET_interface.html
+
+You should read the former if you want to run saceserver and saceclient,
+and the latter if you want to write a client of your own.
+
+
+-------------------------------------------------------------------------
+X-client in test
+
+There is also a sockets version of the X-client in test. This gives a
+graphical AceDB, without loading all the data. To use it, you must first
+compile it (setenv ACEDB_SRC `pwd` ; setenv ACEDB_MACHINE ..)  then
+(make xclient). Then you initialise a database on the current source
+code distribution models with xace, but do not load any data. Then you
+start xclient. Because that address is given in wspec/server.wrm, you
+will automatically download data from Montpellier. If you then save
+and run xace, you will work locally with the same data. But each time
+you start xclient, you load again from the network. I would lie to
+know a) if it works at all, b) if it is useful, c) how it should be
+improved. 
+
+
+-------------------------------------------------------------------------
+WWW interface
+
+There are now several ways to serve the web: 
+
+For Perl based AceDB web serving see AcePerl/AceBrowser at
+
+	http://stein.cshl.org/AcePerl/
+	http://stein.cshl.org/AcePerl/AceBrowser/
+
+
+For Java based AceDB see jadex at
+
+	http://stein.cshl.org/
+
+
+
+-------------------------------------------------------------------------
+Known problems:
+
+ALPHA builds
+------------
+If you running on an alpha which has operating system vervion 4.0,
+update 1229 or later you may find that acesocket.c will not compile,
+the compiler will complain about not being able to find the type
+"socklen_t". This is because DEC have decided to change the way
+this type is included in /usr/include/sys/socket.h.
+
+You need to do your make like this:
+
+make USEROPTS='-D_POSIX_PII_SOCKET' saceserver sgifaceserver saceclient
+
+and then these programs (which are the only ones that require acesocket.c)
+should compile.
+
+You get the operating system version like this:
+
+adnah[edgrif]46: uname -a
+OSF1 adnah V4.0 1229 alpha
+
+
+
+
+Lock file problems
+------------------
+On some machines the lock file mechanism does not appear to work
+correctly, so that no data can be read in (not even enough to
+bootstrap initialisation).  You will see a message 
+	"Don't-know-who (session 0) already has write access" 
+even before the database exists.  To defeat the file locking
+mechanism, set the environment variable ACEDB_NO_LOCK before starting
+the program (e.g. "setenv ACEDB_NO_LOCK").  Of course if you do this
+you are responsible for making sure that two people do not try to
+update or edit the database at the same time.  Alternatively, create a
+fake user "NOLOCK" in the wspec/passwd.wrm file.
+
+
+-------------------------------------------------------------------------
+Additional Information 
+
+An on line help file is contained in ${ACEDB}/wspec/help.wrm and is
+activated by the help option in the menu, or by function key F1 or
+F10, or, on a Sun under twm, the help key.
+
+Some documentation files are available in the doc/ subdirectory of the
+distribution.  Amongst these, the nicest general user guide is
+angistute, which was written by Bruno Gaeta of the Australian National
+Genome Information Service, and is available as a compressed Unix
+postscript file (angistute.ps.Z) and a Macintosh Word binhex/stuffit
+compressed file (angistute.sit.hqx).  Although written for version 2
+AceDB, this is still very relevant for most uses.
+
+Further information is available in files in the wdoc/ subdirectory of
+the source distribution, and via the AceDB website at:
+
+	http://www.acedb.org/
+
+
+========================= end of file ===================================
+
+
+

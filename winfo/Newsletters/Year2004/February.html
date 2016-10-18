@@ -1,0 +1,168 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - February 2004</TITLE>
+
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - February 2004</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+
+<P>A month of mostly bug fixes.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="RedHat"></a><H3>AceDB compiles on RedHat 9</H3>
+
+<P>We now have AceDB compiling on the RedHat 9 version of Linux which uses the
+newer versions of Glib and the GTK toolkit. You need to get the latest monthly
+release and set the ACEDB_MACHINE
+environment variable to "LINUX_4_RH9" to compile on RedHat 9.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="embl"></a><H3>Embl dumping bugs</H3>
+
+<P>Embl dumping was broken for one release because in fixing a problem with
+checking that #EMBL_dump_info is specified correctly I forgot to ensure that
+I jumped back out of the #EMBL_dump_info submodel before checking for further
+tags, pathetic.
+
+<P> Also, for worm group, I have disabled the accession number output
+because they have changed their model completely and the existing
+code simply won't work. They now put in the accession number via an external script.
+
+
+<a name="blixem_crash"></a><H3>Blixem crash</H3>
+
+<P>blixem was crashing with some sequences/homologies and it turns out that this
+is because some gaps array mappings were not being clipped properly resulting in blixem
+attempting to access non-existent sequence data. This is now fixed.
+
+
+<a name="confirmed_introns"></a><H3>Confirmed introns crash</H3>
+
+<P>Sometimes confirmed_introns caused acedb to crash, it turns out this
+was caused by the transition from fmap working at the "whole clone"
+level, i.e. bringing in all of any clones required to make up an
+fmap, to fmap clipping adjacent clones.
+
+<P>In this case it meant that confirmed introns of an adjoining
+clone were not getting mapped, this was fine until we had the
+situation where we had a confirmed intron being confirmed from 2
+different sources. This is effectively two introns with the same
+coords but different confirmations.  The first one did not get
+mapped correctly but because the second one had the same coords
+the code assumed it had been mapped and so tried to process the
+second intron as though everything was ok. Now when introns have
+the same coords we check to see if the previous intron was
+actually mapped.
+
+
+<a name="composite_classes"></a><H3>Composite class bug</H3>
+
+<P>Fix bug in pickRegisterClassMasks(), code
+assumed that a bsFlatten array only has 4 byte fields in it but
+this is not true on the Alpha as one of the union members is a
+pointer which is 8 bytes. This bug prevented acedb from
+initialising on the Alphas if composite classes were declared in
+subclasses.wrm.
+
+
+<a name="blixem_sort"></a><H3>Blixem sort bug</H3>
+
+<P>Fix bug which meant that only the sequences
+passed in from acedb got sorted initially, the sequences obtained
+from another source (e.g. pfetch) did not get sorted until user
+selected a sort method. Now all sequences are sorted from the start.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+
+<a name="xacez_target"></a><H3>xacez target</H3>
+
+<P>As part of the ZMap development it is our intention to add a "ZMap" display
+type to acedb and to facilitate development Rob has created a new target called
+xacez.
+
+<P>This target is not compileable at the moment but will become so as we develop
+the ZMap display.
+
+
+<a name="blixem_crash_more"></a><H3>More on the Blixem crash</H3>
+
+<P>The main cause of this problem is two fold: the homology conversion routine was
+not recording any clipping of the main homology start/end coordinates by the SMapMap()
+call. More seriously, sMapLocalMap() does not take any notice of the start/end coords
+that are passed to it and does not return a mapping status to indicate any clipping.
+
+<P>Currently this is fixed by mapping each gap separately so we can detect if it gets
+mapped correctly. The better fix is to sort out sMapLocalMap() and this will be done
+in the next month or so.
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>Feb monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Tue Apr 13 17:30:49 BST 2004
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

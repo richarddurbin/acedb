@@ -1,0 +1,482 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - August 2004</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - August 2004</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+
+<P>This month sees a PHP interface to AceDB, more support for compiling AceDB on the Opteron,
+some new
+additions to the command line interface, changes to embl dumping of accession
+numbers, extension to GFF "type" dumping, an AQL bug fixed and some developer
+bits.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+
+
+<a name="acedb_php"></a><H3>A PHP interface to AceDB</H3>
+
+<P>(<I>This article is courtesy of Hamish McWilliam</I>
+<A HREF="mailto:software@hpm101.gotadsl.co.uk">software@hpm101.gotadsl.co.uk</A>)
+
+<P>Hamish McWilliam has been working on a PHP interface to AceDB, here's what
+he has to say about it:
+
+<P><b>AcePHP: a PHP interface to AceDB</b>
+                                                                                          
+<P>While AcePerl is wonderful for scripts and web applications, it is                        
+problematic when a small amount of dynamic content is required in an                       
+otherwise static page. PHP is an ideal solution for this circumstance                     
+and since it supports sockets it is possible to use the AceDB socket                      
+server to access data in an AceDB database, and embed it in the page. To                  
+faciliate this a PHP library has been developed that allows access to                     
+most of the capabilites of AceDB. This library is pure PHP so no                          
+re-compilation of the web server is required. For simple object counts                    
+in a database description or one off queries in otherwise static web                      
+pages I can think of no simpler method.                                                   
+
+<P>It's now works well for
+simple things like object counts for a query, number of objects in a class or small queries,
+there are still some problems handling large objects.
+
+<P>If you want to have a play with it, you can find details, crude demos                     
+and downloads at:
+
+<pre><A HREF="http://hpm101.gotadsl.co.uk/projects/acephp/">http://hpm101.gotadsl.co.uk/projects/acephp/</A>
+</pre>
+
+<P>Hamish.                                                                                   
+
+
+
+
+<a name="opteron"></a><H3>Opteron port</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Meig</I>
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)
+
+<P>Jean has added a new defs file to the wmake directory, <b>OPTERON_4_DEF</b>,
+for compiling AceDB on the Opteron
+which should help to ease the problems that some people have experienced in
+referencing the correct libraries for building AceDB on this 64-bit Linux
+platform.
+
+<P>Please note that while the all the binaries from the AceDB source package
+have been compiled and run on the Opteron, other extensions to AceDB, e.g. AcePerl, are
+yet to be ported.
+
+
+
+<a name="smap_cmds"></a><H3>Some New SMap commands</H3>
+
+<P>For some time now there has been an smap command in giface that enables you to
+find out the coordinates of a feature in a parent:
+
+
+<pre><code>acedb-gif&gt; smap -from cds:b0250.4 -to sequence:b0250
+SMAP Sequence:B0250 7671 1839 1 1443 INTERNAL_GAPS
+// 1 Active Objects
+acedb-gif&gt;
+</code></pre>
+
+<P>(N.B. "<code>INTERNAL_GAPS</code>" is returned because cds:b0250.4 consists of exons
+and introns and hence its mapping to sequence:b0250 is not contiguous.)
+
+<P>The command defaults to finding a feature in that features ultimate parent in the database:
+
+<pre><code>acedb-gif&gt; smap -from sequence:b0250
+SMAP Sequence:CHROMOSOME_V 20454867 20494082 1 39216 PERFECT_MAP
+acedb-gif&gt;
+</code></pre>
+
+
+<P>This command is now available in tace and giface (and the corresponding servers),
+it has been added to the base command menu so there is no need to go into the gif
+submenu. (Note the smap command has been left in the gif submenu for compatibility
+with scripts/aceperl programs that rely on this.)
+
+<P>There are now two additional commands in the base command menu that access SMap functions:
+
+<ul>
+  <li><b><code>smapdump:</code></b> dumps a text version of the complete SMap
+      for an object to the terminal.
+  <li><b><code>smaplength:</code></b> gives the length of an object (this is not always
+      obvious as the objects length may be given by the maximum extent of the coordinates
+      of its S_Child features or may be specified explicitly in its S_Parent object).
+</ul>
+
+
+<P>Output from smaplength is simply the length of the object:
+
+<pre><code>acedb&gt; smaplength sequence:b0250
+SMAPLENGTH Sequence:"B0250" 39216
+// 1 Active Objects
+acedb&gt;
+</code></pre>
+
+
+<P>Output from smapdump may be voluminous:
+
+<pre><code>acedb&gt; smapdump cds:B0250.4
+SMAPDUMP CDS:"B0250.4"
+
+sMap->nnnn:
+        sMap->length = 1443
+        sMap->area1 = 1, sMap->area2 = 1443
+
+sMap->root->nnnn:
+        Root = Sequence:"CHROMOSOME_V" [20462537,20456705]
+        sMapLength = 1443
+
+*** CDS:"B0250.4", orient = Down, map = 1,1443->1,1443 
+   *** Sequence:"B0250", orient = Up, map = 1839,1902->1443,1380 2361,2525->1379,1215 3247,3351->1214,1110 3400,3540->1109,969 4131,4301->968,798 4416,4517->797,696 4925,5004->695,616 5055,5160->615,510 5866,6015->509,360 6087,6188->359,258 6281,6421->257,117 7511,7557->116,70 7603,7671->69,1 
+      *** Gene:"WBGene00007121", orient = Down, map = 1,69->1,69 115,161->70,116 1251,1391->117,257 1484,1585->258,359 1657,1806->360,509 2512,2617->510,615 2668,2747->616,695 3155,3256->696,797 3371,3541->798,968 4132,4272->969,1109 4321,4425->1110,1214 5147,5311->1215,1379 5770,5833->1380,1443 
+      *** CDS:"B0250.gc1", orient = Down, map = 1,1443->1,1443 
+      *** Transcript:"B0250.4", orient = Down, map = 1,1443->1,1443 
+
+      <b>&lt; lots more features not shown &gt;</b>
+
+            *** Homol_data:"CHROMOSOME_V:waba", orient = Up, map = 20456705,20456768->1443,1380 20457227,20457391->1379,1215 20458113,20458217->1214,1110 20458266,20458406->1109,969 20458997,20459167->968,798 20459282,20459383->797,696 20459791,20459870->695,616 20459921,20460026->615,510 20460732,20460881->509,360 20460953,20461054->359,258 20461147,20461287->257,117 20462377,20462423->116,70 20462469,20462537->69,1 
+
+sMap dna:
+Length = 1443 (only first 1,000 bases printed)
+    1 atgacgtcgtttacaataaacaaacagcaactggaagaaatgatccggca
+   51 gcttcaggatcggctcgaaagtggagcattcaataaacaaactggaaata
+
+   <b>&lt; lots more bases not shown &gt;</b>
+
+  901 ggcaaacgatcgtggtatggggtgatggaagtatctaaacaacgtaggga
+  951 gcattacatttccgaagaagatttttacactaaattcccaggagcatgta
+
+// 1 Active Objects
+acedb&gt;
+</code></pre>
+
+
+<P>You can see descriptions of smap* command usage online:
+
+<pre><code>acedb&gt; ? smap*
+// Keyword smap* does not match
+// ACEDB list of commands matching smap**:
+smap [-coords x1 x2] -from class:object [-to class:object] :
+             maps cordinates between sequences that have a child -> parent relationship expressed in SMap tags (or the now deprecated Source/Subsequence tags).
+             Note that objects must be specified in "class:object" as smap can map any class that contains SMap tags.
+        -coords x1 x2      coords to be mapped in the -from object, defaults to whole of -from object.
+        -from class:object object to be mapped into one of its parent.
+        -to class:object   object to be mapped to, must be a parent of the -from object, defaults to top parent in the smap tree above -from object.
+smapdump class:object : dumps to stdout the smap for the object.
+smaplength class:object : gives the length of the object.
+// 1 Active Objects
+acedb&gt;</code></pre>
+
+
+<a name="quiet_cmds"></a><H3>New quiet command</H3>
+
+<P>AceDB terminal output usually includes comments at the end even if the command worked:
+<pre><code>acedb&gt; gif seqget 1.12985533-13293939 ; seqfeatures -file myfile
+##gff-version 2
+##source-version giface:ACEDB 4.9.27
+##date 2004-09-01
+##sequence-region 1.12985533-13293939 1 308407
+1.12985533-13293939     .       Sequence        1       88806   .       +       .       Sequence "AL603890.14.1.88806"
+1.12985533-13293939     .       Sequence        1       308407  .       +       .       Sequence "1.12985533-13293939"
+
+          (many more lines)
+
+1.12985533-13293939     .       Clone_right_end 189119  189119  .       .       .       Clone "RP11-133N1"
+1.12985533-13293939     .       Clone_left_end  189120  189120  .       .       .       Clone "RP4-597A16"
+1.12985533-13293939     .       Clone_right_end 308407  308407  .       .       .       Clone "RP4-597A16"
+// FMAP_FEATURES "1.12985533-13293939" 1 308407
+// 15 Active Objects
+acedb&gt;
+</code></pre>
+
+<P>For interactive use of tace, giface, the servers, this is very important as it gives the user
+feedback about the command and the active keyset. This may not be so good for programs that must
+parse the output as they must all be coded to process the comment lines.
+
+<P>The new "quiet" command (which is available from the base or gif command menus) suppresses
+AceDB comments when the command works but passes the comment through if the command
+fails. This allows a program to easily parse the output and detect whether the command succeeded or
+failed. With quiet mode on in the above example either valid GFF lines would be returned or
+a comment because there was an error.
+
+<P>The command description is:
+<pre><code>acedb&gt; ? quiet
+// ACEDB command: quiet
+quiet -on | -off :
+        Turn quiet mode on or off, when "on" commands produce only their output without any extra comments.
+        (Note the usual "NNN Active Objects" is no longer displayed, use the Count command.)
+        Quiet mode makes parsing command output easier because either the first line
+        is an acedb comment because the command failed or there are no acedb comments in the output.
+        -off    (default) verbose output
+        -on     no comments unless there is an error.
+
+// 0 Active Objects
+acedb&gt;
+</code></pre> 
+
+<P>(Note that if you turn quiet mode on in the base menu then it will also be on in the gif
+menu.)
+
+<P>Full support of this option for all commands will take time to implement so if you
+find a command which does not produce "quiet" output as you would expect please email
+<A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A> with examples.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+<a name="embl_acc"></a><H3>Change to how EMBL dumping in AceDB dumps accession numbers</H3>
+
+<P>There has been a change to the way AceDB embl dumping works for accession numbers,
+the changes have been made to support new tags in wormbase.
+
+<P>The original tags that the embl dump code read the accession number from were:
+
+<pre>        Database ?Database ?Text ?Accession_number
+</pre>
+
+<P>This worked while accession data was stored in this form:
+                                                                                          
+<pre>    ?Sequence C04G2                                                                       
+    Database EMBL CEC04G2 Z70718                                                          
+</pre>
+
+<P>The accession number dumped for the above was: "z70718".
+
+<P>The new tags in worm are:
+                                                                                          
+<pre>        Database ?Database ?Database_field ?Accession_number
+
+        (n.b. change of ?Text to ?Database_field, but essentially the same)
+</pre>                                                                                          
+
+<P>In particular the accession number is now specified by the object following
+a ?Database_field object with the name "NDB_AC":
+                                                                                          
+<pre>  ?Sequence C04G2                                                                         
+    Database EMBL    NDB_ID    CEC04G2                                                    
+             EMBL    NDB_AC    Z70718                                                
+             EMBL    NDB_SV    Z70718.1                                              
+</pre>
+
+<P>The old code would return "CEC04G2" as the accession number which is not correct, the
+new code will return "z70718".
+
+
+
+<a name="gff_feature"></a><H3>Extension to how AceDB handles GFF_feature in the Method class</H3>
+
+
+<P>The ?Method class allows you to specify, via the GFF_feature tag, some text
+that will be output as the "feature type name" in the GFF dump of all features that
+specify that method.
+
+<P>The current model for specifying GFF_feature is:
+
+<pre>?Method
+     GFF_feature UNIQUE Text
+</pre>
+
+<P>Wormbase now uses the controlled vocabularly of the Sequence Ontology (SO)
+project to specify these types. In wormbase these terms are stored as the names
+of objects of a new class ?SO_term. Hence their model is now:
+
+<pre>?Method
+     GFF_feature UNIQUE ?SO_term
+</pre>
+
+<P>The GFF dumping code in AceDB has now been altered to cope with both formats
+of data so you can leave your database unchanged or move, as Wormbase has, towards
+a more controlled ontology.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+<a name="AQL_active"></a><H3>AQL and the active keyset</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Meig</I>
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)
+
+<P>According to the AQL documentation, it is possible to initiate an                         
+AQL query on the active keyset, known in aql as '@active' . This is very handy,           
+because the active keyset may result from a complex set of operations that                
+cannot be reproduced by the AQL command line, for example it may result from              
+reading an external file or be constructed by a web cgi script.                           
+                                                                                          
+<P>Example:                                                                                  
+                                                                                          
+<pre>acedb&gt; keyset-read my_paper_list.ace                                                      
+acedb&gt; aql select p,a from p in @active:1, a in p->author                                 
+</pre>
+
+<P>Unfortunately, there was for some time a bug in the definition of the AQL                 
+@active table. This is fixed, and the @active construction works again.                   
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+
+
+<a name="ace_c"></a><H3>Acelib.h to AceC transition</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Meig</I>
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)
+
+<P>In 1997, a tentative C interface to acedb, called acelib                                  
+was proposed by Greg Miller. This interface was implemented                               
+but, as far as we know, never used<b>*</b>. Indeed, the interface                                
+was rather more complicated to use on the server side                                     
+than the direct ace kernel calls, and could not be used                                   
+on the client side.                                                                       
+                                                                                          
+<P>Now that the new AceC C programmers interface is fully                                    
+deployed, and tested both on server and on client side,                                   
+we intend to totally remove the previous acelib code.                                     
+                                                                                          
+<P>This means that the file acelib.h will disappear and                                      
+anyone who was using it in one of its application                                         
+will have to include in its place wac/ac.h and to                                         
+rewrite his application accordingly.                                                      
+                                                                                          
+<P>If anyone is affected by this change, please                                              
+email mieg@ncbi.nlm.nih.gov for dicussion and support.                                    
+                                                                                          
+<P>The removal will take effect before the end of october.                                   
+                                                                                          
+<P><b>*</b><i>The only known usage of acelib is that the
+acedb kernel itself is using it during bootstrap.                                         
+The bit of acelib used in this way will be        
+kept, but will become private to the acedb kernel.</i>
+
+
+
+<a name="graph_text"></a><H3>Text Editor Bug</H3>
+
+<P>(<I>This fix is courtesy of Jean Thierry-Meig</I>
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)
+
+<P>There was a bug in the Text Editor code in AceDB which meant that it would crash if
+you tried to create an editor of length &lt; 16, fixed
+now.
+
+
+
+
+<a name="name_decorate"></a><H3>Displaying object class and name</H3>
+
+<P>For sometime there has been a call in AceDB to return a string which is a compound
+of an objects name and class (from wh/acedb.h):
+
+<pre>char *nameWithClass(KEY k) ;				    /* returns   class:name   */
+</pre>
+
+<P>Some users found this confusing however as their databases adopted a convention of including
+the ":" character in the objects name so the result of this function when displayed
+would give something like:
+
+<pre><b>someclass:some:very:long:name</b>
+</pre>
+
+<P>There is now a new function in wh/acedb.h:
+
+<pre>char *nameWithClassDecorate(KEY k) ;			    /* returns   class:"name" */
+</pre>
+
+<P>You can use this call to get a less ambiguous string that can be displayed to
+the user:
+
+<pre><b>someclass:"some:very:long:name"</b>
+</pre>
+
+
+
+<a name="messubs"></a><H3>messubs changes</H3>
+
+<P>(<I>This fix is courtesy of Jean Thierry-Meig</I>
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)
+
+<P>Jean has fixed a couple of bugs and closed a loophole in the message
+formatting code which is a fundamental part of AceDB. The original loophole
+was caused by long standing inadequacies in the ANSI C libraries for string
+formatting into fixed buffers.
+
+<P>Thanks to Jean for sorting this out.
+
+
+<a name="bssubs"></a><H3>New function to return the name of an object from an OBJ pointer.</H3>
+
+<P>A trivial addition but useful when running in a debugger, the new call will return
+the name of an object given an object pointer, from wh/bs.h:
+
+<pre>char *bsName(OBJ obj) ;					    /* return the name of an object */
+</pre>
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>August monthly build now available.</H2>
+
+<P>The August build will be available as AceDB 4.9.27 from Sept 10th onwards.
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Thu Sep  9 09:40:13 BST 2004
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

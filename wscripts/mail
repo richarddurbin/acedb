@@ -1,0 +1,4 @@
+#!/bin/csh
+# $Id: mail,v 1.1 1994-10-03 16:46:20 rd Exp $
+
+Mail -s "from ACEDB" $1 < $2

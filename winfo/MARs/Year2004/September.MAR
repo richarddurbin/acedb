@@ -1,0 +1,25 @@
+================================================================================
+                              AceDB/ZMap - September MAR
+
+
+Executive summary.                                                                        
+------------------                                                                        
+
+A quiet month, mostly bug fixes for Acedb and consolidation for ZMap.
+
+
+AceDB
+-----
+
+Bug fixes only.
+
+
+ZMap
+----
+
+Many improvements to user interface, scalebar, zooming, display of feature
+details, display of lists of features of a particular type, etc.
+
+ZMap can now be run off GFF files as well as from servers.
+
+Much internal tidying up.

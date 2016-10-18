@@ -1,0 +1,456 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - June 2001</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - June 2001</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P>AceDB 4_9 finally arrived and needless to say there have been some
+bugs, to fix these we've just released AceDB 4_9b.
+There is a new scrolling message window to replace the millions of
+popup dialogs that AceDB sometimes produces.
+There's a new version of AcePython and an article on GFF.
+
+
+
+<!-- ******************************************************************** -->
+<a name="General_News"></a><H2>General News</H2>
+
+<a name="acedb_4_9b"></a><H3>AceDB 4_9b released</H3>
+
+<P>This update of AceDB 4_9 contains a number of fixes and new features covered in
+the rest of the newsletter. The main purpose of the release is to fix a number
+of bugs in the new code.
+
+<P>Both the Monthly and Public AceDB downloads pages have been updated
+with the new build. Internally to the Sanger Centre the build can be obtained
+from ~acedb/RELEASE.SUPPORTED.
+
+
+<a name="IBM"></a><H3>First HP, now IBM</H3>
+
+<P>Well the big names in computing are beating a path to our door. In the March
+newsletter I reported that HP had offered us a loan machine and are keen for
+AceDB to be ported to their new Intel 64-bit machines (when they arrive). Well
+now IBM have made contact to say they want AceDB on their machines as well.
+
+<P>"Fame" at last, well something like that anyway.
+
+
+<!-- ******************************************************************** -->
+<a name="New_Features"></a><H2>New Features</H2>
+
+<a name="tagnames"></a><H3>More on Tag Names</H3>
+
+<P>In last months item on <A href="./May.html#numeric_tags">"Non-numeric tag names"</A>
+I should have emphasised that the valid character set for tag names does <b>not</b>
+include the dash character <b>"-"</b> which is used in the query language to
+mean "subtraction". There are certainly databases in the
+Sanger Centre that use tag names that include the <b>"-"</b> character and
+these tag names will need to be changed.
+
+<P>Please note also that the "tag names" are the text that appears in your models.wrm file,
+<b>not</b> the data in your database which is allowed to have this and many other characters !
+
+<a name="version_dir"></a><H3>How do I know which monthly build version I am using ?</H3>
+
+<P>Starting this month, if you use the "<b><code>-version</code></b>" flag when running
+an AceDB program it will output the original build directory which will show
+exactly which months code you are running:
+
+<pre><code>griffin[edgrif]42: xace -version
+ACEDB 4_9a,  build dir: RELEASE.2001_06_30, compiled on: Jul  2 2001 10:22:19</code>
+</pre>
+
+<P>In this case the June build for 2001.
+
+
+<a name="new_genes"></a><H3>Inheritance of some parent tags when creating new "temp_genes"</H3>
+
+<P>From now on, as a short cut when you make a new "temp_gene", the <code>Species</code>
+and <code>From_laboratory</code>
+tag values (if they exist) will be copied from the parent Sequence object.
+
+
+<a name="msglist"></a><H3>An end to the endless "OK"/"Continue" button ?</H3>
+
+<P>Normally in AceDB informational and error messages are displayed individually
+in so-called "popup" dialog windows which require the user to click on an "OK"
+or "Continue"
+button to get rid of the window. For the odd message this is acceptable, but if
+there are a large number of messages (as when there are DNA mismatches) this
+becomes irritating in the extreme.
+
+<P>A partial fix to this problem was made for DNA mismatches by allowing
+an xace user to interactively turn off reporting of them
+(<A href="./February.html#Interactive"> see February, 2001 newsletter</A>).
+This did not solve the problem for other frequent messages however.
+
+<P>A new "message list" facility has been added to xace to deal with this
+problem. The new code allows the user to choose between having errors
+reported in the usual way or instead having a single "message list" window
+which will display a rolling list of informational/error messages as
+they are generated. The messages do not need to be replied to, they are displayed
+in the window and the window is raised above other AceDB windows to alert the
+user that a message has arrived.
+
+<P>To configure "message list" click on "Admin.." on the main window and
+then select "Preferences" from the "Admin.." menu list. This will show the
+"Preferences Editor" window from which you can set:
+
+<dl>
+  <dt><b><code>USE_MSG_LIST</code></b>
+  <dd>Set this "on" to use the message list window instead of popups (and off to return
+      to popups).
+  <dt><b><code>MAX_MSG_LIST_LENGTH</code></b>
+  <dd>You can control the number of messages that the window will display
+      so that if you want to record all messages you could set this to
+      some very large figure, perhaps several hundred.
+</dl>
+
+<P><b>N.B.</b> You should note that for any preferences where you have to
+type a value, you <b>must</b> press the <b><code>return</code></b> key
+before you click the "Apply" or "Save" buttons. If you don't do this, the
+value you have entered will be ignored.
+
+<P>Once you have selected <b><code>USE_MSG_LIST</code></b> and clicked
+the "Apply" or "Save" buttons, a new window with the title
+"AceDB Normal/Error Messages" will appear. The window has scroll bars
+so that you can adjust it to the size you want and also scroll through
+messages.
+
+<P>If there are no messages then the window will show
+
+<pre>
+"&lt; No messages currently &gt;"
+</pre>
+
+<P>As messages arrive they are displayed with the newest at the bottom displayed in
+red, older messages are scrolled off the top. Once the list has reached
+<b><code>MAX_MSG_LIST_LENGTH</code></b> in size, older messages are discarded to be replaced
+by new ones. Each message is shown with
+a time stamp so that you can see when it was generated. You will see something
+like this:
+
+<pre>
+
+  <font color="black">2001-06-14_16:35:30:  Roger, your sequence is mismatched !
+  2001-06-14_16:35:31:  Roger, your sequence is still mismatched !
+  2001-06-14_16:35:32:  Use AceDB and all your troubles will be over !
+  <font color="red">2001-06-14_16:35:33:  Sorry, my graph has disappeared !</font>
+
+</pre>
+
+<p>There is online help available from the popup menu for the message list window.
+To make this available, the database administrator will need to update
+the <code>whelp/</code> subdirectory with the
+<code>MesgList.html</code> help file from the <code>whelp/</code>
+directory in the acedb 4_9b release.
+
+<p>If you prefer to use the individual popup message windows and only switch to
+the scrolling window occasionally, you can do this because informational/error
+message windows will now be displayed with an extra button which can be used to switch
+to popup windows. Just toggle on the "Switch to Message Window" button and click
+the "Continue" button.
+
+
+<a name="AcePython"></a><H3>Latest Version of AcePython</H3>
+
+<p>For those of you who don't know Python, it's a freely available, object
+oriented scripting language. Unlike Perl, Python was object oriented from the
+start and is a <b>much</b> cleaner implementation of objects, it has a large
+standard library, GUI code etc. etc.
+
+<p>Siegfried Schloissnig and Thomas Sean Powell originally wrote an interface
+to the AceDB socket server in Python while attending the AceDB2000 workshop in Vancouver.
+Siegfried has just sent us the latest code and this announcement:
+
+<P><b>AcePython:</b>
+
+<P>AcePython provides a basic Python based interface to the AceDB database.
+Currently only socket based connections are supported (we are not planning 
+to support the old RPC based server).
+
+<P>AcePython resembles the AcePerl interface, so it is easier to use for
+people with AcePerl experience.
+
+<P>Basically the first step is to open a database connection using Ace.connect.
+This returns an object representing the database connection.
+After a connection has been established it can be used to retrieve objects 
+from the database with the fetch method.
+
+<P>The fetch method uses the underlying transport mechanism to 
+send a query to the server (as mentioned above, only socket based
+connections are currently supported).
+The result of the query is passed to the parser, (a C implementation
+is coming soon) which returns one or multiple AceObjects.
+
+<P>AceObjects support various methods to extract data. These methods are
+named analogous to their AcePerl counterparts.
+
+<P>Right now there is no support for manipulating or inserting data into
+AceDB.
+
+<P>Feel free to contact the author, Siegfried Schloissnig, at
+<A HREF="mailto:schloissnig@mpi-cbg.de">schloissnig@mpi-cbg.de</A> or
+via normal mail: Computer Department, Max Planck Institute of Molecular Cell Biology and Genetics,
+Dresden.
+
+
+
+
+<!-- ******************************************************************** -->
+<a name="Articles"></a><H2>Articles</H2>
+
+<a name="gff_format"></a><H3>Exporting sequence feature information from AceDB using the GFF format</H3>
+
+<P>(<I>This article is courtesy of Keith Bradnam</I>
+<A HREF="mailto:krb@sanger.ac.uk">krb@sanger.ac.uk</A>)
+
+<P>Many AceDB database curators are (necessarily) familiar with dumping data
+from their databases.  The most common option for dumping is probably
+the exporting of sequence information (DNA or protein).  This can be done
+from a keyset list of sequence objects (i.e. click on the 'Export...'
+menu) or by right clicking on the fmap displays (i.e. the graphical
+views of sequences). 
+
+<P>These methods allow you to quickly export sequence information in either
+the native AceDB format ('ace' format) or as a FASTA formatted sequence
+file.  
+
+<P>Perhaps not so well-known is the option of exporting sequence information
+in the General Feature Format (GFF).  The GFF format allows for a
+simple (but powerful) description of all sequence features in a format
+which is ideal for parsing by simple shell/perl scripts.  This is also a
+format that is used widely in the bioinformatics community, and thus is
+useful as a convenient data-exchange format.
+
+<P>This can be particularly useful if you simply want to grab a snapshot of
+what BLAST hits a particular sequence contains, or where the predicted
+exons of a coding sequence are.
+
+<P>To export GFF features, view your sequence graphically using the fmap
+display and then select the right-click menu option named 'Export
+Features'.  This will then allow you to save to a *.gff file.  Remember
+that only those features that are contained within the current 'active
+zone' will be exported, so you may wish to first restrict/broaden the
+active zone.
+
+<P>A complete description of the GFF format is available at:
+<ul>
+  <li><A href="http://www.sanger.ac.uk/Software/formats/GFF/">
+      http://www.sanger.ac.uk/Software/formats/GFF/</A>
+</ul>
+
+
+
+
+
+<!-- ******************************************************************** -->
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="last_month"></a><H3>fmap bug in last months build.</H3>
+
+<P>Sad to say, yours truly introduced a bug into fmap while trying to fix another
+bug. The bug manifested itself by xace reporting that objects were off the end of
+the DNA sequence. While this was correct, the code then did not produce the fmap
+sequence correctly causing AceDB to crash frequently.
+
+<P>This should now be fixed, if its not you can send stern emails to
+<A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>.
+
+
+<a name="gmap"></a><H3>gmap bug</H3>
+
+<P>Some users were finding that gmap crashed on being redisplayed, this is now fixed.
+
+<a name="printers"></a><H3>List of Printers not displayed in print window for NIS defined printers.</H3>
+
+<P>Thanks to Stewart Morris of Medical Genetics Section, The University of Edinburgh
+(<A href="mailto:Stewart.Morris@ed.ac.uk">&lt;Stewart.Morris@ed.ac.uk&gt;</A>
+for fixing this one. A simple typo. resulted in the wrong operating system file
+being examined for printers that are NIS defined rather than being locally
+defined on the users machine.
+
+<a name="more_printer_bugs"></a><H3>Other Printer bugs fixed.</H3>
+
+<P>Several other bugs in printing were also fixed:
+
+<dl>
+  <dt>PS fonts file not found
+  <dd>AceDB sometimes generated warnings about not being able to find
+      the wspec/psfonts.wrm file, this is now fixed.
+  <dt>Blue image on page box wrong
+  <dd>Sometimes the blue rectangle that shows the size of the image on the
+      paper for printing was shown as being zero in height making it impossible
+      to adjust its size, this is now fixed.
+  <dt>"fMapRefresh() could not find FeatureMap on graph"
+  <dd>If you cancelled the print window after trying to do a "Print Whole Map", this
+      would cause AceDB to crash, this is now fixed.
+</dl>
+
+
+
+<a name="blockN.wrm"></a><H3>Database corruptions and blockN.wrm permissions</H3>
+
+<P>Occasionally the following sequence of errors happens with AceDB:
+
+
+<pre><code>DATABASE: /nfs/disk59/scanner/fpc/ACE/mousedb LOGFILE LINE
+:5094:2001-06-18_01:31:28 fes22 21401 FATAL ERROR reported by program tace, in
+file disknew.c, at line 866: diskblockwrite can't open blocks
+/nfs/humdata1/humace/databases/mousedb/database/block8.wrm (system error 13 -
+Permission denied)
+
+
+DATABASE: /nfs/disk59/scanner/fpc/ACE/mousedb LOGFILE LINE
+:5209:2001-06-18_09:14:13 hgs1g 24875 FATAL ERROR reported by program tace, in
+file disknew.c, at line 866: diskblockwrite can't open blocks
+/nfs/humdata1/humace/databases/mousedb/database/block9.wrm (system error 13 -
+Permission denied)
+
+
+DATABASE: /nfs/disk59/scanner/fpc/ACE/mousedb LOGFILE LINE
+:5220:2001-06-18_10:00:34 hgs1g 28578 FATAL ERROR reported by program tace, in
+file disknew.c, at line 578: Duplication in fuseBats</code>
+</pre>
+
+<P>What has happened here is that a user has been allowed to get write access
+to a database, made some changes but then when they come to save the changes it
+turns out that some of the <code>database/block<b>N</b>.wrm</code> files are owned by another user
+and so only part of the changes get saved. This results in the database becoming
+corrupted.
+
+<P>While its possible to set the permissions of the database directories and
+the AceDB programs to prevent this happening it also points to a bug in AceDB.
+AceDB should check that it can read/write all of the <code>database/block<b>N</b>.wrm</code>
+files before allowing the user to have write access.
+
+<P>The code now does this with the result that you may notice that you are refused
+write access more often. You may also notice that even though you could get write
+access when first started up xace, you may subsequently not be able to save because
+some <code>database/block<b>N</b>.wrm</code> files have changed ownership while you have been
+working. This seems preferable to having the database get corrupted.
+
+<P>If you have trouble getting write access you should check the <code>database/log.wrm</code>
+file for error messages (look for your userid near the bottom of the file) to see
+if access to <code>database/block<b>N</b>.wrm</code> files is the problem.
+
+
+
+<a name="socklen_t"></a><H3>Compiling saceserver on more recent Compaq-Alpha machines</H3>
+
+<P>This item only affects users who do their own builds/compiles of the server/client
+AceDB programs on Compaq (formerly DEC) Alpha Stations.
+
+<P>From time to time computer manufacturers change system header files which sometimes
+messes up AceDB builds. There has been a change in the Compaq Alpha operating system
+header <code><b>/usr/include/sys/socket.h</b></code> which causes the AceDB build to fail.
+
+<P>Use the <code><b>"uname"</b></code> command to find out what level your Alpha operating system
+is at:
+
+<pre><code>&gt; uname -a
+OSF1 your_system_name V4.0 1229 alpha</code>
+</pre>
+
+<P>If your system has an update level that is <b>smaller</b> than "1229" then you
+don't need to worry about this further. If the update level is "1229" or higher
+then read on.
+
+<P>Have a look in <code><b>/usr/include/sys/socket.h</b></code> to see if it contains the lines:
+
+<pre><code>#ifdef _POSIX_PII_SOCKET
+typedef unsigned long   socklen_t;      /* 64-bits */
+#endif</code>
+</pre>
+
+<P>If it does then you should do your builds of the server/client programs like this:
+
+<pre><code>make USEROPTS='-D_POSIX_PII_SOCKET' saceserver sgifaceserver saceclient</code>
+</pre>
+
+<P>If you have any problems with this then please mail
+<A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+<P>If you wish to make comments/suggestions about any of the below, please mail them
+to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>
+
+<a name="enums"></a><H3>NULL_GRAPH</H3>
+
+<P>If you are doing some programming using the Graph package then
+you may want to make use of the NULL_GRAPH enum which I've just added to graph.h.
+This is an enum which has the value 0 (successive graphs are numbered incrementally from 1
+so no graph ever has the value 0)
+and has the advantage that debuggers display it symbolically as well as making the code more
+readable for newcomers.
+
+<a name="prefs"></a><H3>AceDB preferences</H3>
+
+<P>xace allows the user to set personal preferences which are recorded in the file
+<code><b>$HOME/.acedbrc</b></code>, while doing the work for the message window
+I added callback functions so that its possible to have a function executed elsewhere
+in the code when the user sets a preference.
+
+
+
+<!-- ******************************************************************** -->
+<H2>June monthly build now available.</H2>
+
+<P><b>NOTE</b> that this build is the acedb 4_9b build.
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<H2>Next User Group Meeting - D319, 2.30pm, Thursday, 19th July 2001</H2>
+
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Wed Jul  4 14:25:45 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

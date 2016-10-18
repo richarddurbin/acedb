@@ -1,0 +1,207 @@
+<HTML>
+
+<!--                                                                          -->
+<!-- Stuff you should alter is highlighted with "***"                         -->
+<!--                                                                          -->
+<!-- The newsletters are parsed by a script to automatically produce the      -->
+<!-- index file for the directory. If you change the format of this template  -->
+<!-- you had better change the script as well.                                -->
+<!--                                                                          -->
+
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - January 2002</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - January 2002</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="General_News"></a><H2>General News</H2>
+
+<P>A short newsletter but a busy month, we are currently working hard on
+SMap, a replacement for the conversion routines in the FMap code that
+build virtual sequences and their features. Next months newsletter will
+contain a full article on SMap.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+<a name="smap_cometh"></a><H3>Smap is coming</H3>
+
+<P>After a long, long time we are very close to completely replacing the existing
+fmap routines that construct virtual sequences with some new routines that use
+a new set of tags to mark up sequences. the new tags form part of the SMap system
+which will completely replace the Structure tags of the current Sequence class:
+
+<pre><code>	  Structure  From	Source UNIQUE ?Sequence
+				Source_Exons Int UNIQUE Int // start at 1
+		     Subsequence ?Sequence XREF Source UNIQUE Int UNIQUE Int
+</code></pre>
+
+<P>The new SMap system will provide a much more powerful and flexible system
+for building up sequence/feature relationships. There will be a full article
+on this in the February newsletter and the code will be generally available
+in the February release.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+
+<a name="no_display_block"></a><H3>Irritating dialogs</H3>
+
+<P>Recently a user reported that every time they clicked on an "object" field
+in the "update" tree window an annoying dialog popped up telling them to <b>"Select
+an object by double-clicking as though you were going to display it."</b>, they then
+had to click on the <b>"Remove"</b> button in this window to get rid of it.
+
+<P>By default acedb shows these popup windows whenever the user has selected an
+option that requires an answer before they can proceed, it's a warning really to
+say "you must answer this before you can carry on.". You can disable this via
+your user preferences, you need to turn on the <b>"NO_MESSAGE_WHEN_DISPLAY_BLOCK"</b>
+preference. You can get to the preferences menu from the "Admin" menu on the
+main window. When turned on this preference tells acedb not to bother showing
+these warning popup messages.
+
+
+<a name="homol_pfetch"></a><H3>Using pfetch to get EMBL entries for homologies in fmap</H3>
+
+<P>When you right click on a homolgy in fmap you get a menu that includes
+options to show alignments and also to efetch the EMBL entry for the homolgy. There
+is now an extra option which allows you to use pfetch instead of efetch
+to get the EMBL entry. pfetch will become the preferred option for retrieving
+these entries at the Sanger Centre in the future.
+
+
+<a name="reopen_log"></a><H3>A new "-reopen" option for acedb log files</H3>
+
+<P>There are a number of Unix utilities (e.g. "rotatelogs") that provide general log file handling
+services. These usually rely on the programs that create and use the logs to have
+an option to close and then reopen the log file. This allows the utility to rename the
+open logfile,
+tell the program to close and reopen the file, with the result that the program will now
+be writing to a new log file and the utility is free to operate on the old log file.
+
+<p>A new "-reopen" option has been added to the "newlog" and "Serverlog"
+commands which simply closes and reopens
+the log files. This allows acedb logs to then be handled by the Unix log utilities.
+
+
+<a name="database_perms"></a><H3>Reinitialising the Database</H3>
+
+<P>Previously the following tests have been applied to say whether you could
+reinitialise an acedb database:
+
+<ol>
+  <li>Your real and effective unix userids must be the same, this will only affect you
+      if your versions of the acedb programs have a setuid or setgid bit set.
+  <li>The <code><b>wspec/passwd.wrm</b></code> file must exist and be readable.
+  <li>You must own the <code><b>wspec/passwd.wrm</b></code> file.
+  <li>Your userid must be listed in <code><b>wspec/passwd.wrm</b></code>.
+</ol>
+
+<P>This creates a problem if there are a group of you working on a database and you
+would like to be able to reinitialise the database without having to <code><b>"su"</b></code>
+to the userid of the owner of <code><b>wspec/passwd.wrm</b></code>.
+
+<P>To get round this a new <code><b>"GROUP_ADMIN"</b></code> option has been added to
+the <code><b>wspec/database.wrm</b></code> file. When this option is uncommented in
+this file then any user who is in the unix group for the <code><b>wspec/database.wrm</b></code>
+will also be able to reinitialise the database.
+
+<P>In other words step 3 above will now be:
+
+<ul>
+  <li>You must own the <code><b>wspec/passwd.wrm</b></code> file
+      or if the GROUP_ADMIN option was set in <code><b>wspec/database.wrm</b></code>
+      you must be in the unix group for the password file.
+</ul>
+
+<P>Note that the permissions for the database/ subdirectory of your database
+must be set to "rws" for the group if this is to work. That is, the group must
+have read, write and execute permissions for the subdirectory and in addition
+the sticky bit for group permissions on the directory must also be set. This
+will ensure that all files <i><b>created</b></i> in the subdirectory will have the same
+group as the subdirectory itself.
+
+<P>For example, assuming that "joe"
+owns the database and "bloggs" is the group then an "ls -l" of the database
+should show the following permissions for the database/ subdirectory:
+
+<pre><code>  drwxrwsr-x   6 joe      bloggs      8192 Feb 13 12:51 database
+</code></pre>
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+<P>If you wish to make comments/suggestions about any of the below, please mail them
+to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>
+
+
+<a name="another_banal_filsubs"></a><H3>Another banal file pathname function</H3>
+
+<P>Another banal pathname function has been added to filsubs, this one returns the base filename
+part of a given path:
+
+<pre><code>  Given   "/some/load/of/directories/filename.something.ext"
+returns   "filename.something"
+</code></pre>
+
+<P>i.e. it lops off the directory and the _last_ extension.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<H2>No January monthly build</H2>
+
+<P>Due to problems with our build system and some large scale and unfinished
+changes to introduce Smap (see February issue) we were not able to produce
+a January monthly build. Sorry !
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<H2>Next User Group Meeting - D319, 2.30pm, Thursday, 14th February 2002</H2>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Wed Feb 13 16:14:53 GMT 2002
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

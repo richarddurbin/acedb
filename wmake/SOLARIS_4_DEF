@@ -1,0 +1,42 @@
+#  $Id: SOLARIS_4_DEF,v 1.10 2003-07-01 16:07:35 srk Exp $
+
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+##### for the Solaris OS using the GTK graphics backend #########
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+NAME = SOLARIS
+
+# Compiler used to build 3rd party libraries 
+LIBCC = gcc
+
+# at Sanger remove -I/opt/x11r5/include, which creates problems with stdarg.h
+COMPILER = gcc -g -DNO_LEFT_CASTING -Wall -DACEDB4  `../w3rdparty/include-config -I/usr/local/include | sed -e "s/-I\/opt\/x11r5\/include//"`
+
+LINKER = gcc -g  -R/usr/local/lib
+
+# The builtin test command in the Solaris shell doesn't understand -L
+TEST = /usr/bin/test
+
+LIBS = `../w3rdparty/libs-config -L/usr/local/lib` -lm -lsocket -lnsl -lreadline -lcurses
+
+#on SOLARIS libraries don't have to be ranlib'd
+RANLIB_NEEDED = false
+
+## other derivation from the default specific to Solaris
+AR_OPTIONS = ru
+RPCGEN_FLAGS = -b -I -K -1
+
+LEX_LIBS = -ll -lw
+#################################################################
+#################################################################
+
+ 

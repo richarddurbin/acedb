@@ -1,0 +1,31 @@
+# $Id: HP_DEF,v 1.3 1994-07-06 02:14:00 mieg Exp $ #
+
+
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+###############   wmake/HP_DEF    May-15-1993      ##############
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+############     for the HP           stations ##################
+############   contributed by Andrew Companek  ##################
+############    drew@chimera.hgen.pitt.edu     ##################
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+NAME = HP
+COMPILER = cc  -Aa -g -D_INCLUDE_POSIX_SOURCE -DSYSV -DNO_LEFT_CASTING
+LINKER = cc -g
+
+LIBS = -lm -L/usr/lib/X11R4
+
+.c.o:
+	$(CC) -c $*.c
+
+#################################################################
+#################################################################
+

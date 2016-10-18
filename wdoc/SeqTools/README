@@ -1,0 +1,9 @@
+This directory contains documentation for the set of sequence tools originally written
+by Eric Sonnehammer. The tools are distributed as part of the acedb package because
+a large part of them were written by Eric when he worked at the Sanger.
+
+The documents are very incomplete but it's start. They are needed because while use
+of acedb is declining usage of belvu, blixem and dotter continues by many groups
+including Havana, Pfam and many others.
+
+Ed Griffiths Aug 2009.

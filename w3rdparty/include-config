@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+# Usage:     include-config  [-local local_libpath] <library(ies)>
+#
+# Examples of library should be "gtk+-2.0" or "glib-2.0" but you can
+# add other pkg_config'd libraries after or before them, just separate with spaces.
+#
+# Use either the pkg-config on the path or the one specified by the "-local" flag.
+#
+# In either case pkg-config is passed the libraries which must be in pucker
+# pkg-config form.
+#
+
+pkg_config='pkg-config'
+
+if [ "$1" == '-local' ] ; then				    # quotes protect the "-" in -local
+  local_path=$2
+  shift ; shift
+  pkg_config="$local_path/bin/$pkg_config"
+fi
+
+echo -n "-DGTK2 "
+
+$pkg_config --cflags $*
+
+
+exit 0

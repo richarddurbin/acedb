@@ -1,0 +1,157 @@
+<HTML>
+
+<HEAD>
+
+<TITLE> ACEDB source code documentation: the dbpath utilities</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="./wdoc.css"
+title="Style sheet for wdoc developer documents">
+
+</HEAD>
+
+<BODY>
+
+<DIV ALIGN=CENTER>
+
+<H1 align=center>Application programmers' guide to the dbpath utilities</H1>
+
+
+<ADDRESS>Originally written by<BR>
+Simon Kelley &lt;srk@sanger.ac.uk&gt, December 1999</ADDRESS>
+
+</DIV>
+
+<PRE>
+I've made changes throughout the code, affecting every call to filName()
+and sessionFilname(), and many calls to callScript*().
+
+The motivation for these changes are twofold.
+
+1) These functions used to return a pointer to a statically allocated
+string. This is evil: it's fundamentally thread-unsafe, and exposes any
+later code change to the risk of creating mysterious bugs because a
+second call to a function is made which overwrites the static buffer
+before a previous call has finished with it. (This is not a theoretical
+risk - I fixed bugs caused  this way). Sadly, this technique has been
+used extensively in acedb (The glaring example is messprintf) I've now
+removed some of the problem, we need to work on the rest.
+
+2) A long time ago, the facility to make $ACEDB a colon separated search
+path was introduced, using code in the filsubs library (ie filName).
+This has never really been used, and indeed was disabled for many
+lookups in sessionFilname. I wanted to achieve something similar, but
+slightly different. I want exactly two directories; one is the standard
+directory containing wspec and database and optionally other stuff where
+a database resides, the other an installation-wide directory where
+default copies of help files and config files and scripts can exist.
+These are used when the files cannot be found in the default directory.
+
+The database directory is found as before from the command line, or the
+value of $ACEDB
+The common directory is found from the value of $ACEDB_COMMON, or
+/usr/share/acedb, or /usr/local/acedb (in that order) on unix, or from a
+registry entry set up by the installation program on windows.
+
+The following resources will be searched for in the COMMON dir if not
+found in the database.
+
+wspec/wingtkrc
+wspec/gtkrc
+wspec/winfonts.wrm
+wspec/xfonts.wrm
+wspec/psfonts.wrm
+wspec/acedbrc
+wspec/table.menu
+wspec/displays.wrm
+wspec/table.menu
+wscripts/*
+whelp/  
+- note that the system will use only the contents of $ACEDB/whelp or
+$ACEDB_COMMON/whelp
+   it won't mix files from both.
+
+The following are searched for only in the database dir.
+database/*
+rawdata/*
+wquery/*
+rawdata/*
+wgf/*
+wspec/layout.wrm
+wspec/models.wrm
+wspec/server.wrm
+wspec/constraints.wrm
+wspec/subclasses.wrm
+wspec/lock.wrm
+wspec/serverconfig.wrm
+wspec/server.wrm
+wspec/datainfo.wrm
+wspec/options.wrm
+wspec/passwd.wrm
+wspec/database.wrm
+
+The API
+
+Functions deleted - sessionFilname()
+Functions deprecated - filName()
+NOTE: This REALLY is deprecated, it's there for image and contigc which
+have not been updated, I've removed every call in Acedb, and none should
+be re-introduced.
+Functions added - dbPathFilName(), dbPathStrictFilName(),
+dbPathMakeFilName(),
+                   filGetName(), filCheckName().
+Semantics altered - callScript*()
+
+The new functions.
+
+char *filGetName(char *filename, char *ending, char *spec, STORE_HANDLE
+handle)
+
+expands filename to an absolute path if needed, on windows translates
+any MS-DOS style paths to posix ones, expands ~, checks that file exists
+and/or can be created, according to spec and returns the full path name
+if so. or NULL. The return string is allocated on handle, and it is the
+resposibility of the caller to free it, using messfree(), or
+handleDestroy().
+
+char *fileCheckName(char *filename, char *ending, char *spec)
+
+does the same as filGetName, but returns TRUE is filGetName would have
+returned non-NULL, or FALSE otherwise.
+
+char *dbPathFilName(char* dir, char *file, char *ending, char *spec,
+STORE_HANDLE handle)
+returns absolute pathname for a file matching spec which exists in the
+$ACEDB or $ACEDB_COMMON. rules for freeing return value as for
+filGetName()
+
+char *dbPathStrictFilName(char* dir, char *file, char *ending, char
+*spec, STORE_HANDLE handle)
+As dbPathFilname, but doesn't search COMMON directory.
+
+char *dbPathMakeFilName(char* dir, char *file, char *ending,
+STORE_HANDLE handle)
+creates filename (in $ACEDB) but doesn't do existence or writability
+checks (like setting spec to NULL in sessionFilName)
+
+Note:
+
+callScript() used to expand relative filenames in the $ACEDB /wscripts
+path. It doesn't do that anymore, calling callScript with a simple
+filename is only valid to run an executable on the user's path. To run
+an exceutable in wscripts, call dbPathFilName() or dbPathStrictFilname()
+with the name of the script, and pass the results to callScript. I've
+changed all the relevant code.
+
+</PRE>
+
+
+<HR>
+<ADDRESS><A href="mailto:srk@sanger.ac.uk">Simon Kelley &lt;srk@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Wed Apr  5 09:35:43 BST 2000
+<!-- hhmts end -->
+
+</BODY>
+</HTML>
+

@@ -1,0 +1,36 @@
+# $Id: SGI_4_DEF,v 1.7 2000-04-11 14:53:01 srk Exp $
+
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+########### for the SGI Silicon Graphics Generic ################
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+# Note:
+# the native cc is recommended over gcc on Silicon Graphics
+#
+NAME = SGI 
+
+# Compiler used to build 3rd party libraries 
+LIBCC = cc
+
+COMPILER = cc -g -DNO_LEFT_CASTING -DACEDB4 `../w3rdparty/include-config -I/usr/local/include`
+
+LINKER = cc -g
+
+LIBS = `../w3rdparty/libs-config -L/usr/local/lib` -lm -lreadline -lcurses
+
+# On SGI the libraries don't need to be ranlib'd
+RANLIB_NEEDED = false
+
+
+#################################################################
+#################################################################
+ 

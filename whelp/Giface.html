@@ -1,0 +1,239 @@
+<!--  $Id: Giface.html,v 1.13 1999-06-25 14:51:06 fw Exp $  -->
+<HEAD>
+<TITLE> ACEDB user guide: giface </TITLE>
+</HEAD>
+
+<BODY BGCOLOR=#ffffff>
+
+<H1> Acedb user guide: giface </H1>
+
+From the user's point of view, giface is a version of tace with
+extensions to generate gif and map files corresponding for acedb
+displays.
+<P>
+(From the programmer's point of view, it is more like xace, but with gif-images
+as its graphics output mode instead of interactive X11-windows.)<P>
+
+A lot of improvements have been made to the general user-friendliness
+of giface since version 4.8. Since this version is still in development
+and may not be officially released. Comments are included about the restrictions
+of giface version 4.7 and earlier.<P>
+
+You run giface just like tace, with the database directory as a
+command line argument, or set as the ACEDB environment variable.
+There is a new single new command added to the standard tace menu,
+"gif".  This opens up a separate menu, with prompt "acedb-gif> ".  In
+this menu you can issue the following commands:<P>
+(command options inside [brackets] are optional, the vertical bar '|' indicates a choice of possible options, words in <I>italics</I> are values specified by the user.)
+
+<H2>Commands</H2>
+
+
+<DL>
+<DT><B>dimensions [-D <I>displaytype</I>] <I>x y</I></B></DT>
+  <DD>This sets the dimensions in pixels of the image that subsequent
+      command will create. The default sizes for all or only a
+      specified displaytype will be reset.
+      <BR>
+      Note on version 4.7 and earlier : no -D option available - only the sizes for
+      displays of type GMAP, FMAP and PMAP will be affected. For multiple
+      dimension changes to take effect you had to quit and re-enter the gif sub-menu.
+  </DD>
+
+<DT><B>display [-D <I>displaytype</I>] [-view <I>view</I>] [<I>class key</I>]</B></DT>
+  <DD>Graphic display of the current (or the specified object). An object
+      is defined by its class and its key (the object's name).<BR>
+      This is the same action that xace would perform when 
+      double-clicking on the object when its listed in the 
+      <A HREF=KeySet.html>KeySet window</A>.<BR>
+      The default display mode is the standard <A HREF=Tree.html>Tree
+      Display</A> (e.g. for Author objects) or a graphical map display 
+      (e.g. for sequence objects). The -D option can be used to
+      change the default display type. The argument <I>displaytype</I>
+      can be one of display types listed in 
+      <CODE><A HREF="Class_Configuration.html">wspec/options.wrm</A></CODE>,
+      where the default type for each class is defined. 
+      Typically you would use
+      <CODE>-D TREE</CODE> to force the textual display or
+      <CODE>-D GMAP</CODE> for Map objects, <CODE>-D FMAP</CODE>
+      for Sequence objects or <CODE>-D PMAP</CODE> for Clone objects.<BR>
+      The -view options works for map displays of type GMAP and allows
+      the user to specify the view object to be used to configure the
+      GMAP display. The argument <I>view</I> is a valid name of a View
+      object, which contain column definitions.
+   </DD>
+   <P>
+
+
+<DT><B>gifdump <I>filename</I></B></DT>
+  <DD>Saves the active graph as a gif-image. The extension ".gif"
+      is added if <I>filename</I>, doesn't already have that suffix.
+      Other information about clickable objects on the graph
+      is written to <I>filename</I>.boxes (if filename has no
+      ".gif" suffix) or <I>basename</I>.boxes (where basename
+      is the <I>filename</I> argument with the ".gif" suffix).
+      The format of the .boxes file is explained below.<BR>
+      This command is typically used after the <B>display</B> or 
+      <B>map</B> command.<BR>
+      If <I>filename</I> is not an absolute pathname (starting with '/')
+      the file will be created in current working directory.
+      <BR>
+      Note on version 4.7 and earlier : You should always specify an 
+      absolute pathname, and the extensions .gif and .boxes are always 
+      added to the filename.
+  <DD>
+  <P>
+
+<DT><B>psdump <I>filename</I></B></DT>
+  <DD>Saves the active graph as postscript. The extension ".ps" 
+      is added if <I>filename</I>, doesn't already have that suffix.
+      This command is typically used after the <B>display</B> or 
+      <B>map</B> command.<BR>
+      If <I>filename</I> is not an absolute pathname (starting with '/')
+      the file will be created in current working directory.
+      <BR>
+      Note on version 4.7 and earlier : You should always specify an 
+      absolute pathname, and the extensions .ps is not added and should 
+      be provided in the <I>filename</I> argument by hand.
+  <DD>
+  <P>
+
+<DT><B>map <I>map</I> [-view <I>view</I>] [-coords <I>x1</I> <I>x2</I>] [-hideheader] [-whole]</B></DT>
+  <DD>Set up a map display of the object <I>map</I>. The optional -view
+      options has the function as for the <CODE>display</CODE> command.
+      To zoom to a specific section of the map use the -coords option
+      with the coordinate arguments <I>x1</I> and <I>x2</I> or the
+      -whole option to show the entire map in one image.<BR>
+      If the image is used for a Web display, it may be useful
+      to use <CODE>-hideheader</CODE> to blank out the buttons in the top
+      row that you would usually see in this display in xace.<BR>
+      This command doesn't create an image file straight away, use
+      the command <B>gifdump</B> to write out the result image.
+   </DD>
+   <P>
+
+<DT><B>pmap [-clone <I>name</I>] | [-contig <I>name</I> <I>coord</I>]</B></DT>
+  <DD>Create a physical map display for clones and contigs.
+      Use the command <B>gifdump</B> or <B>psdump</B> to write 
+      out the result image.
+  </DD>
+  <P>
+
+<DT><B>seqget [<I>sequence</I> [-coords <I>x1 x2</I>]]</B></DT>
+  <DD>Sets active sequence for further seq- operations.
+      The following seq- commands are issued in the same command line, e.g.<BR>
+      <CODE>seqget bK714B7 ; seqactions -hide_header ; seqdisplay -visible_coords 10000 40000</CODE>
+          
+  </DD>
+  <P>
+
+<DT><B>seqactions  [-dna] [-gf_features] [-hide_header] [-rev_comp]</B></DT>
+  <DD>Change parameters on the active sequence display.</DD>
+  <P>
+
+<DT><B>seqcolumns {-on <I>name</I>} {-off <I>name</I>} [-list]</B></DT>
+  <DD>Changes column settings on active sequence display.
+      Multiple <CODE>-on ...</CODE> or <CODE>-off ...</CODE>
+      options can be specified. The column names are not case-sensitive,
+      and names containing spaces have to be &quot;quoted&quot;.<BR>
+      The names of available columns can be listed with the <CODE>-list</CODE>
+      option. The columns are listed left to right with a '+' or '-'
+      sign denoting whether they're switched on or off.
+      <BR>
+      Note on version 4.7 and earlier : column names are case-sensitive
+      and the -list option isn't available.
+  </DD>
+  <P>
+
+<DT><B>seqdisplay [-visible_coords <I>v1 v2</I>]</B></DT>
+  <DD>Creates the actual display for the active sequence. 
+      This is typically the last command in a sequence of commands starting
+      with <B>seqget</B>. The image of the active graph can be written 
+      out using the gifdump or psdump function (see there).
+  </DD>
+  <P>
+
+<DT><B>seqfeatures [-file <I>fname</I>] [-version 1|2] [-list] [-source <I>source(s)</I>] [-feature <I>feature(s)</I>]</B></DT>
+  <DD>Writes out sequence features from the current sequence.
+     The arguments for <CODE>-source</CODE> and 
+     <CODE>-feature</CODE> are '|' separated lists.
+     It operates over the region specified by the -coords in the previous
+     seqget command.
+  </DD>
+  <P>
+
+<DT><B>seqdna [-file <I>fname</I>]</B></DT>
+  <DD>Writes out the DNA sequence of the current sequence.
+     It operates over the region specified by the -coords in the previous
+     seqget command.
+  </DD>
+  <P>      
+
+<DT><B>pepget <I>protein | peptide</I> [-coords <I>x1 x2</I>]</B></DT>
+  <DD>Sets current protein for further pep- operations on the same line.</DD>
+  <P>
+
+<DT><B>pepseq [-file <I>fname</I>]</B></DT>
+  <DD>Exports current peptide sequence.</DD>
+  <P>
+
+<DT><B>pepalign [-file <I>fname</I>]</B></DT>
+  <DD>Exports homols of current peptide sequence.</DD>
+  <P>
+
+<DT><B>makemaps -gmap | -pmap | -cmap | -alpha | -all | -seqmap <I>file</I> | -seqclonemap <I>file</I></B></DT>
+  <DD>makes cached maps and sorted class keysets</DD>
+
+<DT><B>quit</B></DT>
+  <DD>This returns to the standard tace menu.</DD>
+</DL>
+
+You can issue any series of commands, creating many
+gifs from one session of giface.
+
+<H2>.boxes file format</H2>
+
+This file can be used in creating WWW displays, where the gif-image
+is used as a clickable map. The hot-spots on the image can be extracted
+from the .boxes file.<P>
+The file is a set of lines :</P>
+
+<PRE>
+boxnum x1 y1 x2 y2 <I>class</I>:<I>name</I> <I>extra_text</I>
+</PRE>
+
+<P>The boxnum is probably irrelevant to external people.  x1,y1,x2,y2 are
+the bounding box coordinates.  The first 'class:name' specifies the
+object in the box.  The extra text is variable information that can be
+added by the specific display.  Often it contains information that can
+be used for mouseover type behavior.  There may be no extra text.</P>
+
+<H2>Example</H2>
+
+Here is a sample session:<P>
+
+<PRE>
+Unix-prompt: giface ~wormpub/acedb/ace4/cam
+acedb&gt; gif
+acedb-gif&gt; dim 600 480
+acedb-gif&gt; map Sequence-III -view MAP-sequence
+acedb-gif&gt; gifdump /tmp/seqIII
+...
+acedb-gif&gt; quit
+// 0 Active Objects 
+acedb&gt; quit
+
+// A bientot 
+
+Unix-prompt: 
+</PRE>
+
+
+ <P>
+
+to <a href="TOC.html">Table of Contents</a><p>
+
+last edited: May 1999<p>
+
+</BODY>
+

@@ -1,0 +1,104 @@
+/* $Id: classes.wrm,v 1.6 1994-07-27 13:53:43 ulrich Exp $ */ 
+
+  /* wspec/classes.wrm
+     
+     This file is read at compile and at execution time.
+
+     It holds the enumaration of the application dependent classes.
+     Classes necessary to the kernel are defined in a second file 
+     wspec/sysclasses.wrm, which should not be touched except in
+     consultation with us.
+
+     You can add new classes at will, but if you suppress one or 
+     renumber it, you must recompile and reconstruct the database 
+     from ace files.
+
+     Class properties, formerly defined in this file, are
+     now in wspec/options.wrm.  If there is no entry there then
+     classes are type B (tree), hidden, with display method TREE.
+
+     Each #define line corresponds to a class. We require strlen(name) < 32.
+     There must be no repetitions of class numbers.
+     The total number of classes cannot exceed 255.
+     The total number of display types cannot exceed 64.
+     
+     For now we allocate 0-100 for system classes
+			 101-199 for application classes
+			 200-255 for subtypes 
+	The subytypes will not need class numbers when the ?Model
+	class works fully.
+  */
+
+/* def  _VClass_name  Class_number */
+
+#define _VAuthor         101  
+#define _VLaboratory     102 
+#define _VJournal        103 
+#define _VPaper          104 
+#define _VLibrary        105 
+#define _VMutagen        106
+#define _VMethod         107 
+#define _VSequence       108
+  /* I would like to switch Restriction as a subclass of Motif */
+#define _VRestriction    109 
+
+#define _VMap		 110  
+#define _VGene_Class     111
+#define _VSpecies	 112
+#define _VAllele         113
+#define _VStrain         114
+#define _VInterval       115
+#define _V2_point_data   116
+#define _VMulti_pt_data  117
+#define _VDf_Dup_data    118
+#define _VgMap		 119
+
+#define _VClone          120
+#define _VContig         121
+#define _VpMap           122
+#define _VClone_Grid	 124
+#define _VPool           125
+#define _VABI            127
+#define _VDNA            128
+#define _VAA		 129
+
+#define _VLocus          130
+#define _VMultiMap       131
+
+  /* IGD classes */
+#define _VYAC            132
+#define _VSTS            133
+#define _VAluPCR         134
+#define _VFragment       162
+#define _VChrom_Band     163
+#define _VMotif          164
+#define _VEnzyme         165
+#define _VGDB_id         166
+#define _VOMIM           167
+#define _VProbe          168
+#define _VReference      169
+
+#define _VHomology       171
+#define _VPeptide        172
+#define _VSource         173
+
+#define _VContact        174
+
+#define _VGamete         175
+
+#define _VCell           196
+#define _VNeurodata      197
+
+#define _VLane           198
+#define _VvMap		 199
+  /* Subtypes */
+
+#define _VLab_Location	 200 
+#define _VMatch          201
+#define _VInterval_ends  202
+#define _VMulti_counts   203
+#define _VBalancer       204
+#define _Vmap_location   205
+#define _Vmap_error      206
+
+/* 221 230, eddy, flybase */

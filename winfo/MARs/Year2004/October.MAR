@@ -1,0 +1,25 @@
+================================================================================
+                              AceDB/ZMap - October MAR
+
+
+Executive summary.                                                                        
+------------------                                                                        
+
+ZMap zooming via libfoocanvas rewritten to support zooming/scrolling from
+chromosome down to bases.
+
+Acedb mostly maintenance work.
+
+
+Acedb
+-----
+
+Changes made to homol display, fix bugs to support wormbase.
+
+
+ZMap
+----
+
+Improvement to GFF parsing. Merging of features from several servers improved.
+Zooming from whole chromosome down to bases now possible.
+

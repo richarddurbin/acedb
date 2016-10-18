@@ -1,0 +1,102 @@
+
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+#########   for the Microsoft Windows 95, 98 and NT #############
+####### using the cygwin unix compatibility library and GTK #####
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+GTK_BUILD = /cygdrive/i/srk/win32/danah/gtkwin32/src
+
+GTK_INCLUDES = \
+-I$(GTK_BUILD)/gtk+/gdk/win32 \
+-I$(GTK_BUILD)/glib \
+-I$(GTK_BUILD)/gtk+
+ 
+GTK_LIBS = \
+-L$(GTK_BUILD)/glib \
+-L$(GTK_BUILD)/gtk+/gdk/win32 \
+-L$(GTK_BUILD)/gtk+/gtk
+
+EXE_SUFFIX = .exe
+
+NAME = CYGWIN # NOT WIN32 as this activates rbsk's code
+
+COMPILER = gcc -g -fwritable-strings -DPOSIX -DACEDB4 $(GTK_INCLUDES)
+
+LINKER = gcc -g 
+
+LIBS = -L$(GTK_BUILD)/glib -lglib-1.3 -lm -lreadline -ltermcap \
+-luser32 -lcomdlg32 -lgdi32 -lwinspool
+XWIN_LIBS =  $(GTK_LIBS) -lglib-1.3 -lgdk-1.3 -lgtk-1.3 -Wl,--subsystem,windows
+GRAPHXWIN_DEPEND  = libgraph.a libgex.a libgd.a acedb.res
+GRAPHXWIN_LIBS    = acedb.res -lgraph -lgex -lgraph -lgd
+
+LEX_LIBS = -lfl
+
+### flex -l emulates AT&T lex as accurately as possible
+LEX = flex
+LEX_OPTIONS = -l
+
+### use bison with flag -y as yacc doesn't exist
+YACC = bison 
+YACC_OPTIONS = -y
+
+RPCGEN_FLAGS = -b -I -K -1
+
+RANLIB_NEEDED = false
+
+
+acedb.res : ../win32/acedb.rc ../win32/icons.ico
+	  windres $< -O coff $@
+
+startace: ../win32/startace.c acedb.res
+	    gcc ../win32/startace.c -Wl,--subsystem,windows acedb.res -o startace
+
+winaceshell: ../win32/winaceshell.c
+	     gcc ../win32/winaceshell.c -o winaceshell
+
+# These get windows-style line endings before incorporation.
+
+WSPEC_FILES = wingtkrc displays.wrm cachesize.wrm database.wrm\
+              psfonts.wrm constraints.wrm layout.wrm models.wrm\
+              passwd.wrm subclasses.wrm options.wrm
+
+wspec:
+	mkdir wspec
+
+database:
+	rm -rf database; mkdir database;
+
+dbfiles: wspec database $(WSPEC_FILES)
+	rm -f database/ACEDB.wrm; echo 'y\nquit' |./tace .; rm -f database/lock.wrm
+
+$(WSPEC_FILES): wspec ../wspec/$<
+	cat ../wspec/$@ | sed -e 's/$$/'`/bin/echo -ne '\r'`'/g' >wspec/$@				
+makedb: ../win32/makedb.iss dbfiles
+	compil32 /cc ..\\win32\\makedb.iss
+
+installer.iss:
+	rm -f installer.iss; ../win32/BuildInstaller    	       
+	
+WinDist : xace tace dotter blixem acediff saceclient saceserver \
+          sxaceclient giface makeUserPasswd\
+          installer.iss ../win32/icons.ico \
+	  ../win32/copyright.win  ../win32/README.3rdParty.txt \
+          ../win32/README.txt ../win32/README.fonts.txt \
+	  startace winaceshell clean makedb
+	  compil32 /cc installer.iss
+
+WinDotBlix : dotter blixem 
+	compil32 /cc ../win32/installDotBlix.iss
+
+#################################################################
+#################################################################
+

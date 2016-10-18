@@ -1,0 +1,43 @@
+#!/bin/tcsh
+
+if ( $#argv == 0 ) then
+  echo "usage: mkinfo_dotblix <version> <revision>" 
+  exit (1)
+endif
+
+if ($#argv == 1 ) then
+   set revision = 1
+else
+   set revision = $2
+endif
+
+set BINDIR = DARWIN_4_GTK2
+
+set versiondot = $1:s/_/./
+set versionu = $1:s/./_/
+set filename = dotblixem_$versiondot-$revision.info       # using versiondot since 4.9.27
+
+echo "Package: dotterandblixem" >$filename
+echo "Version: $versiondot" >>$filename
+echo "Revision: $revision" >>$filename
+echo "Source: http://www.acedb.org/Software/Downloads/DAILY/ACEDB-source.$versiondot.tar.gz" >>$filename
+echo "source-MD5: 8e8e7a432c2c4ea1d0670e2eb421e792" >>$filename     # checksum of tarfile of source code
+
+cat >>$filename << EOF
+NoSourceDirectory: true
+CompileScript: <<
+ make ACEDB_MACHINE=$BINDIR dotter blixem
+<<
+InstallScript: <<
+install -d %i/bin
+install -o root -g wheel bin.${BINDIR}/dotter %i/bin
+install -o root -g wheel bin.${BINDIR}/blixem %i/bin
+<<
+Description: Open Source genome database tools
+<<
+License: GPL/LGPL
+Homepage: http://www.acedb.org/
+Maintainer: Rob Clack <rnc@sanger.ac.uk>
+Depends: x11, readline, gtk+2
+EOF
+

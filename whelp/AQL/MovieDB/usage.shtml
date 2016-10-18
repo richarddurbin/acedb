@@ -1,0 +1,53 @@
+<HTML>
+
+<HEAD>
+  <TITLE>AQL - MovieDB Usage</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="../aql.css" TITLE="Style sheet for AQL docs">
+</HEAD>
+<BODY>
+
+<H2>AQL - MovieDB Usage</H2>
+
+<H4>With taql :</H4>
+
+<P>
+The taql program is a simple command shell that will only parse
+aql queries. None of the other acedb text-commands will work.
+it's advantage over tace for pure AQL use is that you can enter
+multiline queries. :
+<PRE>% taql MovieDB</PRE>
+
+Then enter your queries after the acedb-aql&gt; prompt. A blank line
+(hit RETURN twice) submit the query. The results are returned in plain
+text format.
+</P>
+
+<P>Type <CODE>taql -h</CODE> for more options.
+</P>
+
+<H4>With tace :</H4>
+
+<P>
+Tace is a more comprehensive acedb command-shell. The AQL facilities
+are just part of the overall functionality. All AQL queries have to be
+preceeded by the keyword "<CODE>aql</CODE>". This keyword allows
+the setting of various output options etc.
+
+<PRE>% tace MovieDB</PRE>
+
+Any tace-command that starts with <CODE>select</CODE> is automatically
+recognised as an AQL query and the <CODE>aql</CODE>-keyword can be omitted.
+</P>
+
+<P>Type ? at the <CODE>acedb&gt;</CODE> prompt for a complete listing of
+   possible commands.
+</P>
+
+
+
+
+<HR>
+<ADDRESS><A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A></ADDRESS>
+
+</BODY>
+</HTML>

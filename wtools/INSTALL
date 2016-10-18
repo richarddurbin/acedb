@@ -1,0 +1,290 @@
+#!/bin/ksh
+#
+##########################################################################
+#################      A C.elegans database      #########################
+#################   R.Durbin and J.Thierry-Mieg  #########################
+#################                                #########################
+#################    Installation script for     #########################
+#################                                #########################
+#################          ACEDB 4_8             #########################
+#################                                #########################
+#################          Dec 2000              #########################
+#################                                #########################
+##########################################################################
+#
+# $Id: INSTALL,v 1.23 2002-01-16 16:03:29 edgrif Exp $
+#
+# To install ACeDB, this file and the appropriate distribution
+# NNNN.tar.gz files should be in the same directory. See the NOTES
+# file to find out which distribution NNNN.tar.gz files you need
+# for your site. You must have write access in the directory to be
+# able to run the INSTALL script.
+#
+# We provide executables for a number of X11-Unix platforms:
+# DEC-Alpha, Linux, SGI & Sun.
+# You can compile for many others using our makefiles.
+# We also provide for compiling for MS-Windows.
+#
+# To run this script, go to the directory containing the script
+# and NNNN.tar.gz files and type script name:
+#
+#                   ./INSTALL
+#
+###################################################################
+#
+#
+# All download files should be of the pattern:
+#
+#        ACEDB-<package>.<version>.tar.gz
+#
+# where
+#        <package> is currently   source | docs | help | tools |
+#
+#        <version> is of the form "version"_"release""update", e.g. 4_8d
+#
+# e.g.     ACEDB-source.4_8d.tar.gz
+#        ACEDB-binALPHA.4_7l.tar.gz
+#
+
+# Set to non-NULL to turn on debug in whole script.
+debug=""
+
+#--------------------------  functions  -------------------------------
+
+function print_usage
+{
+  if [[ -n $1 ]]
+  then
+    print
+    print "Warning: $1"
+  fi
+
+  print
+  print "Usage:        INSTALL [-h]"
+  print
+  print "  -h        produces this help message."
+  print
+  print "  You should cd to the directory containing the *tar.gz install file and"
+  print "  then run INSTALL. INSTALL will try to install all such files that it finds"
+  print "  in the directory."
+  print
+
+  exit 1
+}
+
+
+function bomb_out
+{
+  print
+  print "Fatal Error : $1"
+  print
+
+  exit 1
+}
+
+function print_divider
+{
+  print
+  print '====================================================================='
+  print
+}
+
+
+
+#------------------------- main routine -------------------------------
+
+prefix='ACEDB-'
+static_prefix=$prefix'STATIC_'
+srcname='source'
+binname='bin'
+servname='bin'
+helpname='whelp'
+docname='wdoc'
+toolsname='wtools'
+demoname='wdemo'
+
+# probably this is redundant now because we are doing subdirs...anyway it is not
+# safe enough, what about wquery etc. etc., there are other things that should be
+# saved.....
+# wspec names
+wspec="wspec"
+wspecsaved="SAVED-FROM-INSTALL.$wspec"
+wspecnew="$wspec.FROM-INSTALL"
+
+# default is to install from current directory.
+orig_dir=$PWD
+
+
+# Do the flags... (see usage string for description of switches/arguments)
+while getopts :h arguments
+do
+  case $arguments in
+    'h') print_usage ;;
+
+    # garbage input
+    '?') print_usage "-$OPTARG is not a valid switch" ;;
+    ':') print_usage "You forgot the argument for switch -$OPTARG" ;;
+  esac
+done
+
+# Unused at the moment...
+# Now do the remaining args...
+#((args_left = OPTIND - 1))                  
+#shift $args_left
+
+#if [[ -z $1 ]]
+#then
+#  print_usage "You did not specify a directory from which to make the install file"
+#elif [[ -n $2 ]]
+#then
+#  print_usage "Too many command line arguments: $*"
+#else
+#  source_dir=$1
+#fi
+
+
+
+print_divider
+print '         ACEDB installation starting...'
+print_divider
+
+if [[ $USER = "root" ]]
+then
+  bomb_out 'You should not be root when installing ACEDB, su to some other user name and try again'
+fi
+
+if [[ -r './' && -w './' && -x './' ]]
+then
+  print 'directory permissions OK...'
+else
+  bomb_out 'you do not have read/write/execute permissions for '$PWD
+fi
+
+print '    Files will be owned by: "'$USER'"'
+print 'Files will be installed in: '$PWD
+
+print_divider
+
+print 'The available space in this directory is: '
+df -k .
+print
+print 'The amount of space you need will depend on what data you are installing.'
+print 'For the full source code and binaries, you need around 80 MB.'
+print
+print -n "Should we proceed?  Please answer y/n : "
+read answer rubbish
+
+print_divider
+if [[ $answer = 'y' || $answer = 'Y' ]]
+then
+  print 'Install proceeding...'
+else
+  bomb_out 'Install aborted...'
+fi
+
+
+# check for wspec directory and move it if its there.
+if [[ -d $wspec ]]
+then
+  print_divider
+  print "Renaming $wspec to $wspecsaved, it will be moved back after INSTALL is finished"
+  mv $wspec $wspecsaved || bomb_out "Rename $wspec --> $wspecsaved failed"
+fi
+
+
+# Main install loop.
+
+for i in `ls $prefix*.*.tar.gz`
+do
+    # pre install checks...
+    case $i in
+      $prefix'source'.*.tar.gz)  target=$srcname ;;
+      $prefix'binary'*.*.tar.gz|$static_prefix'binary'*.*.tar.gz) target=$binname ;;
+      $prefix'server'*.*.tar.gz|$static_prefix'server'*.*.tar.gz) target=$servname ;;
+      $prefix'help'.*.tar.gz)    target=$helpname ;;
+      $prefix'doc'.*.tar.gz)     target=$docname ;;
+      $prefix'tools'.*.tar.gz)   target=$toolsname ;;
+      $prefix'demo'.*.tar.gz)    target=$demoname ;;
+      *) continue ;;
+    esac
+
+    print_divider
+    print -n "Do you want to install $i ?  Please answer y/n : "
+    read answer rubbish
+    print
+    if [[ $answer != 'y' && $answer != 'Y' ]]
+    then
+      print
+      print "Aborting install of $i..."
+      continue
+    fi
+
+    wdirs=$(ls $target 2> /dev/null)
+    if [[ -n $wdirs ]]
+    then
+      print 'Warning: installing '$i' will overwrite "'$target'"'
+      print '         everything in this directory will be lost,'
+      print -n '         do you want to continue with the installation (type y/n) ? '
+      read answer rubbish
+      if [[ $answer = 'n' || $answer = 'N' ]]
+      then
+        print
+        print "Aborting install of $i..."
+        continue
+      fi
+      print
+    fi
+
+    # Remove the old version...
+    rm -rf $target || bomb_out "Could not remove previous install of $i"
+    mkdir $target || bomb_out "Cannot make install target directory $i"
+    mv $i $target || bomb_out "Could not move $i to $target for the install"
+    cd $target || bomb_out "Cannot cd to $target for install"
+
+    # do the install itself...
+    print "Installing $i..."
+    gunzip -c $i | tar -xf - || bomb_out "gunzip/untar of $i failed."
+
+    # post install checks/actions...
+    print
+    case $i in
+      $prefix'source'.*.tar.gz) ln -s wmake/makefile
+        print "Installed the source files" ;;
+      $prefix'binary'*.*.tar.gz|$static_prefix'binary'*.*.tar.gz) print 'Installed the binaries...'
+        print '\tLook in the bin directory for updated versions'
+        print '\tof the wspec and other acedb directories.' ;;
+      $prefix'server'*.*.tar.gz|$static_prefix'server'*.*.tar.gz) print 'Installed the server binaries...'
+        print '\tLook in the bin directory for updated versions'
+        print '\tof the wspec and other acedb directories.' ;;
+      $prefix'help'.*.tar.gz) print "Installed the help" ;;
+      $prefix'docs'.*.tar.gz) print "Installed the docs" ;;
+      $prefix'tools'.*.tar.gz) print "Installed the tools" ;;
+      $prefix'demo'.*.tar.gz) print "Installed the demo database" ;;
+    esac
+
+    mv $i ../ || bomb_out "Cannot return $i to $orig_dir."
+    cd ../ || bomb_out "Cannot cd to $orig_dir."
+done
+
+
+# check for wspec.saved directory and restore it if its there.
+if [[ -d $wspecsaved ]]
+then
+  print_divider
+  if [[ -d $wspec ]]
+  then
+    mv $wspec $wspecnew || bomb_out "mv of $wspec to $wspecnew failed"
+    print "The new wspec from the tar file has been saved as $wspecnew."
+  fi
+
+  mv $wspecsaved $wspec || bomb_out "restore of $wspecsaved to $wspec failed"
+  print "Your original $wspec has been restored."
+fi
+
+print_divider
+
+
+
+
+exit 0
+

@@ -1,0 +1,3 @@
+"Sean Connery"	"Indiana Jones and the Last Crusade"	"Professor Henry Jones"
+"Sean Connery"	"The Hunt for Red October"	"Ramius"
+"Sean Connery"	"The Name of the Rose"	"William Baskerville"

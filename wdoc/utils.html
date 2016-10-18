@@ -1,0 +1,80 @@
+<HTML>
+
+<HEAD>
+<TITLE>Developers Guide To ACEDB 4_9 Utility Routines</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="./wdoc.css"
+title="Style sheet for wdoc developer documents">
+
+</HEAD>
+
+
+<BODY>
+
+<BLOCKQUOTE>
+<DIV ALIGN=CENTER>
+ <IMG SRC="./acedb-logo.gif" ALT="[ACEDB 4_9 DOCUMENTATION]" align=middle>
+ <H3>
+  ACEDB Version 4_9
+ </H3>
+</DIV>
+
+
+<DIV ALIGN=CENTER>
+
+<H1 align=center>
+Developers Guide To ACEDB 4_9 Utility Routines
+</H1>
+
+<ADDRESS>Originally written by<BR>
+Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;, September 2001</ADDRESS>
+
+</DIV>
+
+
+<H2>utUnlimitResources()</H2>
+
+<H3>SYNOPSIS</H3>
+
+<PRE>
+<B>#include &lt;<A HREF="file:../wh/regular.h">regular.h</A>&gt;</B>
+
+<B>void utUnlimitResources(BOOL </B><I>allow_user_abort</I><B>) ;</B>
+</PRE>
+
+<H3>DESCRIPTION</H3>
+
+<P>Use this function to raise process resource limits to the maximum
+permitted. Currently the routine only raises the stack and data size
+limits. Note that the "maximum permitted" is defined by the "hard" limit for the process
+and that this hard limit can only be raised by the superuser, for some limits
+this may require a kernel rebuild.
+
+<P>If <I>allow_user_abort</I> is <b>TRUE</b> then the code will give the user
+the chance to exit if any of the following conditions are true:
+<ul>
+  <li>maximum data size < 50MB
+  <li>maximum stack size < 4MB
+</ul>
+<P>The code aborts using <b>messExit()</b> so any user defined exit routines
+will be called.
+
+<P>The code makes use of the getrlimit() & setrlimit() routines which are not
+part of the <b>POSIX</b> or <b>ANSI C</b> standards, so the routine will only have any effect on
+systems that support these routines.
+
+
+<HR>
+<H3 ALIGN="CENTER">ACEDB Version 4_9</H3>
+
+
+<HR>
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Wed Sep  5 15:47:05 BST 2001
+<!-- hhmts end -->
+
+</BLOCKQUOTE>
+</BODY>
+</HTML>

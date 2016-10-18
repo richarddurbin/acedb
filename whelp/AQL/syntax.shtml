@@ -1,0 +1,192 @@
+<HTML>
+
+<HEAD>
+  <TITLE>AQL -  - BNF syntax (Version 4_8b)</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="./aql.css" TITLE="Style sheet for AQL docs">
+</HEAD>
+<BODY>
+
+
+<H2>AQL - BNF syntax (Version 4_8b)</H2>
+
+The syntax for the Acedb query language was developed at the ACE97
+workshop (8/8/97) and further refined during implementation and
+testing. The syntax is given in BNF notation, which is kept
+in sync with the actual parser of the current AQL version.
+<P>
+The reserved keyword are printed in <B>bold</B>. 
+All additional tokens are quoted in 'single quotes'.
+<P> 
+Note that some "factoring" of the grammar has occurred, i.e. the
+introduction of <I>safe_table</I>.
+
+
+<HR>
+
+<pre>
+
+query:        table_expr
+	    | query ';' query
+	    | '@' Identifier ':=' table_expr
+            | '$' Identifier ':=' expr
+
+table_expr:   safe_table
+	    | <b>select</b> fieldlist <b>from</b> fwlist
+	    | <b>select <A HREF="overview.shtml#DEF_ITERATOR">all</A></b> fwlist
+	    | <b>select <A HREF="overview.shtml#DEF_ITERATOR">all</A> from</b> fwlist
+	    | table_expr <b><A HREF="overview.shtml#ORDER_BY">order</A></b>                      // default left to right ascending
+	    | table_expr <b><A HREF="overview.shtml#ORDER_BY">order</A></b> Ordering
+	    | table_expr <b><A HREF="overview.shtml#ORDER_BY">order</A> <A HREF="overview.shtml#ORDER_BY">by</A></b> sortlist
+            | table_expr <b>union</b> table_expr
+            | table_expr <b>intersect</b> table_expr
+            | table_expr <b>diff</b> table_expr   |   table_expr <b>except</b> table_expr
+
+safe_table:   '(' table_expr ')'
+	    | '@' Identifier
+
+sortlist:     sort_criterion
+            | sortlist ',' sort_criterion
+
+<A HREF="overview.shtml#ORDER_BY">sort_criterion</A>: ':' Identifier                      // select column by name
+            | ':' Number                            // select by column number
+	    | ':' Identifier Ordering
+	    | ':' Number Ordering
+
+Ordering:     <B>asc</B>                                   // ascending order - default
+            | <B>desc</B>                                  // descending order
+
+fieldlist:    field
+	    | fieldlist ',' field
+
+field:	      expr
+	    | Identifier '::' expr                  // name alias for field-expression
+
+fwlist:       fw
+            | fw <b>where</b> expr                         // expr is evaluated in boolean context
+            | fwlist ',' fw
+	    | fwlist ',' fw <b>where</b> expr              // expr is evaluated in boolean context
+
+fw:	      <A HREF="overview.shtml#DEF_ITERATOR">basic_decl</A>                            // <A HREF="overview.shtml#DEF_ITERATOR">unnamed declaration</A>
+            | Identifier <b>in</b> basic_decl
+            | basic_decl <b>as</b> Identifier
+            | basic_decl Identifier
+
+basic_decl:   expr                                  // i.e. a locator or anything that returns a value
+	    | safe_table
+            | <b>class</b> Identifier
+
+<A HREF="overview.shtml#LOCATOR">locator</A>:      Identifier
+            | <b>object</b> '(' expr ',' expr ')'          // create object (class, key)
+            | locator '-&gt;' Identifier               // follow into object by tag name
+            | locator '-&gt;' Number                   // follow into object by position
+            | locator '[' Identifier ']'            // locate in current object by tag name
+            | locator '[' Number ']'                // locate in current object by position
+	    | locator ':' Identifier		    // row variable - select column by name
+	    | locator ':' Number                    // row variable - select column by number
+	    | locator '.' Method                    // <A HREF="overview.shtml#LOC_METHOD">locator method</A>
+	    | '-&gt;' Identifier                       // <A HREF="overview.shtml#DEF_ITERATOR">unnamed iterator</A> - follow by tag name
+	    | '-&gt;' Number                           // <A HREF="overview.shtml#DEF_ITERATOR">unnamed iterator</A> - follow by position
+            | '[' Identifier ']'		    // <A HREF="overview.shtml#DEF_ITERATOR">unnamed iterator</A> - locate by tag name
+	    | '[' Number ']'			    // <A HREF="overview.shtml#DEF_ITERATOR">unnamed iterator</A> - locate by position
+	    | ':' Identifier		            // <A HREF="overview.shtml#DEF_ROW_VAR">unnamed row variable</A> - select column by name
+	    | ':' Number                            // <A HREF="overview.shtml#DEF_ROW_VAR">unnamed row variable</A> - select column by number
+	    | '.' Method                            // <A HREF="overview.shtml#DEF_ITERATOR">unnamed iterator</A> - <A HREF="overview.shtml#LOC_METHOD">locator method</A>
+	    | safe_table ':' Identifier		    // table expression - select column by name
+	    | safe_table ':' Number		    // table expression - select column by number
+
+
+Comparator:   '=' | '!=' | '<' | '>' | '<=' | '>=' | <B>like</B>
+
+
+<A HREF="overview.shtml#EXPR_ARITH">expr</A><A NAME="EXPR">:</A>         locator
+	    | <b>exists</b> locator                        // boolean true/false whether locator value is non-NULL
+            | <b>exists</b> '(' locator ')'
+	    | <b>exists_tag</b> locator                    // whether the tag of the locator exists (does not fetch value)
+	    | <b>exists_tag</b> '(' locator ')'
+            | '$' Identifier                        // a scalar variable
+	    | StringLiteral                         // test in double-quotes
+            | Number
+            | FloatLiteral
+	    | Date
+	    | <B>true</B>                                  // i.e. boolean literal
+	    | <B>false</B>
+            | expr Comparator expr                  // returns boolean result
+            | <b>not</b> expr                              // negates boolean value
+            | expr <b>and</b> expr
+            | expr <b>or</b> expr
+            | expr <b>xor</b> expr
+            | expr '+' expr
+            | expr '-' expr
+            | expr '*' expr
+            | expr '/' expr
+            | expr '%' expr                         // positive remainder (also 'mod' or 'modulo')
+            | '-' expr                              // negative value
+            | '(' expr ')'
+	    | <B>mod</B> '(' expr ',' expr ')'             // positive remainder (also '%' or `modulo')
+            | <B>abs</B> '(' expr ')'                      // absolute value
+            | DateFunc '(' expr ',' expr ')'
+	    | TableFunc safe_table
+	    | TableFunc safe_table ':' Number
+	    | TableFunc safe_table ':' Identifier
+
+<A HREF="overview.shtml#LOC_METHOD">Method</A>:       <B>name</B>                                  // get Object name as Text-type
+            | <B>class</B>                                 // get class-Object of Object-value
+	    | <B>length</B>                                // get length of <I>Text</I>-value
+            | <B>create_session</B>                        // timestamp-object when the object was created
+	    | <B>create_time</B>                           // same, but as DateType-result
+	    | <B>update_session</B>                        // timestamp-object when the object was last modified
+	    | <B>update_time</B>                           // same, but as DateType-result
+	    | <B>node_session</B>                          // timestamp-object when the tag, or datafields was last added/modified
+	    | <B>node_time</B>                             // same, but as DateType-result
+
+<A HREF="overview.shtml#TABLE_FUNC">TableFunc</A>:    <B>count</B>
+            | <B>min</B>
+            | <B>max</B>
+            | <B>sum</B>
+            | <B>avg</B>
+<!-- new as of 4.8 -->
+            | <B>first</B>
+            | <B>last</B>
+
+<A HREF="overview.shtml#DATE_FUNC">DateFunc</A>:     <B>yeardiff</B>
+            | <B>monthdiff</B>
+<!--            | <B>weekdiff</B> -->
+            | <B>daydiff</B>
+            | <B>hourdiff</B>
+            | <B>mindiff</B>
+            | <B>secdiff</B>
+
+Identifier:   [A-Za-z][A-Za-z0-9_]*                 // starts with letter, followed by letters or numbers
+
+Number:       [0-9]+
+
+FloatLiteral: [0-9]+[eE][+-]?[0-9]+
+            | [0-9]+'.'[0-9]*[eE][+-]?[0-9]+
+            | '.'[0-9]+[eE][+-]?[0-9]+
+            | [0-9]+'.'[0-9]*
+            | '.'[0-9]+
+
+StringLiteral:  \&quot;([^&quot;]|\\[&quot;\n])*\&quot;                 // anything enclosed in quotes
+                                      // quotes within a string can be escaped by backslash
+
+<A HREF="overview.shtml#DATE_TIME">Date</A>:	      <b>now</b>                                   // current date/time as YYYY-MM-DD_HH:MM:SS
+            | <b>today</b>                                 // current date as YYYY-MM-DD
+	    | DateLiteral
+
+
+<A NAME="DATE_LITERAL">
+DateLiteral:</A>  '<B>`</B>'[12][90][0-9][0-9]'-'[01][0-9]'-'[0-3][0-9]'_'[0-2][0-9]':'[0-5][0-9]':'[0-5][0-9]
+            | '<B>`</B>'[12][90][0-9][0-9]'-'[01][0-9]'-'[0-3][0-9]'_'[0-2][0-9]':'[0-5][0-9]
+            | '<B>`</B>'[12][90][0-9][0-9]'-'[01][0-9]'-'[0-3][0-9]'_'[0-2][0-9]
+            | '<B>`</B>'[12][90][0-9][0-9]'-'[01][0-9]'-'[0-3][0-9]
+            | '<B>`</B>'[12][90][0-9][0-9]'-'[01][0-9]
+            | '<B>`</B>'[12][90][0-9][0-9]
+
+
+</pre>
+
+<HR>
+<ADDRESS><A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A></ADDRESS>
+
+</BODY>
+</HTML>

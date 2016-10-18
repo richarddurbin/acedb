@@ -1,0 +1,91 @@
+<!--  $Id: Interface.html,v 1.3 1999-04-29 16:16:48 fw Exp $  -->
+<head>
+<title>general features</title>
+</head>
+
+<BODY BGCOLOR=#ffffff>
+
+<h2>General Features of the ACEDB Interface</h2>
+
+This help page provides basic information for how to use the general
+features of ACEDB: quitting the program, getting online help,
+printing, using the mouse, keyboard shortcuts, and so on. Help is also
+available for:<p>
+
+<ul>
+
+<li>what ACEDB is and what it can do
+
+<li>the <a href="TOC.html">Table of Contents</a> for on-line help
+
+<li>the <A HREF="acedb.html">ACEDB Main Window</a>
+
+<li><A HREF="Copyright.html">distribution and copyright</a>
+information
+
+</ul>
+
+<h3>Using ACEDB</h3>
+
+<ul>
+
+<li><strong>Quit</strong>: To exit the program choose Quit from the
+menu in the main window.
+
+<li><strong>General info</strong>: The software version and data
+release numbers are available using <A HREF="Status.html">Status</a>
+in the pop-up menu of the <A HREF="acedb.html">ACEDB Main Window</a>.
+
+<li><strong>Mouse</strong>: The left button is used to pick windows or
+objects. Usually, picking once changes the color of the target,
+picking a second time initiates an action. The middle button is used
+in some graphic windows to recenter (single click) or to zoom and
+recenter (by dragging in horizontal and vertical directions). On the
+NeXT, press both buttons to emulate the middle button.  The right
+button is used to access menus.
+
+<li><strong>Menus</strong>: Under X windows (Openwin) you get the menu
+for any ACEDB window by pressing the right mouse button when the
+cursor is in the window.  Almost always the first three items will be
+Quit (which closes the window), Help (which brings up
+context-sensitive help), and Print (which prints the contents of the
+window).  Under SunView you must press the right mouse button when the
+cursor is in the title bar of the window.
+
+<li><strong>Help</strong>: The F1 or F10 or Help key invokes the <A
+HREF="Help.html">online, context-sensitive help</a> related to the
+window to which the mouse points or some selected item within it.
+Some of these keys may not work on some machines or under some window
+managers, but one should!  There is also a help entry in most menus.
+
+<li><strong>Printing</strong>: The F2 or F9 key creates a post-script
+file in the subdirectory PS of $ACEDB.  It will then try to print it
+using "lpr".  If the environment variable ACEDB_LPR is set (e.g.
+setenv ACEDB_LPR "lpr -Pmyprinter"), then that print command is used
+instead.  Setting it to an empty string will prevent automatic
+printing.  There is also a print option in most menus.
+
+<li><strong>Text entry boxes</strong>: Many ACEDB tools contain yellow
+and green rectangular micro text editors. Only one of them is active
+(yellow) at a time in a given window. To activate one, pick it with
+the left mouse button. This will position the cursor. Text entry boxes
+recognize these commands: Return key, Insert key (a toggle), Delete
+and BackSpace keys, Home and End key, the left and right arrows.  In
+addtion a set of control keys allow movement (^f: forward, ^b:
+backward, ^a: to beginning, ^e: to end of line), deletion (^d: a char,
+^w: a word, ^k: to end of line, ^u: whole line) and TAB which attempts
+to autocomplete an object or class name.
+ 		
+<li><strong>Color, Gray, Black and White screens</strong>: In
+principle, under X11, acedb will autodetect the type of screen you are
+using. In case of problem, you can try to setenv one of ACEDB_MONO,
+ACEDB_GREY, ACEDB_GRAY, ACEDB_COLOR, ACEDB_COLOUR.
+
+</ul>
+
+
+to <a href="TOC.html">Table of Contents</a><p>
+
+last edited: July 1994<p>
+
+</BODY>

@@ -1,0 +1,121 @@
+<HTML>
+
+<HEAD>
+<TITLE>Plans for second half of 2003</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../acedocs.css"
+title="Style sheet for Acedb docs">
+
+</HEAD>
+
+<BODY>
+<H1>Plans for second half of 2003</H1>
+
+
+<H2>Overview</H2>
+
+<P>So far this year:
+
+<P>We have got to a state where the SMap/FMap code is reasonably stable and the
+flood of bugs from its introduction seems to be reducing. We have done work on
+the split off FMap but this is still some way from being realised. We have also
+done work to support the annotators at Sanger but there are still some
+significant outstanding pieces of work. Finally, we have spent some time
+supporting Lincoln Stein and he seems to be happy for the moment with acedb.
+
+<P>We need now to set goals for the rest of the year which make the best use of our
+limited resources, especially by trying to make sure that we capitalise on work
+done for xace by making sure that we can easily incorporate it into the split
+off Fmap where appropriate.
+
+
+<H2>Priorities</H2>
+
+<ol>
+  <li>Get a prototype split off FMap working this year (we need a name for this
+      thing....I would say "Emap" but perhaps that smacks too much of Ensemble !)
+  <li>Continue support for Sanger Annotators, in particular humpub group (Jen)
+   worm group and we should not forget Ian Dunhams group are avid acedb users.
+  <li>Support of Wormbase, i.e. Lincoln
+</ol>
+
+<P>The following sections give more detail and in some places give names of people
+who will do the work.
+
+
+
+<H2>Split Off FMap</H2>
+
+<ol>
+  <li> Get all existing code checked back into cvs and see where we have got to. (Simon)
+  <li>Finish adding DAS support to server so we can run the new Fmap from DAS
+      servers. (Ed)
+  <li> Investigate adding support to the acedb server to be http protocol based
+      for a DAS only version of the acedb server. There are two parts to this:
+      
+      <P>- assess how much work it would be to make the acedb server do this (Ed)
+
+      <P>- find a suitable http library (Simon)
+  <li>Do the code to make the existing new display into a separate client. (all of us)
+</ol>
+
+
+<H2>Human group support</H2>
+
+<ol>
+  <li> Blixem: need to continue work to improve the way it works and its
+      reliability. There are cases where it seems no to load the requested
+      sequences for unknown reasons. We can improve greatly its error handling
+      and general message outputting which would help the annotators a lot.
+      We all agree that the code is horrendous but its important to try and
+      improve its overall quality each time we work on it. This seems to be
+      this groups favoured tool and we need to keep them happy. (Ed, Simon)
+  <li> User defaults need to be completely revamped as a .acedbrc directory
+      allowing defaults on a per database basis and using a much better
+      interface (GTK notebook would be good). We should investigate GNOME
+      for any stanza/ini file code it may provide for supporting defaults files. (Rob)
+</ol>
+
+
+<H2>Worm group support</H2>
+
+<ol>
+  <li> carry on generalisation of  "db feature -> seg -> method" mapping, Simon
+      makes the good point that the method will need to know which type (as in
+      the sense of "gene", "homol" etc.) thingy it represents but that this
+      can be generalised  a la  GMap. This has lots of feedback/synergy with
+      the split off FMap. (Ed)
+  <li>need to provide support for creating "genes" from the genefinder interface
+      that are of a class other than Sequence. (Ed)
+  <li> need some kind of superclass mechanism so that they can run queries on
+      several classes at once (e.g. Sequence, CDS and Transcript). Simon suggested
+      this could be via a file in wspec which could be read and used by both
+      the Query and AQL code. At the same time we should investigate the possibility of replacing the
+      existing subclass mechanism with something less restrictive (base it on
+      the set of tags in an object only ??) (Simon)
+</ol>
+
+
+<H2>General programming</H2>
+
+<ol>
+  <li> finish the method/source code for in/excluding sets of features from GFF
+      output. We need to nail this having invested a large amount of Robs time
+      in it. (As a side issue need to check that the missing fields in GFF output was
+      correctly implemented as '.' and not **UNKNOWN**) (This friday, Ed, Rob, Simon)
+  <li>Finish off the new genetic code stuff. This is almost done. (Ed)
+  <li>Vamp up the test system to include new tests of dna/peptide/GFF dumping.
+      and also of smap code. Simon suggested setting up our own wormbase server so we can test stuff
+      before handing it to Lincoln, we should see if Lincoln has a test suite
+      but note that we <b>don't</b> want to end up doing Lincolns testing for him ! (Rob)
+</ol>
+
+
+<HR>
+<ADDRESS><a href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</a></ADDRESS>
+<!-- hhmts start -->
+Last modified: Fri Jun 13 10:35:50 BST 2003
+<!-- hhmts end -->
+</BODY>
+</HTML>

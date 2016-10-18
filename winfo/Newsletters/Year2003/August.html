@@ -1,0 +1,160 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - August 2003</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - August 2003</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+
+<P>Not much to report this month as most of the acedb developers have been away
+on their holidays and are of course now refreshed to hack away at acedb with
+renewed vigour.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+<a name="Windows"></a><H3>Acedb and MS Windows</H3>
+
+<P>Porting to other platforms is not easy and although the task of porting acedb to MS Windows
+is considerably eased by our use of the Cygwin libraries which provide a unix system call
+interface on a windows machine, its still not all plain sailing.
+
+<P>Recent problems include:
+
+<ul>
+  <li>Modifying code to for temporary directories to match the new Cygwin style
+      including adding support for the $TEMP environment variable so user can
+      override the default location of the temp directory.
+  <li>If the stack size for the acedb process is very low, acedb attempts to raise it but
+      this doesn't work on Windows so the code must handle any error and continue.
+  <li>Various manglings of include files and macros: "moved definition of COBJMACROS
+      and removed #include <objidl.h> to get IMalloc_Free to work properly on Win32" and
+      "#include <objidl.h> for new cygwin version and manually #defined IMalloc_Free
+      as it's not happening properly" and so on, and so on.
+</ul>
+
+<P>For all this the system generally works very well and means that acedb truly runs on Unix,
+Mac and MS Windows machines.
+
+
+
+<a name="smap"></a><H3>SMap and FMap</H3>
+
+<P>Originally the objects that made the hierachy from which FMap constructed its
+view of a sequence had to all belong to the Sequence class. 
+The introduction of the SMap code into acedb now allows for hierachies to be
+made up of any objects as long as they contain the SMap tags and data.
+
+<P>While this system is very much more flexible and brings many benefits
+it has led to some problems in the FMap code. A recent example from the
+<i>C. elegans</i> database was a bug which meant that if
+a user double clicked on a "Transcript" class
+object in the FMap it was not Tree displayed as would normally be expected.
+This was caused by an assumption in the code that the object should have been
+of the Sequence class.
+
+<P>While this bug has been fixed it is likely that there will be other areas
+of FMap that will have to be fixed in the future since much of the code contains
+often subtle assumptions that objects will be of the Sequence class. This is work
+in progress so if you run into problems with FMap that you suspect are caused by
+SMap related changes then please email the
+<A HREF="mailto:acedb@sanger.ac.uk">acedb developers</A>.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="smap"></a><H3>Tree display</H3>
+
+<P>Fixed bug in tree display, lookDraw->stackText must be large enough under all
+circumstances since it gets passed to graphTextEntry with a buffer
+length of 2500.
+
+
+<a name="blixem"></a><H3>Blixem bug when showing gapped homologies</H3>
+
+<P>(<I>Simon Kelley <A HREF="mailto:srk@sanger.ac.uk">srk@sanger.ac.uk</A>
+wins the "Developers award for Persistence under Fire" for sorting this one out.</I>)
+
+<P>Previous versions of acedb did not pass gap information to blixem, the latest monthly
+now does this, but.... The process by which acedb passes sequence/clone information to blixem is not straight
+forward as account must be taken of orientation (e.g.
+was the sequence reverse complemented in fmap ?), whether blixem is being run as part of
+xace or as a separate program, what format the gap information should be in and so on and so on.
+Sadly this has led to a few bugs. Simon
+has manfully tracked these down and fixed them one by one.
+
+<P>You should now find that gapped alignments from fmap are now correctly displayed in blixem.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+
+<a name="aquila"></a><H3>Aquila documentation</H3>
+
+<P>Rob has been adding to and improving documentation for the aquila system,
+see <A HREF="http://www.acedb.org/Software/Tools/Aquila/">documentation on the website</A>.
+He has improved the sections on how to add and run tests and how to interpret the results.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>August monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="User_Group"><H2>Next User Group Meeting - D319, 3.00pm, Thursday 11th September 2003</H2>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Wed Sep  3 11:30:10 BST 2003
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

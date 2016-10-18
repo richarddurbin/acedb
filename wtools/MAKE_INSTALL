@@ -1,0 +1,329 @@
+#!/bin/ksh
+#
+#                   MAKE_INSTALL
+#
+#   A tool to make install files for to go on the ftp site.
+#
+#   NOTE, you cannot use this script to make tar files for the
+#   the server for acedb versions earlier than 4_8 because it
+#   only produces archives of the socket server binaries.
+#
+#
+###################################################################
+#
+#
+# All download files should be of the pattern:
+#
+#        ACEDB-<package>.<version>.tar.gz
+#
+# where
+#        <package> is currently   binary<ARCH> | source | docs | help | tools | demo
+#
+#        <version> is of the form "version"_"release""update", e.g. 4_8d
+#
+# e.g.       ACEDB-source.4_8d.tar.gz
+#       ACEDB-binaryLINUX_4.4_7l.tar.gz
+#
+# The INSTALL script in wtools expects that the files will have this
+# naming pattern and will probably break if this is not so.
+#
+#
+# NOTES:
+#        1) -q option doesn't do anything at the moment.     
+#
+#        2) When this is thoroughly tested the "-v" option needs to be
+#           removed from the tar commands to cut down on output.
+#
+#        3) script calls wtools/aceGetVersion
+#
+#
+#
+
+
+# Set to non-NULL to turn on debug in whole script.
+debug=""
+
+
+#--------------------------  functions  -------------------------------
+
+function print_usage
+{
+  if [[ -n $1 ]]
+  then
+    print
+    print "Warning: $1"
+  fi
+
+  print
+  print "Usage:        MAKE_INSTALL [-b|-e|-d|-h|-s|-t|-w] [-q] [-a <nnn>] <source_directory>"
+  print
+  print "  -b|-e|-d|-h|-k|-l|-s  specifies type of archive (-b is default), where:"
+  print
+  print "     -b  LINUX_4 |  LINUX_64 | DARWIN  makes a non-server binary archive for named platform"
+  print "     -e  LINUX_4 |  LINUX_64 | DARWIN  makes a server binary archive for named platform"
+  print "     -d  makes a documents archive"
+  print "     -h  makes an acedb help files archive"
+  print "     -s  makes a source code archive"
+  print "     -t  makes a tools code archive"
+  print "     -w  makes a demo database archive"
+  print
+  print "  -q        MAKE_INSTALL will without asking any questions and will just fail"
+  print "            if there is any doubt about overwriting files etc."
+  print
+  print "  -a  <nnn> specifies directory where archive should be placed, default is PWD"
+  print
+  print "  <source_directory> specifies directory from which archive is to be made,"
+  print "                     directory should be one of the standard acedb build directories"
+  print "                     named RELEASE.nnn. Program will then construct archive either"
+  print "                     from RELEASE.nnn or RELEASE.nnn.BUILD"
+  print
+
+  exit 1
+}
+
+function bomb_out
+{
+  print
+  print "Fatal Error : $1"
+  print
+
+  exit 1
+}
+
+function print_divider
+{
+  print
+  print '====================================================================='
+  print
+}
+
+
+
+#------------------------- main routine -------------------------------
+
+
+# filenames
+prefix='ACEDB'
+
+srcname='source'
+srcpattern='./makefile ./w*'
+binname='binary'
+staticbinname='STATIC_binary'
+binpattern='./acediff ./dotter ./giface ./tace ./tagcount ./taql ./xace ./xremote ./genefeatures'
+servername='server'
+staticservername='STATIC_server'
+serverpattern='./makeUserPasswd ./saceclient ./saceserver ./sgifaceserver'
+helpname='help'
+helppattern='./*'
+docname='doc'
+docpattern='./*'
+toolsname='tools'
+toolspattern='./*'
+demoname='demo'
+demopattern='./*'
+
+#tarprog='gtar'
+tarprog='tar'
+suffix='tar'
+gzsuffix='gz'
+
+# machine architectures
+linux='LINUX_4'
+linux_64='LINUX_64'
+darwin='DARWIN'
+
+
+# set some defaults
+tar_type=$binname
+pattern=$binpattern
+architecture=$linux
+target_dir=$PWD
+work_dir='/tmp'
+quiet=""
+currdir=$PWD
+
+
+# Do the flags... (see usage string for description of switches/arguments)
+while getopts :b:e:dhstwqa: arguments
+do
+  case $arguments in
+    'b') case $OPTARG in
+           $linux | $linux_64 | $darwin) architecture=$OPTARG ;;
+           *) print_usage "-$arguments must be followed by: $linux | $linux_64 | $darwin"
+         esac
+         tar_type=$binname
+         pattern=$binpattern ;;
+    'e') case $OPTARG in
+           $linux | $linux_64 | $darwin) architecture=$OPTARG ;;
+           *) print_usage "-$arguments must be followed by: $linux | $linux_64 | $darwin"
+         esac
+         tar_type=$servername
+         pattern=$serverpattern ;;
+    'd') tar_type=$docname
+         pattern=$docpattern ;;
+    'h') tar_type=$helpname
+         pattern=$helppattern ;;
+    's') tar_type=$srcname
+         pattern=$srcpattern ;;
+    't') tar_type=$toolsname
+         pattern=$toolspattern ;;
+    'w') tar_type=$demoname
+         pattern=$demopattern ;;
+    'q') quiet="yes" ;;
+    'a') if [[ -d $OPTARG ]]
+         then
+           target_dir=$OPTARG
+         else
+           bomb_out "argument to -$arguments ($OPTARG) is not a directory."
+         fi ;;
+
+    # garbage input
+    '?') print_usage "-$OPTARG is not a valid switch" ;;
+    ':') print_usage "You forgot the argument for switch -$OPTARG" ;;
+  esac
+done
+
+# Now do the remaining args...
+((args_left = OPTIND - 1))                  
+shift $args_left
+
+if [[ -z $1 ]]
+then
+  print_usage "You did not specify a directory from which to make the install file"
+elif [[ -n $2 ]]
+then
+  print_usage "Too many command line arguments: $*"
+else
+  source_dir=$1
+fi
+
+
+# check source directory that is to be archived.
+if [[ ! -d $source_dir || ! -d $source_dir'.BUILD' ]]
+then
+  bomb_out "Both $source_dir & $source_dir.BUILD are required to make the archive."
+fi
+
+
+# Get the release number using wtools script.
+verprog=$source_dir'.BUILD/wtools/aceGetVersion'
+vertarget=$source_dir'.BUILD/wnq'
+if [[ ! -d $vertarget || ! -f $verprog || ! -x $verprog ]]
+then
+  bomb_out "Can't find out acedb release version, need $verprog and $vertarget"
+fi
+release=$($verprog $vertarget)
+
+
+
+if [[ -n $debug ]]
+then
+  print "startup values:"
+  print "tar_type=$tar_type, pattern=$pattern, architecture=$architecture"
+  print "source_dir=$source_dir, target_dir=$target_dir, release=$release"
+fi
+
+
+print_divider
+print "      ACEDB build of $tar_type installation file starting..."
+print_divider
+
+
+# check for directory and try to cd to it.
+if [[ $tar_type != $binname && $tar_type != $servername && $tar_type != $staticbinname && $tar_type != $staticservername ]]
+then
+  source_dir=$source_dir'.BUILD'
+fi
+if [[ -d $source_dir ]]
+then
+  print "Using $source_dir to make $tar_type installation file"
+  print
+else
+  bomb_out "$source_dir is not a directory"
+fi
+cd $source_dir || bomb_out "cannot cd to $source_dir"
+
+
+# construct file names for archives.
+if [[ $tar_type = $binname || $tar_type = $servername || $tar_type = $staticbinname || $tar_type = $staticservername ]]
+then
+  archive_name=$prefix'-'$tar_type$architecture'.'$release'.'$suffix
+else
+  archive_name=$prefix'-'$tar_type'.'$release'.'$suffix
+fi
+
+short_name=$archive_name
+long_name=$archive_name'.'$gzsuffix
+archive_name="$target_dir/$archive_name"
+
+print "Archive will be created as $long_name"
+print
+
+
+# For some archives we need to cd to a specific directory to make the archive,
+# a bit mucky for the bin dir, where more is required than I thought...
+#
+# hacked here to exclude blxnew stuff...will go once I incorporate Gemmas
+# stuff in a better way.
+#
+case $tar_type in
+  $binname) tar_dir=$(ls | grep -v BLXNEW | grep -i 'bin.'$architecture)  ;;
+  $servername) tar_dir=$(ls | grep -v BLXNEW | grep -i 'bin.'$architecture)  ;;
+  $staticbinname) tar_dir=$(ls | grep -v BLXNEW | grep -i 'bin-STATIC.'$architecture)  ;;
+  $staticservername) tar_dir=$(ls | grep -v BLXNEW | grep -i 'bin-STATIC.'$architecture)  ;;
+  $helpname) tar_dir='whelp' ;;
+  $docname) tar_dir='wdoc' ;;
+  $toolsname) tar_dir='wtools' ;;
+  $demoname) tar_dir='wdemo' ;;
+  *) tar_dir='./' ;;
+esac
+cd $tar_dir || bomb_out "Can't cd to $tar_dir"
+
+# OK, tar up the files...
+print "Creating tar file archive $short_name"
+$tarprog -cvf$archive_name $pattern >/dev/null || bomb_out "tar of $tar_type files failed."
+print
+
+# For the binary archive we need to stick some extra stuff on the end of the
+# archive.
+if [[ $tar_type = $binname || $tar_type = $staticbinname ]]
+then
+  tar_dir=$source_dir'.BUILD'
+  cd $currdir || bomb_out "Can't return to intial directory $currdir"
+  cd $tar_dir || bomb_out "Can't cd to $tar_dir to finish $tar_type tar."
+
+  pattern="./wspec ./wdoc ./wquery ./wscripts ./wgf ./wtools"
+
+  $tarprog -rvf$archive_name $pattern >/dev/null || bomb_out "tar of extra $tar_type files failed."
+fi
+
+# For the server archive we also need to add some extra files
+
+if [[ $tar_type = $servername ]]
+then
+  tar_dir=$source_dir'.BUILD'
+  cd $currdir || bomb_out "Can't return to intial directory $currdir"
+  cd $tar_dir || bomb_out "Can't cd to $tar_dir to finish $tar_type tar."
+
+  pattern="./wspec/serverconfig.wrm ./wspec/serverpasswd.wrm ./wdoc/Socket_Server"
+
+  $tarprog -rvf$archive_name $pattern >/dev/null || bomb_out "tar of extra $tar_type files failed."
+fi
+
+# Now check that the archive got made successfully using tar -t
+$tarprog -tf$archive_name >/dev/null || bomb_out "check of tar file integrity failed."
+
+
+# do the gzip...
+print "Compressing $short_name into $short_name.$gzsuffix"
+gzip $archive_name || bomb_out "could not run compress $archive_name"
+print
+archive_name=$archive_name'.'$gzsuffix
+
+
+print "The installation file is stored as $archive_name"
+
+print_divider
+
+exit 0
+

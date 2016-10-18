@@ -1,0 +1,114 @@
+<HTML>
+
+<HEAD>
+<TITLE>User Guide To getting the best performance with ACEDB</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="./wdoc.css"
+title="Style sheet for wdoc developer documents">
+
+</HEAD>
+
+<BODY>
+
+<BLOCKQUOTE>
+<DIV ALIGN=CENTER>
+ <IMG SRC="acedb-logo.gif" ALT="[ACEDB DOCUMENTATION]" align=middle>
+ <H3>
+  ACEDB Version 4_8
+ </H3>
+</DIV>
+
+
+<DIV ALIGN=CENTER>
+
+<H1 align=center>
+User Guide To getting the best performance with ACEDB
+</H1>
+
+<ADDRESS>Originally written by<BR>
+Ed Griffiths &lt;edgrif@sanger.ac.uk&gt, March 2000</ADDRESS>
+
+</DIV>
+
+<H2>Background</H2>
+
+<P>
+
+<PRE>
+
+Subject: Re:  how to make acedb fly
+
+most important is to run the aceserver on a LOCAL disk
+not nfs mounted and not on a RAID
+
+actually LINUX gives impressive results because of its
+excellent disk caching
+
+=====
+
+now aceperl is memory intensive and best is to run it on a 
+separate machine so you do not swap out aceserver
+swapping bits of aceperl is ok, this just slws down some clients
+
+======
+
+reading a big acefile is done in chuncks and should not too much degrade the
+system
+
+the worst case is some sort of queries
+
+what i recommend for higehr performances is to index
+as many tags as possible
+my most recent code indexes all tags, that costs just a couple of Mb of ram
+for the worm database and accelerates many requests
+
+====
+
+no task is really cpu intensive, we are really io bound
+so best is to have very fast disk, and a large ram, like 512 M
+so the disks are really cached in ram
+
+====
+
+i can send you the indexing fix for ace.4_7 if you wish
+just 2 lines to edit in wnq/bindex.c than read-models
+
+
+static void bIndexRegisterSecondaryTag(OBJ obj, int cc, BS bs, KEY masterTag)
+{
+  if(!bs) return ;
+  if (bs->key == _UNIQUE)
+    { bIndexRegisterSecondaryTag(obj, cc, bs->right, masterTag) ; return ; }
+  if (bs->key == _XREF && bs->right)
+    { bIndexRegisterSecondaryTag(obj, cc, bs->right->right, masterTag) ; return ;}
+  if (class(bs->key) || 
+      bs->key < _Date)
+    return ;    /* break on values */
+  if (bs->down)
+    bIndexRegisterSecondaryTag(obj, cc, bs->down, masterTag) ;
+  /* no condition, just index every tag */
+  masterTag = bs->key ;
+
+
+the fix is to remove the if which used to condition the line
+  masterTag = bs->key ;
+
+
+then read-models -index // forces reindexing
+</PRE>
+
+
+<HR>
+<H3 ALIGN="CENTER">ACEDB Version 4_8</H3>
+
+
+<HR>
+<ADDRESS><a href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</a></ADDRESS>
+<!-- hhmts start -->
+Last modified: Tue Feb  6 13:21:35 GMT 2001
+<!-- hhmts end -->
+
+</BLOCKQUOTE>
+</BODY>
+</HTML>

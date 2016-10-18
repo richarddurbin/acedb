@@ -1,0 +1,10 @@
+#!/bin/ksh
+# This is an example of how to run MakeAceDB using command-line parameters.
+# I use it for testing, hence the need to remove the existing "newdb" directory.
+
+if [ -d newdb ]
+then
+	rm -r newdb
+fi
+
+./MakeAceDB --tace=/nfs/team71/acedb/rnc/code/acedb/bin.ALPHA_5/tace newdb test-db/wspec database.new.ace

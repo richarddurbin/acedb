@@ -1,0 +1,394 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - February 2001</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<a name="Top"></a>
+
+
+<H1>ACEDB User Group Newsletter - February 2001</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P>This month sees the introduction of code to support representation of
+mRNA exons and associated CDS in a single object rather then two as is
+currently used in much of the human database. There are also various
+other features such as interactive control of reporting of DNA mismatches
+while displaying large links within fmap. There are also a number of important
+bug fixes.
+
+
+<!--******************************************************************** -->
+<a name="New"></a><H2>New Features</H2>
+
+<a name="Merging"></a><H3>Merging of "Supported mRNA" and "Supported CDS" objects for fmap</H3>
+
+<P>This applies particularly to the acedb human chromosome databases.
+
+<P>Previously, where a set of mRNA exons had a known CDS within them,
+this was represented by two Sequence objects in the database. One object
+held the positions of the mRNA exons, while the other held a subset of those
+exons which represented the CDS. This is a hard to maintain because both objects
+must be positioned correctly in their parent sequence object <b>AND</b> their
+exon coordinates must be kept in step with each other. It is also very wasteful
+of space in the database since two objects with two sets of largely overlapping
+data must be held in the database.
+
+<P>New code has been added to acedb to enable a single sequence object to
+represent a set of mRNA exons and the CDS within those exons. The following gives
+a brief example of how this is done.
+
+
+
+<pre><code><b>Parent sequence:</b>
+Sequence : "bA404F10"
+DNA	 "bA404F10" 195976
+......etc
+Subsequence	 "bA404F10.4"      126576 140451
+Subsequence	 "bA404F10.4.mRNA" 126535 142095
+......etc
+
+<b>CDS object:</b>
+Sequence : "bA404F10.4"
+Source	 "bA404F10"
+Source_Exons	     1    55
+Source_Exons	  8893  9213
+Source_Exons	 10520 10792
+Source_Exons	 11003 11122
+Source_Exons	 12044 12147
+Source_Exons	 12885 12947
+Source_Exons	 13805 13876
+CDS
+......etc
+
+<b>mRNA object:</b>
+Sequence : "bA404F10.4.mRNA"
+Source	 "bA404F10"
+Source_Exons	     1    96
+Source_Exons	  8934  9254
+Source_Exons	 10561 10833
+Source_Exons	 11044 11163
+Source_Exons	 12085 12188
+Source_Exons	 12926 12988
+Source_Exons	 13846 15561
+......etc
+</code>
+</pre>
+
+<P>Note that the CDS object has the CDS tag set and that its exons are a strict subset of the
+mRNA exons. The CDS tag can be followed by start/end coordinates for the CDS but this is
+redundant here because the start and end of the exons in the CDS object themselves show
+the start/end of the CDS.
+
+
+<pre><code><b>New parent:</b>
+Sequence : "bA404F10"
+DNA	 "bA404F10" 195976
+......etc
+Subsequence	 "bA404F10.4" 126535 142095
+......etc
+
+<b>and single CDS/mRNA object:</b>
+Sequence : "bA404F10.4"
+Source	 "bA404F10"
+Source_Exons	 1 96
+Source_Exons	 8934 9254
+Source_Exons	 10561 10833
+Source_Exons	 11044 11163
+Source_Exons	 12085 12188
+Source_Exons	 12926 12988
+Source_Exons	 13846 15561
+CDS	42 1049
+......etc
+</code>
+</pre>
+
+<P>Here the two objects have been compressed into one. The exons are the full mRNA set
+of exons and the CDS tag is used to show where the CDS starts and ends within the
+exons. Note that the CDS start/end positions are given in the coordinates of the exons
+when spliced together and
+<b>not</b> the Source_Exons coordinates. Hence (if you do the maths...ugh) the start position
+of "42" shows that the CDS starts about half way through the first exon and the end
+position of "1049" shows that the CDS ends about a tenth of the way into the last exon.
+
+
+<P><b>How is the new object displayed ?</b> The CDS exon sections of the new object can be
+given a different colour using the new "CDS_colour" tag in the Method object, in the example below
+the non-CDS section of the exons will be coloured blue while the CDS section will be red (the
+default colour is magenta).
+
+<pre><code>Sequence : "bA404F10.4"
+Source	 "bA404F10"
+Source_Exons	 1 96
+Source_Exons	 8934 9254
+Source_Exons	 10561 10833
+Source_Exons	 11044 11163
+Source_Exons	 12085 12188
+Source_Exons	 12926 12988
+Source_Exons	 13846 15561
+CDS	42 1049
+......etc
+Method	 "my_CDS"
+
+
+Method : "my_CDS"
+Colour	 BLUE
+CDS_colour  RED
+......etc</code></pre>
+
+<P><b>What about if the CDS extends beyond the set of exons in the object ?</b> There are
+two tags in the existing models commonly used in the Sanger Centre that can be used to
+deal with this situation:
+
+<pre><code>// #Sequence#   (From models.wrm for 22ace)
+
+?Sequence DNA UNIQUE ?DNA UNIQUE Int                    // Int is the length
+......etc
+	  Properties    Pseudogene Text
+......etc
+			End_not_found
+			Start_not_found Int
+</code></pre>
+
+<P>These tags have the following meaning:
+<dl>
+  <dt><b>Start_not_found Int</b>
+  <dd>Setting this tag means that the start of the CDS lies somewhere upstream of
+      the exons in this object. The Int should be given one of the values
+      1,2 or 3 to establish the reading frame for protein translation of the
+      CDS (default to 1 if no value given). Note also that to be pedantic the
+      model should say <code><b>"Start_not_found UNIQUE Int"</b></code>.
+  <dt><b>End_not_found</b>
+  <dd>Setting this tag means that the end of the CDS lies somewhere downstream of
+      the exons in the object. This tag is not followed by an int because it is
+      assumed that transcription will always procede to the end of the last exon
+      and the transcription code can itself detect when to end transcription because
+      it has run out of codons.
+</dl>
+
+
+<P><b>How do I go from two objects down to one ?</b> Well the first point to note is that
+the new code will run perfectly well with databases that contain
+the "two object" representation of the mRNA/CDS exons, merging of objects can
+be made gradually as required. It is not possible (and almost certainly not desireable)
+for the code to do this automatically, the existing two objects are linked only by "similar"
+names and a common
+sequence parent often shared with many other objects all containing exons. Conversion
+will require the use of a specially written script to extract the two objects from the
+database, merge them and parse them back into the database.
+
+<P><b>How can I control which sections of the single object are operated on by the
+various protein translation options in fmap ?</b> The fmap menu for exons now includes
+options to either translate the CDS section or the entire set of exons and display or
+export the result.
+
+
+<a name="Improved"></a><H3>Improved format for server log</H3>
+
+<P>The acedb socket server log has changed name from <code><b>database/server.log</b></code> to
+<code><b>database/serverlog.wrm</b></code> to be consistent with other acedb log/configuration files.
+
+<P>The records in the server log are now output in the same format as the
+<code>log.wrm</code> records which brings the following improvements:
+
+<ul>
+  <li>All records are now stamped with the time, machine and process id for the program.
+  <li>All programs record SESSION_START and SESSION_END records which show information such
+      as which user was running the program, how the program ended (normal or crash) and so on
+      (see also <A href="./January.html">Januarys newsletter</A>).
+</ul>
+
+
+<a name="Interactive"></a><H3>Interactive control of DNA mismatch reporting in xace</H3>
+
+<P>Originally xace would report every single mismatch between every pair
+of DNA objects it attempted to align. This was so irritating that the code
+was changed to report errors only once per pair of objects aligned. Sadly
+this is still exceptionally irritating for those who are trying to construct
+large links from existing sequences because the number of pairs of DNA
+objects to be aligned can be very large. This is exacerbated by the fact that
+the user, when first making a link, already knows
+the DNA is incorrectly aligned.
+
+<P>You can now interactively turn on/off reporting of DNA mismatches by
+selecting the "Report/Don't Report DNA Mismatches" item from the main
+menu in the fmap. Reporting will stay disabled for each subsequent reuse
+of that fmap.
+
+
+<!--******************************************************************** -->
+<a name="Bugs"></a><H2>Bugs Fixed</H2>
+
+<a name="Tree"></a><H3>Tree Display menu</H3>
+
+<P>Several problems have been fixed in the Tree Display menu, some old options
+that were removed have been put back because users preferred them to the new
+ones, e.g. "Preserve". A bug where the "Show As Text" option disappeared from
+the menu has been fixed. The menu should now work as it always as but with some
+extra options, if you still have problems with the menu while using the latest
+monthly build then please mail to <A href="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<a name="Catching"></a><H3>Catching SIGABRT</H3>
+
+<p>The operating system sometimes needs to interrupt the execution of a
+program perhaps because of a serious error such as the program trying
+to access another programs memory space. It does this by directly interrupting
+the programs execution with a "signal", the signal could be one of a number of types
+such as "SIGSEGV" which means the program was trying to access another
+programs memory or "SIGFLT" which means the program was trying to do an
+illegal floating point operation such as dividing by zero. The program is
+allowed to "catch" these signals and try to decide what to do about them.
+AceDB catches signals so that it can clear up its read/write locks before
+exitting.
+
+<P>One of these signals is reserved specifically for interrupting a program and producing
+a snapshot of what the program was doing when interrupted, this is the
+familiar "core" file. The signal for doing this is called SIGABRT. The acedb
+code was erroneously catching this signal meaning that the core file was
+not produced correctly, or in some cases not produced at all.
+
+<P>This bug has been fixed and the following now applies for signal handling:
+
+<dl>
+  <dt><b>SIGABRT</b>
+  <dd>signal is <b>never</b> caught by AceDB.
+  <dt><b>all other catchable signals</b>
+  <dd>signals are caught and acedb clears read/write locks and gives a chance to save
+      work before exitting.
+</dl>
+
+<P>Sometimes with serious, reproducible bugs it would be useful for AceDB to not catch
+any signals so that a core file would be produced when the error occurs. Signal
+handling can now be turned off in one of two ways:
+
+<dl>
+  <dt><b>"-nosigcatch"</b>
+  <dd>Use this command line option when you run an acedb program to turn
+      off signal catching from the start:
+      <pre>	   <code>tace -nosigcatch /your/database</code>
+      </pre>
+  <dt><b>"Admin" menu item in xace</b>
+  <dd>There is a new "Signal Catching Off/On" option in the "Admin" menu which
+      can be used to toggle signal catching on and off.
+</dl>
+
+<P>By default programs will run as they always have with signal catching
+turned on. This is how you should normally run the code, if you turn
+signal catching off and have been writing to the database when acedb
+crashes, the database will not be cleaned up with the result that it may
+get corrupted. This facility is intended for use in debugging difficult
+errors, not as a standard way to run acedb.
+
+
+<a name="Print"></a><H3>Print bug</H3>
+
+<P>An annoying bug whereby xace would sometimes "freeze" when an attempt was made to print
+has now been fixed (DDTS bugs: SANgc10014 & SANgc10359).
+
+<a name="Tablemaker"></a><H3>Tablemaker bug</H3>
+
+<p>A bug in the meaning of "hidden column" in tablemaker meant
+it mapped onto the "hidden" state in the table display
+system, which caused rows which differed only in hidden columns to appear multiple times.
+The semantics of "hidden" in tablemaker are not "don't show me this
+column", but "this is an intermediate working column which doesn't
+appear in the result table". The code was changed to reflect this, columns
+marked as hidden are not included at all in the output table.
+
+
+
+<a name="Two"></a><H3>Two URL bugs</H3>
+
+<P>Two fixes for url handling by acedb:
+
+<ul>
+  <li>the "(" and ")" characters in Urls need to be escaped (i.e. not parsed),
+      since the netscape remote mechanism mangles them.
+  <li>If a Rewrite tag was followed by only one string, acedb crashed.
+</ul>
+
+<a name="Dumping"></a><H3>Dumping bug</H3>
+
+<P>There was a bug in the dumping code for perl-style and other formats
+which caused acedb to crash or give strange output if the text being dumped contained
+a "%". This is now fixed.
+
+
+
+<a name="Future"></a><H2>Future Plans</H2>
+
+<P>If you wish to make suggestions about any of these plans, please mail them
+to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>
+
+<a name="AceDB"></a><H3>AceDB and gapped alignments</H3>
+
+<P><b>Coming in 4_9...</b>
+
+<P>As of AceDB 4_9 (due out anytime now...honest...), AceDB will support the
+viewing of gapped alignments in Blixem. This is a combination of work on Blixem
+and the new "Smap" code that will support a much more sophisticated way of contructing
+"virtual" sequences from clone, gene etc. data than the current fmap supports.
+
+
+<a name="AceDBXml"></a><H3>AceDB and XML Schema</H3>
+
+<P><b>Coming soon...</b>
+
+<P>Work is currently under way to output Ace data in XML format. As well as
+the data, AceDB will output XML Schema that describe the data and will enable
+the data to be verified using existing XML parsers that support XML Schema.
+
+
+
+
+
+<!-- ******************************************************************** -->
+<H2>February monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<H2>Next User Group Meeting - D319, 2.30pm, Thursday, 15th March 2001</H2>
+
+<p><b>!*! Please note changed venue !*!</b>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon May 21 14:42:59 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

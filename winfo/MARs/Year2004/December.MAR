@@ -1,0 +1,28 @@
+================================================================================
+                              AceDB/ZMap - December MAR
+
+
+Executive summary.                                                                        
+------------------                                                                        
+
+This MAR did not get submitted as there was so little headline activity this
+month.
+
+
+
+Acedb
+-----
+
+No recorded activity in cvs ! (But actually there is work still in progress to
+move the standard builds for linux/alphas over to GTK2.)
+
+
+ZMap
+----
+
+Bug fixes: Cropping of long objects/scale bar to the max. Xwindows size,
+setting of colour highlighting for active window. Added code to retrieve
+dna as well as features. Move build to use newly installed /usr/local/gtk2
+on Alphas. Added second navigator bar to show extent of scrolled window.
+
+

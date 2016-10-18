@@ -1,0 +1,10 @@
+#!/bin/csh
+# This script is called by xace to launch a standalone
+# version of blixem. You should replace the below
+# path with wherever you keep the acedb code.
+#
+
+~/acedb/CODE/acedb/bin.ALPHA_4/blixem $*
+
+
+exit 0

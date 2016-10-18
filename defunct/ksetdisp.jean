@@ -1,0 +1,982 @@
+/*  File: ksetdisp.c
+ *  Author: Jean Thierry-Mieg (mieg@mrc-lmb.cam.ac.uk)
+ *  Copyright (C) J Thierry-Mieg and R Durbin, 1991
+ *-------------------------------------------------------------------
+ * This file is part of the ACEDB genome database package, written by
+ * 	Richard Durbin (MRC LMB, UK) rd@mrc-lmb.cam.ac.uk, and
+ *	Jean Thierry-Mieg (CRBM du CNRS, France) mieg@kaa.cnrs-mop.fr
+ *
+ * Description: Manipulate Key Sets.
+      keyset windows have their own menus and  KEYSET. When they 
+      are destroyed they (VERY IMPORTANT) destroy the keyset.
+ * Exported functions:
+ * HISTORY:
+ * Last edited: Jun 27 18:54 1994 (mieg)
+ * * Oct 15 15:15 1992 (mieg): Mailer
+ * * Nov  5 18:27 1991 (mieg): I introduced keySetAlpha
+ * * Oct 23 18:53 1991 (mieg): changed name dump to a keySetDump
+ * Created: Wed Oct 23 18:52:00 1991 (mieg)
+ *-------------------------------------------------------------------
+ */
+
+/* $Id: ksetdisp.jean,v 1.1 1994-07-03 15:28:00 rd Exp $ */
+
+#include "acedb.h"
+#include "lex.h"
+#include "graph.h"
+#include "array.h"
+#include "key.h"
+#include "keyset.h"
+#include "display.h"
+#include "dump.h"
+#include "tags.wrm"
+#include "systags.wrm"
+
+#include "a.h"
+#include "bs.h"
+#include "sysclass.wrm"
+#include "session.h"     
+#include "query.h"
+#include "pick.h"
+#include "biblio.h"
+
+ extern void Bdump (KEY key) ;
+
+	/* keySetShow () displays a KEYSET (a sorted array of KEY's) in 
+	   multicolumn format, allowing the user to pick and move around 
+	   with arrow keys.  Objects are displayed with default displaytype.
+
+	   To initialise the system, call with handle==0.  It returns the new 
+	   handle.  To reuse the graph call first with (0,handle) to
+	   kill the alphabetic keyset. The aim of this is to
+	   allow the user to change the displayed KEYSET.
+
+	   keySetCurrent() allows the user to set the key directly (a bit
+	   like pick).  It takes the key as argument, not the box number.
+	   If the requested key is not in the list it returns 0, else the key.
+	   If k==0 it returns the current key.
+
+	   Although we can save to permanent objects (by the menu Save option)
+	   and recover from them (via display() and keySetDispCreate()),
+	   a keyset display window is NEVER attached to an object - it always
+	   deals in copies of the permanent keyset.  This allows much greater
+	   flexibility in changing the contents of a window, avoids tangles
+	   with the cache, and is absolutely necessary.
+	*/
+
+#define NCOL 3
+#define COLWIDTH 16
+#define MAXOBS 1000
+
+static int MAGIC = 187641 ;	/* also use address as graphAss handle */
+
+typedef struct LOOKstruct
+  { int   magic ;
+    KEYSET kSet , keySetAlpha ;
+    KEY   curr ;
+    Graph graph, owner ;
+    Stack pages ;
+    BOOL  isBlocking ;
+    int   base, top ;		/* top is 1 + index of last displayed key */
+  } *LOOK ;
+
+static FREEOPT menuOptions[] =
+            { 26
+#ifdef ACEDB_MAILER
+	    + 1
+#endif
+               ,"Key Set ?",
+             99,"Quit",
+             98,"Help",
+	    -1,"",
+             6,"Add-Remove",
+/* 	     5,"Select-Many", */
+             7, "New KeySet",
+	    10,"Import Keyset",
+	     2,"Copy",
+             1,"Save As",
+/* 	     8,"Previous Selection", */
+	    -1,"",
+	    20,"AND",
+	    21,"OR",
+	    22,"MINUS",
+	    23,"XOR",
+	    -1,"",
+	    33,"Ace Dump",
+/*	    31,"Asn Dump", */
+	    38,"Name Dump",
+	    37,"Sequence Dump",
+	    51,"Destroy selected object",
+	    52,"Destroy these objects",
+	    -1,"",
+            40,"Show as Text",
+            45,"Show as Multimap",
+	     4,"Show Related Biblio",
+	    43,"Find Neighbours",
+            46,"Follow",
+	    47,"Query By Example",
+#ifdef ACEDB_MAILER
+	    41,"Mail",
+#endif
+/*          42,"Debug" */
+            } ;
+
+static void localDestroy (void) ;
+static void localPick (int box) ;
+static void localKbd (int k) ;
+static void ksetlocalMenu (KEY k) ;
+static void pageUp(void), pageDown(void) ;
+static void* keySetShow2 (KEYSET kSet, LOOK look) ;
+static void ksetAddKey (KEY key) ;
+static void ksetDeleteKey (KEY key) ;
+static void ksetUnBlock (void) ;
+
+extern int keySetAlphaOrder(void *a,void *b) ;
+extern BOOL treeChooseTagFromModel(int *type, int *targetClass, int classe, 
+			    KEY *tagp, Stack s, BOOL continuation) ;
+
+#define LOOKGET(name)     LOOK look ; \
+       			  if (!graphAssFind (&MAGIC, &look)) \
+		            messcrash ("graph not found in %s", name) ; \
+                          if (look->magic != MAGIC) \
+                            messcrash ("%s received a wrong pointer",name)
+
+static LOOK selectedKeySet = 0 ;
+
+/******************************/
+/** fake biblio functions   **/
+/** for model free kernel   **/
+/******************************/
+
+#ifndef BIBLIO
+
+void biblioKey (KEY key) 
+{ messout ("Sorry : Recompile with flag BIBLIO") ;
+  return ;
+}
+void biblioKeySet (char *title, KEYSET s) 
+{ messout ("Sorry : Recompile with flag BIBLIO") ;
+  return ;
+}
+
+#endif
+
+/******************************/
+
+static void pageUp(void)
+{
+  LOOKGET ("pageUp") ;
+  if (look->base)
+    { look->base = pop(look->pages,int) ;
+      keySetShow2 (look->kSet, look) ;
+    }
+  else
+   messout ("Already on the top page!") ;
+}
+
+static void pageDown(void)
+{
+  LOOKGET ("pageDown") ;
+  if (look->top < keySetMax(look->kSet))
+    { push (look->pages,look->base,int) ;
+      look->base = look->top ;
+      keySetShow2 (look->kSet, look) ;
+    }
+  else
+   messout ("Already on the bottom page!") ;
+}
+
+static void localResize (void)
+{
+  int curr ;
+  LOOKGET("localResize") ;
+  curr = look->curr ;
+  keySetShow2 (look->kSet, look) ;
+  if (curr > 1 && curr < look->top - look->base + 2)
+    { look->curr = curr ;
+      graphBoxDraw (curr, WHITE, BLACK) ;
+    }
+}
+
+static void* keySetShow2 (KEYSET kSet, LOOK look)
+{  
+  int	i, ix, iy, y, dx, bad = 0 , colFull, col,
+     max = ( kSet ? keySetMax(kSet) : 0 ) ;
+  char	*cp ;
+  int   nx, ny ;
+
+  graphClear () ;
+  if (!look->isBlocking)	/* so as not to hide message */
+    graphPop() ;
+  graphFitBounds (&nx, &ny) ;
+
+  if (look->base >= max)
+    { stackClear (look->pages) ;
+      look->base = 0 ;
+    }
+  iy = look->base ? 2 : 0 ;
+
+  graphBoxStart () ; 
+    graphText ("Selected KeySet",14,iy) ; 
+  graphBoxEnd () ;
+  { KEYSET dummyks ;
+    void *dummylook ;
+    if (!keySetActive (&dummyks, &dummylook))
+      selectedKeySet = look ;
+  }
+  if (look == selectedKeySet)
+    graphBoxDraw (1,BLACK,LIGHTRED) ;
+  else
+    graphBoxDraw (1,WHITE,WHITE) ;
+
+  ++iy ;
+  ix = 0 ;
+  if (max)
+    { 
+      if(!look->keySetAlpha)
+        look->keySetAlpha = keySetAlphaHeap(kSet, look->base + 12 * ny) ;
+      else
+	if(keySetMax(look->keySetAlpha) < keySetMax(look->kSet) &&
+	   keySetMax(look->keySetAlpha) < look->base + 3 * ny)
+	  { keySetDestroy(look->keySetAlpha) ;
+	    look->keySetAlpha 
+	      = keySetAlphaHeap(look->kSet, keySetMax(look->kSet)) ;
+	  }
+    }
+
+  colFull = 0 ;
+  i = look->base ;
+  graphTextFormat(BOLD) ;  /* pickable object should be in bold */
+  if (iy < ny - 3) /* prevent a possible infinite loop on too  small a window */
+    while (i < max && (colFull*COLWIDTH < nx - 3))
+    { col = colFull ;
+      for (y = iy ; i < max && y < ny - 2 ; i++ ,y++)
+	{ cp = 0 ;
+	  if(!nextName(arr(look->keySetAlpha,i,KEY), &cp) || *cp == '\177')
+	    { bad ++ ;
+	      continue ;
+	    }
+	  dx = 1 + (1 + strlen (cp)) / COLWIDTH ;
+	  if (colFull < col + dx)
+	    colFull = col + dx ;
+	  graphBoxStart () ;
+	  if (iskey(arr(look->keySetAlpha,i,KEY)) != 2)
+	    { graphTextFormat(PLAIN_FORMAT) ;
+	      graphText (cp,1 +col*COLWIDTH, y)  ;
+	      graphTextFormat(BOLD) ;
+	    }
+	  else
+	    graphText (cp,1 + col*COLWIDTH, y) ;
+	  graphBoxEnd () ;
+	}
+    }
+  graphTextFormat(PLAIN_FORMAT) ;
+  look->top = i ;
+  if (look->base)
+    graphButton ("Page up", pageUp, 19, 0.5) ;
+  if (look->top < max)
+    graphButton ("Page Down", pageDown, 19, ny - 1.5) ;
+
+  look->kSet = kSet ;
+  look->curr = 0 ;
+
+  iy = look->base ? 2 : 0 ;
+  graphText (messprintf ("%d items", max - bad),0,iy) ;
+
+  graphRedraw () ;
+
+  return look ;
+}
+
+void* keySetShow (KEYSET kSet, void* handle)
+{ Graph old = graphActive() ;
+  LOOK  look = handle ;
+
+  if (look && look->magic != MAGIC)
+    messcrash("keySetShow called with corrupted handle") ;
+  if (look && !graphActivate (look->graph))
+    messout ("keySetShow lost its graph - taking over this one") ;
+
+ /* if (look && look->owner != old)     look = 0 ; */
+  if (!look)
+    { look = (LOOK) messalloc (sizeof (struct LOOKstruct)) ;
+      look->magic = MAGIC ;
+      look->graph = graphActive() ;
+      look->owner = old ;
+      look->pages = stackCreate(32) ;
+      graphRegister (DESTROY, localDestroy) ;
+      graphRegister (MESSAGE_DESTROY, ksetUnBlock) ;
+      graphRegister (PICK, localPick) ;
+      graphRegister (KEYBOARD, localKbd) ;
+      graphRegister (RESIZE, localResize) ;
+      graphFreeMenu (ksetlocalMenu, menuOptions) ;
+
+      graphAssociate (&MAGIC, look) ;
+      if (!selectedKeySet)
+	selectedKeySet = look ;
+    }
+  else    
+    { 
+      if (look->magic != MAGIC)
+	messcrash ("keySetShow called with bad handle") ;
+      look->curr = 0 ;
+      look->base = 0 ;
+      stackClear(look->pages) ;
+      keySetDestroy(look->keySetAlpha) ;
+    }
+
+  return keySetShow2(kSet, look) ;
+}
+
+/*****************************/
+
+/* create a new keyset list display */
+void newKeySet (char *title)
+{
+  KEYSET k = keySetCreate () ;
+  Graph  g = graphActive () ;
+  
+  displayCreate(DtKeySet) ;
+  graphRetitle(title && *title ? title : "New KeySet") ; 
+  keySetShow (k,0) ;
+  keySetSelect () ;
+  graphActivate (g) ;
+}
+
+/***********************************/
+
+BOOL keySetDisplay (KEY key, KEY from, BOOL isOldGraph)
+{
+  KEYSET kset ;
+  void*  handle ;
+
+  if (!(kset = arrayGet (key,KEY,"k")))
+    return FALSE ;
+
+  if (!isOldGraph)
+    displayCreate (DtKeySet) ;
+  else
+    localDestroy () ;
+  graphRetitle (name(key)) ;
+  
+  handle = keySetShow (kset, 0) ;
+
+  return (handle != 0) ;
+}
+
+/***********************************/
+
+/* BEWARE: look->curr (a box) runs 2..keySetMax+1, not 0..max-1 */
+/* box 0 is the background, 1 is the "selected" message */
+
+KEY keySetCurrent (void *handle, KEY k)
+{
+  int i ;
+  LOOK look = (LOOK) handle ;
+
+  if (look->magic != MAGIC)
+    messcrash ("keySetCurrent called with bad look handle") ;
+  if (!k)
+    return keySet(look->keySetAlpha,look->curr - 2 + look->base) ;
+  if (!keySetFind (look->keySetAlpha,k,&i))
+    return 0 ;
+  if (i < look->base)
+    { while ((look->base = pop(look->pages,int)) >= i) ;
+      keySetShow2 (look->kSet, look) ;
+    }
+  else if (look->curr > 1)
+    graphBoxDraw (look->curr,BLACK,WHITE) ;
+  if (i && i < look->top) 
+    { look->curr = i-look->base+2 ;
+      graphBoxDraw (look->curr,WHITE,BLACK) ;
+      graphGoto (0,1+i%NCOL) ;
+    }
+    
+  return k ;
+}
+
+/*************************************/
+/*************************************/
+
+static void localDestroy (void)
+{
+  LOOKGET("keySetDestroy") ;
+
+  look->magic = 0 ;
+
+  keySetDestroy (look->kSet) ;
+  keySetDestroy (look->keySetAlpha) ;
+  stackDestroy (look->pages) ;
+  messfree (look) ;
+
+  graphAssRemove (&MAGIC) ;
+}
+
+/*************************************/
+
+       /* selects keyset for mix, query etc */
+void keySetSelect ()
+{
+  LOOKGET ("keySetSelect") ;
+
+  if (    selectedKeySet 
+      &&  selectedKeySet != look
+      && selectedKeySet->magic == MAGIC
+      && graphExists(selectedKeySet->graph))
+    { Graph hold = graphActive () ;
+      graphActivate (selectedKeySet->graph) ;
+      
+      graphBoxDraw (1,WHITE,WHITE) ;   /* box 1 is the message */
+      graphActivate (hold) ;
+    }
+  graphBoxDraw (1,BLACK,LIGHTRED) ;
+  selectedKeySet = look ;
+}
+
+/***************/
+
+BOOL keySetActive(KEYSET *setp, void** lookp) 
+{
+  if (selectedKeySet && selectedKeySet->magic == MAGIC
+      && graphExists(selectedKeySet->graph)
+      && arrayExists(selectedKeySet->kSet))
+    { if (setp) *setp = selectedKeySet->kSet ;
+      if (lookp) *lookp = selectedKeySet ;
+      return TRUE ;
+    }
+  selectedKeySet = 0 ;
+  if (setp) *setp = 0 ; 
+  if (lookp) *lookp = 0 ;
+  return FALSE ;
+}
+
+/***************/
+
+/* BEWARE: look->curr (a box) runs 2..keySetMax+1, not 0..max-1 */
+/* box 0 is the background, 1 is the "selected" message */
+
+static void localPick (int box)
+{
+  LOOKGET("keySetPick") ;
+
+  if (look != selectedKeySet)
+    keySetSelect () ; 
+  if (box <= 1)
+    return ;
+  if (box == look->curr)                  /* double click */
+    { KEY key = keySet(look->keySetAlpha, 
+		       look->curr - 2 + look->base) ;
+      if (look->isBlocking)
+	ksetDeleteKey (key) ;
+      else 
+	{ 
+	  display (key,0,0) ;
+	}
+    }
+  else
+    { if (look->curr > 1)
+        graphBoxDraw (look->curr, BLACK, WHITE) ;
+      look->curr = box ;
+      graphBoxDraw (look->curr, WHITE, BLACK) ;
+      displayPreserve() ;
+    }
+}
+
+/***********************************/
+
+static void keySetMix(LOOK qry, int operator)
+{
+  KEYSET s ;
+  LOOK  q = selectedKeySet ;
+  
+  switch(operator)
+    {
+    case 20:
+      s = keySetAND(q->kSet,qry->kSet) ;
+      break ;
+    case 21:
+      s = keySetOR(q->kSet,qry->kSet) ;
+      break ;
+    case 22:
+      s = keySetMINUS(qry->kSet,q->kSet) ;
+      break;
+    case 23:
+      s = keySetXOR(q->kSet,qry->kSet) ;
+      break ;
+    default:
+      messcrash("keySetMix received wrong operator %d",operator) ;
+    }
+  arrayDestroy(qry->kSet) ;
+  qry->kSet = s ;
+/*   unSelect(selectedKeySet) ; */
+  keySetDestroy(qry->keySetAlpha) ;
+  keySetShow2(qry->kSet,qry ) ;
+}
+
+/***********************************/
+
+static void localKbd (int k)
+{
+  float x0,y0,x1,y1,x2,y2 ;
+  int dispMax, dispMin ;
+  int max ;
+  LOOKGET("keySetPick") ;
+
+  if (look->curr < 2)
+    return ;
+
+  max = keySetMax (look->kSet) ;
+  dispMin = 2 ;
+  dispMax = 1 + look->top - look->base ;
+  
+  graphBoxDraw(look->curr, BLACK, WHITE);
+  switch (k)
+    {
+    case UP_KEY :
+      if (look->curr > dispMin)
+	--look->curr ;
+      else if (look->base)
+	{ pageUp () ;
+	  look->curr = look->top - look->base + 1 ;
+	}
+      break ;
+    case DOWN_KEY :
+      if (look->curr < dispMax)
+	++look->curr ;
+      else if (look->top < max)
+	{ pageDown () ;
+	  look->curr = 2 ;
+	}
+      break ;
+    case RIGHT_KEY :
+      graphBoxDim (look->curr,&x0,&y0,&x2,&y2) ;
+      y1 = y0 ; x1 = x0 ;
+      while (look->curr < dispMax &&
+	     (y1 < y0-0.5 || x1 == x0))
+	graphBoxDim (++look->curr,&x1,&y1,&x2,&y2) ;
+      if ((y1 < y0 - 0.5 || x1 == x0) && look->top < max)
+	{ pageDown() ;
+	  look->curr = 2 ;
+	}
+      break ;
+    case LEFT_KEY :
+      graphBoxDim (look->curr,&x0,&y0,&x2,&y2) ;
+      y1 = y0 ; x1 = x0 ;
+      while (look->curr > 2 && (y1 > y0+0.5 || x1 == x0))
+	graphBoxDim (--look->curr,&x1,&y1,&x2,&y2) ;
+      if ((y1 > y0+0.5 || x1 == x0) && look->base)
+	{ pageUp () ;
+	  look->curr = look->top - look->base + 1 ;
+	}
+      break ;
+    case HOME_KEY :
+      if (look->base)
+	{ while (look->base = pop(look->pages,int)) ;
+	  keySetShow2 (look->kSet, look) ;
+	}
+      look->curr = 2 ;
+      break ;
+/*    case END_KEY :
+      if (look->top < max)
+	{ ???
+	if(look->keySetAlpha &&
+	keySetMax(look->keySetAlpha) < keySetMax(look->kSet))
+	{ keySetDestroy(look->keySetAlpha) ;
+	look->keySetAlpha = keySetAlphaHeap(kSet, keySetMax(look->kSet)) ;
+	}
+	keySetShow2 (look->kSet, look) ;
+	}
+      look->curr = max - look->page*200 + 1 ;
+      break ;
+*/
+    default:
+      graphBoxDraw(look->curr, WHITE, BLACK) ;
+      return ;
+    }
+  graphBoxDraw (look->curr, WHITE, BLACK) ;
+  display (keySet(look->keySetAlpha,look->curr + look->base - 2),0,0) ;
+}
+
+/***************************/
+
+static void ksetAddKey (KEY key)
+{
+  LOOKGET("ksetAddKey") ;
+
+  keySetInsert(look->kSet,key) ;
+  keySetDestroy(look->keySetAlpha) ;
+
+  keySetShow2(look->kSet,look) ;
+
+  displayRepeatBlock () ;
+}
+
+/***************************/
+
+static void ksetDeleteKey (KEY key)
+{
+  LOOKGET("ksetAddKey") ;
+
+  keySetRemove(look->kSet,key) ;
+  keySetDestroy(look->keySetAlpha) ;
+
+  keySetShow2(look->kSet,look) ;
+
+  displayRepeatBlock () ;
+}
+
+/*****************************/
+
+static void ksetUnBlock (void)
+{
+  LOOKGET("ksetUnBlock") ;
+
+  if (look->isBlocking)
+    { look->isBlocking = FALSE ;
+      displayUnBlock() ;
+    }
+}
+
+/*************************************/
+
+extern BOOL asnDumpKey(KEY key, FILE* fil, Stack ss, BOOL previousAsn) ;
+extern void dumpKeySetFastA (KEYSET kSet) ; /* in dnasubs.c */
+extern BOOL keySetDump(FILE *f, Stack s1, Array s) ; /* in keysetdump.c */
+
+static void ksetlocalMenu (KEY k)
+{
+  Graph  g ;
+  KEY	 key = 0 ;
+  int    i ;
+  BOOL   previousAsn = FALSE ;
+  FILE   *fil ;
+  static char fileName[FIL_BUFFER_SIZE] , dirName[DIR_BUFFER_SIZE] ;
+  LOOKGET("localMenu") ;
+
+  switch (k)
+    {
+    case 99: 
+      graphDestroy () ; 
+      break ;
+    case 98: 
+      helpOn("KeySet") ;
+      break ;
+    case 1:	/* save */
+      if(!isWriteAccess())
+	{ messout("Sorry, you do not have Write Access");
+	  return ;
+	}
+
+      while (!key && messPrompt ("Give a name","","t"))
+	if (!lexaddkey (freeword(),&key,_VKeySet) &&
+	    !messQuery ("Overwrite existing keyset ?"))
+	  return ;
+      
+      if (!key)
+	break ;
+      
+      if (!lexlock(key))
+	{ messout ("Sorry, key is locked by someone else") ;
+	  break ;
+	}
+      arrayStore (key,look->kSet,"k") ;
+      lexunlock (key) ;
+
+      break ;
+    case 2:	/* copy */
+      g = graphActive () ;
+      displayCreate(DtKeySet) ;
+      graphRetitle ("Copied keyset") ;
+      keySetShow (keySetCopy (look->kSet),0) ;
+      displayPreserve() ;
+      graphActivate (g) ;
+      break ;
+    case 4:	/* biblio */
+      biblioKeySet ("Biblio for keyset",look->kSet) ;
+      break ;
+    case 8:
+      if (keySetMax (look->keySetAlpha))
+	{ KEYSET newKs = 
+    query(0,
+	  messprintf(">? KEYSET IS multi.%s.*", className
+		     (keySet(look->keySetAlpha,0)))) ;
+	  if (!keySetMax(newKs))
+	    { keySetDestroy (newKs) ;
+	      break ;
+	    }
+	  keySetDestroy(look->kSet) ;
+	  keySetDestroy(look->keySetAlpha) ;
+	  look->kSet = newKs ;
+	  look->keySetAlpha = 
+	    keySetAlphaHeap(look->kSet, keySetMax(look->kSet)) ;
+	}
+      break ;
+    case 10:	/* Read from file */
+      if (!(fil = filqueryopen (dirName, fileName, "ace", "r",
+				"File of object names ?")))
+	return ;
+				/* first empty current keyset */
+      keySetMax(look->kSet) = 0 ;
+				/* then read in from file */
+      { int table, nbad = 0 ;
+	int level = freesetfile (fil,"") ;
+	char *word ;
+
+	while (freecard (level))	/* closes file itself */
+	  if (word = freeword())
+	    { if (!(table = pickWord2Class (word)))
+		{ ++nbad ; continue ; }
+	      if (table == _VKeySet && !keySetMax(look->kSet))
+		continue ;
+	      freestep (':') ;
+	      if (!(word = freeword()))
+		{ messout ("No object name, line %d", 
+			   freestreamline (level)) ;
+		  continue ;
+		}
+	      if (lexword2key (word, &key, table))
+		keySet(look->kSet, keySetMax(look->kSet)) = key ;
+	      else
+		++nbad ;
+	    }
+	if (nbad)
+	  messout ("%d objects not recognized", nbad) ;
+      }
+				/* finally show new keyset */
+      keySetSort(look->kSet) ;
+      keySetCompress(look->kSet) ;
+      keySetDestroy(look->keySetAlpha) ;
+      look->keySetAlpha = 
+	keySetAlphaHeap(look->kSet, keySetMax(look->kSet)) ;
+      keySetShow2(look->kSet,look) ;
+      break ;
+    case 33:	/* .ace dump */
+      if (!(fil = filqueryopen (dirName, fileName, "ace", "w",
+				"Where do you wish to export the data ?")))
+	{ messout ("failed to open ace dump file") ;
+	  return ;
+	}
+      fprintf (fil,"// data dumped from keyset display\n\n") ;
+      if (keySetMax(look->kSet) > keySetMax(look->keySetAlpha))
+	{ keySetDestroy(look->keySetAlpha) ;
+	  look->keySetAlpha = 
+	    keySetAlphaHeap(look->kSet, keySetMax(look->kSet)) ;
+	}
+      for (i = 0 ; i < keySetMax(look->keySetAlpha) ; ++i)
+	if (!dumpKey (keySet(look->keySetAlpha,i), fil, 0))
+	  if (!messQuery("Do you want to proceed ?"))
+	    break ;
+      filclose (fil) ;
+      break ;
+    case 31:	/* .asn dump */
+      if (!(fil = filqueryopen (dirName, fileName, "asn", "w",
+				"Where do you wish to export the asn-data ?")))
+	{ messout ("failed to open asn dump file") ;
+	  return ;
+	}
+      previousAsn = FALSE ;
+      fprintf (fil,"ACeDB-data ::= \n{") ;
+      if (keySetMax(look->kSet) > keySetMax(look->keySetAlpha))
+	{ keySetDestroy(look->keySetAlpha) ;
+	  look->keySetAlpha = 
+	    keySetAlphaHeap(look->kSet, keySetMax(look->kSet)) ;
+	}
+      for (i = 0 ; i < keySetMax(look->keySetAlpha) ; ++i)
+	{ previousAsn |=   /* OR equal */
+	    asnDumpKey (keySet(look->keySetAlpha,i), fil, 0,  previousAsn) ;
+	}
+      fprintf(fil, "\n}\n") ;
+      filclose (fil) ;
+      break ;
+    case 38:	/* name dump */
+      if (!(fil = filqueryopen (dirName, fileName, "ace", "w",
+				"Where do you wish to export the names ?")))
+	{ messout ("failed to open ace dump file") ;
+	  return ;
+	}
+      fprintf(fil,"KeySet : \"%s\"\n",fileName) ;
+      if (keySetMax(look->kSet) > keySetMax(look->keySetAlpha))
+	{ keySetDestroy(look->keySetAlpha) ;
+	  look->keySetAlpha = 
+	    keySetAlphaHeap(look->kSet, keySetMax(look->kSet)) ;
+	}
+      keySetDump(fil,0 ,look->keySetAlpha) ;
+      filclose (fil) ;
+      break ;
+    case 37:     /* FastA format sequence dump */
+      if (keySetMax(look->kSet) > keySetMax(look->keySetAlpha))
+	{ keySetDestroy(look->keySetAlpha) ;
+	  look->keySetAlpha = 
+	    keySetAlphaHeap(look->kSet, keySetMax(look->kSet)) ;
+	}
+      dumpKeySetFastA (look->keySetAlpha) ;
+      break ;
+    case 6:     /* Add key */
+      look->isBlocking = TRUE ;
+      displayPreserve() ; look->owner = -1 ;
+      displayBlock (ksetAddKey,
+	"Double-clicking oustide your own window will add entries, "
+	"inside will delete them.  "
+	"This will continue until you remove this message") ;
+      break ;
+    case 7: 
+      newKeySet (0) ;
+      break ;
+    case 5:   /* to select a sub set more easily */
+      g = graphActive () ;
+      displayCreate(DtKeySet) ;
+      graphRetitle ("Selection") ;
+      keySetShow (keySetCreate (),0) ;
+      displayPreserve() ;
+      look->isBlocking = TRUE ;
+      displayPreserve() ; look->owner = -1 ;
+      displayBlock (ksetAddKey,
+	"Double-clicking oustide the selection window will add entries, "
+	"inside will delete them.  "
+	"This will continue until you remove this message") ;
+      break ;
+    case 20: case 21: case 22: case 23:     /* JTM mix */
+      if (selectedKeySet && selectedKeySet->magic == MAGIC)
+	{ displayPreserve() ; look->owner = -1 ;
+	  keySetMix(look, k) ;
+	}
+      else
+	messout
+	  ("%s%s",
+	   "First select a key Set window by picking ",
+	   "its background with the left mouse button") ;
+      break ;
+    case 40:     /* JTM Tree */    /* Display Type  1 is TREE */
+      if (look->curr < 2)
+	break ;
+      if(pickType(keySet(look->keySetAlpha,look->curr-2+look->base)) == 'B')
+	display (keySet(look->keySetAlpha,look->curr-2+look->base),0,1) ;
+      break ;
+
+#ifdef ACEDB_MAILER
+    case 41 :  /* Mailer */
+      acedbMailer(0, look->kSet, 0) ;
+      break ;
+#endif
+	
+    case 42:     /* JTM Hexadecimal dump of disk blocks */
+      if (look->curr < 2)
+	break ;
+      Bdump(keySet(look->keySetAlpha,look->curr-2+look->base)) ;
+      break ;
+    case 43:	/* neighbours */
+      look->kSet = keySetNeighbours(look->kSet) ;
+      keySetDestroy(look->keySetAlpha) ;
+      look->keySetAlpha = 
+	keySetAlphaHeap(look->kSet, keySetMax(look->kSet)) ;
+      keySetShow2(look->kSet,look) ;
+      break ;
+    case 46:	/* follow */
+      i = look->curr-2+look->base ;
+      if (i < 0 || i > keySetMax(look->keySetAlpha))
+	i = 0 ;
+      if (!keySetMax(look->keySetAlpha))
+	break ;
+      key = keySet(look->keySetAlpha,i) ;
+      if (pickType(key) != 'B')
+	break ;
+      { int type, tcl ;
+	KEY tag ;
+	Stack sta = stackCreate (50) ;
+	
+	if (treeChooseTagFromModel (&type, &tcl, class(key), &tag, sta, FALSE))
+	  { 
+	    look->keySetAlpha = query(look->kSet, messprintf(">%s",stackText (sta, 0))) ;
+	    keySetDestroy(look->kSet) ;
+	    look->kSet = look->keySetAlpha ;
+	    look->keySetAlpha = 
+	      keySetAlphaHeap(look->kSet, keySetMax(look->kSet)) ;
+	    keySetShow2(look->kSet,look) ;
+	  }
+	stackDestroy (sta) ;
+      }
+      break ;
+    case 47:     /* qbe */
+      i = look->curr-2+look->base ;
+      if (i < 0 || i >= keySetMax (look->keySetAlpha))
+	i = 0 ;
+      qbeCreateFromKeySet (look->keySetAlpha,i - 1) ;
+      break ;
+    case 45:     /* JTM Hexadecimal dump of disk blocks */
+      doMultiMapDisplay (look->kSet) ;
+      break ;
+    case 51:	/* destroy one object */
+      if (look->curr < 2)
+	break ;
+      key = keySet(look->keySetAlpha,look->curr-2+look->base) ;
+      if (!isWriteAccess ())	/* may occur is somebody else grabed it */
+	{ messout ("Sorry, you do not have Write Access");
+	  break ;
+	}
+      if (!messQuery (
+		      messprintf ("Do you really want to destroy %s:%s", 
+				  className(key), name(key))))
+	break ;
+      switch ( pickType(key))
+	{
+	case 'A':
+	  arrayKill (key) ;
+	  break ;
+	case 'B':
+	  { OBJ obj ;
+	    if (obj = bsUpdate (key))
+	      bsKill (obj) ;	      
+	  }
+	  break ;
+	}
+      { KEY *kp = arrp(look->kSet, 0, KEY) ;
+	int max = keySetMax (look->kSet) ;
+
+	while (max-- && *kp != key) kp++ ;
+	while (kp++, max--)
+	  *(kp - 1) = *kp ;
+      }
+      keySetMax (look->kSet)-- ;
+      keySetDestroy(look->keySetAlpha) ;
+      look->keySetAlpha = 
+	keySetAlphaHeap(look->kSet, keySetMax(look->kSet)) ;
+      keySetShow2(look->kSet,look) ;
+      break ;
+    case 52:	/* destroy  all */
+      if (!keySetMax(look->keySetAlpha))
+	break ;
+      if (!isWriteAccess ())	/* may occur is somebody else grabed it */
+	{ messout ("Sorry, you do not have Write Access");
+	  break ;
+	}
+      if (!messQuery (
+		      messprintf ("Do you really want to destroy these %d objects", 
+				  keySetMax (look->kSet))))
+	break ;
+      i = keySetMax (look->kSet) ;
+      while (i--)
+	{ key = keySet (look->kSet, i) ;
+	  switch ( pickType(key))
+	    {
+	    case 'A':
+	      arrayKill (key) ;
+	      break ;
+	    case 'B':
+	      { OBJ obj ;
+		if (obj = bsUpdate (key))
+		  bsKill (obj) ;	      
+	      }
+	      break ;
+	    }
+	}
+      keySetMax (look->kSet) = 0 ;
+      keySetMax (look->keySetAlpha) = 0 ;
+      keySetShow2(look->kSet,look) ;
+      break ;
+    default: 
+      break ;
+    }
+}
+
+/*************************************/
+/*************************************/

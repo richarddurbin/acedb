@@ -1,0 +1,66 @@
+<!--  $Id: TreeTableMenu.html,v 1.4 1999-05-03 16:45:00 fw Exp $  -->
+<head>
+<title>Table Menu in Tree Display</title>
+</head>
+
+<BODY BGCOLOR=#ffffff>
+
+<h2>Table Menu in Tree Display</h2>
+
+The file <B>wspec/table.menu.wrm</B> configures the optional
+menu 'Tables...' in the <A HREF="Tree.html">Tree Display</A>.
+<P>
+A table in Acedb allows you to display the contents
+of any number of fields from one or more classes
+at the same time. This can be a very helpful way
+to summarize data for your users. Acedb tables are
+"live", meaning they respond to mouse clicks.
+<P>
+Definitions of tables can be written to file and loaded back in
+at a later time. The <A HREF="Table_Maker.html">Table Maker</A>
+can be used to create such a definition.<BR>
+<P>
+<B>wspec/table.menu.wrm</B> allows you to associate a pre-defined
+query with a certain class. This places a menu button "Tables..." on all 
+Tree Display windows showing objects of that class.
+<P>
+Such table definitions will take one parameter - the name of the
+object we're dealing with. If the user selects the menu item
+from the 'Tables...' menu, the Table_Maker will be launched with the
+first table parameter being the object name of the current Tree
+display.
+<P>
+
+<H3>File format</H3>
+
+Definition blocks in the file contain a set of menus items per class.
+The definition blocks are separated by blank lines.<BR>
+The first line in a definition block is the class name itself.
+Everything after the class name on that line is ignored.
+The lines that follow up to the blank line contain the file names
+of the pre-defined Table_Maker queries. As only the last word
+in the line is going to be used as the filename, the filename can be
+preceded by words describing the table. For instance
+"E_mail_addresses" in the example below.<BR>
+All file names are relative to the database's main directory.
+<P>
+In version 4.8 the parsing of this file has been greatly improved and
+there may be multiple definition blocks for class and definition
+blocks may be empty, whereas in 4.7 and earlier an empty block
+would have caused a fatal crash.
+<P>
+
+
+<H3>Example file</H3>
+<PRE>
+Person
+E_mail_addresses : wquery/e_mail.def
+</PRE>
+
+<p>
+
+to <a href="TOC.html">Table of Contents</a><p>
+
+last edited: May 1999<p>
+
+</BODY>

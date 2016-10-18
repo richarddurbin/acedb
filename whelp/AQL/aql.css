@@ -1,0 +1,60 @@
+/* style-sheet for AQL example pages */
+
+BODY {background-color: white}
+
+/* page header */
+H2 { text-align: center; }
+
+/* main sections */
+H3 {
+  text-decoration: underline;
+  margin-top: 30;
+  background-color: #f0f0f0;
+  text-align: center;
+}
+
+/* subsections */
+H4 {
+  font-family: arial, sans-serif, helvetica;
+  font-weight: bold;
+  color: purple;
+  text-indent: 0;
+}  
+
+/* quoting a complete query */
+CODE {
+  font-family: Courier, monospace;
+  color:  rgb(10,150,10);
+  white-space: normal;
+  /*background-color: #FFFFCC;*/
+}
+
+/* AQL query keywords */
+EM {
+  font-family: Courier, monospace;
+  font-weight: bold;
+  color:  rgb(10,150,10);
+  font-style: normal;
+}
+
+/* referring to query elements in explanatory text */
+TT {
+  font-family: Courier, monospace;
+  color: rgb(10,120,10);
+}
+
+/* email address at the bottom */
+ADDRESS {
+  text-align: right;
+}
+
+/* STRONG used for things like Note: this is important */
+STRONG {
+  color: red;
+}
+
+/* main section separators */
+HR {
+  margin-top: 10;
+  margin-bottom: 0;
+}

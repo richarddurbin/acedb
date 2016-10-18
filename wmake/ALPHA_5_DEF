@@ -1,0 +1,96 @@
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+########### wmake/DEC_ALPHA_DEF    March-18-1993       ##########
+#################################################################
+#
+# $Id: ALPHA_5_GTK2_DEF,v 1.1 2004/01/21 13:55:39 edgrif Exp $
+#
+#################################################################
+########## Machine dependant compiler modification ##############
+####### for the DEC-Alpha 3000 model 500 running Unix ###########
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+
+# Use this file to compile standard acedb code for OSF 5 and GTK 2
+
+
+
+# N.B. this file is used both for building executables that
+# dynamically link in the readline/gtk libraries from /usr/local/lib
+# and for executables that have our local copies of readline/gtk
+# statically linked in. This has involved a bit of frigging around
+# with linker options that is unpleasant to say the least...
+# If you change this file you should be aware that you may be in
+# for a BAD time...
+
+
+NAME = ALPHA
+
+# Compiler used to build 3rd party libraries 
+LIBCC = cc
+
+# Note that I have done this so you don't have to set any special environment variables to
+# build and run the executables.
+# 
+# Set up gtk version stuff, params are:
+#
+#        [-local libs_path]  glib_version gtk_version
+#
+# libs_path is so you can specify a non-standard place for pkg-config/gtk etc.
+#
+LOCALDIR = -local /usr/local/gtk2
+GTKVER =  glib-2.0 gtk+-2.0
+
+GTKINC =  `../w3rdparty/include-config $(LOCALDIR) $(GTKVER)`
+GTKXWIN = `../w3rdparty/acedb-config $(LOCALDIR) $(GTKVER)`
+GTKLIB =  `../w3rdparty/libs-config  $(LOCALDIR) $(GTKVER)`
+GTKLIBDIR = `../w3rdparty/libs-config $(LOCALDIR) -libonly $(GTKVER)`
+
+XWIN_LIBS = $(GTKXWIN) -lXext -lX11
+
+
+# I'm trying "level3" messages, you can go to "level6" but this is quite annoying....
+#
+COMPILER = cc -g -c99 -msg_enable level3 -ieee_with_inexact -DACEDB4 $(GTKINC) -I/usr/local/include
+
+
+# On DEC by default the linker will first search all the library
+# directories for a dynamic version of the library and only if it
+# can't be found will it then look for a static version. What we
+# actually want is for the linker to search each directory in turn for
+# either a dynamic or a static version of the library
+#LINKER = cc -g1 -oldstyle_liblookup
+LINKER = cc -g -oldstyle_liblookup
+
+# On DEC binaries complied with gcc + ev6 specific options crawl on pre
+# ev6 machines. Add opion to emulate ev5, specifying the ev6 options only
+# gains about 10% anyway. This is probably only used for the Image
+# external modules since the default compiler/linker for DEC is cc
+CCCFLAGS = -O2 -g3 -Wall -mcpu=ev5
+
+# On DEC the library does not need to be ranlib'd
+RANLIB_NEEDED = false
+
+# /usr/local/lib: needed for GNU software, e.g. readline package, libs-config
+#     detects whether it should be taken from our local copy or from system
+#     /usr/local/lib
+# -no_archive + -so_archive: unfortunately the -oldstyle_liblookup from
+#     above causes us to find a libcurses.a in /usr/local/lib which is no good
+#     for our dynamic link of gtk/readline, so we need to turn off archive use
+#     and then turn it on again.
+#
+LIBS = -rpath $(GTKLIBDIR) $(GTKLIB) -L/usr/local/lib -lreadline -no_archive -lcurses  -so_archive
+
+
+
+.c.o:
+	$(CC)  $*.c
+
+#################################################################
+#################################################################
+
+ 

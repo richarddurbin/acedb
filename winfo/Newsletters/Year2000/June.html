@@ -1,0 +1,210 @@
+<HTML>
+
+
+<!-- Stuff you should alter is highlighted with "***" -->
+
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - June 2000</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<H1>ACEDB User Group Newsletter - June 2000</H1>
+
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+<P>This month saw the first Acedb Workshop since 1997, which took place in Vancouver. Thanks
+go to Richard Bruskiewich and Steve Jones (a former Sanger person,
+who now works at the Genome Sequence
+Centre, Vancouver) for their efforts in organising the workshop.
+This issue will be about the conference and what happened there.
+
+
+<a name="General"></a><H2>General News</H2>
+
+<a name="Apologies"></a><h3>Apologies</h3>
+
+<P>Apologies for no Acedb Users meeting this month, in the end there just was
+not time to organise one.
+
+<P>There will be a meeting in July, if you have issues you want to raise before
+then, please come and see the acedb developers in our new room (D2-12) which is
+just down from reception, near personnel/accounts etc.
+
+<a name="newsletter"></a><h3>The Newsletter</h3>
+
+<P>Partly as a result of requests at the
+conference and partly because of independent requests from acedb users at other
+sites, this newsletter is now being added to the acedb newsgroup each month and
+is also being sent out to users at other sites. I hope to solicit some useful
+articles from contacts made at the conference.
+
+
+<a name="Acedb2000"></a><H2>Acedb2000 at Vancouver</H2>
+
+<P>I'm not going to cover everything that happened at Vancouver, the
+following sections deal with subjects most relevant to the Sanger Centre.
+A fuller description of the conference will appear on the acedb web site
+in due course.
+
+<a name="Grid"></a><h3>Grid</h3>
+
+<P>Gudmund Thorission from Iceland gave a short presentation on how he
+hopes to use the grid models/display for micro-array data. The main
+points for discussion were:
+
+<ul>
+  <li><b>scale -</b> can acedb hold the amount of data that micro-arrays
+      would produce.
+  <li><b>colours -</b> is it possible to colour code the squares in the
+      grid display so that they look meaningful to the user.
+  <li><b>intelligent display -</b> can the grid display be made to work to
+      allow reasonable scrolling across a micro-array but not need to load in
+      the data for the entire array at once (as this may require prohibitive
+      amounts of memory).
+</ul>
+
+<P>This conversation mirrors several that have happened in the Sanger Centre
+over at least the last year (e.g. with Dan Lawson and Adam Butler). What's
+required now is an initial specification which includes:
+
+<ul>
+  <li>expected size of micro-arrays
+  <li>amount of data per micro-array element
+  <li>some typical colour schemes
+</ul>
+
+Adam Butler is going to take an initial stab at this, but if you are interested in
+seeing this done then don't sit back, either start a discussion on the acedb newsgroup
+or email the acedb developers direct (<A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>).
+
+<a name="Zacedb"></a><h3>Zacedb</h3>
+
+<P>Richard Durbin spent much of his time at Vancouver working on a new 
+storage layer for acedb. This is the part of acedb that stores/retrieves
+objects to/from disk. The idea here would to allow a choice of
+"backends", perhaps including free (e.g. mySQL, BerkeleyDB, the original acedb system)
+or commercial (e.g. Oracle, Sysbase) systems to be used. The backend would not
+"know" about acedb objects, it would only be used to store/retrieve them and
+provide other services such as locking.
+
+<P>The rationale for doing this is that the backend system could be used to allow truly
+concurrent reading/writing via threading and more reliability via support for transactions.
+This would be a great advance for acedb and would supply features requested by
+Sanger and external users.
+
+<P>This work is currently only at the <I>"broken prototype"</I> stage, much work needs
+to be done on further prototyping, in particular to assess whether performance
+would be good enough with a different backend.
+
+<a name="website"></a><h3>The acedb web site</h3>
+
+<P>The session on the format/usability of the acedb web site produced one
+main conclusion: <b>it's not very user friendly</b>. Fortunately there
+were also a lot of suggestions for improvements including:
+
+<ul>
+  <li>completely revamping the downloads section
+  <li>less developer, more user stuff
+  <li>provide search facilities for acedb keywords
+  <li>sort the documentation out !
+</ul>
+
+<P>and a host of other good suggestions.
+
+<P>We plan to substantially reorganise the web site over the next few weeks.
+
+<a name="socket"></a><h3>socket server</h3>
+
+<P>There were a number of talks/tutorials on how to use/set up
+the new sockets-based version of the acedb server/client (available now
+in Acedb 4_8c in ~acedb/RELEASE.DEVELOPMENT/bin.XXX directories).
+If you would like more information or a tutorial on the new
+server/client system (how to set up user passwords etc.) then contact
+Ed Griffiths (<A HREF="mailto:edgrif@sanger.ac.uk">edgrif@sanger.ac.uk</A>).
+
+<P>Other important developments related to the socket server included:
+
+<ul>
+  <li><b>AcePerl -</b> Lincoln Stein has produced a new version of AcePerl that now talks
+      directly to the socket server, you can get more information on this
+      from: <A href="http://stein.cshl.org/AcePerl/">http://stein.cshl.org/AcePerl/</A>.
+      Note that because AcePerl can now talk directly to the server you will
+      be able to use AcePerl from Windows and Apple Macs because AcePerl is now purely in
+      Perl with no C code compilation required.
+  <li><b>AcePython -</b> <A HREF="mailto:uiy6@rz.uni-karlsruhe.de">Sean Powell</A>
+      & <A HREF="mailto:uhpk@rz.uni-karlsruhe.de">Siegfried Schloissnig</A> wrote a python
+      interface to the socket server whilst at the conference. If you want access to this
+      code send a note to Ed Griffiths (<A HREF="mailto:edgrif@sanger.ac.uk">edgrif@sanger.ac.uk</A>).
+</ul>
+
+<P>Note that you can also interface to the socket server from Java:
+(<A href="http://www.biojava.org/docs/api/">http://www.biojava.org/docs/api/</A>.
+
+
+<a name="SMAP"></a><h3>SMAP - a new way to construct sequences</h3>
+
+<P>There has been a lot of discussion at Sanger over how to construct
+larger sequences up to whole chromosome level. There was a whole session
+devoted to this with an introductory talk by Richard Bruskiewich, followed
+by a talk by Richard Durbin which gave an overview of the proposed model
+for SMAP and a model for exons.
+
+<P>A fair summary would probably be that the SMAP model should solve a lot
+of the problems that were experienced with chromosome 22 and with large sequence
+construction in general. The difficult bit of the code still needs writing but
+that should happen over the next few weeks.
+
+<P>What to do about building haplotype sequences remains unsolved however.
+
+<a name="AQL"></a><h3>AQL</h3>
+
+<P>There was a lot of interest in AQL as a more powerful replacement for
+the Query language and TableMaker. We would welcome more reports about
+how people find AQL to use, any performance problems etc.
+
+<P>A major requirement for AQL is some kind of query builder and also
+more tutorial documentation of the "how to..." type. Anyone fancy writing
+an article on how to use AQL ??
+
+
+
+<a name="Acedbmac"></a><h3>Acedb and the Mac</h3>
+
+<P>There were a significant number of users who would like to see
+a more up to date copy of acedb available on the Mac. Simon Kelley has
+made some headway with obtaining a software environment in which to build
+acedb on the Mac. The basic problem here is that we do not have the resources
+to maintain code that requires a completely different build environment, graphics
+routines etc.
+
+<P>Things look hopeful but no more than that.
+
+
+<H2>Next User Group Meeting - D213, 2.30pm, Thursday, 13th July</H2>
+
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon May 21 15:38:59 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

@@ -1,0 +1,39 @@
+// $Id: subclasses.wrm,v 1.8 1997-02-19 14:55:28 il Exp $
+// subclasses.wrm
+// this is in standard ace file format
+
+Class Gene
+Visible
+Is_a_subclass_of Locus
+Filter Gene
+
+Class Other_Locus
+Visible
+Is_a_subclass_of Locus
+Filter "NOT Gene"
+
+Class Tc_Insertion
+Visible
+Is_a_subclass_of Allele
+Filter Transposon_insertion
+
+Class Genome_Sequence
+Visible
+Is_a_subclass_of Sequence
+Filter Genomic_Canonical
+
+Class cDNA_Sequence
+Visible
+Is_a_subclass_of Sequence
+Filter cDNA_EST
+
+Class Repeat_Sequence
+Visible
+Is_a_subclass_of Sequence
+Filter Repeat_consensus
+
+Class wormpep
+Visible
+Is_a_subclass_of Protein
+Filter Worm_pep
+ 

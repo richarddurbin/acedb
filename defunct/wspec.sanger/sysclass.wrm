@@ -1,0 +1,60 @@
+/*  $Id: sysclass.wrm,v 1.1 1994-08-03 19:07:33 rd Exp $  */
+
+  /* wspec/sysclass.wrm
+     
+     Before editing this file, please contact us.
+
+	This file is read at compile and at execution time
+
+     It holds the enumeration of the classes needed by the acedb kernel.
+     The additional application classes are enumerated in wspec/classes.wrm
+     modelled on this one with no repetitions of class numbers.
+
+     The 2 files could be appended, but this would imply a
+     recompilation of the kernel whenever the applications
+     is modified.
+
+     Each #define line correspond to a class
+     The compiler and the executable read this file.
+     
+     Class properties, formerly defined in this file, are
+     now in wspec/options.wrm 
+
+     We need strlen(name) < 32.
+     The total number of classes cannot exceed 255
+     The total number of display types cannot exceed 64
+     
+     Class numbers must of course be unique.
+  */
+
+/* def  _VClass_name  Class_number */
+
+#define _VSystem          0 
+#define _VGlobal          1 
+#define _VSession         2 
+#define _VVoc             3 
+#define _VBat             4 
+#define _VKeySet          5 
+#define _VCalcul          6 
+#define _VImage           7 
+#define _VModel           8
+#define _VConstraint	  9
+#define _VColour         71
+#define _VQuery          18
+
+#define _VText           64  
+#define _VComment        65  
+#define _VOwnerComment  193  	/* must be 128 + _VComment */
+#define _VLongText       66  
+#define _VKeyword        67  
+#define _VInclude       180
+#define _VSourceCode    181
+#define _VTag           182
+#define _VClass         183
+#define _VDisplay 	184
+
+/************ end of file **********/
+
+
+
+

@@ -1,0 +1,79 @@
+<!--  $Id: Add_New_Objects.html,v 1.5 1999-04-29 16:16:27 fw Exp $  -->
+<head>
+<title>Add_New_Objects</title>
+</head>
+
+<BODY BGCOLOR=#ffffff>
+
+<h2>Add/Delete/Rename/Alias Objects</h2>
+
+This window lets you perform various operations on whole objects.
+Currently you can add new objects, delete entire objects, edit
+and rename objects. Two objects can also be fused into one.
+You must have acquired write access for it to work.<p>
+
+For every operation you need to select an object to work on by its class and its name :<P>
+
+First you select a class. Either choose the class from the right button 
+menu on the "Class:" button or single click on a class from the choice
+between the menu buttons. (Double clicking on the classes does nothing
+and it not to be confused with the behavior in the main window)<P>
+Now select the object by typing its name in the yellow entry box 
+labeled "Name:". For an operation other than 'Create' it makes sense
+for the name to be a valid object name in the selected class.<P>
+
+You can easily import an object's class and name using the "Pick object"
+function, which lets you `grab` the object from another window.
+Activate the object chooser by clicking on the "Pick object" button.
+Now go to another <A HREF="KeySet.html">KeySet</A> window or another
+<A HREF="Tree.html">Tree</A> window and double click on an object name,
+which is written in bold.<P>
+
+All actions are initiated from the right button background menu or
+the menu buttons :<P>
+
+
+<h3>Menu items:</h3>
+<ul>
+<li><strong>Quit</strong>: quits the window.
+
+<li><strong>Help</strong>: brings up this help.
+
+<li><strong>Create</strong>: creates a new object entry in the
+selected class and displays an empty tree window for it so you can 
+go into <A HREF="Update.html">update mode</A> and add data if you
+want.<P>
+
+<li><strong>Display</strong>: displays the selected object, 
+just as if you'd double clicked on it from e.g. another
+KeySet window.<P>
+
+<li><strong>Edit</strong>: The selected object is displayed and 
+opened in the usual <A HREF="Update.html">update mode</A> of the
+<A HREF="Tree.html">Tree display</A>.<P>
+
+<li><strong>Alias/Fuse</strong>: You will then be prompted for an 
+alias name for the selected object. By creating an alias both the 
+old and new name will be recognized, but the new name you enter
+will be the one the database writes out (canonical name).  If it is
+the name of an existing object then the two will be fused.<P>
+
+<li><strong>Rename/Fuse</strong>: you first must pick a class and
+supply an object name. You will then be prompted for a new name.
+Rename is a hard rename function.  Unless you are just
+changing case, the old name will no
+longer apply to this or any other current object (you can
+reuse it for a new object).  If the new name belongs to
+an existing object the two objects will be fused. <BR>
+If you want both names to apply for the object 
+use the 'Alias' function.<P>
+
+<li><strong>Delete</strong>: deletes object with all its data<P>
+
+</ul>
+
+to <a href="TOC.html">Table of Contents</a><p>
+
+last edited: April 1999<p>
+
+</BODY>

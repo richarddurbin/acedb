@@ -1,0 +1,16 @@
+# $Id: display_script,v 1.3 2000-10-03 11:33:41 srk Exp $ 
+# The worm database seems to be schizoid about weather to include
+# the .jpeg extension or not, so we cover all the bases.
+
+if [ -e $ACEDB/pictures/$1 ] 
+then
+  xv $ACEDB/pictures/$1 &
+fi
+
+if [ -e $ACEDB/pictures/$1.jpeg ] 
+then
+  xv $ACEDB/pictures/$1.jpeg &
+fi
+
+# You may want to use the -8, -perfect, -rw -nolimits options
+ 

@@ -1,0 +1,50 @@
+<HTML>
+
+<!--  $Id: Dump.html,v 1.6 2000-05-08 08:04:17 edgrif Exp $  -->
+
+<head>
+<title>Dump all</title>
+</head>
+
+<BODY BGCOLOR=#ffffff>
+
+<h2>Dump all</h2>
+
+<p>Dumps the whole database into an ace file. 
+This function is synonymous with "Export" in other applications.
+
+<p>The dump file can be edited by hand, parsed back in an empty system
+(provided you split out the copy of the tags and classes files) or use
+with acediff to compare 2 sessions.
+
+<p>At the same time, Dump checks the integrity of the whole database and
+verifies the existence of all the XREF's.
+
+<p>The "Dump" function dumps all the Visible A and B (not X) classes. This 
+information is sufficient for a complete reconstruction.
+
+<p>Acedb dumps out the objects as it knows them now.  Uncommitted changes
+will be dumped - so the user can parse a file in, make a full dump, then quit
+without saving.
+Objects have to be saved though - if the object is still being parsed or 
+edited then it will dump the old version.
+
+<p>Note that if you delete a tag(s) in the model (by editting models.wrm) and then
+dump, the tags will still be dumped if they exist in the database. You will then
+<B>NOT</B> be able to read the dump file back in unless you either:
+<UL>
+  <LI>return models.wrm to its original state (i.e. reinsert the delete tags)
+  <LI>remove all instances of the deleted tags from the dump file(s).
+</UL>
+Acedb works like this to prevent the accidental loss of potentially large
+amounts of data that might result from unintentional editting of models.wrm.
+The recommended way to remove a tag is to remove all instances from the database
+first and then remove the tag from models.wrm.
+
+<p>to <a href="TOC.html">Table of Contents</a>
+
+<p>last edited: April 1999
+
+</BODY>
+
+</HTML>

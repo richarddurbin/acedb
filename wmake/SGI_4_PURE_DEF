@@ -1,0 +1,42 @@
+# $Id: SGI_4_PURE_DEF,v 1.9 2000-04-11 14:11:32 srk Exp $
+
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+########### for the Silicon Graphics using purify  ##############
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+# Note:
+# the native cc is recommended over gcc on Silicon Graphics
+#
+NAME = SGI 
+
+# Compiler used to build 3rd party libraries 
+LIBCC = cc
+
+COMPILER = cc -g -DNO_LEFT_CASTING -DACEDB4 -DACEDB_GTK `../w3rdparty/include-config -I/usr/local/include`
+
+LINKER = purify -chain-length="10" cc -g
+
+#different c++ compiler for purify compiling
+CCC = g++
+CCCLINK = purify g++
+CCCFLAGS = -g3 -Wall
+
+LIBS = `../w3rdparty/libs-config -L/usr/local/lib` -lreadline -lm -lcurses 
+
+RANLIB_NEEDED = false
+
+.c.o:
+	$(CC) $*.c
+
+#################################################################
+#################################################################
+ 

@@ -1,0 +1,83 @@
+// $Id: sysmodels.wrm,v 1.5 1994-07-23 15:41:13 mieg Exp $
+// Acedb system models, please do not edit.
+
+?Model ANY   // must come first
+
+?Text   Quoted_in ANY
+
+?Comment  Quoted_in ANY
+
+?Keyword Quoted_in ANY
+
+?Class   Compiled_as UNIQUE Text UNIQUE Int    // Consistency check 
+         Belongs_to_class UNIQUE Int
+         Is_a_subclass_of ?Class XREF Is_a_superclass_of UNIQUE Int // the mask of that subclass
+         Is_a_superclass_of ?Class XREF Is_a_subclass_of UNIQUE Text UNIQUE Int //Query and mask
+         Uses_tags ?Tag XREF Appears_in_class
+	 Visibility UNIQUE Hidden
+                           Visible
+         Mask   UNIQUE Int
+	 Filter UNIQUE Text
+         Constraints Text
+
+?Tag     Parent_tag UNIQUE Text UNIQUE Int   // Name and value of Tag for Consistency check 
+         Related_tags ?Tag XREF Related_tags
+         Used_for Text Text  // Database_name semantics
+         Appears_in_class ?Class XREF Uses_tags
+         Appears_in_source_code ?SourceCode XREF Uses_tags
+         
+?SourceCode SourceFile ?LongText
+	    Uses_tags ?Tag XREF Appears_in_source_code
+	    Uses_class ?Class
+            Includes ?Include XREF Included_by
+
+?Include SourceFile ?LongText
+         Included_by ?SourceCode XREF Includes
+
+?Session        Session UNIQUE Int 
+		Permanent_session     // If set, prevents automatic destruction
+                Date   UNIQUE Text 
+                User   UNIQUE Text 
+                Session_Title  UNIQUE Text 
+                CodeRelease UNIQUE Int UNIQUE Int 
+                DataRelease UNIQUE Int UNIQUE Int 
+		Created_from UNIQUE ?Session 
+		Up_linked_to UNIQUE ?Session 
+		Destroyed_by_session UNIQUE Int 
+		GlobalLex   UNIQUE Int 
+		SessionLex  UNIQUE Int UNIQUE Int UNIQUE Int UNIQUE Int 
+		VocLex  UNIQUE Int UNIQUE Int UNIQUE Int UNIQUE Int 
+		GlobalBat UNIQUE Int UNIQUE Int  // address # blocks used
+		BatPlus  UNIQUE ?Bat  UNIQUE Int // # block set
+		BatMinus UNIQUE ?Bat  UNIQUE Int // # blocks freed
+
+?Display  Visibility // not yet used, but i need a model
+                     // i will later turn wspec/displays.wrm into an
+                     // ace file
+
+?Colour UNIQUE WHITE
+	       BLACK
+	       LIGHTGRAY
+	       DARKGRAY
+	       RED
+	       GREEN
+	       BLUE	
+	       YELLOW
+	       CYAN
+	       MAGENTA
+	       LIGHTRED
+	       LIGHTGREEN
+	       LIGHTBLUE
+	       DARKRED
+	       DARKGREEN
+	       DARKBLUE
+
+?OwnerComment   Session UNIQUE ?Session
+                Start   UNIQUE Int Int	// date, time
+		Finish  UNIQUE Int Int	// date, time
+                User   UNIQUE Text 
+		Quoted_in ANY
+
+?Image		File_name Text		// relative to $ACEDB/images
+
+// End of the system models

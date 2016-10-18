@@ -1,0 +1,94 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<TITLE>AQL.walk_through</TITLE>
+<META NAME="Template" CONTENT="\\Xerox\sys\PROGS\97STD\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080">
+
+<H1>AQL Mark 1&nbsp;- Walk through</H1>
+<P>AQL is a proposed new query language for acedb.  It borrows syntax and ideas from OQL, the ODMG's proposed query language for object-oriented databases (which is supported by O2), Lorel, a language for querying semi-structured data developed at Stanford, and Boulder, a value-attribute path-based access system developed by Lincoln Stein for the Whitehead Genome Center.</P>
+<P>This document provides a walk through of the proposed features for AQL, presented informally and illustrated by examples.  There is also a syntax definition document, and an introductory document giving some history, motivation etc. </P>
+<DFN><P>Example 1: Authors who live in England</P>
+</DFN><B><CODE><PRE>&#9;select</B> a 
+<B>&#9;from</B> a <B>in</B> <B>class</B> Author
+<B>&#9;where</B> a-&gt;Address = "England"</PRE>
+</CODE><P>The basic structure shown here is fairly standard, with a <B><CODE>select </B></CODE>clause specifying the output field(s), a <B><CODE>from</B> </CODE>clause giving declarations of the range of variables, and a <B><CODE>where</B></CODE> clause giving a boolean condition on expressions of those variables.  We use the arrow notation to access information inside objects.</P>
+<P>The behaviour of such a query is:</P>
+
+<UL>
+<LI>loop over declarations nested inside each other</LI>
+<LI>test the condition</LI>
+<LI>if TRUE then evaluate the result field(s)</LI>
+<LI>when done remove duplicates, i.e. make the resulting list/table a set</LI></UL>
+
+<P>Note that most acedb properties can be multi-valued, so that expressions like <CODE>a-&gt;Address = "England"</CODE> in the above contain implicit declarations that will range over all the <CODE>Address </CODE>strings.  We are assuming in Example 1 that a person's country will be stored as one of their address lines.  When this line matches, the condition is satisfied and a result entry is generated, even if other Address lines do not match.  Note that we always produce a set rather than a bag (equivalent to an implicit <B><CODE>distinct </B></CODE>operator for SQL or OQL).  Sets are so pervasively implicit in acedb that anything else makes seems meaningless.</P>
+<P>Example 1 generated a list of objects.  With the same construction we can generate a table containing the Email address of each author:</P>
+<DFN><P>Example 2:</DFN> <DFN>Authors with their email addresses</P>
+</DFN><B><CODE><PRE>&#9;select</B> a, a-&gt;Email
+<B>&#9;from</B> a <B>in</B> <B>class</B> Author</PRE>
+</CODE><P>We may get multiple result lines per author if they have more than one email address.  If the author does not have an email address, this query will still get a result line with a null value in the second field.  To get entries only for people with email we would have to give an explicit condition: <B><CODE>where</B> <B>exists</B> a-&gt;Email.</P>
+</CODE><FONT FACE="Arial"><P>Abbreviations</P>
+
+<UL>
+</FONT><LI>The  <B><CODE>from</B> </CODE>clause is not needed if the results fields required are exactly those specified in the declarations.  We can then write simply <CODE>(<B>select</B> a <B>in</B> <B>class</B> Author <B>where</B> a-&gt;Address = "England").</LI>
+</CODE><LI>There can be one default variable which can be thought of as having an empty name, allowing us to write <CODE>(<B>select</B> <B>class</B> Author <B>where</B> -&gt;Address = "England").</LI></UL>
+
+</CODE><FONT FACE="Arial"><P>Expansions</P>
+
+<UL>
+</FONT><LI>Result fields of a table can be named, e.g. <CODE>(<B>select</B> author:a, email:a-&gt;Email <B>in</B> <B>class</B> Author).</LI>
+</CODE><LI>We would like to be able to specify (optional) types for declarations - not implemented yet.</LI></UL>
+
+<FONT FACE="Arial"><P>Alternatives</P>
+
+<UL>
+</FONT><LI>In place of <CODE>&lt;var&gt; <B>in</B> &lt;set&gt;, </CODE>one can write <CODE>&lt;set&gt; <B>as</B> &lt;var&gt;,</CODE> or just <CODE>&lt;set&gt; &lt;var&gt;.</CODE> </LI></UL>
+
+<FONT FACE="Arial"><P>Unexpected properties</P>
+
+<UL>
+</FONT><LI>Because we currently don't have an optimiser, we allow intercalation of <B><CODE>from</B> </CODE>and <B><CODE>where</B> </CODE>clauses.  In fact we like it, and don't really see why we should change.  If  we set/build an optimiser, it can easily rearrange the order, or use this information only as a hint.</LI></UL>
+
+<DFN><P>Example 3:</DFN>  <DFN>English authors with their publications in Nature</P>
+</DFN><B><CODE><PRE>&#9;select</B> a,b 
+<B>&#9;from </B>a <B>in class</B> Author <B>where</B> a-&gt;Address = "England", 
+&#9;     b <B>in </B>a-&gt;Paper <B>where </B>b = "Nature"</PRE>
+
+<UL>
+</CODE><LI>In the previous example, we could not write <B><CODE>select</B> a,a-&gt;Paper <B>…</B> <B>where</B> a-&gt;Address = "England" <B>and</B> a-&gt;Paper = "Nature"</CODE>, because the two different <CODE>a-&gt;Paper </CODE>expressions are not bound, so we would get all the papers in any journal written by those English authors who have published in Nature.  This is not what typically happens with such a query, e.g. in SQL or OQL. Maybe we should do the necessary lexical analysis to bind these, but then if you want the alternative interpretation you have to do something weird.  Perhaps just:</LI></UL>
+
+<B><CODE><PRE>&#9;select</B> a,b-&gt;Paper
+<B>&#9;from </B>a <B>in class</B> Author <B>where</B> a-&gt;Paper = "Nature"
+&#9;     b <B>in </B>a</PRE>
+</CODE><B><I><FONT FACE="Arial"><P>More complex queries</P>
+</B></I></FONT><P>Below we give a series of queries illustrating further features of the language.</P>
+<DFN><P>Example 4:</DFN> <DFN>Authors who have published with Richard Durbin</P>
+</DFN><B><CODE><PRE>&#9;select</B> a-&gt;Paper-&gt;Author <B>from</B> a <B>in</B> object("Author","Durbin RM") 
+<B>&#9;</B></CODE><DFN>or just</DFN><B><CODE>&#9;select</B> object("Author","Durbin RM")-&gt;Paper-&gt;Author</PRE>
+</CODE><P>Here we introduce the <CODE>object()</CODE>constructor, and show serial use of the object dereferencing operator.</P>
+<DFN><P>Example 5:</DFN> <DFN>Objects mapped on chromosome III with their map position</P>
+</DFN><B><CODE><PRE>&#9;select</B> g, gm.Position
+<B>&#9;from </B>g<B> in </B>object("Map","III")-&gt;Contains[2], gm <B>in </B>g-&gt;Map
+<B>&#9;where</B> gm = "III"</PRE>
+</CODE><P>There are number of points here.  The construction <CODE>-&gt;Contains[2] </CODE>will find the items that are 2 positions away from the tag <CODE>Contains</CODE> , i.e. its grandchildren, rather than its children.  This is a common construction in acedb: it allows objects from multiple arbitrary classes to be collected together while maintaining strong typing.  Next note that we must require that <CODE>gm = "III" </CODE>because <CODE>g</CODE> may have positions on multiple maps.  Finally, note that we have written <CODE>gm.Position </CODE>in the <B><CODE>select</B></CODE> clause, because we do not want to dereference <CODE>gm</CODE> as an object pointer; instead we want to look at the attribute following <CODE>gm</CODE> in the <CODE>g</CODE> object.  </P>
+<P>N.B. We would like to be able to write <B><CODE>select</B> g, g-&gt;Map."III".Position </CODE>here.</P>
+<DFN><P>Example 6:</DFN> <DFN>Subsequences of sequence AH6, with their start and end points, saved as a table @AH6subseq.</P>
+</DFN><CODE><PRE>&#9;@AH6subseq <B>:= select</B> x,x[1],x[2] 
+&#9;&#9;      <B>from</B> x <B>in</B> <B>object(</B>"Sequence","AH6"<B>)</B>-&gt;Subsequence</PRE>
+</CODE><P>We can save query results for temporary use later in a query sequence, and also long term in the database (final syntax for this to be decided).  Note the use of <CODE>x[1] </CODE>and<CODE> x[2] </CODE>for the two fields following <CODE>x</CODE>, which happen to be single-valued in the model.</P>
+<DFN><P>Example 7:</DFN> <DFN>Authors with more than 5 papers</P><DIR>
+<DIR>
+
+</DFN><B><CODE><P>select</B> a <B>in</B> <B>class</B> Author <B>where count(select </B>a-&gt;Paper<B>)</B> &gt; 5</P></DIR>
+</DIR>
+
+</CODE><P>Here we see a set operator <B><CODE>count() </B></CODE>applied to a recursively defined subquery.  Note that the subquery has an unbound variable, <CODE>a</CODE>, making it a parameterized query.  The parameter is bound to the value in the main query.  We can use this mechanism to create parameterized queries that can have parameters externally provided via the query package interface.</P>
+<DFN><P>Example 8:</DFN>  <DFN>AH6 subsequences sorted by size</P>
+</DFN><B><CODE><PRE>&#9;(select</B> r[1],size:r[3]-r[2] <B>from </B>r <B>in</B> @AH6subseq <B>where</B> [3]&gt;[2]<B>) 
+&#9;union (select </B>[1],size:[2]-[3] <B>from </B>@AH6subseq <B>where</B> [2]&gt;[3]<B>) 
+&#9;order_by </B>.size</PRE>
+</CODE><P>Quite a lot in this one!  First, we have set operations <B><CODE>union, intersection, diff </B></CODE>available on tables.  Next, we can assign variables such as <CODE>r</CODE> to range over tables (previously stored as here, or explicitly defined).  We dereference these variables by field number using the <CODE>[1] </CODE>notation, or by field name using the <CODE>.size</CODE> notation.  Finally there is an <B><CODE>order_by </B></CODE>operator on tables, that takes as arguments a list of field specifications (with qualifiers for ascending or descending).</P>
+<P>&nbsp;</P></BODY>
+</HTML>

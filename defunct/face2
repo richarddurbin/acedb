@@ -1,0 +1,3 @@
+#!/bin/csh -F
+# $Id: face2,v 1.2 1994-08-03 20:05:08 rd Exp $
+aceclient alpha write

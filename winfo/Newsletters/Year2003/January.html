@@ -1,0 +1,264 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - January 2003</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - January 2003</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<P>Set your own DNA highlighting colour in FMap, get more information from
+EMBL dumps and more documentation when you download the acedb server package.
+There's a new script for setting up acedb databases from scratch, a crop of
+bug fixes and some the usual nerdy stuff for acedb developers.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="dna_colour"></a><H3>Set your DNA highlight colour</H3>
+
+<P>The user preferences now include setting your own colour for DNA highlighting
+in the FMap, this has always by default been a light red/pink, now you can
+set it to any of the standard acedb colours. Select the "Admin" button on the
+main window and from there the "Preferences" item.
+
+
+<a name="embl_dump"></a><H3>More changes to the EMBL dumper</H3>
+
+<P>EBML dumping now includes the following:
+<ul>
+  <li>"product=" lines for protein/RNA, with/without species name.
+  <li>"standard=" always dumped, usually the sequence name.
+  <li>"gene=" derived from attached Locus object.
+</ul>
+
+
+<a name="server_download"></a><H3>Server download package now includes all server documentation.</H3>
+
+<P>The acedb server download package (available from
+<A HREF="http://www.acedb.org/Software/Downloads/">http://www.acedb.org/Software/Downloads/</A>)
+now includes:
+
+<ul>
+  <li>All server documentation from wdoc/Socket_Server (SOCKET_aceserver.html etc.).
+  <li>All server configuration files from wspec (serverconfig.wrm, serverpasswd.wrm).
+</ul>
+
+<P>These versions of the files will the correct and up to date versions for the server code
+downloaded in the package.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+
+<a name="makeacedb"></a><H3>MakeAceDB - A new script for setting up an acedb database from scratch</H3>
+
+<P>(<I>This article is courtesy of Rob Clack</I>
+<A HREF="mailto:rnc@sanger.ac.uk">rnc@sanger.ac.uk</A>)
+
+<P>(<I>Thanks also to Andrew Menzies who wrote the original version of this script</I>
+<A HREF="mailto:am3@sanger.ac.uk">am3@sanger.ac.uk</A>)
+
+<P>Setting up an ace database is not particularly arduous, but there is no 
+reason not to automate it, which is what MakeAceDB does. MakeAceDB is 
+part of AceDB standard release and as such comes as part of the download 
+package available from this site. It is located in the wtools 
+subdirectory, along with all other files referred to in this document.
+
+<P>MakeAceDB is a perl script which creates the necessary directories, 
+copies the required files into place and initialises the database. If 
+you specify the path to an ace file, then MakeAceDB will load that into 
+the new database. The run-time parameters may be given either on the 
+command line, which does tend to make for rather a long command, or in a 
+file, in which case you identify the command file with the <code>-f</code> flag. 
+Examples of how to run MakeAceDB are given in the files MADC an MADF. 
+There is also an example of a command file, MakeAceDB.com.
+
+<P>You will need to provide the location of a set of .wrm files, but 
+individual ones can be overridden with local copies if you wish. If 
+running with command line parameters, just list the .wrm files after the 
+<code>--tace</code> option. If running with a command file, specify them with 
+<code>wrm=filename</code>. If your userid doesn't exist in the passwd.wrm file, it 
+will be added. If you don't specify a passwd.wrm file, a new one will be 
+created with just your userid in it. You can supply as many .ace files 
+as you like, and these will be loaded into the new database.
+
+<P>MakeAceDB is written with the intention that you be able to specify 
+different userid and groupid, in which case the userid will be used in 
+the passwd.wrm file, for example.
+
+<P>If you find bugs, please email
+<A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="tsuser"></a><H3>Allowable names for -tsuser option</H3>
+
+<P>When the -tsuser command line option was introduced
+<a href="../Year2002/July.html#tsuser_option">last July</a>
+no restrictions were
+enforced on the format of the name used. This led to some errors because
+users placed characters such as "/" in the name and as this name is used
+in constructing various file names in acedb this leads to problems because
+files are created that have the directory separator "/" in their names.
+
+<P>As of this release only alphanumeric characters, i.e. characters from the
+set [a-z,A-Z,_], are allowed. Hence "my_own_NAME" is valid, but "name with blanks"
+or "name/with/slashes" are not.
+
+
+<a name="gmap_cursor"></a><H3>GMap cursor movement bug</H3>
+
+<P>A bug in the GMap cursor code led to the cursor initially not moving
+when the arrow short cut keys were used.
+This turned out to be because the code reads a default value for cursor movement
+from the database and if this was very small, it led to the code calculating
+that the cursor had not moved. On using the mouse to move the cursor,
+the cursor movement value got clamped to a minimum value, this now happens
+when using the arrow short cut keys.
+
+
+<a name="dotter_bug"></a><H3>Dotter and invalid sequence query bug</H3>
+
+<P>An invalid query sequence before using Dotter caused the 
+dna sequences to be displayed overlapped, fixed now.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+
+<a name="array_bug"></a><H3>Old array bug</H3>
+
+<P>Simon gets the prize for finding the oldest bug this month:
+ArrayInsert() caused a memory overwrite when the array is
+initially empty.
+
+
+<a name="main_utils"></a><H3>Main routine utilities</H3>
+
+<P>If you write any bits of code that are common to all acedb main routines then
+put them in w3/apputils.c.
+
+
+<a name="smapconvert"></a><H3>Smapconvert routine uses new smap call to check orientation</H3>
+
+<P>SMapConvert now uses the new sMapIsReverse() routine to unambiguously find the
+orientation of single base pair long features. Previously this could not be done
+as SMap did not carry orientation information separately from coordinate information
+and since we do not use inter-base coordinates the strand of a single base pair long
+feature cannot be disambiguated.
+
+
+<a name="smapconvert_allele"></a><H3>Smapconvert and the new use of the Allele subtag in the Sequence class</H3>
+
+<P>As wormbase moves over to using SMap to map more and more of their
+features there are some changes to the subtags of the Sequence class.
+For instance, the Allele subtag format has changed from:
+
+<P><pre><code>             Allele ?Allele XREF Sequence UNIQUE Int UNIQUE Int UNIQUE Text
+</code></pre>
+
+<P>to:
+
+<P><pre><code>SMap S_Child Allele ?Allele XREF Sequence UNIQUE Int UNIQUE Int #SMap_info
+</code></pre>
+
+<P>This change of format is likely to happen for other tags as well as we move away from
+all sequence like features being part of the Sequence class and instead have them smap'd
+from the Sequence class.
+
+<P>This means that the code must detect this new format but still
+support the old, the best way to do this is by examining the model for the Sequence
+class in the current database. The SMapConvert code now examines the model so
+that it can support the old and new models.
+
+<P>To do this some new calls were put into the bs package (see <code>bs.h</code> and
+<code>isOldAlleleModel()</code> function in smapconvert.c for an example)
+to allow stepping
+through the model without poking into the models BS structs as has been done
+on other parts of the code (e.g. treedisp.c or nicedump.c).
+
+<P>We have reached the stage where the strategy is to have constant subparts
+(e.g. the SMap tags, the Homol tags) which are then embedded into different
+classes, they can all be processed with the same code for virtual sequence building because
+the model for the subpart tags remains constant. It makes sense therefore to have
+code that can check that these subparts conform to the required format. The
+<code>isOldAlleleModel()</code> function was a test to see how this worked, the next
+stage is to write a more general function that given a string representing the
+expected subtag model will validate it against the model for a given subtag branch
+in a particular database.
+
+
+
+<a name="web_aquila"></a><H3>Web/Aquila improvements</H3>
+
+<P>Rob has been putting a lot of effort into getting the acedb web site more
+in line with the general Sanger web site in terms of the scripts/Apache directives
+and general standards used. This is a real improvement because it means we can
+get more help, more easily from the Sanger web team for web site work.
+
+<P>This has included quite a bit of altering of our basic html files
+for build results etc. so that they will work with Sanger style Apache
+like includes etc. He has also managed the move from directly editting
+the "live" web site to using the internal web development site which
+can then be copied over to the "live" web site when testing is complete.
+
+<P>He has also put some effort into aquila and finishing off the work
+started by John Sturdy, we should all be adding new tests to the aquila
+system.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>No monthly build now available.</H2>
+
+<P>Sorry no build this month.
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Fri Feb 28 18:09:49 GMT 2003
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

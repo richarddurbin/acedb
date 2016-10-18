@@ -1,0 +1,142 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - March 2004</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - March 2004</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+
+<P>This month sees a small extension to the EST read pair code and to the
+output of confirmed introns in GFF format and some bug fixes.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+<a name="EST_pairs"></a><H3>EST Read Pairs</H3>
+
+<P>As explained in the
+<A HREF="http://www.acedb.org/winfo/Newsletters/Year2002/June.html#Homols_ESTs">
+June 2002 newsletter</A>
+it's possible to have EST read pair homologies joined by dotted lines on the FMap. This
+can be very helpful where there are lots of ESTs or pairs are far apart making them difficult
+to spot.
+
+<P>This facility has been extended to allow ESTs that have different SMap'd parents
+to be joined up, this has been useful for genomes such as Zebra fish where the read pairs
+may be very far apart.
+
+<P>Note homologies are <b>only</b> shown with solid and dotted lines when you show the column in "cluster"
+mode.
+
+
+<a name="Confirmed_intron_sequences"></a><H3>Confirmed intron reporting in GFF output</H3>
+
+<P>There has been some rationalisation of confirmed intron output in GFF. The confirmations
+will now be reported in the format:
+
+
+<pre><code>&lt;mandatory GFF fields&gt; Sequence &lt;parent_sequence_name&gt; [Confirmed_XXX [confirming_sequence_name] ;]
+
+(XXX will be one of:  EST, cDNA, Homology, UTR, False or Inconsistent)
+</code></pre>
+
+<P>The Confirmed_XXX section will be repeated for all the confirmations for that intron and
+may be followed by the name of a confirming sequence in the database.
+
+<P>So for a sequence containing:
+                                                                                          
+<pre><code>Confirmed_intron         39403 40250 EST                                                  
+Confirmed_intron         39403 40250 cDNA                                                 
+Confirmed_intron         39403 40250 UTR                                                  
+Confirmed_intron         39403 40250 Homology                                             
+</code></pre>                                                                                   
+                                                                                          
+the GFF record will be:
+                                                                                          
+<pre><code>B0454   curated intron  39403   40250   .       +       .       Sequence "B0454.1" ; Confirmed_by_cDNA ; Confirmed_by_EST ; Confirmed_by_homology ; Confirmed_in_UTR
+</code></pre> 
+
+<P>If there are multiple confirming sequences for a confirmation type
+they will all be output. So given:
+
+                                                                                          
+<pre><code>   EST  b0250                                                                             
+        b0250.1                                                                           
+        etc.                                                                              
+</code></pre>                                                                                      
+
+<P>they will all be dumped as:
+                                                                                          
+<pre><code>    Confirmed_EST b0250 ; Confirmed_EST b0250.1 ; etc......                           
+</code></pre>
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="econnreset"></a><H3>Fix handling of ECONNRESET</H3>
+
+<P>Code in the socket library for the socket server did not handle ECONNRESET
+properly (heppens when a client terminates without saying goodbye), this is now fixed.
+
+
+<a name="cds_dump"></a><H3>CDS DNA dumping bug</H3>
+
+<P>Another bug caused by the move to having arbitrary classes SMap'd for FMap.
+The code only allowed Sequence class objects with a CDS tag to have their
+CDS DNA dumped, fixed now.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>March monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Tue Apr 13 18:30:31 BST 2004
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

@@ -1,0 +1,233 @@
+<html>
+<head><title>ACeDB2000 conference proceedings: Day 3</title></head>
+<body bgcolor=white>
+ 
+<blockquote>
+<div align=center>
+<h5><a href="index.html">Back to conference overview</a></h5>
+<h2>ACeDB2000: Day 3</h2>
+</div>
+<h3>Summaries from taskgroups</h3>
+
+  <p><b>Website/doc-discussion:</b> numerous changes to the acedb.org website are in the pipeline. A few possibilities for doc-writing were discussed, including the option of having a full-time person taking care of that (takes money of course..$$$)
+
+<p><b>Programming:</b> Richard working on ZAce still (MySQL) and Lincoln working on a version based on BerkeleyDBM. They are looking for someone to implement an XML-validating parser.
+
+<p><b>Middleware:</b> Maria almost finished with a port of Webase to AcePerl, so that the Webace CGI-scripts could work with AcePerl. AcePython-crew is working on parsing of data coming back from the server, since the connection was up and running. XML-output is in alpha-stage, being bug-tested. And finally the GIF-scrolling has.
+  Gripes-session resulted in a small tutorial on how to get data from tags in complex trees, like the Homol
+
+<p><b>Curators:</b> Feature requests have resulted in some 2D-display things and comparative maps. Dave put up some doc listings and requests, for people to sign up on. I think he also said that Steven Jones was going to give a talk on the pre-indexing feature. Richard B. gave a talk on his dendrogram. Also
+<hr>
+
+<h3>Simon Kelley: databases for the masses</h3>
+
+<p>Distribution on CD's, data plus software that could be distributed on a single CD for users to install easily and start using. This would be especially important for the WinAce port, to reach the non-Unix people.
+<br>Simon showed the following as a Windows-icon setup:
+<pre>
+[acedb]
+path=c:\path\to\database
+
+</pre>
+
+If this is made a file (mydatabaseas.adb) it This should start up the database, since the installer connects the .adb to ACeDB.
+<p>Simon then got into a fairly detailed description of using an installer to get ACeDB onto a Windows system. I won't write the whole thing down here, but please contact <a href="mailto:srk@sanger.ac.uk">Simon</a> if you want the details.
+
+<hr>
+<h3>Maria Nemchuk: ExternalDB for multi-db connections</h3>
+
+<p><b>Intro:</b> the problem is with integrating information from multiple, heterogenous databases. How would you import a record on-the-fly from e.g. GenBank to local Ace-databases.
+
+<p><b>Origin?</b> the original implementation was done at AGIS, and consisted of accession-database pair Acedumps that were used to extract the information. So, a better system was needed.
+
+<p><b>Solution:</b> A collection of Perl-scripts that query local ACeDB's for accession-database data:
+[have to ask Maria for some slides here]
+and the results are pooled and used to construct the URL's, so one can connect from their own database(s) on webpages to GenBank, EMBL, SWISSPROT etc, to provide links from those external db's to your own.
+
+<p><b>Availability:</b> accession-database listsdownloadable by FTP with some instructions
+ <i><a href="ftp://genome.cornell.edu/pub/externaldb">ftp:genome.cornell.edu/pub/externaldb</a></i>
+but more work needs to be done on the package, for public release soon.
+
+<p><b>On comparative maps:</b> one would want to find all maps that contain markers  that are in a sequence, through the Probe-tag and then the Locus which is in a map.
+
+<p><b>More general discussion:</b> Folks went into a more general discussion of cross-database queries, the problem of non-identical models and relating data in ACeDB to data in relational databases.
+
+<p>Pros:
+
+<ul>
+  <li>Simple to maintain and extend
+  <li>Easy to extend for new questions, by following connections betweeen the databases.
+</ul>
+
+<p>Cons:
+<ul>
+  <li>Not dynamic enough, better to store queries than query results. How about creating a special class of external queries.
+</ul>
+
+<hr>
+
+<h3>Richard Bruskiewich: SMAP/Links/chromosomes</h3>
+
+<p><b>Intro:</b> the incompleteness of genomic sequences, even for chromosome 22 (Sanger). Some issues with this and how to make ACeDB handle this better.
+
+<p><b>Issues:</b>
+<ol>
+  <li>Sequences keep changing throughout the sequencing process
+  <li>Version numbers are dominant
+  <li>ACeDB has problems with sequence data conflicts in contig overlaps (gapped alignments needed..)
+  <li>Hard to remap annotations to new versions/assemblies.
+  <li>How to annotate genomic polymorphisms? (SNPs, deletions etc.)
+</ol>
+
+<p><b>Chrom2 strategy:</b>
+
+<p>Clone overlaps established (trim-left, trim-right) bp location of overlap point relative to seq. Script that ran on  dbase and found those overlaps and heuristic-algorith found the continous sequence. This would be fine-tuned for special situation, where you had perhaps knowledge of deletions or something in the region.
+
+<p><b>Principles:</b>
+<p>A multiple sequence  alignment (MSA) concept is needed, for representing features in more than one context, instead of constraining them to ONE sequence. Some kind of meta-coordinate frame could allow you to do this kind of comparisons, to cross-comparisons
+
+<p><b>Some ideas:</b>
+
+<pre>
+?Alignment          MSA          'Rearrangements, polymorphisms, metacoordinate frame'
+                    |
+?Superlink      Chromosome        'Gapped, ordered set of clones'
+                   | 
+?Link            Contig           'Ungapped seq path'
+                   |
+?Sequence        Clone            'the real sequence'
+                   |
+?Feature         (GFF)     '1st order subsequences, labeled for function, annotation'
+                   |
+?Transcript/?Gene Composite
+                  features               'multi-level abstractions of features'
+
+</pre>
+
+<p>Some kind of IMAP (integrated from GMAP/FMAP/Blixem), a display that would display gaps, chromosomes, synteny-regions (mouse-2-human), rearrangements. One could zoom down and see the feature. Close coupling of enhanced GMAP and enhanced  FMAP displays with a seq-only display. Independent zooming and panning at each level, based on a common metacoordinate system based upon the MSA.
+<br>
+So, instead of viewing the features in context of one sequence, one could view, say, two versions of the same sequence (patient vs. disease) and see the features in each side by side. A like an exon feature may be present in one, but not in the other because of a deletion or rearrangement.
+
+<p>Doug pointed out that this kind of system would be useful for questions at the level of small variations like SNPs up to the level of larger rearrangements and whole-chromosome  synteny questions.
+
+<p>There are some considerations regarding multiseq-alignments representations, like which letters to use for variations in the DNA-seq (IUPAC for SNPs etc.)
+
+<p>Finally Richard D. took over with a short low-level discussion on the possibilities for such a system using existing code and what might have to modified. Missed most of it, sorry..
+
+<hr>
+<h3>Richard Durbin: on sequence display stuff, feature consideration for SMAP</h3>
+
+<p>What we want to do is assemble some draft sequence of various forms (finished/unfinished, in pieces perhaps) and display it along with genes and other things, like the reference sequence.
+<pre>
+Refseq:  ---------------------------------------------------------
+Seq A:   ---------------------
+Seq B:                   ------------------------
+Seq C:                                        ------------------------
+
+Genes:   ........       .............  .  ....            .....
+</pre>
+
+<p>Things to think about
+<ol>
+  <li>How to obtain the ref seq?
+  <li>how to map relevant features to the ref
+  <li>How to treat haplotypes (no ref seq)?
+  <li>.something I couldn't read ;( 
+</ol>
+
+<p><b>Solutions:</b>
+<p>ACeDB currently uses "recursive mapping", so that each sequence can have only one parent, which in turn can map onto its parent and so on:
+<pre>
+Sequence Ref
+   Subsequence A 1 1000
+               B 800 2000
+	       etc.
+</pre>
+<p>The problems with this approach is that all the overlap data needs to match exactly with all the other stuff for the whole thing to work.
+
+<p><b>The new idea:</b>
+<p> What is needed could be something like a structure class, using a Tag-2 coordinate system, to position anything on a map.
+<pre>
+Virtual_sequence R
+  SMap S_child  SeqChild  A 1 1000
+                          B 200 2000
+			  etc.
+
+<i>and</i>
+
+SeqA
+  Smap S_parent Virtual_parent R
+       S_child  Feature GeneA 200 500
+
+</pre>
+<p>So that any object could have any other object as its child. Features would become objects themselves.
+
+<p><b>Dealing with mismatches:</b>
+<p>The mismatches could be reported within the parent in relation with the child.
+<pre>
+Virtual_sequence R
+  SMap S_child  SeqChild  A 1 1000 Adj 1 800
+                                       802 1000
+                                   Mismatches 801
+</pre>
+
+<p>Folks got a bit distracted here discussing the issue of actually forming the reference sequence. If you have two sequence with different bases at a mismatch-position, which one should dominate? Should any quality-values be attached to the mismatches and ACeDB follow some procedure to decide on the final ref-sequcence? Or should it remain as it has, and only display what it is given and have an external program do the actual refseq-building?
+<br>It is obvious that there are different opinion on this subject, with Richard D. firmly in favour of the more 'static' approach of displaying the data, and folks like Lincoln in favour of a more complex system of high/medium/low quality values for the mismatches. We'll see what happens...
+
+<p><b>Representing genes:</b>
+<p><i>the old way (missing pictures here of exon/CDS/mRNA)</i>:
+<pre>
+Sequence "SeqA"
+  Subsequence SeqD 200 500
+  Subsequence SeqDm 3400 3800
+
+Sequence "SeqD"
+  Source SeqA
+  Source_exon 1 80
+              130 500
+</pre>
+
+<p><i>A possible new way:</i>
+<pre>
+Sequence "SeqA"
+  S_map   S_child Transcript_child D 3001 4000
+                  Exon_child D1 3001 3080
+                  Intron_child D2 3081 3600
+
+Transcript D
+  S_map S_parent Sequence_parent "SeqA"
+        Exon D1
+        Intron D2
+</pre>
+<p>Or one could also have a kind of proto-children, like "feature" from start to stop, and then specify the type, to generelize the scenario further.This system would also extend conveniently to alternate exon splicing, since the alternate forms could use the same exon or transcript objects. That would of course be very natural, biologically.
+
+<p><b>Mismatch blues:</b>
+<p>A Perl-script that recalculates the overlaps parameters so that the whole thing if changes are made....didn't quite get this bit though.( Let's get the script into the /wtools-dir ..)
+<br>A lazy approach is to see the sequences as mapping onto the ref-seq, and forget about those mismatches (a non-ACeDB task..), but they would be of course stored in the database. 
+<br>OR, simply run an external program to reassemble the whole thing to match
+
+
+<hr>
+
+<h3>Whole group: XML discussion</h3>
+
+<p><b>Overview:</b>
+<p>XML looks like a good match to ACeDB, matching the tree-structure with its object-within-object syntax, and Document Definition Types could be exported along with data in Keyset, bringing the description of the model in question with it. Same for data imports.
+<br>If this could be done, ACeDB data could be manipulate with programs that manipulate XML-formatted data.
+
+<p><b>Proposed standard (Lincoln):</b>
+<p>- must get Lincoln to jot description down -
+
+<p>At least it is clear that ACeDB's policy of a tag being unique within a model fits quite nicely with XML's way of thinking. It is mainly the multi-value data fields (like <i>Homol</i> that could cause trouble. But there are several ways around that problem (see Lincoln's details on this)
+<p>
+
+<hr>
+
+<h3>AceBrowser displays n'stuff</h3>
+<p><a href="http://acedb2000.bcgsc.bc.ca/~hmcwill/UKCropNet.html">Here is a page with some demos</a> that were used yesterday's discussions of AceBrowser displays, courtesy of Hamish. Missed that one myself.
+
+
+</body>
+</html>
+
+
+

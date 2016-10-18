@@ -1,0 +1,130 @@
+<HTML>
+
+<HEAD>
+  <TITLE>AQL - Future developments</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="./aql.css" TITLE="Style sheet for AQL docs">
+</HEAD>
+<BODY>
+
+
+<H2>AQL - Future developments</H2>
+
+
+<UL>
+<LI><FONT SIZE=+2>Optimisation techniques</FONT>
+  <P>
+     <OL>
+       <LI> <FONT SIZE=+1>uncorrelated subqueries</FONT>
+         <P>list all movie titles with an above-average rating</P>
+         <CODE><EM>select</EM> m->Title <EM>from </EM>m <EM>in class</EM> Movie <EM>where</EM> m->Rating > <EM>avg</EM>(<EM>select</EM> m->Rating <EM>from</EM> m <EM>in class</EM> Movie)</CODE>
+
+	 <P>The subquery is inside the <TT><EM>avg</EM>()</TT> expression is 
+	 clearly unrelated to the outer main-query, as it generates 
+	 just one value independent of the outer query. In the current 
+	 logic of the language it will be evaluated over and over again 
+	 for every movie that has a <TT>->Rating</TT> value.</P>
+
+	 <P>Currently this query has to be optimised by hand into the form:</P>
+	 <CODE>$x := <EM>avg</EM>(<EM>select</EM> m->Rating <EM>from</EM> m <EM>in class</EM> Movie); <BR>
+	          <EM>select</EM> m-&gt;Title <EM>from</EM> m <EM>in class</EM> Movie <EM>where</EM> m-&gt;Rating &gt; $x</CODE>
+
+	<P><HR WIDTH=50%></P>
+       <LI> <FONT SIZE=+1>more semantic-sensitivity</FONT>
+         <P>These two queries have the same result :-</P>
+
+	 <CODE><EM>select</EM> p, m<BR>
+               <EM>from</EM> p <EM>in class</EM> person, m <EM>in class</EM> movie<BR>
+	       <EM>where</EM> p->Stars_In = m</BR>
+	       <BR>
+	       <EM>select</EM> p, p->Stars_in<BR>
+	       <EM>from</EM> p <EM>in class</EM> person<BR>
+         </CODE>
+	 <P>but the first one would take much longer - 
+	 the query loops over a cartesian product of both classes (Person and Movie),
+	 and then then cuts down the result to the tuples for which the <U>where-clause</U> matches.</P>
+
+     </OL>
+
+<P><HR></P>
+
+<LI><FONT SIZE=+2>Language extensions</FONT>
+  <P>
+     <OL>
+        <LI> <FONT SIZE=+1>more built-in methods</FONT>
+	  <P>More built-in string method like:-</P>
+
+	  <P><CODE><EM>select</EM> m <EM>from</EM> m <EM>in class</EM> map <EM>where</EM> m.<EM>substr</EM>(1,3) = "Chr"</CODE></P>
+
+	  <P>Other string operators could solve problems like the extraction of the
+	  first/last name from the <TT>author->Full_name</TT> strings, etc..</P>
+
+	<P><HR WIDTH=50%></P>
+        <LI> <FONT SIZE=+1>definition of methods</FONT>
+
+          <P>methods are defined upon the default locator, and can later be used on any locator</P>
+
+	  <P><CODE>#size := [2]-[1] <EM>where</EM> [2] > [1] + 30000;<BR>
+                   <EM>select</EM> x, x.size<BR>
+		   <EM>from object</EM>("Sequence","AH6")->Subsequence <EM>as</EM> x<BR>
+		   <EM>order by</EM> x.size</CODE></P>
+
+          <P>replaces</P>
+
+          <P><CODE><EM>select</EM> s, size::s[2]-s[1] <BR>
+                   <EM>from object</EM>("sequence","LINK_AH10")->subsequence <EM>as</EM> s<BR>
+		   <EM>where</EM> s[2] > s[1] + 30000 <BR>
+		   <EM>order by</EM> :size</CODE></P>
+
+	   <P>It is questionable, whether such functionality, shouldn't be provided by the
+	   underlying database, i.e. the sequence model had a <I>calculated</I> field
+	   that is updated when any of the fields that it is based on are updated.
+	   This would require the implementation of <B>Constraints</B> and <B>Triggers</B>
+	   in ACeDB.</P>
+
+
+	<P><HR WIDTH=50%></P>
+
+        <LI> <FONT SIZE=+1>Sorting by expression values</FONT>
+	   <P>Currently one can only sort by values that are evaluated as 
+	   select-fields and included in the results table. In some cases
+	   it would be nice to sort by People's age, for instance, but not 
+	   actually report it.</P>
+
+	   <P>It would be very hard to do in one go, as one can only 
+	   sort tables once their completely filled in, but not as they 
+	   are made. One approach is transform queries like this</P>
+
+	   <P><CODE><EM>select</EM> p <EM>from</EM> p <EM>in class</EM> person <EM>order by yeardiff</EM>(p->date_of_birth,<EM>today</EM>)</CODE></P>
+
+	   <P>into</P>
+
+	   <P><CODE>@tmp := <EM>select</EM> p, <EM>yeardiff</EM>(<EM>today</EM>,p->date_of_birth) <BR>
+	            <EM>from</EM> p <EM>in class</EM> person <EM>order by</EM> :2;<BR>
+		    <EM>select</EM> a:1 <EM>from</EM> a <EM>in</EM> @tmp</CODE></P>
+
+
+
+
+	<P><HR WIDTH=50%></P>
+        <LI> <FONT SIZE=+1>A data manipulation language (DML)</FONT>
+	  <P>It is desirable to be able to use AQL to update the database, and add new data by AQL commands.
+	  It'd be nice if that could be close to the way SQL and OQL do additions and updates.</P>
+
+
+
+
+	<P><HR WIDTH=50%></P>
+	<LI> <FONT SIZE=+1>A data definition language (DDL)</FONT>
+	  <P>A well-defined format for database creation, schema-definition would take the
+	  pain out of writing and verifying the 'models.wrm' file by hand.</P>
+
+     </OL>
+
+</UL>
+
+
+<HR>
+<ADDRESS><A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A></ADDRESS>
+
+</BODY>
+</HTML>

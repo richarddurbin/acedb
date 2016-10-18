@@ -1,0 +1,41 @@
+<html>
+<LINK rel=stylesheet type="text/css"
+href="../wdoc.css"
+title="Style sheet for wdoc developer documents">
+<body>
+<h3>Intuitive compare function in AceDB utils.c.</h3>
+
+<h3>lextstrcmp()</h3>
+<p>
+Although lexstrcmp has been available in AceDB since the early 1990's its full functionality
+is not widely known, so it seems worth documenting it and a recent enhancement.  It provides
+a means of sorting strings of mixed alpha and numeric characters into a more intuitive order
+than is possible using the standard alphabetic sort routines more normally associated with
+computers.
+</p>
+<p>
+The intention is to sort strings like A11B and A100B into the order which I regard as
+intuitive, ie A11B precedes A100B, rather than the default alphabetic processing which would
+place A100B before A11B.
+</p>
+<p>The routine is used by passing it char * pointers to the two strings to be compared.</p>
+<pre>
+Prototype:
+    int lexstrcmp(char *a,char *b);
+Examples:
+    if (lexstrcmp(cp, name(tag)))
+    return lexstrcmp(cp,cq) <= 0  ? TRUE : FALSE ;
+    cmpClass = lexstrcmp(Text(objA), Text(objB));
+</pre>
+<p>
+In addition to this, a new function, <strong>arrstrcmp()</strong> has been provided recently.
+This is simply a wrapper routine which allows lexstrcmp to be utilised when sorting arrays,
+something not previously possible.  It takes the void pointers that qsort requires it to
+have as parameters, casts them to char ** and dereferences them, since what is being sorted is
+an array of pointers to character strings.
+<p>
+To use the new routine when sorting an AceDB array called myArray, specify it as follows:
+arraySort(myArray, arrstrcmp);
+</p>
+<hr>
+</body>

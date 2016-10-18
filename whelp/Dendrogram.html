@@ -1,0 +1,834 @@
+<HTML>
+
+<HEAD>
+<TITLE>Dendrogram Tree</TITLE>
+</HEAD>
+
+<BODY BGCOLOR=#ffffff LINK="#0000ff" VLINK="#800080">
+
+<A NAME="Top"><H2>Dendrogram Tree Display</H2></A>
+
+<P>
+  <A HREF=dndrgm.gif><IMG SRC="dndrgm.gif" WIDTH=590 HEIGHT=441 ALT="[screenshot]"></A>
+</P>
+
+<P>This display type is not to be confused with the generic ACEDB "Tree" display. The Dendrogram display represents true multi-object data ?Tree objects such as taxonomy, phylogenetic trees (of DNA sequences or proteins, for instance) and developmental cell lineages. ?Tree objects are composed of a "tree" of objects in the computing sense of a data tree, that is, the display recursively traverses "parent-child" linked ?TreeNode objects rooted from the "Root" tag of the ?Tree object in question.</P>
+<H3>Contents</H3>
+
+<UL>
+<LI><A HREF="#Input">Tree Data Input</A> </LI>
+<LI><A HREF="#Navigating">Navigating the Tree</A> </LI>
+<LI><A HREF="#Buttons">Menu Buttons</A> </LI>
+<LI><A HREF="#Menu">Pop-Up Menu</A> </LI>
+<LI><A HREF="#Display">Display Information &amp; Configuration</A> </LI>
+<LI><A HREF="#Models">Associated ACEDB Models</A></LI>
+<LI><A HREF="#Bugs">Known Bugs</A></LI>
+</UL>
+
+<P><HR></P>
+
+<H3><A NAME="Input">Tree Data Input</A></H3>
+
+<P>The ?Tree and associated ACEDB models guiding dendrogram
+construction are described at the end of this document 
+(see <A HREF="#Models">Models</A>). 
+</P>
+
+<P>Tree data may be read into ACEDB from the main ACEDB class window
+popup menu (under Phylogenetic Trees) as a "New Hampshire" formatted
+tree file (the standard Phylip format for trees, default file
+extension ".ph") . Users may designate the tree being input as a
+"taxonomy", "DNA sequence" or "Protein Sequence" tree, depending upon
+the menu item selected. If no ?Tree name is given in the .ph file (as
+the first "root" label), then the user is prompted for such the
+name. </P>
+
+<P>Tree data (including cell lineages) may also be input directly as
+ACEDB formatted ?Tree and ?TreeNode objects (with attached ?Taxon,
+?Sequence and/or ?Protein objects) by the usual ACEDB methods: with
+direct object creation/updating or by using .ace data files (formatted
+as per the "Associated Models" below). <B><I>Note</I></B>: "New
+Hampshire" tree input modality does not currently apply for "cell
+lineage" trees, Embedded_Tree ?Tree's, etc. which must be input using
+direct ACEDB methods.</P>
+
+
+<P>In general, the display code assumes that given ?TreeNode objects
+in a given ?Tree are unique (un-duplicated, non-cyclic) in the
+tree. Also, "Embedded ?Tree's" should probably not be directly or
+indirectly self referential! Undefined problems may occur in
+dendrogram displays if this is not the case.</P>
+
+<P><B><I>"New Hampshire" format</I></B> </P>
+
+<P>The "New Hampshire" format consists of parenthesized, comma
+delimited nested lists of items representing the structure of a
+tree. A list is composed of atoms (leaves) or lists (subtrees). The
+outer list is terminated by a semi-colon. Everything in the file
+following the semi-colon is ignored. Any item (including sublists) in
+a list may be labeled and/or may have a numerically descriptive suffix
+with either or both a float number label designating bootstrap value
+and a second float number (after any bootstrap value and prefixed with
+a colon) designating a subtree "branch length" (i.e. " (...)100:0.56"
+where 100 is the bootstrap value and 0.56 is the distance (the (...)
+denoting the subtree list itself). Alternatively, the bootstrap value
+may be a number enclosed in square brackets, coming after the branch
+length value (i.e. (...):0.56[100] alternative notation for the
+previous example).</P>
+
+<P>All that been said, unlabeled nodes and/or nodes without distances
+and/or bootstrap values are perfectly acceptable.</P>
+
+<P>Valid labels must begin with an alphabetic character but may
+contain other characters. The nature of tree parsing is such that
+whitespace in the .ph file is ignored. In order to put a space into
+any label, substitute "_" for the spaces in the label string. If an
+underscore "_" is required in a label, the backslash "\" character can
+be used to "escape" the very next character. The backslash character
+may also be used to insert a space or any of the special characters in
+the following string: "_\{}[](),; :" (not including the double
+quotation marks).</P>
+
+<P>Labels may be placed either before or after a list description
+corresponding to a subtree (or the total tree). If the label is placed
+<B><I>before</I></B> the list, then it may be used for labelling the
+?TreeNode in taxonomic and cell lineage trees. For DNA or Protein
+trees, the label is only inserted into the Label Text tag-value field
+of the ?TreeNode but not used as the ?TreeNode name. If a label is
+found <B><I>after</I></B> the list, it is used in the "Label" value
+only.</P>
+
+<P>Valid numbers (distance and bootstrap values) must begin with a
+digit (even if only a zero) and may contain a decimal point. Negative
+signs on numbers are ignored (but the user is notified if one is
+encountered).</P>
+
+<P>The following is an example of a tree encoded New Hampshire format:</P>
+
+<PRE>
+(A,B:10.0,C(D:3.0,(E:2.0):4.0,,F:2.0)1.0:13.0,(G:2.0,H:1.0):5.0[0.9]);</PRE>
+<P>(approximately) representing the tree:</P>
+<PRE>
++-A
+|
++----------B
+|       +---D
+|   100%      |
++-------------C--E
+|       |
+|       +-?  ? == an unlabeled ?TreeNode
+|       |
+|       +--F
+|     +--G
+| 90% |
++-----+
+      |
+      +-H</PRE>
+
+<P>The "Phylogenetic Tree" popup menu item gives you the choice of
+entering a "Taxonomic", "DNA Sequence" or "Protein Sequence"
+tree. Depending on which option you pick, your leaf node label names
+are automatically used to generate ?Taxon, ?Sequence or ?Protein
+objects, respectively, during tree input. In the case of "Taxonomic"
+trees, interior node labels are also used to generate ?Taxon objects
+(i.e. for higher "rank" taxons, e.g. phylum, order, family, genus,
+etc... see "Associated Models" below). </P>
+
+
+<P>Once entered, the trees may be edited using all the usual ACEDB
+techniques of object editing (i.e. object Updating). No specialized
+tool for tree editing is currently available; however, the semantics
+of the models is simple enough: the UNIQUE Parent and the Child nodes
+of ?TreeNodes may be deleted or modified to "manually" prune from, or
+graft subtrees onto, each other. Also, manual editing (or .ace file
+input) can add additional node data which is not easily input in the
+New Hampshire format, e.g. ?Taxon colour coding, associated sequences,
+etc.</P>
+
+<P><B><I>*** ACEDB Extensions to the basic New Hampshire standard ****</I></B> </P>
+
+<P>The "C" label above just before the sublist is interpreted as
+"interior" node label for the subtree. Such labels, with or without
+Taxon embellishments (see below) may either preceed (prefix) or come
+after (postfix) a sublist (Developer's Note: I think that "postfix"
+labels are the convention in the New Hampshire tree definition
+standard, but the ACEDB dendrogram tree data input facility accepts
+both prefix and postfix labels; however, only prefix labels are used
+in ?TreeNode ACEDB object names; postfix labels merely set the Label
+Text tag-value of the ?TreeNode, or the Taxon embellishment (see
+below)). </P>
+
+<P>The "interior" node labeling facility is especially useful for
+Taxonomy trees or for labeling subtree cuts ("subfamilies") of
+phylogenetic trees. <B><I>Note: One can even label the "Root" node of
+a tree in this way. In fact, if such a label is provided, it is also
+taken to be the name of the ?Tree, by default (i.e. the user is not
+prompted for the tree name).</I></B> </P>
+
+<P>An additional ACEDB specific extension to the basic New Hampshire
+standard trees is that ?Taxon rank may be specified in between the
+internal label and the list, as a brace ("{" and "}") enclosed tag
+field. The tag name must be listed under the "Rank" tag in the ACEDB
+?Taxon model class. For example, a "Taxonomic" tree describing the
+nematode would be written as follows (several taxa omitted for
+clarity):</P> <P>NCBI_Taxonomy(Eukaryotae {Superkingdom}(Metazoa
+{Kingdom}( Nematoda {Phylum} ... (Caenorhabditis {Genus}(
+Caenorhabditis_elegans{Species}))))))))))));</P>
+
+<P>Alternatively, the taxon name may appear within the "rank" list,
+delimited by a colon. Thus, the above "Taxonomic" tree can be
+equivalently written:</P>
+
+<P>NCBI_Taxonomy ({Superkingdom:Eukaryotae}( {Kingdom: Metazoa }(
+{Phylum: Nematoda } ... ({Genus: Caenorhabditis }( {Species:
+Caenorhabditis_elegans }))))))))))));</P>
+
+<P>The merits of this latter syntax is that Sequence and Protein trees
+may attach a "{Species:&lt;name&gt;}" value to their leaf labels,
+which will be sequence names. Note that when you input taxonomic trees
+in this manner, it is generally necessary to provide the whole
+taxonomic path complete with taxon rank labels for every level, to
+guarantee the proper construction of the taxonomic subtree.</P>
+
+<P><B><I>Troubleshooting a Tree Parse Failure</I></B></P>
+
+<P>Sometimes, ACEDB will fail to successfully parse in a given tree
+file. The program will generally give an error message giving some
+indication of the source of the parse failure. Common (indirect)
+reasons for failure include unmatched parentheses, braces, brackets,
+or commas. If the program complains about a missing comma, check also
+for labels in which you have used spaces rather than underscores to
+indicate blank characters. Remember that labels must begin with a
+character and numbers with at least a digit (not a decimal point).</P>
+
+<P>Back to <A HREF="#Top">Top of Page</A> | <A HREF="TOC.html">Table of Contents</A></P>
+
+<P><HR></P>
+
+<A NAME="Navigating"><H3>Navigating through the Tree</H3></A>
+
+<P>Both the mouse and the keyboard may be used to navigate through a
+tree and display associated information. Refer to the corresponding
+tables about keyboard and menu operations (below). Clicking the "Middle" mouse
+button (or "shift+Left mouse button" in a two button mouse) scrolls
+the tree display to centre it at the point of the mouse click. "Page
+Up" and "Page Down" can be used to scroll the display too.</P>
+
+<P>The active (clickable) components are the ?TreeNodes, which may be
+unlabeled or labeled. Tree nodes have two parts, an 'anterior' node
+box and a 'posterior' label box (possibly empty). The primary feature of
+the 'anterior' box is a small circles designating the node. The context
+of the anterior versus posterior node box is slight different, with 
+respect to double clicking actions and pop-up menus; however, when
+either box is selected, the whole tree node becomes 'currently active'
+with highlighting. The actual colour of a highlighted node is
+influenced by the setting of tags in the model, as follows:
+<UL>
+  <LI>If no tags are set, or if the display is in 'Black n' White' (not colour) mode,
+      then the default colour of a selected 'anterior' node box is
+      green, while its corresponding 'posterior' label box is labelled blue.</LI>
+  <LI>If the display is in 'Colour' mode, and if
+      the 'Display' Colour tag of a given node or any 'Parent' node above it
+      in the tree is set to a colour, then the 'anterior' node (as are the branch lines)
+      is set to that colour. Local settings of a given node Display Colour override any
+      colour setting inherited from a parent, and is propagated down its subtree.</LI>
+  <LI>If the  display is in 'Colour' mode, and if the node has an associated ?Taxon
+      which has its Colour tags set, then the 'posterior' node label is drawn
+      in the complement to that colour.</LI>
+</UL>
+</P> 
+<P>Nodes without a subtree (child nodes) attached or the root nodes of hidden subtrees are
+treated as "leaves" of a tree for the purposes of navigation.</P> 
+
+<P> <B><I>Displaying Associated Data</I></B> </P>
+
+<P>As expected, one mouse "pick" of a tree node label highlights it,
+and a second pick (or "double click") results in the display of
+information associated with the node. Alternatively, highlighting
+nodes, followed by pressing of the "Enter" key, also result in such a
+data display. The manner of display is object specific: i.e. ?Sequence
+objects give a "feature map" display; ?Proteins give a "peptide map"
+display; Embedded_Tree ?Tree's give a new dendrogram display. For user
+reference, the ACEDB text only object records are also concurrently
+displayed for the non-text displayed objects. This is now a general
+"tag2" driven feature: any ?TreeNode "Contains" associate tag-value
+with a non-textonly ACEDB display type, will be displayed with its
+default display when the treenode is "displayed". Generally, 
+all associated information under the "Contains" tag of the tree node 
+object is concurrently displayed.  If no 'Contains' tag associated
+data is found, the ?TreeNode object itself is displayed by default 
+(as 'text only') <B><I>Note:</I></B> ?Tree's may be embedded in ?TreeNode's
+of other ?Tree's. Clicking on such a node generates display of the
+associated ?Tree in a new ACEDB display window.</P>
+<P>Pop-up menu commands (see below) are also available to display 
+'Contains' tag associated data as 'text only' or to display the
+underlying ?TreeNode data object rather than the associated data.</P>
+<P>?Protein and ?Sequence objects (and any other class with a Species
+?Species tag-value pair) will also trigger display of any embedded
+"Taxon ?Taxon" or "Species ?Species" data from their own object
+(i.e. not the ?TreeNode but the ?Protein/?Sequence object itself). If
+a ?TreeNode contains a Taxon ?Taxon tag-value pair, though, this
+overrides the Species in any associated ?Protein or ?Sequence
+object.</P>
+
+<P>"Pick_me_to_call" tag/value pairs may be used to invoke scripts
+(e.g. to display node associated jpeg or gif images). The default
+"ground state" of information is a ?TreeNode object record. For tree
+nodes without labels, the ?TreeNode associated data may always be
+displayed by selecting the given node then doing a "Show selected
+object as text" popup menu operation.</P>
+
+<P><B><I>Hiding Subtrees</I></B></P>
+
+<P>Double picking tree node circles results in the
+expansion/contraction of the subtree rooted by the given node. Hidden
+subtrees are indicated by an arrow and a number indicating the total
+number of leaves in that (hidden) subtree. Double clicking a hidden
+subtree root node exposes the subtree. See also "Insert/Delete" keys
+and the popup menu "Hide/Show Subtree" below. Using the Right Arrow
+from the root node of a "hidden" subtree, also automatically expands
+that subtree.</P>
+
+<P><B><I>Phylogenetic Tree "Bootstrap" Values</I></B></P>
+
+<P>If subtree phylogenetic (float) "bootstrap" values are available in
+a ?TreeNode, they are displayed to the right of the tree node
+circle. Raw bootstrap values in the ?TreeNodes may be normalized using
+the ?Tree..<B><FONT COLOR="#ff0000">Bootstrap_Factor</FONT></B>
+tag-value (i.e. actual displayed bootstrap value is
+?TreeNode..<B><FONT COLOR="#ff0000">Bootstrap</FONT></B> /
+?Tree..<B><FONT COLOR="#ff0000">Bootstrap_Factor</FONT></B>). 
+<B><FONT COLOR="#ff0000">Bootstrap_Factor</FONT></B> is 1.0 by default. If the
+displayed bootstrap value is in the range of 0.0 to 1.0, the value is
+displayed as a percentage 0% to 100%. Bootstrap values should be
+positive (if negative, the sign is ignored). The display of the
+bootstrap values is globally controled by the 
+?Tree..<B><FONT COLOR="#ff0000">Hide_Bootstraps</FONT></B> tag. The
+?TreeNode..<B><FONT COLOR="#ff0000">Hide_Bootstraps</FONT></B> tag
+hides the bootstraps for a complete subtree. This latter setting is
+overridden for any given node by the 
+?TreeNode..<B><FONT COLOR="#ff0000"> Show_Bootstrap</FONT></B> tag.</P>
+
+<P><B><I>Keyboard Operations</I></B></P>
+
+<P>The keyboard may also be used to navigate through the tree. The
+following keys (and their effects) are available. If "Needs Active
+Node" is "Yes" then the key only has an effect if a node is currently
+selected. In most cases, the display is scrolled as necessary to bring
+the given tree node into view.</P>
+
+<P><I><B>Key (Needs Active Node?) Effect &nbsp;</B></I></P>
+<P><B>Home</B> (No) Go to first leaf in the tree</P>
+<P><B>End</B> (No) Go to last leaf in the tree</P>
+<P><B>Enter</B> (Yes) Display the information associated with the current Node</P>
+<P><B>Right Arrow</B> (Yes) Go to first child Node in subtree of the current Node; expand if hidden</P>
+<P><B>Left Arrow</B> (Yes)  Go to the parent Node of the current Node</P>
+<P><B>Down Arrow</B> (Yes) Go to the next "sibling" Node/subtree of the current Node</P>
+<P><B>Up Arrow</B> (Yes) Go to the previous "sibling" Node/subtree of the current Node</P>
+<P><B>Space Bar</B> (Yes; Leaf Node) Go to the next leaf Node or hidden subtree from the current Node</P>
+<P><B>Backspace</B> (Yes; Leaf Node) Go to the previous leaf Node or hidden subtree from the current Node</P>
+<P><B>Tab</B> (No) Toggle between labels only and descriptive labels (w/taxon)</P>
+<P><B>Escape (Esc)</B>(No)  Toggle between branchline/taxon "black 'n white" and colour mode</P>
+<P><B>Insert</B>  (Yes) Update the current tree Node object (using ACEDB object updating) </P>
+<P><B>Delete</B> (Yes) Toggle expansion/contraction of the subtree rooted by the current Node</P>
+<P>&nbsp;</P>
+
+<P>Back to <A HREF="#Top">Top of Page</A> | <A HREF="TOC.html">Table of Contents</A></P>
+
+<P><HR></P>
+
+<A NAME="Display"><H3>Display Information and Configuration</H3></A>
+
+<P><B><I>Node Labels</I></B></P>
+
+<P>If an explicit or inferred label is associated with the tree node,
+it is printed after the ?TreeNode circle. Labels may either be
+"simple" or "long, descriptive" depending upon the current setting of
+the "?Tree..<B><FONT COLOR="#ff0000">Descriptive_Labels</FONT></B>"
+tag or selection of the popup menu "Toggle Labels" function. Simple
+labels are derived from the tree type specific "Contains" object name
+(i.e. the ?Taxon object in a Taxonomy tree, ?Sequence object in a DNA
+tree, ?Protein object in a Protein tree). Where no such tree type
+specific object exists, but where at least one "Contains" tag2 object
+is present (e.g. ?Gene_Family), its object name will be used as the
+source of the label. Otherwise, if the ?Tree type is Taxonomy or Cell
+Lineage, then the ?TreeNode name is used as the label
+source. Otherwise, the node is displayed unlabelled.</P>
+
+<P>Generally, in practice, all taxonomy tree nodes will be labeled,
+while only the leaves of phylogenetic (sequence/protein) trees will be
+so labeled, although one could also label subtrees by "Gene
+Family". For trees NOT of the "Taxonomy" type, interior nodes of the
+tree are generally unlabeled unless the "Label Text" field of the
+?TreeNode is set; however, all tree "leaves" are labeled with the name
+of the associated object (?Sequence or ?Protein) name, or the
+?TreeNode name, if the former tag values are absent from the
+?TreeNode. In contrast, the interior nodes of "Taxonomy" trees are
+also labeled, with the ?Taxon or ?TreeNode object name. In all
+trees. The "Toggle Labels" popup menu item toggles labels between the
+?TreeNode "Label Text" field value and a more descriptive name
+extracted from certain tag-value fields of an associated "Contains"
+object, currently: 
+?Taxon - "<B><FONT COLOR="#ff0000">Common_name ?Text</FONT></B>";
+?Sequence/?Protein - "<B><FONT COLOR="#ff0000">Title ?Text</FONT></B>"; 
+?Cell - "<B><FONT COLOR="#ff0000">Fate ?Text</FONT></B>"; 
+or "<B><FONT COLOR="#ff0000">Description ?Text</FONT></B>" 
+tag-value, if it exists for any other "Contains" tag2 object in 
+the given ?TreeNode.</P>
+
+<P><B><I>Copying Labels and Data to the Clipboard</I></B></P>
+
+<P>The label of the currently active tree node may be copied to the
+system "clipboard" for pasting elsewhere in ACEDB (or in another
+application), by selecting "copy" in the dendrogram pop-up menu or by
+the usual system-specific defined manner. <B><I>Special Note</I></B>:
+You may also copy the contents of the display's header message box (if
+visible) by picking the box then immediately selecting "copy". Picking
+the message box in this manner does NOT change the currently selected
+tree node (and the message box itself does not change in appearance -
+the operation takes place silently, but also overwrites the current
+contents of the ACEDB post buffer, which may have previously contained
+the active node's label...)</P>
+
+<P><B><I>Dendrogram Colouring</I></B></P>
+
+<P>The displayed lines and nodes may be colour coded if suitable
+"#Colour" tags are set in the data objects used to construct the
+tree. Specifically, setting the Display Colour #Colour tag of the
+?TreeNode dictates (recursively) the colour of lines and nodes in a
+given subtree, until overridden by a similar tag in a descendent
+?TreeNode (for its subtree). </P>
+
+<P>Similarly, setting the Display 
+"<B><FONT COLOR="#ff0000">Foreground_Colour</FONT></B>" and 
+"<B><FONT COLOR="#ff0000">Background_Colour</FONT></B>" #Colour tags of
+associated ?Taxon objects will override the subtree colour of the node
+labels "by taxon". This latter feature is especially useful to colour
+code a phylogenetic (?Sequence or ?Protein) tree by species. For this
+latter feature, curators have a choice of either embedding a Taxon
+?Taxon value directly into the ?TreeNodes or putting a 
+"<B><FONT COLOR="#ff0000">Species ?Species</FONT></B>" 
+tag-value pair directly into the associated ?Protein or ?Sequence 
+object under "Contains" in a given ?TreeNode (this latter approach 
+probably being a more sensible way to organize things ...)</P>
+
+<P>Bootstrap values for subtrees may be loaded in from tree files,
+stored in the ?TreeNodes and displayed next to the nodes in the
+display. Bootstrap values are globally displayed by default unless
+disabled by the 
+?Tree "<B><FONT COLOR="#ff0000">Hide_Bootstrap</FONT></B>" tag 
+(or hidden from the pop up menu toggle for bootstraps). Subtrees 
+may have all their bootstrap values hidden by a local 
+"<B><FONT COLOR="#ff0000">Hide_Bootstrap</FONT></B>" tag 
+in the ?TreeNode rooting the subtree. This global and subtree based 
+"<B><FONT COLOR="#ff0000">Hide_Bootstrap</FONT></B>" behaviour may 
+be overridden locally, for a single given ?TreeNode, by setting the 
+"<B><FONT COLOR="#ff0000">Show_Bootstrap</FONT></B>" tag.</P>
+
+<P>Setting the "<FONT COLOR="#ff0000">Display Hide</FONT>" tag in a
+?TreeNode dictates that a given subtree rooted by the ?TreeNode is
+initially displayed as hidden.</P>
+
+<P>The ?Tree model class controls default alignment (Top, Middle or
+Bottom) of the dendrogram tree (set to "Top" for Taxonomic trees,
+"Middle" for other types, by default).</P>
+
+<P>A "header" of various dendrogram information is provided. This
+header may be hidden (by default) by setting the "Display Hide" ?Tree
+tag or dynamically, using the "Toggle Header" popup menu item. The
+number of leaves, the maximum branch length and the current 
+"<B><FONT COLOR="#ff0000">Normalization</FONT></B>" branch display scale (plus
+an approximate "ruler legend" for the scale) is shown at the top of
+the graph. A "message box" (coloured cyan) displays additional
+information about the currently selected node, such as node name,
+common name, descriptive text and associated Taxon (usually a species,
+if available). </P>
+
+<P>Presently, the source of the descriptive text depends upon the type
+of tree being displayed. For DNA trees, the 
+"<B><FONT COLOR="#ff0000">Brief_identification</FONT></B>" tag value is
+used. For Protein trees, the "Title" tag value is used.  For Cell
+lineages, the "<B><FONT COLOR="#ff0000">Remark</FONT></B>" tag value
+is used.  For Taxonomy trees, the code looks for a 
+"<B><FONT COLOR="#ff0000">Description ?Text</FONT></B>" tag value field.  If no
+descriptive text is found in this way, the program looks for a
+"<B><FONT COLOR="#ff0000">Description ?Text</FONT></B>" tag value
+field in the first of any "Contains" tag2 object.</P>
+
+<P>The "<B><FONT COLOR="#ff0000">Normalization</FONT></B>" value
+scales the tree's branch lengths into some reasonable graph display
+length (Default Value == 1.0). (Re)set the 
+"<B><FONT COLOR="#ff0000">Normalization</FONT></B>" value in the ?Tree object
+(see below) to some reasonable number to change the scale of the
+displayed tree. The "Rescale" popup menu item does this too (but does
+not save the value to the ?Tree object; the user needs to explicitly
+set the object value). Taxonomic trees have a Normalization of 1.0 by
+default and suppress the associated metric values in the
+header. Printing ("to fit" horizontally) of dendrograms may be
+facilitated by rescaling the tree.</P>
+
+<P>*** Note: Following initial tree data input from a "New Hampshire"
+file, the display scale is unlikely to be suitable for a reasonable
+display of the tree and will likely need to be changed *** </P>
+
+<P>Your display.wrm must have an entry for "DtDendrogram". Your
+options.wrm and models.wrm files must reflect the presence of the
+?Tree, ?TreeNode, ?Taxon and ?Species model classes (see "Associated
+Models" below). If you like, you can set the default displays in
+options.wrm for ?Tree, ?TreeNode, ?Taxon and ?Species to
+"DtDendrogram". The code acts accordingly, displaying the (first)
+associated dendrogram tree by default, scrolled to the active box set
+to the given object (except for ?Tree, which is set to the first
+leaf).</P>
+
+<P>Back to <A HREF="#Top">Top of Page</A> | <A HREF="TOC.html">Table of Contents</A></P>
+<P><HR></P>
+<H3>&nbsp;<A NAME="Buttons">Menu Buttons</A></H3>
+
+<UL>
+  <LI><B>Quit</B>: destroys this window.</LI>
+  <LI><B>Help:</B> brings up this help file. </LI>
+  <LI><B>Display:</B>right button click brings up pop-up menu 
+                     for display configuration (see below)</LI>
+  <LI><B>Biblio </B>: this button is only present if the current ?Tree
+	or ?TreeNode objects displayed in the Dendrogram graph have Reference
+	?Paper's. </LI>
+
+
+</UL>
+
+<P>Back to <A HREF="#Top">Top of Page</A> | <A HREF="TOC.html">Table of Contents</A></P>
+
+<P><HR></P>
+
+<A NAME="Menu"><H3>Pop-Up Menu items</H3></A>
+
+<P>The dendrogram display has several context specific pop-up menus
+to manipulate the display. Some of these menus have keyboard equivalents 
+(noted in parentheses in the popup menu).</P>
+<P>
+<P><B>Display Button Menu</B> A right button click on the 'Display' button in the header brings up
+a list of globally acting commands which modify how the dendrogram is
+displayed.  All of these menu items only affect the "look" of
+the currently active display temporarily until the 'Save Display State' 
+item is selected.
+<UL>
+  <LI><B>Recalculate Display:</B> redraws the display with latest
+         configuration and data parameters in effect.</LI>
+
+  <LI><B>Save Display State:</B> saves the current ?Tree and ?TreeNode Display tag
+         values to the corresponding database objects; normally, any changes a user
+         makes to display settings 'on the fly' (e.g. display modes, node collapse/expand states)
+         are not permanently saved to the database until this menu item is selected. </LI>
+
+  <LI><B>Rescale Tree:</B> brings up a prompt for a (floating point)
+	number to use for scaling the branch lengths of the tree (the default
+	value for trees is 1.0 unless otherwise set in the model). </LI>
+
+  <LI><B>Toggle Labels (Tab key):</B> toggles label display between node
+	"Label" only and labels with ?Taxon name appended. </LI>
+
+  <LI><B>Toggle Colour (Esc key):</B> toggles dendrogram colour mode
+	on and off (i.e. colouring of lines and nodes based upon ?Taxon
+	colours). </LI>
+
+  <LI><B>Toggle Bootstrap Values:</B> toggles global display of
+	bootstrap values, if present. </LI>
+
+  <LI><B>Align Tree to Top/Middle/Bottom/UnRooted:</B> Sets the
+	alignment of subtrees to top, middle or bottom. Overrides (but does
+	not reset) default setting in the ?Tree object. Note: "Unrooted"
+	dendrograms are on the drawing board but not yet implemented. </LI>
+</UL>
+<P><HR></P>
+<B>Main Menu:</B> default menu on the display, in all contexts in which no other menu
+is available, is the main menu.
+<UL>
+  <LI><B>Quit</B>: quits the window. </LI>
+
+  <LI><B>Help</B>: brings up this help. </LI>
+
+  <LI><B>Copy</B>: Copies the current highlighted node label (or message
+	box contents, if picked) to the clipboard. </LI>
+
+  <LI><B>Print</B>: Prints the display on your local printer. </LI>
+
+  <LI><B>Toggle Header: </B>toggles dendrogram information header on and
+	off. </LI>
+
+  <LI><B>Recalculate Display:</B> redraws the display with latest
+         configuration and data parameters in effect.</LI>
+
+  <LI><B>Save Display State:</B> saves the current ?Tree and ?TreeNode Display tag
+         values to the corresponding database objects; normally, any changes a user
+         makes to display settings 'on the fly' (e.g. display modes, node collapse/expand states)
+         are not permanently saved to the database until this menu item is selected. </LI>
+
+  <LI><B>Preserve Graph</B>: Prevents this window from being overwritten the
+	next time a new dendrogram is created. </LI>
+
+  <LI><B>Anchor Tree Display:</B> Sets the currently active dendrogram
+	window as the default dendrogram graph for reuse for all new
+	dendrogram object displays (e.g. of associated node data). If the
+	selected display is already set as the default, selecting it again
+	resets this mode off (i.e. new dendrograms generally create new
+	windows). If another dendrogram other than the default is active
+	(i.e. by mouse selection) when this command is selected, then that
+	window becomes the new default.  The purpose of this command is to
+	ensure that new dendrogram displays triggered by sources outside
+	keysets (e.g. from ACEDB object text displays) will reuse a single
+	dendrogram display. </LI>
+
+  <LI><B>Goto Root Node:</B> Selects and scrolls to the "root" node of
+	the tree. </LI> 
+
+  <LI><B>Goto First (Home key)/Last Leaf (End key): </B>Selects and
+	scrolls window to "first" or "last" leaf respectively. </LI>
+
+  <LI><B>Collapse all Labelled Subtrees:</B> Recursively marks as 'hidden'
+        all subtrees which are rooted by a labelled node. After this
+        operation, top down navigation of the tree reveals each hidden
+        node, which may be expanded individually.</LI>
+
+  <LI><B>Dump tree data as .ace: </B>if a ?TreeNode is currently
+	selected, then only the subtree rooted by active node is dumped as an
+	".ace" file. Otherwise, the entire ?Tree and underlying ?TreeNode
+	objects are dumped as an ".ace" file. <B><I>Note</I></B>: if you wish
+	to read a "subtree only" file back in as a separate tree, you will
+	need to <B><I>manually</I></B> edit the .ace file to include a ?Tree
+	object description (with a "Root ?TreeNode" tag-value), rename all
+	?TreeNode "Tree ?Tree" tag-values to the new tree name, and relabel
+	the "root" ?TreeNode to "Type Root". </LI>
+
+  <LI><B>Dump tree leaf data:</B>dumps a table of "short label",
+	"descriptive label {species}" entries for the leaves of a given
+	(sub)tree.  If a ?TreeNode is currently selected, then only the leaves
+	of the subtree rooted by active node are dumped. Otherwise, all the
+	leaves of the entire ?Tree are dumped. </LI>
+
+  <LI><B>Dump tree sequences as Fasta: </B>if a ?TreeNode is currently
+	selected, then Fasta dump only the ?DNA and ?Protein sequences
+	dereferenced in the subtree rooted by the active node. Otherwise,
+	Fasta dump all?DNA and ?Protein sequences dereferenced in the entire
+	?Tree. </LI>
+
+</UL>
+<P><HR></P>
+<P><B>Node Box Menu:</B> The 'anterior' node display box has a context specific pop-up menu as follows:</P>
+<UL>
+
+  <LI><B>Expand All Subtrees:</B> Recursively expands (unhides) all subtrees of 
+         the current node, unconditionally clearing all 'hide' states previously set in the subtree.</LI>
+
+  <LI><B>Collapse All Subtrees:</B> Recursively collapses (hides) all subtrees of 
+         the current node, unconditionally forcing 'hide' states for all subtree nodes./LI>
+
+  <LI><B>Expand/Collapse Subtree (Delete key):</B> Expands and contracts only
+        the subtree rooted by the currently selected node. Can
+	also use the "Insert/Delete" key to do this. </LI>
+
+  <LI><B>Expand/Collapse Subtree Outliers:</B> Expands and contracts all 
+         subtrees 'outlying' from the currently selected node. That is,
+         only the direct treenode path from the root node to the current
+         node remains visible; all other subtree branches off this path
+         are hidden. </LI>
+
+   <LI><B>Relabel Tree Node</B>: brings up a user edit box to (re)label the tree node.</LI>
+
+   <LI><B>Show Treenode as text</B>: Displays the selected ?TreeNode
+        (<B>not</B> its 'Contains' associated data) as an ACEDB text-only 
+        object display window.</LI>
+
+   <LI><B>Update Tree Node (Insert key)</B>: Update the current tree node
+	object using the ACEDB object text "update" mode. </LI>
+
+   <LI><B>Dump Subtree data as .ace: </B> the subtree rooted by active node 
+        is dumped as an ".ace" file.  <B><I>Note</I></B>: if you wish
+	to read a "subtree only" file back in as a separate tree, you will
+	need to <B><I>manually</I></B> edit the .ace file to include a ?Tree
+	object description (with a "Root ?TreeNode" tag-value), rename all
+	?TreeNode "Tree ?Tree" tag-values to the new tree name, and relabel
+	the "root" ?TreeNode to "Type Root". </LI>
+
+   <LI><B>Dump Subtree leaf data:</B>dumps a table of "short label",
+	"descriptive label {species}" entries for the leaves of a given
+	(sub)tree.  If a ?TreeNode is currently selected, then only the leaves
+	of the subtree rooted by active node are dumped. Otherwise, all the
+	leaves of the entire ?Tree are dumped. </LI>
+
+   <LI><B>Dump Subtree sequences as Fasta: </B>if a ?TreeNode is currently
+	selected, then Fasta dump only the ?DNA and ?Protein sequences
+	dereferenced in the subtree rooted by the active node. Otherwise,
+	Fasta dump all?DNA and ?Protein sequences dereferenced in the entire
+	?Tree. </LI>
+
+</UL>
+<P><HR></P>
+<P><B>Label Box Menu:</B> The 'posterior' label display box has a context specific pop-up menu as follows:</P>
+<UL>
+   <LI><B>Display Associated Data(Enter key)</B>: 
+        Displays all 'Contains' associated data of the currently selected ?TreeNode
+        in their default (possiblygraphical) modes such as will happen when 
+        you double click a box. 
+        Note: Unlike the keyboard hot key equivalent, this menu item
+	displays every node associated object as an ACEDB object tree graph
+	(i.e. even ?Sequence, ?Protein objects and ?URL display as text only
+	displays; "Pick_me_to_call" tags are <B>not</B> executed) </LI>
+
+   <LI><B>Display Associated Data as Text</B>: 
+        Displays all 'Contains' associated data of the currently selected ?TreeNode
+        as an ACEDB text-only object display window, rather than just
+	displaying the associated objects in their default (possibly
+	graphical) modes such as will happen when you double click a
+	box.</LI>
+
+   <LI><B>Goto Root Node:</B> Selects and scrolls to the "root" node of
+	the tree. </LI> 
+
+   <LI><B>Goto First (Home key)/Last Leaf (End key): </B>Selects and
+	scrolls window to "first" or "last" leaf respectively. </LI>
+
+   <LI><B>Relabel Tree Node</B>: brings up a user edit box to (re)label the tree node.</LI>
+
+   <LI><B>Biblio</B>: Pops a window with all the papers related to the
+	object The paper themselves which are part of the list, those written
+	by the authors of the list, those quoting the genes of the list,
+	etc. The Biblio window can then be printed. </LI>
+
+  </UL>
+
+<P>Back to <A HREF="#Top">Top of Page</A> | <A HREF="TOC.html">Table of Contents</A></P>
+
+<P><HR></P>
+
+<A NAME="Models"><H3>Associated ACEDB Models</H3></A>
+
+<P>The four following ACEDB classes should be supported in order for
+this display to work properly. <B><I>Note:</I></B> The "Contains"
+field in ?TreeNodes is now a "tag2" magic tag, therefore, any type of
+ACEDB tag-object pair associated data may displayed by any means which
+shows the given node's data (node selection+enter key or double
+clicking the label). The dendrogram display code also knows a bit more
+about ACEDB ?Sequence and ?Protein classes (and the tag "Title ?Text"
+field therein).</P>
+
+<P>Several of the tags in the following required models are "magic",
+directly interpreted by Dendrogram display source code. These tags
+(and other mandatory elements) are <B>bold</B> highlighted, 
+Some classes of objects are interpreted in a special way by
+the program code: the existing ?Cell, ?Sequence and ?Protein classes,
+plus a new ?Taxon class (with an augmented ?Species class). Users may
+wish to use all the other noted tags, keywords and xref's, which are,
+nevertheless, not stricted needed for the proper functioning of the
+Dendrogram display code (and thus, may be modified or omitted). Some
+the tag/values are only default values at graph creation and their
+function may be overridden by specific popup menu commands
+(e.g. "Align Tree...", "Rescale tree", "Hide Subtree", etc.)</P>
+
+<PRE>
+
+// the main "tree" object
+?Tree    <B>Description</B> UNIQUE ?Text		// Used as graph display title if present
+         Type UNIQUE <B>Taxonomy</B>			// Controls semantics of tree display
+                     <B>DNA</B>
+                     <B>Protein</B>
+                     <B>Cell_Lineage</B>
+         <B>Root</B> UNIQUE ?TreeNode                  // "Root" node of the current tree
+         <B>Tree_Node</B>   ?TreeNode                  // Nodes in other ?Trees within which this ?Tree is embedded
+         Display     <B>No_Header</B>			// Suppresses display "header"
+                     <B>Descriptive_Labels</B>		// Show descriptive labels
+                     <B>Colour</B>			// Taxon_colouring if present
+                     <B>Normalization</B>    UNIQUE Float	// Normalization factor for display (defaults to 1.0)
+                     <B>Bootstrap_Factor</B> UNIQUE Float	// Normalization factor for bootstrap values (defaults to 1.0)
+                     <B>Hide_Bootstraps</B>
+                     Alignment UNIQUE <B>Top</B>	// How the dendrogram is to be drawn
+                                      <B>Middle</B>
+                                      <B>Bottom</B>
+                                      <B>Unrooted</B>  // Unrooted "star" tree
+         <B>Reference</B>   ?Paper XREF Tree
+
+?TreeNode       <B>Label</B> UNIQUE ?Text		// Tree vertex label, e.g. sequence name or taxon   
+                <B>Id</B>    UNIQUE Int		// Node numbering...
+                <B>Description</B>  ?Text
+		Type UNIQUE  <B>Root</B>		// Root ?TreeNode should be so designated!
+                             <B>Interior</B>
+		             <B>Leaf</B>
+                <B>Distance</B> UNIQUE	Float		// "Evolutionary distance" or branch length
+                <B>Bootstrap</B> UNIQUE	Float		// Node subtree "bootstrap" values
+                <B>Tree</B>   UNIQUE   ?Tree
+		<B>Parent</B> UNIQUE   ?TreeNode XREF  Child
+		<B>Child</B>           ?TreeNode XREF  Parent
+                Display  <B>Hide</B>			// Hide the subtree (children) of this node
+                         <B>Colour</B>   UNIQUE #Colour // Fixes the colour of the subtree; 
+                                                 // overridden by child node settings
+                         <B>Hide_Bootstraps</B>         // Hide all bootstraps in subtree...
+                         <B>Show_Bootstrap</B>          // ... except those with the "Show_Bootstrap" tag set
+                <B>Contains</B> Embedded_Tree UNIQUE ?Tree XREF Tree_Node 
+                         <B>Taxon</B>    UNIQUE ?Taxon     XREF Tree_Node
+		         <B>Sequence</B> UNIQUE ?Sequence  XREF Tree_Node
+		         <B>Protein</B>  UNIQUE ?Protein   XREF Tree_Node
+                         <B>Cell</B>     UNIQUE ?Cell      XREF Tree_Node
+                         URL      UNIQUE ?Url       XREF Tree_Node
+                <B>Pick_me_to_call</B>   Text   Text
+
+?Taxon   <B>Common_name</B>  UNIQUE ?Text
+         Other_names  Text
+         <B>Rank</B>  UNIQUE Superkingdom
+                      Kingdom
+                      Phylum
+                      Subphylum
+                      Superclass
+                      Class
+                      Subclass
+                      Superorder
+                      Order
+                      Suborder
+                      Superfamily
+                      Family
+                      Subfamily
+                      Genus
+                      <B>Species</B> UNIQUE ?Species XREF Taxon
+                      No_Rank
+         <B>Description</B>  ?Text
+	 <B>Taxonomy</B>     UNIQUE ?TreeNode	// Unique taxonomy tree 
+         // Note: ?Taxon objects can be associated with more than one tree
+         <B>Tree_Node</B>    ?TreeNode XREF Taxon 
+	 // Optional colour code (i.e. on Phylogenetic trees)
+	 Display      <B>Foreground_Colour</B>   #Colour  
+	              <B>Background_Colour</B>   #Colour  
+
+?Species Common_name  ?Text
+         <B>Taxon</B> UNIQUE ?Taxon XREF Species
+         Loci         ?Locus
+         Sequences    ?Sequence
+         Proteins     ?Protein
+         Reference    ?Paper
+
+//</PRE>
+
+<P><HR></P>
+
+<P>Back to <A HREF="#Top">Top of Page</A> | <A HREF="TOC.html">Table of Contents</A></P>
+
+<A NAME="Bugs"><H3>Known Bugs</H3></A>
+<UL>
+   <LI>A hard ACEDB crash occurs if the 'Root ?TreeNode' object in the ?Tree object has not
+       yet been instantiated in ACEDB (i.e. the tag has a non-bold object label). This is suspected
+       to also be true of any other ?TreeNode tag value in the tree. Lesson: create all your ?TreeNode 
+       objects before you use them!</LI></br>
+</UL>
+
+<P><HR></P>
+
+<P>Back to <A HREF="#Top">Top of Page</A> | <A HREF="TOC.html">Table of Contents</A></P>
+
+<P>Last edited (rbsk): June 28, 1999</P>
+<P>HTML syntax revised: October 20, 1998 (fw)</P>
+
+<P>The "Dendrogram" display is the creation of Richard Bruskiewich,<BR>
+International Rice Research Institute (IRRI), r.bruskiewich@cgiar.org,<BR>
+(formerly at the Sanger Centre, UK).</P>
+
+</BODY>
+
+</HTML>

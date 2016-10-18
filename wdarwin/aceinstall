@@ -1,0 +1,85 @@
+#!/bin/csh 
+# no ksh under darwin....oh joy, oh rapture...sigh
+
+set OS = `uname -a | cut -d" " -f1`
+if ( $OS != "Darwin" ) then
+    echo ""
+    echo "This script only runs on a Mac"
+    echo ""
+    exit
+endif
+
+if ( $#argv < 2 || $#argv > 3 ) then
+    echo "Wrong number of params."
+    echo "Usage: aceinstall <version> <revision> [gtk]"
+    echo "eg aceinstall 4.9m 1 gtk"
+    echo "For Debion reasons the version has a dot instead of an underscore."
+    echo "NB only specify gtk if xfree86 etc have not been installed."
+    exit
+endif
+
+
+if ( $#argv == 2 ) then
+    echo "Please confirm that xfree86 etc are already installed (y/n)"
+    set response = $<
+    if ( $#response == 0 || ( $response != "y" && $response != "Y" )) then
+	exit
+    endif
+endif
+
+set version = $1
+set revision = $2
+set gtk = $3
+
+# ensure the version has a dot not an underscore or fink will get confused
+
+set prefix = `echo $version | cut -d "_" -f1`
+set suffix = `echo $version | cut -d "_" -f2`
+
+if ( $prefix != $suffix ) then
+    set version = ${prefix}.$suffix
+endif
+
+# Required format of .deb file is <package>_<version>-<revision>_<architecture>.deb
+
+set file = acedb_${version}-${revision}
+echo info file is ${file}.info
+echo deb file is /${file}_darwin-powerpc.deb
+
+set skip = "n"
+
+if ( -e /sw/fink/dists/local/main/binary-darwin-powerpc/database/${file}_darwin-powerpc.deb ) then
+    echo ""
+    echo "A .deb file for this release already exists.  Shall I remove it? (y/n/q)"
+    set response = $<
+    if ( $#response == 0 || $response == "y" || $response == "Y" ) then
+	echo
+	sudo rm /sw/fink/dists/local/main/binary-darwin-powerpc/database/${file}_darwin-powerpc.deb
+    else if ( $response == "q" || $response == "Q" ) then
+	exit
+    else 
+	set skip = "y"
+    endif
+endif
+
+if ( $skip == "n" ) then
+    echo "Making a .info file and moving it into place"
+    Desktop/acedb/wdarwin/mkinfo $version $revision
+
+    mv ${file}.info /sw/fink/dists/local/main/finkinfo/database
+
+    echo "Building the .deb file"
+    fink build acedb
+endif
+
+echo "Copying the .deb file into place"
+cp /sw/fink/dists/local/main/binary-darwin-powerpc/database/${file}"_darwin-powerpc.deb" .
+
+if ( $gtk == "gtk" ) then
+    fink install xfree86-base xfree86-rootless gtk+ readline
+endif
+
+echo "Installing acedb"
+sudo dpkg -i ${file}_darwin-powerpc.deb
+
+echo "Installation completed."

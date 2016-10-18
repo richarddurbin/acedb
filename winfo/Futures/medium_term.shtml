@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+
+<LINK rel=stylesheet type="text/css"
+href="../acedocs.css"
+title="Style sheet for general ace documents">
+
+    <title>ACEDB - in the Medium Term</title>
+    <meta name="keywords" content="acedb, future, plan, strategy, changes">
+    <meta name="description" content="Thoughts/ideas about how Acedb will develop in the future.">
+
+</HEAD>
+
+
+<BODY>
+
+<h1>ACEDB - in the Medium Term</h1>
+
+<A name="intro">
+<FONT color="blue">
+<H2>Introduction</H2>
+</FONT>
+</A>
+These changes are mostly larger coding efforts that might take some months (years ?)
+to complete.
+
+<A name="cmdinterface">
+<FONT color="blue">
+<H2>A new command line interface</H2>
+</FONT>
+</A>
+
+<p>Many of the commands available to acedb users via <CODE>tace</CODE> etc. have grown up in a slightly
+<I>ad hoc.</I> way. ACEDB release 5 will present an opportunity to revise the structure of the command
+interface. In particular there will be sets of command options for:
+<UL>
+  <LI>maintenance
+</UL>
+
+
+
+<A name="acelib">
+<FONT color="blue">
+<H2>acelib</H2>
+</FONT>
+</A>
+<p>The interface to the acedb database is a bit adhoc and requires a programmer to
+know serveral different 'subsystems' of calls to open the database and read/write
+information to it. The idea behind acelib is to provide a more consistent database
+interface to make applications easier to write and provide more power to the
+applications (e.g. having more than one database open at a time).</p>
+
+<P>The production of acelib will require:
+<DL>
+  <DT>Cleaning up the name space, including:
+  <DD>
+       <UL>
+	 <LI>deciding what is and what is not the kernel.
+	 <LI>choosing a prefix for use in the code (e.g. ace)
+	 <LI>renaming all #define symbols (whether defining values or macros)
+	      to start with the prefix from above
+	 <LI>renaming all external symbols (whether variables or functions)
+	      to start with the prefix from above
+	 <LI>ensuring all include files are guarded against multiple inclusion
+	 <LI>changing inclusions of acedb header files to be of the form
+	      #include <wh/name.h> so that the header file is qualified with an
+	      acedb include directory name and becomes part of the standard search
+	      list of include directories
+	 <LI>Restructuring header files into those that are for 'internal' use
+	      by kernel code only and those that are for external use by applications.
+       </UL>
+  <DT>Removal of statics/globals and introduction of 'context'
+  <DD>currently much acedb code uses a crude 'object' model whereby a package holds
+       instance data in static variables (both local and global). While in one sense
+       this provides 'objects' it has a number of drawbacks:
+       <UL>
+	 <LI>it is not reentrant so like strtok in the C stdlib, the packages must
+	      be used carefully
+	 <LI>it is not thread safe
+	 <LI>it means that only one database can be open at a time
+       </UL>
+       A better approach is to get the application to create a 'database' context which
+       it passes as a parameter to each call for operation on the database (see X Windows,
+       X Toolkit etc). This way the database code does not need to hold any 'context' information
+       for a particular database.
+  <DT>POSIX conforming
+  <DD>the library should use POSIX conforming system calls to make porting it
+       to other platforms as easy as possible. This will become increasingly important as
+       POSIX compliance becomes more complete.
+</DL>
+
+<A name="aql">
+<FONT color="blue">
+<H2>aql</H2>
+</FONT>
+</A>
+<p>A beta test version is available in ACeDB 4_8.</p>
+
+<A name="perl">
+<FONT color="blue">
+<H2>Ace perl</H2>
+</FONT>
+</A>
+<p>Need some information from Lincoln.</p>
+
+</body>
+</html>

@@ -1,0 +1,574 @@
+<HTML>
+
+<HEAD>
+  <TITLE>AQL - MovieDB Example queries</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="../aql.css" TITLE="Style sheet for AQL docs">
+</HEAD>
+<BODY>
+
+<H2>AQL - MovieDB Example queries</H2>
+
+
+<H3>Simple listing of objects</H3>
+
+<DL>
+<DT><H4>1. list all movies</H4>
+<DD><CODE>select all from class Movie</CODE> 
+<DD><CODE>select all class Movie</CODE> (the same, just shorter) <BR> 
+<DD><P>List all objects in the class <I>movie</I>. 
+       <BR>
+       Note the system is not case sensitive when referring to 
+       database related terms, such as class names or tags.
+       <BR><A HREF="result1.txt">results</A>
+    </P>
+
+
+<DT><H4>2. list all persons</H4>
+<DD><CODE>select p from p in class Person</CODE>
+<DD><P>A locator-variable <TT>p</TT> is defined to loop over the key-values in class <I>Person</I>.
+	The query works exactly like the (1), but this query can be extended easily,
+	as <TT>p</TT> can be referred to for tag-dereferencing, column-wise sorting etc..
+	<BR><A HREF="result2.txt">results</A>
+    </P>
+</DL>
+
+<HR>
+
+<H3>Tag dereferencing to access object attributes</H3>
+
+<DL>
+<DT><H4>3. list all movies and their directors</H4>
+<DD><CODE>select m, m-&gt;Director from m in class Movie</CODE>
+<DD><P>The <U>from-clause</U> defines an iterator variable <TT>m</TT> that loops over all key-values of class <I>movie</I>.
+       <BR>
+       The <U>select-clause</U> defines two <U>select-fields</U> - <I>m</I> is just the object value (shown as it's name)
+       and <TT>m-&gt;Director</TT> is the object value, which is stored with the tag <TT>Directory</TT>
+       in object in the class <I>Movie</I>.
+       <BR><A HREF="result3.txt">results</A>
+    </P>
+	
+
+<DT><H4>4. list all movies and their directors and possibly their real names</H4>
+<DD><CODE>select m, m-&gt;Director, m-&gt;Director-&gt;Real_name from m in class Movie</CODE>
+<DD><P>Basically the same as (3), but the result of <TT>m-&gt;Director</TT> has been dereferenced to
+       get the <TT>Real_name</TT> tag value for the particular object from the <I>Person</I> super-class.
+       <BR><A HREF="result4.txt">results</A>
+    </P>
+	
+
+<DT><H4>5. list authors of books on which movies are based</H4>
+<DD><CODE>select a, a-&gt;Real_name from m in class Movie, a in m-&gt;Based_on-&gt;Author</CODE>
+<DD><P>The <U>from-clause</U> defines two iterators - <TT>m</TT> loops over the <I>Movie</I> class
+       and <TT>a</TT> which takes the value of the <I>Person</I>-object, that is stored with the 
+       <TT>Based_on</TT>-object (in class <I>Book</I>) for movies that are based on novels or plays.
+       <BR>
+       The <U>select-clause</U> defines two result columns which report the <I>Author</I>
+       objects for such books. The second column shows how that object can be dereferenced further
+       to gain access to tags inside the <I>Author</I> objects.
+       <BR>
+       Note that is isn't important where the dereferencing is done (select or from-clause). 
+       The above query is the same as
+    </P>
+
+<DD><CODE>select m-&gt;Based_on-&gt;Author, m-&gt;Based_on-&gt;Author-&gt;Real_name from m in class Movie</CODE>
+
+<DD><P>which performs the same without the need for an extra variable <TT>a</TT>, but duplicates some query elements.
+	<BR><A HREF="result5.txt">results</A>
+    </P>
+	
+<DT><H4>6. list all people and all their relations</H4>
+<DD><CODE>select p, p-&gt;Relations[2] from p in class Person</CODE>
+<DD><P>This query makes use of <U>tag-positioning</U>. 
+       All values fields have a position relating to their tag. So far we've dereferenced
+       tags to retrieve their values, e.g. <TT>m-&gt;Based_on</TT>. This notation is in fact translated
+       to <TT>m-&gt;Based_on[1]</TT> to say that we're interested in the data element which is one to the right
+       of the tag. A look at the <A HREF="wspec/models.wrm">models</A> shows a different arrangement
+       for the Relations data in the <I>Person</I> class, where the real data is positioned
+       2 levels to the right of the <TT>Relations</TT> tag.
+       <BR>
+       The bracketed number 2 means to skip the first level of data (some people have a <TT>Spouse</TT>
+       or other tag in the database) and only report the value to the right of that tag.
+       <BR><A HREF="result6.txt">results</A>
+    </P>
+
+
+<DT><H4>7. list all people and their spouses</H4>
+<DD><CODE>select p, p-&gt;Relations[Spouse] from p in class Person</CODE>
+<DD><P>This query positioned the tag-value by name rather than number.
+	The level2 tag notation at <TT>Relations</TT> is resolved only at the
+	<TT>Spouse</TT> tag in this case. This query is equivalent to :
+    </P>
+<DD><CODE>select p, p-&gt;Spouse from p in class Person</B></CODE>
+
+    <P>which shows that the user does not have to specify the exact path
+	from the root of the object. The name for a tag has to be unique within
+	a class, so there is always only one possible path from the root
+	to a named tag in the object.
+	<BR><A HREF="result7.txt">results</A>
+    </P>
+</DL>
+
+<HR>
+
+<H3>Conditional expressions in the where-clause</H3>
+
+<DL>
+<DT><H4>8. list movies that have a director with movie name and directors name</H4>
+<DD><CODE>select m, d from m in class Movie, d in m-&gt;Director where exists d</CODE>
+<DD><P>The <U>where-clause</U> puts a condition on the preceding 
+	<U>from-clause</U>. The AQL keyword <EM>exists</EM> is a boolean construct,
+	which returns TRUE if a value exists, and FALSE if no value can be found.
+	<BR>
+	The result table has no blank fields in the
+	second column as all those movies without a value for <TT>d</TT> (i.e. <TT>m-&gt;Director</TT>)
+	have been omitted.
+	<BR><A HREF="result8.txt">results</A>
+    </P>
+
+
+<DT><H4>9. list the names of cast members in "True Romance"</H4>
+<DD><CODE>select m-&gt;Cast from m in class Movie where m = "True Romance"</CODE>
+<DD><P>The query iterates the variable <TT>m</TT> over the <I>Movie</I> class, but only
+	activates the <U>select-clause</U> (which reports the cast of a movie)
+	if the value of the Movie iterator is "True Romance".
+	<BR>
+	Although <TT>m</TT> takes object-typed value, we can compare them by their
+	text-value (i.e. the object's name). The objects name has to be quoted for that matter.
+	<BR>
+	The same results could be achieved by looping over all persons, and only selecting those
+	that have starred in "True Romance".
+    </P>
+<DD><CODE>select p from p in class Person where p-&gt;Stars_in = "True Romance"</CODE>
+<DD><P>This shows an interesting aspect of AQL - It is possible to get the same result using totally different queries.
+       Other ways of obtaining the same results will be shown later.
+       <BR><A HREF="result9.txt">results</A>
+    </P>
+
+
+<DT><H4>10. list the movies that have been released after 1990, i.e. in 1991 and thereafter</H4>
+<DD><CODE>select m, year from m in class Movie, year in m-&gt;Release[Date] where year &gt; `1990</CODE>
+<DD><P>This condition compares two value of <I>DateType</I>. A date like 1990 would easily
+	be confused with an integer, and therefore literal date-values have to be preceded
+	with the reverse tick <TT>`</TT>.
+	<BR>
+	The <U>where-clause</U> also has the effect of restricting the listing of <TT>m</TT>-values
+	to those where a release-date is stored in the database, which 
+	implies the <TT>where exists ->year</TT> condition.
+	<BR>
+	The iterator <TT>year</TT> could also be defined as <TT>m-&gt;Date</TT>, but the
+	above construct was chosen for readability. See example (7).
+	<BR><A HREF="result10.txt">results</A>
+    </P>
+
+<DT><H4>11. list all movies for which no release year information is stored</H4>
+<DD><CODE>select m from m in class Movie where not exists m-&gt;Release[Date]</CODE>
+<DD><P>The <EM>not</EM> keyword negates the value of the <TT>exists m-&gt;Release[Date]</TT>
+	condition.
+	<BR><A HREF="result11.txt">results</A>
+    </P>
+
+</DL>
+
+<HR>
+
+<H3>Date functions</H3>
+
+<DL>
+<DT><H4>12. list all people with their age</H4>
+<DD><CODE>select p, yeardiff(p-&gt;Date_of_Birth, today) from p in class Person</CODE>
+<DD><P>Calculations with values of type <I>Int</I> or <I>Float</I> are easily written
+	using the standard operators +, -, / and *. For <I>DateType</I> values this
+	is not so easy. A set of functions is provided to calculate the
+	difference between two dates at various levels.
+	<BR>
+	This query extract the year portion from two dates and subtracts those
+	to compute the age. The result of those date-functions is an integer.
+	<BR>
+	The AQL keyword <EM>today</EM> will be rendered to
+	<TT>`1999-12-06</TT>
+	(or whatever the current date is) during evaluation. 
+	The word <EM>today</EM> is therefore a valid date-literal value.
+	<BR><A HREF="result12.txt">results</A>
+    </P>
+
+<DT><H4>13. for all people over 55, list their name and age</H4>
+<DD><CODE>select p, yeardiff(p-&gt;Date_of_Birth, today) from p in class Person where yeardiff(p-&gt;Date_of_Birth, today) &gt; 55</CODE>
+<DD><P>Same as (12), but restricts the list to people with ages greater than 55. <BR>
+	Note that only values for <TT>p</TT> can be included for which the <TT>Born</TT> tag exists. See example (10),
+	where a similar behavior occurred.
+	<BR><A HREF="result13.txt">results</A>
+    </P>
+</DL>
+
+    <P>Possible date-functions are :-</P>
+    <UL>
+      <LI><EM>yeardiff</EM>
+      <LI><EM>monthdiff</EM>
+<!--      <LI><EM>weekdiff</EM> ** not implemented yet ** -->
+      <LI><EM>daydiff</EM>
+      <LI><EM>hourdiff</EM>
+      <LI><EM>mindiff</EM>
+      <LI><EM>secdiff</EM>
+    </UL>
+
+
+    <P>These functions will return a sensible result of the date/time value 
+       specifies the appropriate portion that the function requests.
+    </P>
+
+    <P>No sensible result will be returned for <TT>monthdiff (m-&gt;Release[Date], `1996)</TT>.
+       The date-function <EM>monthdiff</EM> can only produce a good result if
+       both dates contain month-details. Some movies in fact have release dates with 
+       month information, but the date literal <TT>'1996</TT> does not.
+       The result of evaluating <EM>monthdiff</EM> will therefore always produce NULL.
+    </P>
+    <P>All date-functions return an integer value, which is positive 
+       if left argument is the smaller (i.e. earlier) date.
+    </P>
+
+
+<HR>
+
+<H3>Table functions</H3>
+
+<DL>
+<DT><H4>14. list all people and how many movies they've starred in</H4>
+<DD><CODE>select p, count(select p-&gt;Stars_in) from p in class Person</CODE>
+<DD><P>The <U>table-function</U> <EM>count</EM> acts on the sub-query <TT>select p-&gt;Stars_in</TT>
+	and returns an integer value for all objects where the <TT>Stars_in</TT>-tag exists. It simply counts
+	the number of times the <TT>Stars_in</TT>-tag is contained in each object <TT>p</TT>.
+	<BR>
+	<STRONG>Note</STRONG>, 
+	that <TT>count (p-&gt;Stars_in)</TT> is not valid. Table-functions
+	only operate over valid table-expressions. And the minimal valid table
+	expression to list all values of the <TT>Stars_in</TT> tag needs the
+	keyword <EM>select</EM>.
+	<BR><A HREF="result14.txt">results</A>
+    </P>
+
+<DT><H4> 15. list all movies with more than 3 cast members</H4>
+<DD><CODE>select m from m in class Movie where count(select m-&gt;Cast) &gt; 3</CODE>
+<DD><P>This time the table-function is evaluated in the <U>where-clause</U>, which
+	compares it's integer result with the number 3.
+	<BR><A HREF="result15.txt">results</A>
+    </P>
+
+
+<DT><H4> 16. calculate the average age of all the actors</H4>
+<DD><CODE>select avg(select yeardiff(p-&gt;Date_of_Birth, now) from p in class Actor)</CODE>
+<DD><P>The <EM>avg</EM> table function acts on the return-value of another table expression.
+	The inner <U>select-query</U> returns a list of ages, over which the average value
+	is computed.
+	<BR>
+	Such complex queries should be constructed inside-out. First try out the inner 
+	query and see that it returns the desired result. Then wrap that result
+	up in the final table-function.
+	<BR><A HREF="result16.txt">results</A>
+    </P>
+
+
+<DT><H4>17. get the latest movie release date</H4>
+<DD><CODE>select max(select m-&gt;Date from m in class Movie)</CODE>
+<DD><P>Similar to (16), <EM>max</EM> acts on a list of dates.
+	<BR><A HREF="result17.txt">results</A>
+    </P>
+</DL>
+
+  <P>Possible table-functions are :-</P>
+  <UL>
+    <LI><EM>count</EM> (all tables)
+    <LI><EM>min</EM>  (Int, Float, DateType) <!-- ** should allow Strings ** -->
+    <LI><EM>max</EM>  (Int, Float, DateType)
+    <LI><EM>avg</EM>  (Int, Float)
+    <LI><EM>sum </EM> (Int, Float)
+    <LI><EM>first</EM> (all tables)
+    <LI><EM>las</EM>t  (all tables)
+  </UL>
+
+  <P>All table functions will work on either accumulated object 
+     attributes <SUP>(14),(15)</SUP> or on the table
+     values of whole <U>select-queries</U><SUP>(16),(17)</SUP>. All 
+     such tables expression have to produce a table with only one column,
+     and in most cases they have to be of a specific value-type for the <U>table-function</U> to work.
+  </P>
+
+<HR>
+
+<H3>Scalar variables</H3>
+
+<DL>
+<DT><H4>18. how many movies are stored</H4>
+<DD><CODE>$x := count(select all class movie)</CODE>
+<DD><P>Scalar variable have a perl-like '$' syntax and can assume just one value.
+	This value is usually the return value of a table-function expression.
+	A variable assignment is treated as a whole query expression in itself.
+	<BR><A HREF="result18.txt">results</A>
+	<P>
+	The output will be a table with one column and one row containing the single
+	return value that the variable <TT>$x</TT> will assume.
+	The query is therefore equivalent to 
+	<BR><CODE>select count(select all class movie)</CODE>
+    </P>
+
+<DT><H4>19. list movies with an higher than average rating</H4>
+<DD><CODE>$x := avg(select m-&gt;Rating from m in class Movie); <BR>
+             select m, r from m in class Movie, r in m-&gt;Rating where r &gt; $x</CODE>
+<DD><P>The first query assigns a scalar variable to be the average rating of movie (ignoring
+	movie for which no such value is stored).
+	The second query then uses this value to list all movies for which the rating value is higher
+	that that.
+	<BR>
+	This demonstrates how queries can be concatenated using the semi-colon ';'. Usually
+	one or more queries will calculate variables, whereas the last query is a table expression
+	that uses those variables to generate the output.
+	<BR><A HREF="result19.txt">results</A>
+	<P>
+	The same query could be composed without a scalar variable, but the difference
+	in execution time is quite startling :
+	<BR>
+	<CODE>select m, r from m in class Movie, <BR>
+		    &nbsp;&nbsp;r in m-&gt;Rating <BR>
+		    &nbsp;&nbsp;&nbsp;&nbsp;where r &gt; avg(select m1-&gt;Rating from m1 in class Movie)</CODE>
+        <BR>
+	The first query would only run <EM>avg</EM> once (to get the value for <TT>$x</TT>)
+	and finish in a time linearly related to the number of movies.
+	The second query will execute the nested query inside the <EM>avg</EM> function in every 
+	iteration cycle of <TT>m</TT> from the outer query.
+	The execution time is therefore quadratically related to the number of movies.
+	<P>
+	This is an example how queries can optimized by arranging it in a clever way.
+    </P>
+
+</DL>
+
+<HR>
+
+<H3>Table variables</H3>
+
+<DL>
+<DT><H4>20. show release date of first "James Bond" film</H4>
+<DD><CODE>@tmp := select first(select m-&gt;Date) <BR>
+		&nbsp;&nbsp;&nbsp;&nbsp;from m in class Movie, a in m-&gt;Cast<BR>
+		&nbsp;&nbsp;&nbsp;&nbsp;where a[1] = "James Bond" order by :1;<BR>
+		select min(@tmp):1</CODE>
+<DD><P>This query is structured into two parts. The first query lists the release dates of all films
+	with the character named "James Bond". The nature of the model for the <I>Release</I> tag means
+	that multiple release dates can be stored. The table-functions <EM>first</EM> ensures we're only listing
+	one release date per movie. The results are sorted and assigned to the table variable <TT>@tmp</TT>.
+	<BR>
+	The second part of the query uses the table function <EM>min</EM> to extract the smallest value
+	from the first column of the given table. This will be the earliest release date of any bond film.
+	<BR><A HREF="result20.txt">results</A>
+    </P>
+
+<DT><H4>21. characters that appeared in more than 1 movie listed with the movies, sorted by the movie primary release date</H4>
+<DD><CODE>@characters := select c, <BR>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;count(select m1 from m1 in class Movie where m1-&gt;Cast[2] = c), <BR>
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;m, first(select m-&gt;Release[Date]) <BR>
+	 &nbsp;&nbsp;from m in class Movie, c in m-&gt;Cast[2];<BR>
+	 select character::row:1, movie::row:3, date::row:4 <BR>
+	 from row in @characters <BR>
+	 &nbsp;&nbsp;&nbsp;&nbsp;where row:2 &gt; 1 <BR>
+	 order by :character, :date</CODE>
+<DD><P>The table-variable feature is used again to separate the work into two parts. The first query
+	does all the work, whereas the second query, just selects specific fields and does the sorting.
+	We will learn later how this can be written all in one query.
+	<BR>
+	The second query demonstrates a row-variable. The iterator <TT>row</TT> is declared as a cursor
+	on the table <TT>@characters</TT>. In the select-clause we extract fields 1, 3 and 4 from that row
+	whereas the where-clause uses field 2 for the comparison.
+	<BR>
+	The select-clause also renames the select-fields, which makes the query more readable.
+	Those aliased names ('<TT>character</TT>', '<TT>movie</TT>' and '<TT>date</TT>') can then be used for the sort-clause
+	to refer to select-fields by their name.
+	<BR><A HREF="result21.txt">results</A>
+	<P>
+	The use of table-variables sometimes stems from the way people compose
+	queries by incrementally building them up from less complex queries.
+	Their use is not always necessary though. Here is the same example,
+	but without table-variables :<BR>
+
+	<CODE>select c, m, mdate<BR>
+                 from m in class Movie, c in m-&gt;Cast[2],<BR>
+		 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;num in count(select m1 from m1 in class Movie where m1-&gt;Cast[2] = c)<BR>
+		 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where num &gt; 1,<BR>
+		 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mdate in first(select m-&gt;Release[Date])<BR>
+		 order by :c, :mdate</CODE>
+        <P>
+	See example (29) for more on splitting queries into two parts and table-variables.
+   </P>
+</DL>
+
+<HR>
+
+<H3>Bond-movie examples</H3>
+
+<DL>
+
+<DD><P>The database contains a particular dataset, which is useful for testing
+       and learning. It contains the last 20 James Bond movies. Some have little detail
+       stored about them, but the one feature that identifies them is the character name
+       "James Bond", which is stored with the particular Bond-actor.<BR>
+       The following examples will demonstrate a range of features which get
+       progressively more complicated.</P>
+
+<DT><H4>22. list bond movies</H4>
+<DD><CODE>select m from m in class Movie where m-&gt;Cast[2] = "James Bond"</CODE>
+<DD><P>In all Bond-movies there is a character called "James Bond".
+	The character name is the data-element to the right of the actors name under the <I>Cast</I>-tag
+	in the <I>Movie</I>-object.
+	<BR><A HREF="result22.txt">results</A>
+    </P>
+
+<DT><H4>23. list bond movies together with all of the cast</H4>
+<DD><CODE>select m, m-&gt;Cast from m in class Movie where m-&gt;Cast[2] = "James Bond"</CODE>
+<DD><P>The where-clause is important : it applies to the iterator <TT>m</TT>,
+	and will be evaluated once per movie. So the list of possible
+	values for m is restricted to Bond-movies.
+	<BR>
+	The select-clause will then evaluate <TT>m-&gt;Cast</TT> again for all 
+	of those movies, and therefore report all cast-members of those movies,
+	not just the ones playing "James Bond".
+	This may not always be what you want, so compare with (24).
+	<BR><A HREF="result23.txt">results</A>
+    </P>
+
+
+<DT><H4>24. list bond movies together with all of the cast</H4>
+<DD><CODE>select m, a from m in class Movie, a in m-&gt;Cast where a[1] = "James Bond"</CODE>
+<DD><P>The subtle difference to (23) is important. The where-clause now applies
+	directly to the iterator <TT>a</TT> (for "actor"). It will only be true if
+	the given actor <TT>a</TT> is playing "James Bond", and because the
+	select-clause reports the value of <TT>a</TT>, only the Bond-actors 
+	are shown. 
+	<BR>
+	<STRONG>Note</STRONG>, how we get the value for the character name in this query.
+	The iterator <TT>m-&gt;Cast</TT> s automatically rewritten as
+	<TT>m-&gt;Cast[1]</TT> (the first data-element to the right is reported by default).
+	Therefore we only have to step one more position further to the right to get
+	to the second field, which is the character name.
+	<BR><A HREF="result24.txt">results</A>
+    </P>
+    <P>If the query was written as
+    </P>
+<DD><CODE>select m, m-&gt;Cast from m in class Movie, a in m-&gt;Cast where a[1] = "James Bond"</CODE>
+    <P>the result would be the same as <A HREF="result23.txt">(23)</A>, because the 
+	extra declaration of <TT>a</TT> is just used in the where-clause and
+	is basically the same as referring to <TT>m-&gt;Cast[2]</TT> directly.
+    </P>
+
+<DT><H4>25. list bond films with the James Bond actor and list all the movies that actor has starred in</H4>
+<DD><CODE>select m, a, a-&gt;Stars_in from m in class Movie, a in m-&gt;Cast where a[1] = "James Bond"</CODE>
+<DD><P>Basically the same as (24), but with an extra select field which lists all movies by the actor <I>a</I>.
+	<BR><A HREF="result25.txt">results</A>
+    </P>
+
+<DT><H4>26. list all James Bond actors and the total number of movies they've starred in</H4>
+<DD><CODE>select a, count(select m1 from m1 in class Movie where m1-&gt;Cast = a) <BR>
+		from m in class Movie, a in m-&gt;Cast where a[1] = "James Bond"</CODE>
+<DD><P>This query makes use of a nested sub-query. For every bond actor as determined by the outer query, 
+       the nested query loops over all movies again finding the ones which where the cast includes the actor
+       <TT>a</TT> from the outer query.
+       <BR><A HREF="result26.txt">results</A>
+    </P>
+
+<DT><H4>27. list all James Bond actors and how many non bond-films they've starred in</H4>
+<DD><CODE>select a, count(select m1 from m1 in class Movie, <BR>
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a1 in m1-&gt;Cast where a1 = a and a1[1] != "James Bond") <BR>
+	     from m in class Movie, <BR>
+	     &nbsp;&nbsp;&nbsp;a in m-&gt;Cast where a[1] = "James Bond"</CODE>
+<DD><P>The inner is similar to the one in (26), but the where-clause is more elaborate
+	to count only the films where the current actor <TT>a</TT> (from the outer scope)
+	played someone that wasn't called "James Bond".
+	<BR><A HREF="result27.txt">results</A>
+    </P>
+
+<DT><H4>28. for all Bond actors list their films where they weren't James Bond and who they played in those films</H4>
+<DD><CODE>select a, otherm, otherc<BR>
+             from m in class Movie, <BR>
+	     &nbsp;&nbsp;a in m-&gt;Cast <BR>
+	     &nbsp;&nbsp;&nbsp;&nbsp;where a[1] = "James Bond", <BR>
+	     &nbsp;&nbsp;otherm in a-&gt;Stars_in, a1 in otherm-&gt;Cast<BR>
+	     &nbsp;&nbsp;&nbsp;&nbsp;where a = a1,<BR>
+	     &nbsp;&nbsp;otherc in a1[1] <BR>
+	     &nbsp;&nbsp;&nbsp;&nbsp;where otherc != "James Bond"</CODE>
+<DD><P>We don't need a nested query here to count the number of movies for each Bond-actor.
+	The first where-clause restricts the value of <TT>a</TT> to only those actors who have played
+	"James Bond". The iterator <TT>otherm</TT> then find all their movies (which at this stage 
+	still includes all their bond movies as well).
+	The last clause then gets their character names from all those movies and excludes "James Bond".
+	This will exclude all actors who only played James Bond.
+	<BR><A HREF="result28.txt">results</A>
+    </P>
+</DL>
+
+<HR>
+
+<H3>Tricks and pitfalls</H3>
+
+<DL>
+
+<DD><P>All of the "James Bond" examples have been expressed so far in just one query. The query in example (28)
+       grows to considerable complexity. The section on table-variables showed how some queries are better
+       split up into two or more queries. A final query can then combine the results as shown in example (22).
+    </P>
+
+<DT><H4>29. list actors from Bond-films that didn't play "James Bond"</H4>
+<DD><CODE>@a := select m-&gt;Cast from m in class Movie <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where m-&gt;Cast[2]  = "James Bond";<BR>
+@b := select c from m in class Movie, <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c in m-&gt;Cast, <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;otherm in c-&gt;Stars_in where c[1] = "James Bond";<BR>
+@a diff @b</CODE>
+<DD><P>The table <TT>@a</TT> lists all actors from movies where a character was called "James Bond". 
+	The second table <TT>@b</TT> will list all those actors who actually
+	played the "James Bond" character. That leaves us to report the difference of the two
+	table using the <EM>diff</EM> table-function.
+	<BR>
+	The use of table-variables can be avoided because the <EM>diff</EM> keyword can be placed
+	between any two expressions which return a table value, i.e. two select-from-where queries :
+    </P>
+    <CODE>
+select m-&gt;Cast from m in class Movie <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where m-&gt;Cast[2]  = "James Bond"<BR>
+&nbsp;diff<BR>
+select c from m in class Movie, <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c in m-&gt;Cast, <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;otherm in c-&gt;Stars_in where c[1] = "James Bond"
+     </CODE>
+     <BR><A HREF="result29a.txt">results</A>
+     <P>The trick of the two queries which are combines by diff, leave no ambiguity.
+	Spot the difference in this query, where everything is expressed as just one select-from-where query :
+     </P>
+     <CODE>
+select othera  <BR>
+from m in class Movie<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where m-&gt;Cast[2] = "James Bond", <BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;othera in m-&gt;Cast<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;where othera[1] != "James Bond"
+    </CODE>
+    <BR><A HREF="result29b.txt">results</A>
+    <P>At first sight it seems to do the right thing. We select only the movies <TT>m</TT> where a character
+       is called "James Bond". The variable <TT>othera</TT> then lists all actors again for only those movies
+       and we check that we only report those who didn't play "James Bond".
+       So how is it different ?
+    </P>
+    <P>The line "Sophie Marceau" is missing from the result. Closer inspection of the data
+       reveals that no character name is stored for her role in "The world is not enough". The second where-clause
+       on <TT>othera</TT> therefore has no value for <TT>othera[1]</TT> to be used in the comparison. 
+       The comparison will evaluate to NULL and no result is shown for "Sophie Marceau".
+    </P>
+    <P>
+	See the section on <A HREF="../overview.shtml#NULL_VALUES">NULL values</A>.
+    </P>
+</DL>
+      
+<HR>
+Queries designed by Fred Wobus.<BR>
+The Sanger Centre, 06/Dec/1999
+
+<ADDRESS><A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A></ADDRESS>
+
+</BODY>
+</HTML>
+

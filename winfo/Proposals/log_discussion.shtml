@@ -1,0 +1,166 @@
+<!--#config timefmt="%d-%b-%C%y, %I:%M %p" -->
+<!--#set var="title" value="Log information discussion" --> 
+<!--#set var="icon" value="acedb.gif" --> 
+<!--#set var="author" value="fw" --> 
+<!--#set var="keywords" value="acedb, source code maintenance, CVS, changelog, log messages, emacs mode" -->
+<!--#set var="description" value="Discussion about which method to adopt for Acedb source code to log source file changes. " -->
+
+<!--#exec cgi="/cgi-bin/header" -->
+
+<H1 ALIGN=CENTER>File changelogs in Acedb source code.</H1>
+
+<P>In the past we have used a specially programemd mode in emacs 
+   to record changelogs in source files. Since using CVS for source 
+   code maintenance, we also record messages using CVS. We have now
+   discovered that CVS can automaitcally insert those messages
+   in the file.<BR>
+   This mechanism might render the existing emacs-mode logs obsolete
+</P>
+
+
+<H3>The CVS documenation says</H3>
+
+<P>The CVS documentation mentions a few problems associated with the auto-insertion $Log$ approach.</P>
+
+<OL>
+
+<LI> while the file is in our system, we can get the log info using cvs log
+    (aprs in our case). Once the file is exported the information might be
+    useless anyhow.
+    <P><STRONG>NOT true</STRONG> in our case - files are often moved back and forth, even
+    between developers with an ineterest in log info.</P>
+    </LI>
+
+<LI> RCS is not good at handling $Log$ info when a branch is merged onto a
+    main track. it may result in conflicts.
+    <P><STRONG>NOT relevant</STRONG> misbehaviuor in our case, as we don't use branches.</P>
+    </LI>
+
+<LI> people would be able to ammend log info that is inserted in the file,
+    when they are editing the file. people might tend to fix typos or even
+    factual information. As the CVS internal log is not updated, it might
+    result in inconsistencies.
+    <P><STRONG>COULD be a problem</STRONG>, but discipline is required not to amend log info
+    once inserted ion the file.<BR>
+    If the log info gets inserted at the end of the file, we might resits
+    the urge to fix spelling mistakes etc.</P>
+    </LI>
+</OL>
+
+
+<H3>My own opinion</H3>
+
+<H4>Reasons FOR keeping emacs mode logs and CVS logs seperate</H4>
+
+<P>
+I quite like the format that is used by the emacs mode. The messages
+entered have been sparse in the past, but people have been better recently
+about inserting concise and descriptive message at the file header.
+These messages often contain important developer information, like
+function x moved to y, or variable a renamed b etc. whereas the cvs logs
+should be more verbose and of interest to people that haven't been
+involved in the development of that particular module (like me, when I'm
+writing release notes from the cvs logs).
+</P>
+
+<DL><DD>
+  <H4>Changeover problems</H4>
+  <P>  One of the problems is that all logs up to now are in cvs and 
+  not in the files, and although a script could pull out the cvs logs
+  and add them to *EACH and EVERY* file, as if they'd been inserted by
+  cvs in the first place.</P>
+
+  <P> The other problem, is the fact that the emacs headers contain vital
+  information that might not have been logged in the cvs messages. merging
+  them might take up a lot of time.</P>
+
+  <P>I wouldn't agree with a gradual changeover, that leaves the 
+  emacs logs at the top, but now continues with the cvs insertion. 
+  Acedb suffers too much already from gradual changeovers that have
+  never been completed and were never done 'all the way'.</P>
+</DD></DL>
+
+<H4>Reasons AGAINST emacs logs and FOR cvs logs only</H4>
+
+<P>The format of the CVS log insertions is quite nice also. This is an example :</P>
+
+<PRE>
+/*
+ * $Log: log_discussion.shtml,v $
+ * Revision 1.1  2000-03-02 14:30:30  edgrif
+ * winfo/Proposals/log_discussion.shtml - initial revision created by edgrif
+ *
+ * Revision 1.5  1998/10/14  09:17:07  fw
+ * did something
+
+ *
+ * Revision 1.4  1998/10/14  09:12:58  mieg
+ * small changes bla bla
+ *
+ * Revision 1.3  1996/05/09  15:16:47  rd
+ * Fixed function xx()
+ *
+....
+*/
+</PRE>
+
+<OL>
+<LI>They take up more space, but when inserted at the end they would be
+    managable.
+    </LI>
+
+<LI>People might think more about what they put in the log, as it will be
+    added to the file itself (i.e. it becomes more visible) not just some
+    anonymous system that has to be prompted to show the logs.
+    </LI>
+
+<LI>Not everybody uses emacs or has this mode file available. Using cvs
+    logs would be truly cross-platform & cross-editor. (I'm thinking of
+    rbrusk and windows here).
+    </LI>
+
+<LI>If the file is simply renamed, CVS truncates the log at the point 
+    when the renaming took place and just refers to the old name where 
+    the rest of the log is. But the log insertion in the file would
+    continue in a linear fashion and it would not suffer from that.
+    <BR>
+    It would also make 'aprs' or 'cvs log' absolete, because one can just
+    'more' the file or open it in emacs (whilst one is editing it anyway)
+    to get access to the logs.
+    </LI>
+
+<LI>Once the changeover has been completed (as described above - no
+    half-baked jobs please). All the logs would be at the bottom, every
+    file could contain a proper header at the top, and go straight to the
+    code. This would make the files look a lot cleaner when browsing
+    through code.
+    <BR>
+    We also wouldn't need the /**** end of file ****/ lines at the end of
+    each file. The end would be marked by the start of the log section.
+    </LI>
+
+</OL>
+
+<H3>Fred's Summary</H4>
+
+<P>I am in favour of a changeover, but it certainly required a lot of work.
+Most of that work would be to merge emacs log with cvs logs, which might
+be tediuos in some cases.</P>
+
+<P>While we do that cleaning up the headers of some source files would be
+nice, as some are badly cluttered with stuff that should be thought about
+again and/or move to private header files.</P>
+
+<P>During the changeover, we would also have to touch *EVERY* file in the CVS
+system, and might gather a better idea of what is there and how to pull it
+together better or how to modularise it better.</P>
+
+<P>If we agree, that the CVS log mechanism should be adopted, we only have to
+problem to decide whether it is worth investing the time to do the
+changeover properly. I think we'd all benefit from it. Changelogs are a
+good idea, so we should make best use of them.</P>
+
+
+
+
+<!--#exec cgi="/cgi-bin/footer" -->

@@ -1,0 +1,206 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - December 2001</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - December 2001</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="General_News"></a><H2>General News</H2>
+
+<a name="ftp_http"></a><H3>Downloading acedb</H3>
+
+<P>The Sanger Centre has had to tighten up security on its ftp and web sites.
+This has meant that some users have had trouble downloading via ftp because
+their own ftp is not configured to use passive mode which is the only supported
+mode at the Sanger Centre now.
+
+<P>Do please remember that you can download everything from our
+<A HREF="http://www.acedb.org/Software/Downloads/">web page for downloads</A>
+using either ftp or http protocols, the latter will avoid
+any problems you may have with ftp.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+<a name="silent_option"></a><H3>New "-silent" command line for Socket Server</H3>
+
+<P>The server can now be run in the foreground in "silent" mode, i.e. no
+messages are sent to the terminal. Specify the "-silent" option when starting
+the server. This option was requested to make it possible to run the server
+for extended periods of time in an xterm without huge numbers of messages
+being output to the terminal.
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+<a name="port_numbers"></a><H3>The Socket Server and port numbers.</H3>
+
+<P>There has been some confusion over the valid range of port numbers for the
+socket server. IANA (Internet Assigned Numbers Authority) has set aside certain ranges of port
+numbers for certain uses with sockets:
+
+<PRE><CODE>
+
+Port No. range          Usage
+--------------          -----
+
+0 - 1023                "well-known" ports, you need super user authority
+                        to use these and they are reserved for ftp, http,
+                        X windows and basic operating system services.
+                        <b>DO NOT USE THESE</b>.
+
+1024 - 49151            "registered" ports, if you setting up the server to
+                        be run by inetd you should use one of these.
+                        <B>But</B> you will need to check in /etc/services
+                        that your number does not clash with one already there.
+
+49152 - 65535           "dynamic" ports, are for dynamically assigned/ephemeral
+                        use. You should use one of these if you are just trying
+                        out the server from an xterm in the foreground.
+
+</CODE></PRE>
+
+<P>You should <b>not</b> choose a port larger than 65535. If you do, the port
+number may be truncated in a way that leaves it in the range 0 - 1023 which are
+reserved for superuser use for well-known services. Numbers larger than 65535 are
+generally reserved for RPC and not available for sockets.
+
+
+<a name="core_dump"></a><H3>Change in behaviour when acedb crashes.</H3>
+
+<P>In the past when acedb crashed it produced a core dump. Unfortunately this
+dump is often useless because acedb attempts to clean up the database before
+the core dump by setting up a special routine called a signal catcher.
+This means that the core dump records what was going on when
+acedb was cleaning up, not what caused the crash.
+
+<P>Now, by default, no core dump will be produced. Instead, if acedb crashes in
+a way that you can reproduce,
+you should restart it with the "-nosigcatch" command line option, e.g.:
+
+<pre><code>tace -nosigcatch your_database
+</code></pre>
+
+<P>This will tell acedb not to try to clear up when it crashes and the operating
+system will then produce a useful core dump when the problem reoccurs. You should
+keep this core dump and let the
+<A HREF="mailto:acedb@sanger.ac.uk">acedb developers</A>
+know about it.
+
+<P>If you are using xace, you can also turn signal catching on and off from the
+Admin menu on the main window.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+<a name="grey_ramp"></a><H3>Greyramp speed improved.</H3>
+
+<P>The grey ramp printing code was preforming a function call per pixel, this
+has now been fixed which should speed things up a lot.
+
+<a name="aceout_print"></a><H3>The last of the aceOutPrint() bugs ?</H3>
+
+<P>When the aceOut package was introduced it unfortunately encouraged some
+erroneous use of the aceOutPrint() call (which should really be called aceOutPrint<b>f</b>()).
+The problem occurs when programmers do this:
+<pre><code>char *some_string = "blah, blah, resulting in a large % gain, blah, blah" ;
+
+aceOutPrint(some_string) ;
+</code></pre>
+What they should really do is this:
+<pre><code>char *some_string = "blah, blah, resulting in a large % gain, blah, blah" ;
+
+aceOutPrint("%s", some_string) ;
+</code></pre>
+In the former, the "%" in some_string is taken as a formatting character and the code
+looks in probably undefined memory to get the data to be formatted.
+
+<P>All occurences of this in acedb code have now been fixed and the header for the
+aceOut package updated to warn programmers about this problem. A longer term fix
+will be to introduce an aceOutPrintf() function to take the place of the aceOutPrint()
+call, which will become a routine to print simple strings.
+
+<a name="dotter"></a><H3>Dotter bug.</H3>
+
+<P>Dotter was crashing periodically, this was because of a problem passing
+the data over to the forked off dotter via a pipe. This should now be fixed.
+
+<a name="alias"></a><H3>Serious alias bug</H3>
+
+<P>Jean Thierry-Mieg discovered a serious bug which affected the use of aliases
+with acedbs cache of the tags present in an object. The cache is used to speed
+up queries since it makes it possible to see if an object contains a particular
+tag without actually having to load the object.
+
+<P>The code was not de-aliasing names and so would report a tag missing from
+an object because it did not look up the true object underlying the alias in
+the cache. This should make aliases much more reliable to use.
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+<a name="libgif_renamed"></a><H3>libgif.a renamed to libgd.a</H3>
+
+<P>The library that contains the GD package for producing acedb images used to
+be called libgif.a, it has now been renamed to libgd.a because of a name clash
+with a library on the new Mac OS-X system. This more accurately reflects the
+library's contents in any case since it is based on the GD package.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<H2>No December monthly build</H2>
+
+<P>Due to problems with our build system and some large scale and unfinished
+changes to introduce Smap (see January issue) we were not able to produce
+a December monthly build. Sorry !
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<H2>December User Group Meeting - was cancelled</H2>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Wed Feb 13 11:22:22 GMT 2002
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

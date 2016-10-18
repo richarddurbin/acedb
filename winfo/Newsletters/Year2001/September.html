@@ -1,0 +1,359 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - September 2001</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - September 2001</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<a name="General_News"></a><H2>General News</H2>
+
+<a name="IBM_acedb"></a><H3>First HP, now IBM</H3>
+
+<P>Recently <b>Hewlett-Packard</b> lent us a whizzo test machine to try out
+acedb on and now IBM are "beating" a path to our door (well almost). Two people
+from IBM in the US visited us last month to discuss porting acedb to IBMs latest
+RISC machines and making a more long term commitment of supplying acedb binaries for
+IBM machines for download in addition to those we already supply.
+
+<p>Courtesy of Bradley Elkin of IBM (US) we now have a makefile for building
+acedb on AIX 4.3, the current release of IBMs version of the Unix operating sytem.
+
+
+<a name="telnet_changes"></a><H3>No more telnet access to Sanger</H3>
+
+<P>I received the below note from System Support at the Sanger Centre
+about a further tightening up of access from outside users. If this will
+affect you adversely please contact system support direct
+(<A HREF="mailto:ssg@sanger.ac.uk">ssg@sanger.ac.uk</A>).
+
+<pre><code>&gt; Subject: Telnet Access to Sanger Systems.
+&gt; 
+&gt; 
+&gt; ** External Telnet access will be closed on Friday 12th October at 9am **
+&gt; 
+&gt; As part of the on going program to increase the security of the Sanger
+&gt; network we intend to close all remote access to Sanger systems via
+&gt; "Telnet"
+&gt; 
+&gt; Telnet access will not be closed internally although its use is
+&gt; discouraged.
+&gt; 
+&gt; Telnet does not use encryption and because of this it is possible for
+&gt; any data sent over the session, including user names and passwords to be
+&gt; captured.
+&gt; 
+&gt; We have installed, and been actively promoting the use of, SSH (Secure
+&gt; Shell) over the last 18 months. This provides a secure replacement for
+&gt; telnet with added functionality.
+&gt; 
+&gt; We have compiled a CD with SSH for all popular operating systems and these
+&gt; can be obtained from the System Support Group. If you require one please
+&gt; send a message to 'ssh-cd-request@sanger.ac.uk'
+&gt; 
+&gt; If you would like more information or have any questions please contact a
+&gt; member of the systems team.
+</code></pre>
+
+
+<!-- ******************************************************************** -->
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="process_limits"></a><H3>Once more unto the process limits</H3>
+
+<P>Whenever you run a program on a Unix machine, the resources (memory, files open
+etc.) available to the program are controlled by a set of limits. You can
+view these using the built-in "limit" command with the csh shell:
+
+<P><pre><b><code>&gt; limit
+cputime         unlimited
+filesize        unlimited
+datasize        262144 kbytes
+stacksize       2048 kbytes
+coredumpsize    unlimited
+memoryuse       505664 kbytes
+vmemoryuse      1048576 kbytes
+descriptors     4096 
+&gt;</code></b></pre>
+
+<P>This can be a problem when running acedb if, by default, your process limits happen
+to be set low. In particular acedb requires reasonable datasize and stacksize limits,
+while the precise limits required depend on how big the database is and what sort of
+operations are being done, its likely that you will need at least 50MB datasize and
+4MB stacksize. The simplest way to increase these limits is use the built-in "unlimit"
+command:
+
+<P><pre><b><code>&gt; unlimit data
+&gt; unlimit stack
+&gt;</code></b></pre>
+
+<P>It's hard to remember to do this however and accordingly,
+from this release, all acedb executables will automatically attempt to increase the limits
+for datasize and stacksize to the maximum permitted. If this is still very low (less than 50MB
+datasize and
+4MB stacksize) you will be given a warning and asked whether you wish to continue.
+Server programs do not issue the warning but instead log the problem into database/serverlog.wrm
+within the database.
+
+
+
+<a name="dump_reading"></a><H3>Reading in a set of dumpfiles</H3>
+
+<P>A long time ago, in a galaxy far, far away....Roger Horton said rather wistfully
+"Wouldn't it
+be nice if you could just click on something and read in a set of acedb dump files in
+one go.". Well, now you can.
+
+<P>There are two interfaces:
+
+<dl>
+  <dt><b>xace</b>
+  <dd>From the "Admin.." menu on the main window, select "Read Dump Files".
+      The file chooser window will be displayed and will by default show the
+      directory you were in when you started xace so if this is where the dump
+      files are, you will be able to select one immediately.
+
+      <P>To load a set of dumpfiles, just choose the first file in the set which
+      will have a name something like  "dump_2001-09-05_A.<b>1</b>.ace", you will
+      then be shown a message window which will identify the dump set to be
+      read in and ask you if you want to procede. If you say "Yes", the dumpset will
+      be read in and a list of files read in/parse results for the files will
+      be displayed.
+
+      <P>If errors are encountered in a dump file then processing of the dump set will stop
+      at that file. If you decide at that point you want to just abort the whole dump
+      reading then you should quit acedb without saving and start again.
+  <dt><b>tace</b>
+  <dd>Use the new "dumpread" command to read in a dumpset: "dumpread &lt:dump_file_name&gt;".
+      As with <b>xace</b>, you will be asked to confirm that you want to read in the dumpset,
+      and once finished the list of files read/parse results will be displayed.
+</dl>
+
+
+
+
+<a name="cds_dumping"></a><H3>Dumping CDS's from a keyset</H3>
+
+<P>The "Export.." menu in the keyset window now contains two extra options to dump
+just the CDS in FASTA format as either DNA or protein for the keyset objects.
+
+<P>Objects that do not contain the "CDS" tag and associated data will not be dumped.
+
+
+<a name="userid_saceclient"></a><H3>saceclient, scripts, userids and passwords</H3>
+
+<P>Following a discussion on the
+<A href="http://www.bio.net/hypermail/acedb/">acedb newsgroup</A> about running
+saceclient from a script the following changes have been made to saceclient:
+
+<ul>
+  <li>A bug has been fixed which prevented saceclient being run from a pipe
+      (thanks to Tim Cutts for that).
+  <li>New commandline arguments have been added to allow the userid and
+      password to be specified on the commandline:
+
+      <P>tace -userid &lt;userid&gt; -passwd &lt;password&gt;
+</ul>
+
+<P>Fixing of the bug means that it's now possible to run saceclient via a pipe
+from a script, pushing through the pipe the userid and password when required.
+This method is slightly more complex to program but is more secure than using the
+command line arguments (see below).
+
+<P>The command line arguments are easier to use in that saceclient can be started
+and the connection made to the database in a single line. You should be aware
+however that this option causes a <b>security hole</b>, the problem is that its
+possible for anyone to log on to the machine where saceclient is running and via the
+ps command find out your password:
+
+
+<P><pre><b><code>&gt; ps -f -u edgrif
+UID         PID   PPID    C STIME    TTY             TIME CMD
+edgrif      405      1  0.0 09:10:56 ??           0:04.88 /usr/bin/X11/xclock -geometry 195x28-0-0 -digital -bg white -fg black -font *h
+                                          .
+                                          .
+                                          .
+                                          .
+edgrif     7113   7038  0.0 13:50:29 ttypb        0:00.41 saceclient -userid edgrif -passwd wallychops -port 20001 griffin
+&gt;</code></b></pre>
+
+<P>Oops, damn, now I've given my favourite password away...sigh.
+
+<P>This may not matter to you if are running on a machine that is not accessible
+to others but you should be aware of this potential problem.
+
+
+<a name="server_readonly"></a><H3>Read only databases and saceserver</H3>
+
+<P>A common requirement for giving general, wide spread access to databases
+is to be able to make the database "<b>read only</b>" so that it cannot be
+either accidentally or maliciously damaged. On a Unix system this means making
+the database directory and all its files/subdirectories readonly to the server and
+perhaps not accessible to other users at all.
+
+<P>Assuming that you will run the saceserver as userid johnboy and you want only
+johnboy to have access to the database, and that johnboy
+is the owner of all files/directories in the database.
+
+<P>Prevent other users from having any access to the database:
+
+<P><pre><b><code>&gt; chmod -R go-rwx &lt;your_database&gt;
+</code></b></pre>
+
+<P>Prevent johnboy from having write access to the database in any way:
+
+<P><pre><b><code>&gt; chmod -R u-w &lt;your_database&gt;
+</code></b></pre>
+
+<P>You must then uncomment the <b>READONLY_DATABASE</b> option in the wspec/serverconfig.wrm
+file for the database to tell the server that the database is intended to be
+<b>read only</b>. If you don't do this the server will detect that it cannot write to its
+log file, issue an error message and exit.
+
+
+<P>Although this arrangement is very secure it does mean that none of the normal logging
+will take place. Its possible to continue logging but keep the rest of the database
+<b>read only</b> as well. Follow the above steps but with two important differences:
+
+<P>Make sure that the server can write to the server log file:
+
+<P><pre><b><code>&gt; chmod u+w &lt;your_database/database/serverlog.wrm&gt;
+</code></b></pre>
+
+<P>Make sure that the <b>READONLY_DATABASE</b> option in the wspec/serverconfig.wrm
+for the database is commented out, this will tell the server that it should try to
+write to its logfile.
+
+<P>This will enable the server to log connections etc. with reasonable security.
+
+
+<!-- ******************************************************************** -->
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+<a name="file_chooser"></a><H3>File chooser bug</H3>
+
+<P>The file chooser sometimes displayed the parent directory of the one
+actually required (usually the PWD), this is now fixed, the file chooser
+should always now show the requested directory.
+
+<a name="fmap_horizontal"></a><H3>Fmap scrolling bugs</H3>
+
+<P>Two bugs from when horizontal scrolling was introduced into fmap
+have been fixed:
+
+<ul>
+  <li>The current horizontal scroll position is maintained when fmap
+      if redrawn for any reason.
+  <li>The horizontal cursor line when clicking with the mouse button
+      now extends completely to the right of the screen when fmap is
+      scrolled horizontally.
+</ul>
+
+
+<a name="blixem_reverse"></a><H3>Reverse strand display in Blixem</H3>
+
+<P>A small buglet in blixem broke reverse-strand display, this is now fixed.
+
+
+<!-- ******************************************************************** -->
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+<P>If you wish to make comments/suggestions about any of the below, please mail them
+to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>
+
+
+<a name="fil_subs"></a><H3>Small additions to filsubs</H3>
+
+<P>The new <b><code>filGetDirname()</code></b> function will return just
+the directory portion of
+a path, this complements existing functions to return filename and extension.
+<b><code>filCheck()</code></b> now includes a test for the existence of a file,
+n.b. you may still not be able to read the file but you can see if it is there !
+
+
+<a name="getopt"></a><H3>GNU getopt code added</H3>
+
+<P>The GNU getopt code has been added, this gives us support for
+single letter and long form command line arguments, the calls in
+this small package are summarised in wdoc/getopt.html. This is
+the first part of a two stage plan to standardise our handling of
+command line options. The aim being a) to bring our handling of
+command line arguments into line with standard Unix practice, and b)
+to enable us as developers
+to add new command line options simply by updating a table of such
+options and then making a single call later in the code to find out
+whether an option/value has been specified.
+
+
+<a name="aceio_bug"></a><H3>aceOutPrint() bug again</H3>
+
+<P>When the aceio package was written the interface for aceOut was
+incomplete in that it included an <b><code>aceOutPrint()</code></b> call which should
+have been named <b><code>aceOutPrintf()</code></b>. This has led to the below usage
+of <b><code>aceOutPrint()</code></b>:
+
+<pre><b>       char *some_string ;
+
+       aceOutPrint(some string) ;
+</b></pre>
+
+<P>Of course there is a problem if <b><code>some_string</code></b> contains the printf
+formatting character "<b>%</b>", this has tended to lead to incorrect output rather than
+crashes. Some time in the next month or so documentation will be added and a new
+"plain string" call added to the aceout package to make the distinction between formatted
+and plain text output.
+
+
+
+<!-- ******************************************************************** -->
+<H2>September monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<H2>Next User Group Meeting - D319, 2.30pm, Thursday, 18th September 2001</H2>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon Nov 12 08:30:02 GMT 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

@@ -1,0 +1,36 @@
+// $Id: passwd.wrm,v 1.9 2003-07-07 13:47:39 rnc Exp $
+//
+//  wspec/passwd.wrm
+//
+//  password file to the ACeDB system
+//
+//  //comments out the line
+//
+//  the names of user with write access must be listed here
+//  each one on a new line
+//
+//  This file should belong to the acedb administrator
+//  and have permission 644 or possibly 600
+//
+
+rd
+mieg
+acedb 
+srk
+edgrif
+rnc
+
+// Put the login name of the database administrator who
+// creates the database below, they should own this file
+// which will allow them to reindex the database.
+joe_bloggs
+
+
+// On some platforms, the unix command getLogin fails,
+// In this case, anyone will have write access if you
+// uncomment the next line by removing the leading //
+
+//getLoginFailed  
+
+// end of file
+ 

@@ -1,0 +1,6 @@
+This has been shelved because unix systems like linux provide a utility
+to automatically rotate logs and all we needed to do was provide a function
+that from tace would close and reopen the log. This then allows the utility
+to rotate the log files.
+
+Do the rotating logs, do on size and timing (e.g. daily or weekly)

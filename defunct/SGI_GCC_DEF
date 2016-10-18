@@ -1,0 +1,31 @@
+# $Id: SGI_GCC_DEF,v 1.4 1994-07-06 02:14:09 mieg Exp $  #
+
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+############### wmake/SGI_DEF    Jan-12-1992       ##############
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+########### for the SGI Silicon Graphics       ##################
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+NAME = SGI
+COMPILER = gcc  -Wreturn-type -Wimplicit -Wunused -Wcomment -g \
+	-fwritable-strings
+LINKER = gcc -g
+
+LIBS = -lm
+
+# -lsun is used by the rpc system for ace client/server
+# -lc_s is the shared c library on silicon
+
+.c.o:
+	$(CC) -c $*.c
+
+#################################################################
+#################################################################

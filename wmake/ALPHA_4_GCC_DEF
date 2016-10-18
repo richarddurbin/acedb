@@ -1,0 +1,30 @@
+# SCCS: $Id: ALPHA_4_GCC_DEF,v 1.10 2003-09-09 21:23:59 mieg Exp $
+
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+####### for the DEC-Alpha running Digital UNIX V4.0 #############
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+NAME = ALPHA
+# Compiler used to build 3rd party libraries 
+LIBCC = gcc
+
+COMPILER = gcc -g -DACEDB4 -ansi -pedantic -Wall -Wnested-externs `../w3rdparty/include-config -I/usr/local/include`
+
+LINKER = gcc -g
+
+# On DEC the library does not need to be ranlib'd
+RANLIB_NEEDED = false
+
+LIBS =  `../w3rdparty/libs-config -L/usr/local/lib` -lreadline -lm -lcurses
+
+#################################################################
+#################################################################

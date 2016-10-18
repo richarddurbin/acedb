@@ -1,0 +1,35 @@
+================================================================================
+                              AceDB - June MAR
+
+
+Executive summary.                                                                        
+------------------                                                                        
+
+AceDB in print: an article on AceDB is to appear in "Encyclopedia of Genetics,                     
+Genomics, Proteomics and Bioinformatics".
+
+ZMap and GFF, the GFF v2 parser is working and GFF v3 is on the way.
+
+
+
+AceDB
+-----
+
+AceDB in print: Richard and Ed have written a 2000 word article about AceDB
+for the forthcoming Wiley "Encyclopedia of Genetics, Genomics, Proteomics and
+Bioinformatics". The article will be a review specialist in the "Programming
+Paradigms" section.
+
+
+ZMap
+----
+
+ZMap will ultimately read a number of data formats and now read GFF v2. This
+is important because both the AceDB and DAS 2 servers can currently export
+this version of GFF so ZMap can now extract data from both. The parser allows
+switch-able SOFA compliant behaviour and has options to allowing parsing, but
+not processing the data for syntax checking and for defaulting unknown feature
+types.
+
+Work is continuing on adding display methods used in AceDB FMap to ZMap.
+

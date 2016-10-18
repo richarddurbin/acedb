@@ -1,0 +1,282 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - October 2003</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - October 2003</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+
+<P>After a bit of a shake down caused by the departure of Simon Kelley from the
+Acedb team we've decided that we will continue to send out a monthly newsletter
+and do a monthly build. Although we have cut down enormously on how much we
+are working on acedb, its still enough to warrant continuing with the builds
+and newsletters.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="General_News"></a><H2>General News</H2>
+
+<P>This newsletter sees the last contributions to acedb from Simon Kelley and
+describes a number of changes to support the increasing use of different classes
+to make virtual sequences for display/annotation via FMap or dumping as GFF.
+We are moving on to GTK version 2 at long last. And there are a number of bug fixes.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="superclass"></a><H3>Composite classes: the opposite of Subclasses</H3>
+
+<P>As a parting shot Simon Kelley implemented a mechanism for allowing you
+to create collections of database classes that can be queried as a unit.
+You could for example clump all your Smap'd classes into a single composite
+class to make running queries easier. Here's a brief description of how you
+do this courtesy of Simon:
+
+<P>"Composite classes" behave in the Query language and the Acedb Main
+window like a superclass of their members.
+
+<P>They are called "Composite classes" because we already have a concept                  
+of superclasses which are the inverse of subclasses.                                    
+
+<P>To make a Composite class:                                                              
+                                                                                       
+<P>You need to add the class to subclasses.wrm (I know, I know, it's like using the
+"Start" menu to shut down the computer.) There is a new tag in Class class                
+called "Composite_of", so to make a Composite class called "Interesting"                
+which is all Sequences and Loci add the following to subclasses.wrm
+
+<pre><code>Class Interesting                                                                       
+Visible                                                                                 
+Composite_of Sequence                                                                   
+Composite_of Locus                                                                      
+</code></pre>
+
+<P>The new class behaves like a protected class (you can't create objects                 
+of that class) but you can query it and select it in the main window.                   
+
+<P>Unfortunately there will be no AQL support for the foreable future.
+
+
+
+<a name="temp_genes"></a><H3>Gene Finder changes: Making Temp Genes</H3>
+
+<P>If you don't use the Gene finder facility built into FMap then there's
+probably not much point in reading this.
+
+<P>The introduction of the SMap tags into acedb has meant that it is now possible
+to construct virtual sequences for display by FMap not just from Sequence
+class objects, but from any classes the user has embedded the SMap tags in.
+This has meant changes to Acedb in a number of places to generalise the
+code to handle any number of classes.
+
+<P>The Gene finder facility allows the user to create new "gene" objects to
+match the exons/splice site information produced by the Gene Finder code.
+Previously these objects could only be Sequence class objects, now they
+could be any one of a number of classes. The "Selected -> temp_gene" menu
+item now gives a submenu allowing the user to select the class of the
+temp_gene to be created. To be included in the submenu a class must contain
+the <b>S_Parent</b> and <b>Source_Exons</b> tags, i.e. the class must be
+mappable and able to represent exons in the usual acedb style.
+
+<P>The code that fixes and removes temporary genes
+has also been altered to cope with 
+temp_gene_N objects of different classes.
+
+<P>An earlier attempt to allow different class objects to be created relied
+on the user setting a USE_CDS_CLASS preference, this is now redundant and
+has been removed from the preferences list.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+<a name="GTK2"></a><H3>GTK 2: moving on with the times</H3>
+
+<P>GTK has been our underlying widget set (i.e. the library that provides sliders,
+buttons etc.) for some years now. Up until recently acedb was only compiled with
+GTK version 1 which is now substantially out of date.
+
+<P>Accordingly we have put some effort (thanks to Simon for getting this all going)
+into getting acedb to compile with GTK version 2. The newer version has many bug
+fixes and improvements but has required a number of code and build changes.
+
+<P>The build changes are encapsulated in scripts in w3rdparty/ and the usual
+wmake/XXXX_DEF files. For now the relevant wmake/XXXX_DEF files contain
+"GTK2" as part of their file name, e.g. LINUX_GTK2_4_DEF. We have provided
+DEF files for Linux and Alpha builds.
+
+
+<a name="fmap_smap"></a><H3>FMap changes</H3>
+
+<P>As users incorporate new classes into their sequence data to replace
+the old monolithic Sequence class based data there have had to be a number
+of changes to the FMap. Its likely that these changes will continue for
+some time to come. Latest changes include:
+
+<ul>
+  <li>When you double click on any box in the FMap window that is derived from
+      an SMap'd object, that object will be shown in the Tree display.
+  <li>The blue information line at the top of the Fmap now shows both the class
+      and object name for a box in the format "Class:name", e.g. "Sequence:B0250".
+      This is necessary now that boxes can be derived from objects of many different
+      classes.
+</ul>
+
+
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="dotter"></a><H3>Small Dotter change</H3>
+
+<P>In response to a frequent user request, fullscreen crosshairs are now the default.
+
+
+<a name="find_tree"></a><H3>Find bug in Tree display</H3>
+
+<P>Fixed bug whereby a failed Find didn't give an error message.
+
+
+
+<a name="fmap_bugs"></a><H3>FMap bugs</H3>
+
+<P>Fixed horrible bug in fmap window title, same old dangling text pointer issues.
+This bug caused window title to sometimes be garbage because pointer that name(key)
+returned was no longer pointing to the name of the key.
+
+<P>Yet more horrid text pointer stuff, we were passing blixem the pointer
+returned by name(key), the blixem code then truncated this text directly
+because it didn't take a copy of the text, this changed the text in the
+lex thus actually changing the name of the object in the database !
+This didn't show up before because most object names were sufficiently short
+that blixem did not truncate them for display, the Otter/lace system at
+Sanger creates long object names automatically for its assemblies and this
+revealed the bug.
+
+
+<a name="socket_bug"></a><H3>Server bug</H3>
+
+<P>Fixed bug in socket layer: I misunderstood how much shutdown() does for you,
+I thought it closed the file as well as stopping the TCP connection. This
+turns out not to be true, you need to explicitly close the connection after
+the shutdown. I think this is fixed but the command that lets you monitor
+how many files a process has open is su root so I can't check this..sigh.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+
+<a name="composite_function"></a><H3>New Pick function for Composite classes</H3>
+
+<P>Simon Kelley says:
+
+<P>For programming, I've added one function                                                
+                                                                                        
+<P><code>BOOL pickBelongsToComposite(KEY classe, KEY key)                                        
+</code>
+
+<P>classe can either be a small integer from pickWord2Class or a Key in                    
+Class class. The function returns TRUE of key is in classe. It's legal                  
+to call it with either composite or ordinary classes.                                   
+                                                                                     
+
+
+
+<a name="smapconvert_works"></a><H3>Various sMapConvert() bits</H3>
+
+<P>The introduction of multiple classes has required a number of changes
+to the smap code, this is a sample of the type of work that's had to
+be done:
+
+<ul>
+  <li>Exon code needs to make an artificial "parent" seg for non-sequence class
+      exons/introns otherwise bumping algorithm doesn't work. This feels like a hack.
+  <li>Fixed confirmed introns code which did not deal with when smap call failed
+      in the right way, looks like a v. old bug to me.
+  <li>Fix convertAllele() so that it gets the Method correctly for non-sequence
+      class alleles.
+  <li>Change main convert loop to remove code that makes sequence segs to a
+      subroutine, otherwise processing is v. complex for classes other than
+      a sequence.
+  <li>Add data to conv_info for smapped position of current obj, needs to be
+      passed to convert routines for classes other than sequence.
+</ul>
+
+
+<a name="aquila"></a><H3>Aquila</H3>
+
+<P>These changes are courtesy of Rob Clack.
+
+<P>Added better support to Aquila for which executable is run, e.g. tace, giface etc.
+
+<P>Aquila requires the Mail package and now warns if its not available.
+
+<P>gff tests added, very important now many different classes are being
+SMap'd and then dumped.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>October monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Tue Dec 23 11:42:45 GMT 2003
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

@@ -1,0 +1,63 @@
+================================================================================
+                              AceDB - December MAR
+
+
+Executive summary.                                                                        
+------------------                                                                        
+
+A month of consolidation of code for Wormbase and Human group, fixing of most
+important outstanding bugs. ZMap work is aimed at investigating using
+Gnome/GTK libraries for all display.
+
+
+Gnome/GTK
+---------
+
+Continued work to move AceDB and ZMap to latest versions of Gnome/GTK, mostly
+concerned with getting gnome/gtk libraries updated on Linux (fairly easy) and
+on the Alphas (hideous). Our build system copes but the system libraries are
+not yet up to date.
+
+
+ZMap
+----
+
+Investigating use of Gnome Canvas as the basis for display of ZMap window.
+
+
+Blixem
+------
+
+Bug fixes in blixem:
+
+- display of long sequence names improved by abbreviating them in the middle
+so annotators can still see beginning/end, current abbrev. is "<>".
+
+- The selected sequence name was being truncated, now fixed.
+
+- the % identity routine did not do gapped alignments, it does now (required
+bug fix in SMap, bug caused caused the nucleic acid coords for a protein
+alignment to be truncated).
+
+
+FMap/Wormbase
+-------------
+
+Add new FEATURE_OBJ seg type for more generalised features that result from
+smap objects that are not Sequence class objects.
+
+Fix confirmed intron code to report information about which sequence confirms
+an intron correctly.
+
+Fix irritating off by one bug in confirmed Intron routine caused by forgetting
+that database coords are 1-based but segs are 0-based.
+
+Add code to display/do user interaction for non-sequence class smapped objects
+correctly.
+
+Improve code to correctly output gff_source field contents in GFF records, especially
+where there is a parent/children relationship as in exons/introns.
+
+Fix EMBL dumping, broken by introduction of some of new smapped classes and
+some changes to tags within classes.
+

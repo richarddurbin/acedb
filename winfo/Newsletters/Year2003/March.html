@@ -1,0 +1,392 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - March 2003</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - March 2003</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<P>This month there are improvements/additions to giface commands, cut/pastable
+popup error messages (an AceDB first...), long awaited FMap keyboard shortcuts,
+control of timestamping frequency for server log files, a gene feature finder
+executable and fix for possibly the most irritating FMap bug in the world.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="General_News"></a><H2>General News</H2>
+
+<P>We seem to be back on track with monthly releases and newsletters. The SMap
+code has been used extensively by the C. Elegans group at Sanger for mapping
+homologies, alleles and other features and seems stable and working well.
+We'll be producing a write up of SMap tags and other associated tag sets
+(e.g. the homology tag set) that are supported by AceDB for next month or sooner
+if possible.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="gif_commands"></a><H3>New and improved giface commands</H3>
+
+<P>If you use giface then you may be interested to note the following
+changes/additions to the <b>"smap"</b> and <b>"seqget"</b> commands available from
+the <b>"gif"</b> submenu in giface.
+
+<P><b>"smap":</b> The smap command has been made much faster so that you should be
+able to use it to find the position of a child smap'd feature in any parent of that feature
+quickly enough to service web server requests if you are using the AceDB server
+version of giface.
+
+<P>For example you can find the position of genes on forward and reverse strand of
+a chromosome in the worm:
+
+<pre><code>     acedb> gif smap -from sequence:m7.1
+     SMAP Sequence:CHROMOSOME_IV 11082185 11081556 1 444 INTERNAL_GAPS
+     // 0 Active Objects
+     acedb>
+     
+     acedb> gif smap -from sequence:m7.2
+     SMAP Sequence:CHROMOSOME_IV 11084106 11085837 1 1551 INTERNAL_GAPS
+     // 0 Active Objects
+     acedb>
+</code></pre>
+
+<P>Here "m7.1" is on the reverse strand of CHROMOSOME_IV from bases 11081556 to 11082185,
+while "m7.2" is on the forward strand from bases 11084106 to 11085837. "INTERNAL_GAPS"
+indicates that these features are sets of exons and hence have gaps 
+
+<P>If you specify a coordinate range and the -from object is outside of that coordinate
+range the smap call will return as its last word "OUTSIDE_AREA" to indicate that the
+object could be mapped but was outside the area of interest.
+
+
+
+<P><b>"seqget":</b> The seqget command now has a "-noclip" option. With this option,
+when you use seqget specifying a coordinate range, 
+you can decide whether features should be clipped to the coordinate range or, if you specify
+"-noclip" whether features that overlap should be mapped to their full extent.
+
+<P>For example:
+
+<pre><code>
+
+   =================|=========================|=================== sequence
+                   100                       200
+                _________            ______
+               /         \          /      \
+           ====           ==========        ========= feature
+
+                    &lt;-------- clip -----------&gt;
+
+           &lt;------------------- noclip -------------&gt;
+
+
+</code></pre>
+
+<P>Here we have asked to see features from bases 100 to 200 of the sequence, the default
+(clipped) will return only the part of the feature that does not extend past this range, the noclip
+option returns the full features.
+
+<P>Clipping is useful for something like fMap where a user is only interested in what
+features look like in a particular range, the unclipped option is useful when you want
+to see the full features that overlap a particular range perhaps to then output them
+as in GFF or some other format.
+
+
+
+<a name="fmap_recomp"></a><H3>FMap and display of reverse strand features.</H3>
+
+<P>If you are in tree display of a sequence object and click on a child sequence that
+is on the reverse strand feature the fMap will now automatically be displayed
+showing the reverse strand. Previously 
+the object would be on the left/up-strand of the fMap display and so may not even have
+been displayed if its method did not include the "Show_up_strand" tag.
+
+
+
+<a name="pop_up_messages"></a><H3>You saw it here first</H3>
+
+<P>OK, once again AceDB is ahead of the game....
+
+<P>How many times have you seen some error in a program that has been popped up in
+a helpful little dialog box and what you'd really like to do is cut/paste that
+message into an email and send if off with some choice vituperative comments of your
+own to the programs developers. Of course what you discover is that you can't cut/paste
+the message so you have to copy it out verbatim and then you make a mistake and accidentally
+leave out the vital piece of information and, and, and....
+
+<P>Well in AceDB you can cut/paste the message, just move your mouse pointer over
+the message, you will see it go highlighted, click on it with the left button and then
+use the middle button to cut/paste it into your email.
+
+<P>AceDB, ahead of the game...well, OK, sometimes we are...
+
+
+<a name="fmap_shortcuts"></a><H3>FMap keyboard shortcuts</H3>
+
+<P>After an infinity of time and an almost as large number of people "volunteering"
+to put some shortcuts into the fMap something has finally happened. Here is a list
+of newly added keyboard shortcuts in the FMap:
+
+<P><pre><code>left,right arrows        creep left/right
+Ctrl left,right arrows   page left/right
+
+up,down arrows           creep up/down
+Ctrl up,down arrows      page up/down
+
+=,-                      zoom little in/out
+Ctrl =,-                 zoom lots in/out
+
+Shift up,down arrows     cycle through highlighting features
+                         column by column
+
+Page Up/Down             page up or down
+Home/End                 go to start/end of current view
+
+spacebar                 recalculate
+Enter/Return             pick (like mouse click on current item)
+"r"                      reverse-complement
+"w"                      whole (zoom fMap to whole sequence)
+</code></pre>
+
+<P>(Note that you can press either the "+" key or the "=" key to zoom in, its more convenient
+to press the "=" key because you don't have to press shift first.)
+
+
+<a name="server_timestamps"></a><H3>Controlling the frequency of timestamps in the server log file</H3>
+
+<P>A while ago I reported an AceDB server
+<A HREF="http://www.acedb.org/winfo/Newsletters/Year2002/October.html#socket_server">performance bug</A>
+caused by time stamping every single log file message, at the time a quick fix
+was made to allow the database administrator to select time stamping on an
+"all or nothing" basis. You can now choose intermediate levels of time stamping
+using the new <b><code>TIMESTAMP_FREQUENCY</code></b> keyword in the
+<code>wspec/serverconfig.wrm</code> file of the database. You can use this
+keyword to say how often you would like time stamps to appear in the server logfile.
+
+<P>From the <code>wspec/serverconfig.wrm</code> description:
+
+<pre><code>//////////////////////////////////////////////////////////////////
+// TIMESTAMP_FREQUENCY:
+// If the TIMESTAMP_FREQUENCY flag is uncommented in this file
+// then the number following it will be used to set the frequency
+// with which log messages are timestamped.
+//
+// The timestamp frequency will be interpreted as:
+//
+// 0   no timestamping.
+// 1   timestamp every message.
+// n   timestamp every n messages.
+//   
+// The default is 0.
+//
+//TIMESTAMP_FREQUENCY 0
+</code></pre>
+
+
+
+<a name="gff_out"></a><H3>GFF output, unknown fields</H3>
+
+<P>When AceDB outputs features from an FMap in GFF format, there may be fields
+that it doesn't have data for, e.g. the "source" field. AceDB used to output
+the string "unknown"  for these fields, but this is not distinctive enough as curators sometimes
+use this string as the value for GFF_source tag in their methods. In future
+AceDB will output the string "*UNKNOWN*" for any field in a GFF record for which
+it cannot establish a value, hence you will be able to distinguish between features
+that you want to call "unknown" and actual missing data in the database.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+<a name="gene_features"></a><H3>New Gene Features program available</H3>
+
+<P>(<I>This article is courtesy of Rob Clack
+<A HREF="mailto:rnc@sanger.ac.uk">rnc@sanger.ac.uk</A> & Kevin Howe
+<A HREF="mailto:klh@sanger.ac.uk">klh@sanger.ac.uk</A></I>)
+
+<P>You can now
+<A HREF="http://www.acedb.org/Software/Downloads/monthly.shtml">download</A>
+a separate executable which uses the Phil Green/LaDeana Hillier's
+gene finder program to search for localised gene finder features.
+
+<P>The standalone genefeatures program scans a FASTA-format sequence for 
+localised gene features which it then writes to stdout in GFF format.
+
+<P>To achieve this it uses a series of example profiles, both positive 
+examples of the feature of interest and matching "pseudo" examples (eg 
+pieces of sequence which have some splice-site characteristics, but are 
+not splice-sites.)
+
+<P>The program was originally based on Phil Green and LaDeana Hillier's 
+GENEFINDER program, some bits of which have been incorporated into fMap.
+
+<P>Thanks to Kevin Howe for help/programming.
+
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="active_feature"></a><H3>Losing the active feature on scrolling in FMap</H3>
+
+<P>An old and frustrating bug for annotators has been fixed. It used to be
+that if you selected a feature and then in scrolling up/down that feature
+went off the screen, FMap would forget that you had selected the feature,
+so then you had to click it again. Now you will find that FMap can just about
+always remember which feature you selected, the only exception being if you scroll
+so far up/down that the feature is no longer in the calculated section of
+sequence that FMap is displaying.
+
+
+<a name="server_messages"></a><H3>Server exit message twice</H3>
+
+<P>A minor bug: the server used to output its exit message to the server log
+twice, this is now fixed.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+
+<a name="dotter_bug"></a><H3>Incredible dotter bug</H3>
+
+<P>Fixed an incredible bug in dotter:
+
+<pre>Here's how xqseqDisp is declared:
+
+<code>static char xqseqDisp[3][MAXALIGNLEN+1] ;</code>
+
+Here's how xqseqDisp is initialised:
+
+<code>    for (i = 0; i < MAXALIGNLEN; i++)
+	qseqDisp[i] = 	sseqDisp[i] =
+	    xqseqDisp[0][i] = xqseqDisp[2][i] = xqseqDisp[3][i] =
+		qseqDispCrick[i] = sseqDispCrick[i] = 0;</code>
+</pre>
+
+<P>Youch, we go clean off the end of the xqseqDisp array with xqseqDisp[3][i], thanks to the
+Alpha compiler for spotting that one buried in the code.
+
+
+<a name="array_bug"></a><H3>Array and keyset bug</H3>
+
+<P>Thanks to Rob for sorting this one out:
+
+<P>Fixed bug where key is inserted at posn 0 in array,
+but code thought index of -1 meant array was empty.
+Changed to use arrayMax to verify array size.
+
+
+
+<a name="graph_call"></a><H3>New graph package call</H3>
+
+<P>A small additional function has been added to the graph package, you can now set
+the size of graphs of <b>any</b> type specifying pixels for the size using graphRawBounds().
+
+
+
+<a name="graph_changes"></a><H3>Some changes to the gex/graph package</H3>
+
+<P>To implement keyboard shortcuts the keyboard callback routines had to be
+changed to allow the keyboard modifier (Ctrl, shift etc) to be passed back as
+well as the key. The GTK layer now passes back modifier keys that are pressed
+at the same time as normal keys. This allows the graph package to pass such
+key presses through to FMap or other graph package based displays.
+
+<P>Note that where possible these actions are dealt with at the GTK level, in
+FMap for instance, horizontal scrolling can be dealt with at the GTK level,
+as horizontal scrolling is via a GTK widget. Vertical scrolling is dealt with
+at the graph/FMap level because it involves the FMap type scroll bar.
+By dealing with these simpler user interface actions at the GTK level we make
+them generally available to all displays that use GTK type widgets for scrolling
+etc.
+
+
+
+<a name="build_changes"></a><H3>Some changes to the build system</H3>
+
+<P>The AceDB home directory is now a little less full as all build log files
+are now held in a .BUILDLOGS subdirectory. If a build fails look in here for
+the log files to see what went wrong.
+
+
+
+<a name="smap_changes"></a><H3>Some changes to smap to fix a pernicious bug</H3>
+
+<P>By default smap clips the coordinates of mapped features to the coordinate
+range specified, this resulted in a bug in sMapMapEx().
+sMapMapEx() needs to know the true length of the parent, not the clipped length.
+The length is needed so that features that are reversed with respect to the parent and hence
+must be positioned from the <b>end</b> of the parent can be positioned correctly.
+To do this the SMapKeyInfoStruct has to hold the length of the parent.
+
+<P>The function now also checks to see if a feature
+is outside the area of the smap and return the new SMAP_STATUS_OUTSIDE_AREA
+code for this. We need this because its possible for a feature to be mapped
+correctly but still be outside the specified coordinate range for a particular
+mapping.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>March monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="User_Group"><H2>Next User Group Meeting - D319, 3.00pm, Thursday, 10th April 2003</H2>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Fri Apr  4 15:14:26 BST 2003
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

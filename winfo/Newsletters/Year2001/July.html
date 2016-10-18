@@ -1,0 +1,340 @@
+<HTML>
+
+<!--                                                                          -->
+<!-- Stuff you should alter is highlighted with "***"                         -->
+<!--                                                                          -->
+<!-- The newsletters are parsed by a script to automatically produce the      -->
+<!-- index file for the directory. If you change the format of this template  -->
+<!-- you had better change the script as well.                                -->
+<!--                                                                          -->
+
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - July 2001</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - July 2001</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P>This month sees the introduction of a long requested feature, namely
+an interruptible Fmap, there are new display tags for the Grid display, an
+article on circular object references and once again the problem of
+programs running out of stack space rears its ugly head. As usual there
+are a number of bug fixes as well.
+
+
+<!-- ******************************************************************** -->
+<a name="New_Features"></a><H2>New Features</H2>
+
+<a name="Fmap_interrupt"></a><H3>Oh NO, I meant to click "View as text"</H3>
+
+<P>Well we all do it, you click on an object in the <code>"Keyset"</code> or <code>"Tree display"</code>
+windows and before you can do anything about it <code>xace</code> is churning and churning and
+the busy cursor just won't go away....sigh. The usual cause of the problem is that you have clicked on
+a "Sequence" object that either has a huge number of children or some very big parents
+(just see how programs mimic life...). Xace is busy opening, examining and closing
+a large number of objects and allocating large amounts of memory as it tries to
+prepare an <code>Fmap</code> of a large section of sequence.
+
+<p>Well in the latest monthly release you can now press the <code>"F4"</code> key 
+to stop the Fmap display. When you do this a dialog box will appear after a couple
+of seconds that will
+give you some idea of what Fmap was doing when you interrupted it and allow you to
+choose whether to stop or continue. If you decide to stop, xace will display the
+object using the <code>"Tree display"</code> which is probably what you would have
+done anyway.
+
+<P>Currently Fmap will show it has been interrupted at one of the following stages:
+
+<ul>
+  <li><b>"Getting the DNA"</b> (constructing a unified section of DNA for the sequence)
+  <li><b>"Constructing virtual sequence"</b>
+      (collecting together all the information e.g. homols, gene predictions etc., for
+      the sequence)
+  <li><b>"Finding coding"</b> (finding all the CDS coding in the sequence)
+</ul>
+
+
+<p>In addition to making Fmap interruptible, Fmap will now also initially
+check the size of sequence you have asked to display and if the sequence is
+large a dialog box will immediately give you the chance to stop. Once again the object
+will be displayed using the <code>Tree display</code> if you decide to you don't want
+the Fmap.
+
+
+<a name="grid"></a><H3>New Grid display options</H3>
+
+<P>A user recently made two requests for enhancements to the Grid display:
+
+<ul>
+  <li>tags to set the size of the grid boxes
+  <li>a tag to switch from one label per sub-block of boxes to one
+      label per box.
+</ul>
+
+<P>The new monthly release has support for these, the following changes
+have been made:
+
+<P>New tags have been added to the ?Grid class:
+
+<pre><code>Square_size UNIQUE Float UNIQUE Float // Total size of box and surrounding space,
+				      // (default = 2.0 1.0)
+Box_size UNIQUE Float UNIQUE Float    // Size of box, cannot be bigger than
+                                      // Square_size dimensions (default 0.9 0.7).
+Label_per_box                         // Do a label per box rather than a label
+                                      // per "Lines_at" sub-block.
+</code></pre>
+
+<P>With "Square_size" you can control the size of the square
+that the box is drawn in, and with "Box_size" the size of the
+box itself. This allows you to specify a small box with a large surround, a large box
+with a small surround and so on. You can modify the sizes interactively from
+the grid display main menu so you can see how different settings look.
+
+<P>If you specify the tag "Label_per_box" with one of the labelling options,
+e.g. "Labels UNIQUE A1_labelling", then grid will display the labels one
+per box rather than one per block of boxes.
+
+<P>Originally the ?Grid class contained a "Size" tag:
+
+<pre><code>Size UNIQUE Int UNIQUE Int
+                      // idea is to give box size here
+</code></pre>
+
+<P>This tag was never in fact supported by the code and has been withdrawn.
+
+<P>Remember that to use the new tags you will need to get both the
+code and the definition of the ?Grid class from the sample
+wspec/models.wrm that come with the new monthly build.
+
+
+<!-- ******************************************************************** -->
+<a name="Articles"></a><H2>Articles</H2>
+
+<a name="circular_sequences"></a><H3>Sequences that point to themselves</H3>
+
+<P>It's a perennial problem, you make a sequence object and it was supposed
+to have a different parent, or perhaps no parent at all, but somehow it ends
+up being its own parent. Here's an example:
+
+<pre><code>Sequence : "my_parent"
+Source "my_parent"
+Subsequence "child" 1 110000
+
+Sequence : "child"
+Source	 "my_parent"
+Source_Exons	 1 55
+Source_Exons	 8893 9213
+Source_Exons	 10520 10792
+</code></pre>
+
+<P>In this case "child" is a normal sequence object containing some source
+exons and has a parent sequence object called "my_parent". Unusually
+"my_parent" is its own parent.
+
+<P>Until now if you tried to display "child" as an Fmap using xace, xace
+would simply hang while displaying the busy cursor and you would have no
+option but to kill xace.
+
+<P>AceDB does not prevent you from having circular
+references like this and nor should it. You may have perfectly legitimate
+reasons for wanting an object to point to itself, or perhaps more likely,
+you may have a web of objects that if traversed will have loops within
+the web.
+
+<P>The problem for AceDB is that for some parts of the code
+this can lead to infinite loops such as when the Fmap code is searching
+up through a particular Sequence objects parents to find out the final position
+of that object within the overall sequence in which it is positioned. If the
+code encounters a parent that points to itself then it will continue to
+search "up" forever.
+
+<P>The only way to deal with this is make sure the code can detect this
+occurance and prevent the loop. Most of these places have been fixed now
+and Fmap itself should now deal with this by stopping at the point of
+the circularity and trying to display what its got. In most cases the Fmap will
+display a warning message identifying the object which has the cicular
+reference in it. The above example was copied (to protect the innocent)
+from a real example which caused xace to loop endlessly, the bug is now fixed.
+
+<P>If you find other examples of circular references in objects that cause
+AceDB to crash then please send us mail at
+<A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<a name="Stacksize"></a><H3>Warning about stack size and very big databases</H3>
+
+<P>Recently AceDB crashed repeatedly while Dan Lawson was trying to build the <I>C. elegans</I>
+database. This turned out to be because the AceDB process was running out of stack
+space while processing CHROMOSOME_V (about 21 Mbases in size).
+Our initial approach was to unlimit stack space to the then maximum
+of 32MB and rerun AceDB, AceDB again crashed for the same reason. We then raised
+stack space to 52MB and Dan was able to complete the worm build.
+
+<P>There are several things to note here:
+
+<ul>
+  <li>On our machines 32MB of stack size was enough to process the
+      other <I>C. elegans</I> CHROMOSOME_* objects which are about
+      17 Mbases long.
+  <li>CHROMOSOME_V required more than 32MB of stack size, we don't
+      know exactly how much.
+  <li>This is a temporary problem only (see below).
+</ul>
+
+<P>AceDB should not be using this much stack space and it does so because
+a number of routines were written recursively to go up and down object
+trees in the database. This is a natural way to write such code but
+can be wasteful of memory. Testing will show which routines are using
+up the stack space and it should be possible to rewrite them non-recursively
+so that stack space is not a problem.
+
+<P>In the meantime you should follow this procedure to raise stack size
+(assuming you use C shell):
+
+<P>Use the limit command to find out what your current stack size limit
+is:
+
+<pre>&gt; limit stacksize
+stacksize       8192 kbytes
+&gt; limit -h stacksize
+stacksize       32768 kbytes
+&gt; 
+</pre>
+
+<P>The first limit command shows what our current stack size limit is,
+the second shows the maximum it can be raised to. If the current limit is
+lower than the maximum then use unlimit to raise it to the maximum:
+
+<pre>&gt; unlimit stacksize
+&gt; limit stacksize
+stacksize       32768 kbytes
+&gt; 
+</pre>
+
+<P>If your stack size is already at the maximum and you still need it
+to be increased then you will need to ask your own system support staff
+to do this as it requires root permission and a possible rebuild
+of the Unix kernel to do it (!).
+
+
+<!-- ******************************************************************** -->
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="Graph_not_found"></a><H3>"Graph Not Found" bug</H3>
+
+<P>Sometimes xace crashes with a message that is some variant of "Graph Not Found"
+or perhaps "could not find FeatureMap on graph". Many of these should now be fixed
+after a change to the way popup dialogs are displayed, if you still get crashes
+of this sort, please try and reproduce the crash and let us know by mailing
+<A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A> or raising a problem
+online at <A HREF="http://www.sanger.ac.uk/cgi-bin/webddts/WebDDTS.pl?Project=Acedb">
+http://www.sanger.ac.uk/cgi-bin/webddts/WebDDTS.pl?Project=Acedb</A>.
+
+
+<a name="No_redraw"></a><H3>Tree window not redrawn properly</H3>
+
+<P>This is the bug that has appeared, been fixed, reappeared and now (hopefully)
+is fixed. The bug has been very hard to fix because it only affects some of the
+people some of the time. After a life and death struggle Simon (Kelley) thinks
+he's fixed this. If not, then you'd better contact us at
+<A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<a name="DNA_dump"></a><H3>DNA dumping bug</H3>
+
+<P>There was a bug in the DNA dumping code for databases where some objects used
+the Sequence class and some the SMAP. The code looked in only one or the other not
+both. This is now fixed.
+
+
+<a name="sigcatch_menu"></a><H3>Signal catching menu</H3>
+
+<P>The menu item for controlling signal catching (right click on "Admin" button in
+xace main window) was not correctly updated as signal handling status was changed
+either interactively by the user or via the "-nosigcatch" command line option. This is now fixed.
+
+
+<a name="webtag"></a><H3>Support for the WWW_location tag broken</H3>
+
+<P>The WWW_location tag/data got broken in AceDB 4_9c, this is now fixed and
+should work as normal.
+
+
+<a name="server_HP"></a><H3>Socket server fixed on HP</H3>
+
+<P>We have had an HP machine on loan for some weeks to test
+AceDB on, this has just gone back after several bugs fixed were made to AceDB including:
+
+<P>On HP's, non-blocking reads of a socket return EAGAIN where other systems return
+EWOULDBLOCK. Unlike most other systems HP has different values for the two error numbers.
+This meant that AceDB detected what it thought was an error when really the HP
+code was returning the EWOULDBLOCK return code. Once fixed the socket code
+worked perfectly.
+
+
+<a name="makefile"></a><H3>Symbolic link missing in source code download file</H3>
+
+<P>To build AceDB from the source code requires a symbolic link to wmake/makefile,
+this link was missing from the source code download file. This is now fixed.
+
+
+<a name="stack_message"></a><H3>Misleading Stack size message</H3>
+
+<P>Sometimes when AceDB crashes it produces a message about raising your
+stack space, unfortunately this message was often produced when this would
+not have solved the problem. The message is now only output if the users
+stack space is very low, i.e. 1.5 MB or less.
+
+
+<!-- ******************************************************************** -->
+<H2>August monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<H2>Next User Group Meeting - D319, 2.30pm, Thursday, 16th August 2001</H2>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Tue Aug  7 10:44:50 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

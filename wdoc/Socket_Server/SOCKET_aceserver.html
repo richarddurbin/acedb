@@ -1,0 +1,724 @@
+<HTML>
+
+<HEAD>
+<TITLE>User Guide To ACEDB 4_9 Sockets-based Client/Server</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../wdoc.css"
+title="Style sheet for wdoc developer documents">
+
+</HEAD>
+
+
+<BODY>
+
+<BLOCKQUOTE>
+<DIV ALIGN=CENTER>
+ <IMG SRC="./acedb-logo.gif" ALT="[ACEDB 4_9 DOCUMENTATION]" align=middle>
+ <H3>
+  ACEDB Version 4_9
+ </H3>
+</DIV>
+
+
+<DIV ALIGN=CENTER>
+
+<H1 align=center>
+User Guide To Sockets-based Client/Server
+</H1>
+
+<ADDRESS>Originally written by<BR>
+Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;, December 1999</ADDRESS>
+
+</DIV>
+
+<H2>Background</H2>
+
+<P>The first implementation of the ACEDB client/server code used <CODE>RPC</CODE> for
+inter process communication (<CODE>IPC</CODE>). This method was originally
+chosen because it offered the promise and portable means of making requests
+between the client and server. In practice <CODE>RPC</CODE> suffered from
+several major disadvantages:
+<UL>
+  <LI>although <CODE>RPC</CODE> was offered by all major unix vendors, their
+       implementations turned out to be buggy, in different ways (ironically,
+       this was especially true of Suns implementation).
+  <LI>although <CODE>RPC</CODE> offers a very simple function call interface
+       for <CODE>IPC</CODE>, error handling is not so simple and does not
+       offer the fine grained control that other methods of <CODE>IPC</CODE> do.
+  <LI><CODE>RPC</CODE> for MS Windows is not robust.
+  <LI><CODE>DCE RPC</CODE> using the DCE version of RPC would help with portability for
+       both Unix and MS Windows, but the DCE version is often not available for free.
+  <LI>many other code subsytems offer sockets communication (e.g. Perl) but not
+       <CODE>RPC</CODE>.
+  <LI>On unix at least  <CODE>RPC</CODE> requires several daemons to be running (portmapper,
+       inetd) and this makes the system susceptible to system set up/reboot problems.
+</UL>
+The decision was taken to switch to socket based <CODE>IPC</CODE> because it overcomes
+the above difficulties. Sockets of course present their own difficulties because the interface
+to them is more complex to program than <CODE>RPC</CODE>, it's greater flexibility/portability
+and ubiquitousness made this a worthwhile trade off.
+
+
+
+<H2>Overview</H2>
+
+<P>The sockets based version of the server offers the same interface as the current RPC based
+version of the client/server but there have been several additions to the code that are
+either indirectly or not directly related to sockets:
+
+<UL>
+  <LI>NO_RESTART option & fix for the "phoenix" bug
+  <LI>READ/WRITE options for setting global access permissions to a database
+  <LI>MD5 password based authentification for users
+  <LI>domain name group authorisation (NO_HOSTNAME_RESOLUTION option)
+  <LI>a new "admin" class of user with a set of "admin" commands
+  <li>READ ONLY database support
+  <LI>DEBUG option
+</UL>
+
+<P>This document describes these new features and then goes on to describe how to:
+
+<UL>
+  <LI>set up a database for use with the sockets server
+  <LI>server start up options
+  <LI>foreground and inetd startup of the server
+  <LI>client start up  
+</UL>
+
+
+
+<H2>Setting up a database</H2>
+
+<P>The following is a brief summary to get you started, it should 
+let you get the server/client going, after that you can tinker around
+to get more security etc.:
+
+<H3>1) Options in wspec/serverconfig.wrm:</H3>
+<DL>
+  <DT><B>NO_RESTART</B>
+  <DD>- turns ON no restart of server after a crash/shutdown.
+  <DT><B>NO_HOSTNAME_RESOLUTION</B>
+  <DD>- turns OFF checking for user being in a domain specified
+       as having permission to log in, e.g.  sanger.ac.uk
+  <DT><B>DEBUG</B>
+  <DD>- turns ON server debugging output to database/server.log
+  <DT><B>WRITE/READ</B>
+  <DD>- set the basic database access permission levels for the
+       read and write groups (admin users always have write access).
+       Default is PASSWD, but NONE & WORLD can also be set.
+  <dt><B>READONLY_DATABASE</B>
+  <dd>- allows the server to run on a database where all the file permissions
+      have been set to read-only (unix only) for extra security.
+</DL>
+     
+<P>Unless you have special needs, the default settings are suitable for
+either testing or a production database, but you must create the empty file
+<b>wspec/serverconfig.wrm</b>.
+
+<P>See <A HREF="#config_options">Configuration options</A> for more details.
+
+
+<H3>2) Passwords in wspec/serverpasswd.wrm:</H3>
+
+<P>This file contains two types of record: groups/associated users
+records and individual user records. There are three groups: admin, write and read
+and to set up a database to run with the new socket server there needs
+to be <B>at least one user</B> in the admin group.
+
+<P>To 'bootstrap' an admin
+user so you can access the database via the client you need to:
+<OL>
+  <LI>choose your admin userid (this does _not_ need to be an existing
+       Unix userid, it can be any name you want), e.g. <B>joebloggs</B>
+  <LI>alter the admin group line in <CODE><B>serverpasswd.wrm</B></CODE> so it looks like
+       this:
+       <PRE><CODE><B>
+       admin: joebloggs</B></CODE>
+       </B></CODE></PRE>
+  <LI>now use the acedb utility program makeUserPasswd to create the
+       user entry for joebloggs (note that you won't see the password
+       you type):
+       <PRE><CODE>
+       > bin.<i>whatever</i>/makeUserPasswd joebloggs
+       // Please enter passwd: jumbo10
+       // Please re-enter passwd: jumbo10
+       // The following line is a valid entry for wspec/serverpasswd.wrm
+       
+       joebloggs ccc5b9abf592836076410cdee518c518
+       
+       > 
+       </CODE></PRE>
+       <P>cut and paste the entry into a separate line in the <CODE><B>serverpasswd.wrm</B></CODE> file.
+</OL>
+
+<p>The resulting <b>wspec/serverpasswd.wrm</b> file would look like this:
+       <PRE><CODE><B>
+       admin: joebloggs
+       joebloggs ccc5b9abf592836076410cdee518c518
+       </B></CODE></PRE>
+
+<P>Once the initial admin user has been set up, all other users can
+be set up from the admin userid via the new admin commands.
+
+<P>You should now be in a position to test the server and client, it is
+recommended that you test the server in the foreground before trying
+to set it up to be run by inetd.
+
+
+<H2>Server start up options</H2>
+
+<P>saceserver command line options are:
+<PRE><CODE>
+saceserver database_path &lt:port_number clientT:serverT:maxReq:autoS&gt;
+
+           <B>database_path</B>    mandatory, gives path to the database
+             <B>port_number</B>    defaults to 23100
+                 <B>clientT</B>    client time out (secs), default = 600
+                 <B>serverT</B>    server time out (secs), default = 600
+                  <B>maxReply</B>  maximum reply size (Kbytes) that server should return
+                   <B>autoS</B>    time between autosaves of database (secs), default = 600
+</CODE></PRE>
+
+
+<H3>timeout values</H3>
+
+<P>The meaning of the timeouts is:
+<dl>
+  <dt><B>clientT</B>
+  <dd>the server will disconnect any clients who have not been active for this length of time.
+  <dt><B>serverT</B>
+  <dd>once all clients are disconnected, the server will timeout after this length of time. 
+</dl>
+
+<P>So if, for instance, you wanted to allow clients to be dormant for an hour
+but have the server close down as soon as the last client quit you could start
+the server like this:
+
+<pre><code>saceserver your_database_path your_port 3600:1
+</code></pre>
+
+<P>Note that clientT and serverT can take the special value zero which means
+the timeout is infinite, i.e. neither the client or server will ever be timed
+out. This special value is provided for testing and is specifically <B>not</B>
+recommended for normal use.
+
+
+<H3>maximum request size</H3>
+
+<P>The meaning of the maximum request field is:
+<dl>
+  <dt><B>maxReply</B>
+  <dd>If the reply to a client exceeds this threshold then the server "slices" the reply up
+      and returns it a piece at a time. This prevents a single client from hogging the server.
+</dl>
+
+<P>Note that maxReply can take the special value zero which means
+that there is no maximum reply threshold and the server will return in one piece the
+entire reply. This special value is provided for circumstances where the user wants to get
+large replies back in one piece, you should note that other clients requests will not be
+processed while a large reply is being sent.
+
+
+<H3>port numbers</H3>
+
+
+<P>IANA (Internet Assigned Numbers Authority) has set aside certain ranges of port
+numbers for certain uses:
+
+<PRE><CODE>
+
+Port No. range          Usage
+--------------          -----
+
+0 - 1023                "well-known" ports, you need super user authority
+                        to use these and they are reserved for ftp, http,
+                        X windows and basic operating system services.
+                        <b>DO NOT USE THESE</b>.
+
+1024 - 49151            "registered" ports, if you setting up the server to
+                        be run by inetd you should use one of these.
+                        <B>But</B> you will need to check in /etc/services
+                        that your number does not clash with one already there.
+
+49152 - 65535           "dynamic" ports, are for dynamically assigned/ephemeral
+                        use. You should use one of these if you are just trying
+                        out the server from an xterm in the foreground.
+
+</CODE></PRE>
+
+<P>Actually its all more confused than this, not all operating systems stick to
+the IANA recommendations, but it is
+generally true that you cannot use a port less then 1024 without root permission
+and you should not in general choose these ports.
+
+<P>You should also <b>not</b> choose a port larger than 65535. If you do, the port
+number may be truncated in a way that leaves it in the range 0 - 1023 which are
+reserved for superuser use for well-known services.
+
+<P>Typically you will see these sorts of errors if you choose a port that is
+either below 1024 or already in use (you may have to look in the database
+logfile to see the error if the server is inetd started):
+
+<PRE><CODE>
+
+<B>typical server error:</B>
+
+% saceserver /mydatabase 777
+// Database directory: /data1/GrainGenes
+// #### Server starts 2000-04-03_11:29:49   
+// #### host=(unknown)  port=777  ACEDB=/data1/GrainGenes
+// #### clientTimeout=600 serverTimeout=600 maxKbytes=0 autoSaveInterval=600
+ 
+// FATAL ERROR (www on gn) reported by program aceserver (ACEDB 4_9c), in file a
+cesocket.c, at line 657: Cannot bind to server listening socket system error 13
+ - Permission denied
+// Sorry for the crash, please report it, if it is reproducible
+
+// NB: changes made since the last explicit save have NOT been saved
+
+
+<B>typical client error:</B>
+
+% saceclient localhost -port 777
+FATAL ERROR (www on gn) reported by program saceclient (ACEDB 4_9c), in file ace
+socketlib.c, at line 269: connect error system error 146 - Connection refused
+
+</CODE></PRE>
+
+
+
+<H2>Running the Server</H2>
+
+<H3>in the foreground</H3>
+
+<P>To run the server in the foreground, type the following at the prompt in an xterm:
+
+<pre><code>  saceserver &lt;your/data/base&gt;  &lt;your_port_number&gt; &lt;time_out_options&gt;
+</code></pre>
+
+<P>If the server starts correctly your xterm will "hang" because the server will be sitting
+waiting for clients to connect. If something goes wrong acedb will print an error message and
+then exit. You should correct the error and then try again.
+
+<P>Once the server is starting correctly then try accessing it using the client:
+
+<pre><code>saceclient &lt;host_where_server_is_running&gt; -port &lt;port_number_from_above&gt;
+acedb&gt; status
+acedb&gt; quit
+</code></pre>
+
+<P>If you can connect correctly then you are ready to try running the server under the control
+of one of the unix <A HREF="#inetd">inetd</A>
+or <A HREF="#xinetd">xinetd</A> controller programs.
+
+
+
+<a name="inetd"><H3>under inetd</H3>
+
+<P>You can now run saceserver against any existing acedb database
+and/or register it under inetd by adding lines to the following
+files (you will need root access):
+
+<P>For this example we assume:
+
+<PRE>nickname for server/database -  MyfirstDB
+             port for server -  20113
+        user owning database -  mieg
+       path to server binary -  /usr/local/bin/saceserver
+            path to database -  /home/databases/aardvarkDB
+   timeout values for server -  200:200:0
+</PRE>
+
+
+<P><b>In /etc/services add the line:</b>
+
+<pre><code>MyfirstDB  20113/tcp
+</code></pre>
+
+
+<P><b>in /etc/inetd.conf add the line</b>
+
+<pre><code>MyfirstDB stream tcp wait mieg  /usr/local/bin/saceserver saceserver /home/databases/aardvarkDB 200:200:0
+</code></pre>
+
+<P>Where:
+
+<pre><code>                <b>MyfirstDB</b>  seen in both files, a random name of your choice to name the database server
+          <b>stream tcp wait</b>  mandatory, this is the way the daemon must be declared
+                     <b>mieg</b>  user name under which the daemon runs, avoid root,
+                           choose some local user owning /home/databases/aardvarkDB
+<b>/usr/local/bin/saceserver</b>  full path to saceserver executable
+               <b>saceserver</b>  repeat the name of the execuatble so that it is found as argv[0] by the code
+ <b>/home/databases/aardvark</b>  the database directory
+                <b>200:200:0</b>  server and client time out in seconds, then a blocking factor
+                           (default zero is ok)
+</code></pre>
+
+
+<P>Now get inetd to reread /etc/inetd.conf and pick up the information for MyfirstDB
+(you will probably need to be root to do this):
+
+<ol>
+  <li>find out the process id of inetd
+<pre>&gt; ps -A | grep inetd
+
+   545 ??       I        0:00.62 /usr/sbin/inetd
+</pre>
+
+  <li>Send inetd the interrupt signal
+<pre>&gt; kill -HUP 545
+</pre>
+</ol>
+
+
+<P>Sending this signal should be enough but on some old systems a reboot may be necessary.
+
+<P>Then access the server by starting up a client:
+
+<pre><code>saceclient &lt;host_where_server_is_running&gt; -port 20113
+</code></pre>
+
+
+<a name="xinetd"><H3>under xinetd</H3>
+
+<P>xinetd is an open source replacement for inetd, it provides many more features and much
+security than inetd, you can read more about it at the
+<A HREF="http://www.xinetd.org/">xinetd website</A>.
+
+<P>Its configuration is a bit different from inetd and is as follows:
+
+<P>For this example we assume the following:
+
+<PRE>nickname for server/database -  MyfirstDB
+             port for server -  20113
+        user owning database -  mieg
+       path to server binary -  /usr/local/bin/saceserver
+            path to database -  /home/databases/aardvarkDB
+   timeout values for server -  200:200:0
+</PRE>
+
+
+<P>In <b>/etc/services</b> add the line:
+
+<pre><code>MyfirstDB  20113/tcp
+</code></pre>
+
+
+<P>xinetd keeps its configuration files in the directory <b>/etc/xinetd.d</b>. Create a file
+in this directory giving it some meaningful name such as <b>acedb</b> and add the
+following lines:
+
+<pre><code># file: /etc/xinetd.d/acedb
+# default: on
+# description: wormbase acedb database
+service acedb
+{
+               protocol                = tcp
+               socket_type             = stream
+               port                    = 20113
+               flags                   = REUSE
+               wait                    = yes
+               user                    = mieg
+               group                   = mieg
+               log_on_success          += USERID DURATION
+               log_on_failure          += USERID HOST
+               server                  = /usr/local/bin/saceserver
+               server_args             = /home/databases/aardvarkDB 200:200:0
+}
+</code></pre>
+
+<P>Note that you will need to change the port, user, group, server and server_args
+fields for you setup.
+
+<P><b>Warning:</b> In the past there have been a number of problems with the way
+xinetd worked which prevented users from running the acedb servers with xinetd.
+Currently the following combination of Linux, xinetd and acedb is known to work:
+
+<P><b>Linux:</b> Red Hat Linux release 7.3 (Valhalla), kernal: 2.4.18-27.7.xbigmem
+
+<P><b>xinetd:</b> xinetd-2.3.7-4.7x
+
+<P><b>acedb:</b> 4_9m
+
+<P>If you find that you cannot get acedb working under xinetd control then you should
+first check that you have up to date software.
+
+
+<H2>Running the client</H2>
+<PRE>
+
+Usage: saceclient &lt;host&gt; [-port pn] [-time_out <nn>] [-ace_out] [-ace_in] [-f file_name parms]
+
+host: is a machine where the server runs or is a registered service.
+pn: is the port number described in the server setup section.
+nn: is a number of seconds to wait to receive a server answer, it defaults to 300.
+-ace_out: implies a clean output: .ace files or clean tables
+-ace_in: if the input to the client is an ace file to be parsed by the server.
+-f filename: say for mailing, a command file which is echoed on stdout except
+ that %1 %2 ... %9 will be macro substituted by the parms parameters and
+ that the construction %(xxx) where xxx is a client command will be evaluated
+
+</PRE>
+
+
+<H2>Introduction of MD5 password encryption based authentification for users</H2>
+
+<P>The sockets based version comes with a new password based system. The previous
+versions of the server used a file based system that while not requiring
+users to user passwords, did require that both client and server could
+"see" the directory where the "magic" files used by the server for
+authentification were stored. This has obvious problems when the client and
+server are separated by a firewall, are very remote from each other or either
+is running on a system that does not support shared file systems.
+
+<P>The new system uses passwords much like any Unix system does, users have their
+own unique userid and must supply a password to gain access to the database.
+Note that userids are 'global' to a database, e.g. if two users on different machines
+by chance have the same userid, they cannot both use that userid to gain access to
+the database, one or the other will have to use a different userid for the database.
+This is the same restriction as applies to Unix login ids.
+
+<P>The new system uses a "challenge-response" protocol: the client contacts the
+server, the server sends the client a key, the client must then encrypt their
+userid, password and the key and send it back to ther server. The server then
+encrypts its copy of the encrypted userid/password with the key and compares
+them with what its been sent. At no time does the password pass in plain text
+across the network, nor is it stored in plain text. Furthermore, they key
+is changed every time the user logs on, making it more difficult to crack
+the password. While not perfect this method offers at least as much (actually
+more) security than the Unix password system. This is also essentially the
+method of security used in the http protocol.
+
+<P>There is a new file, <CODE>wspec/serverpasswd.wrm</CODE>, which holds
+the userids and associated passwords and also which group a userid belongs
+to. There are three groups of users:
+<DL>
+  <DT>read
+  <DD>users who can get read access to the database
+  <DT>write
+  <DD>users who can get read/write access to the database
+  <DT>admin
+  <DD>users who can get read/write access to the database and run
+       administrative commands on the database (e.g. add new users, shutdown
+       the database etc.)
+</DL>
+
+<P>Entries in this file are of two sorts: group entries and userid entries, below is
+a sample <CODE>wspec/serverpasswd.wrm</CODE> showing both group and userid
+entries (as usual lines beginning with "//" are comments):
+<PRE>
+// User groups
+//
+admin:  edgrif
+write: simon
+read: jean richard sanger.ac.uk
+
+// users and passwords
+//
+edgrif 38a6557860893d95c7e738c0e5cd233d
+simon 7d61c0b3fb23c97f6970f07683a03649
+jean 52af4f5526e16c855ca14a40287d1be1
+richard 9dee3b01e9adeb11f8acac16fb368d76
+</PRE>
+
+<P>Initially an admin user must create a new entry for a user, complete with password (see
+admin user section), after this a user can change their own password using the
+<CODE>passwd</CODE> command from the saceclient:
+<PRE><TERM>
+acedb> passwd
+enter new passwd:
+reenter new passwd:
+</TERM></PRE>
+Only rudimentary password checking is done, it is up to users/administrators to ensure
+that good passwords are chosen.
+
+
+
+
+<H2>Introduction of domain name group authorisation and the NO_HOSTNAME_RESOLUTION option</H2>
+
+<P>The previous section described the format of entries in  <CODE>wspec/serverpasswd.wrm</CODE>,
+the "read" and "write" group entries can also contain domain names:
+
+<PRE>
+// User groups
+//
+admin:  edgrif
+write: simon
+read: jean richard sanger.ac.uk
+</PRE>
+
+<P>The "read" group entry contains the entry "sanger.ac.uk", this allows any user whose
+internet address ends with this sub-domain to log in with read access, e.g.
+johnsmith@linuxbox.sanger.ac.uk, janebrown@sanger.ac.uk etc. This makes it
+possible to give access to groups of people logging in from different sites. This only
+happens if the access level for a group is <CODE>PASSWD</CODE> and the userid of the
+connecting client cannot be found in the group.
+
+<P>When a client connects, the server only has the numeric version of the clients
+internet address, since the lookup required to convert this to the text form
+can be both error prone and slow, it is possible to globally disable this lookup
+by setting the <CODE>NO_HOSTNAME_RESOLUTION</CODE> option in <CODE>wspec/serverconfig.wrm</CODE>.
+If this option is set, the server will not attempt to resolve the text form of a clients
+internet address and match it to group name entries.
+
+
+
+<H2>Introduction of an "admin" class of user and a set of "admin" commands</H2>
+
+<P>The introduction of a password system made it necessary to introduce some
+extra commands to the command line interface: because users passwords are
+relatively long and must be copied into the password file correctly, this is
+only really feasible via a program. It also became clear that there should
+be a special class of user who would be allowed to run these commands and not
+just any user with write access as in previous servers.
+
+<P>Some "admin" commands already existed e.g. shutdown, these commands have
+been supplemented with additional commands including:
+<DL>
+  <DT><B>shutdown [now] [norestart]</B>
+  <DD>Shuts down the server, by default this is when the last client quits but
+       if the <B>now</B> option is specified, clients connections are terminated
+       immediately and the server is shut down. If the  <B>norestart</B> is specified
+       then the server will not restart until the lock file
+       <CODE>database/SERVER_SHUTDOWN_LOCKFILE.wrm</CODE> is removed.
+  <DT><B>who</B>
+  <DD>display how many clients are currently connected.
+  <DT><B>data_version</B>
+  <DD>data served now, as stated in wspec/server.wrm
+  <DT><B>wspec</B>
+  <DD>export wspec directory as a tar file
+  <DT><B>user passwd|group|new|delete <I>userid [password group]</I></B>
+  <DD>This command has several forms enabling an admin user to create/update/delete userids:
+       <UL>
+	 <LI>Create: <B>user new <I>new_userid new_group</I></B> (you will be prompted for the passwd)
+	 <LI>Delete: <B>user delete <I>userid</I></B>
+	 <LI>Change group: <B>user group <I>userid new_group</I></B>
+	 <LI>Change password: <B>user passwd <I>userid</I></B> (you will be prompted for the passwd)
+       </UL>
+  <DT><B>global read|write none|passwd|world</B>
+  <DD>Change global read/write permissions for database
+  <DT><B>domain group|new|delete <I>domain-name [group]</I></B>
+  <DD>This command is similar to the <B>user</B> command but enables the admin user to
+       create/update/delete domain names:
+       <UL>
+	 <LI>Create: <B>domain new <I>new_domain new_group</I></B>
+	 <LI>Delete: <B>domain delete <I>domain</I></B>
+	 <LI>Change group: <B>domain group <I>domain new_group</I></B>
+       </UL>
+</DL>
+
+
+
+
+<a name="config_options"></a><H2>Server Configuration Options</H2>
+
+
+<H4>NO_RESTART (and the "phoenix" bug)</H4>
+
+<P>This option can be specified in <CODE>wspec/serverconfig.wrm</CODE> and will prevent the
+database from restarting after either a controlled shutdown or
+a server crash. If the option is specified then the server will
+leave a lockfile in the <CODE>database/</CODE> on shutdown or when it crashes
+(either in a trappable or non-trappable way).
+The name of the lockfile
+indicates whether the file was written as a result of a crash
+or a shutdown:
+<PRE>
+For a crash that was detected by the acedb code:
+
+database/SERVER_CRASH_LOCKFILE.wrm
+
+for a crash that could not be detected by the acedb code:
+
+database/SERVER_UNDETECTABLECRASH_LOCKFILE.wrm
+
+and for a shutdown:
+
+database/SERVER_SHUTDOWN_LOCKFILE.wrm
+</PRE>
+
+<P>The server cannot be restarted either manually or automatically by inetd until
+the lockfile is removed from the directory (the directory would normally be set up
+so that only admin users would have permission to do this).
+
+<P>Previous acedb servers have suffered from an irritating bug when run under the control
+of inetd. This bug (aka the "phoenix" bug) seemed to occur sometimes when the server
+crashed, the system would get into a loop with the server crashing, inetd respawning the server,
+the server crashing, inetd respawning the server, etc. etc. The advantage of the socket based
+server is that the greater degree of control over the port allowed debugging to show that this
+happens when a client has connected, but the server crashes <B>before</B> it has cleared the
+listening socket on which the client connected. In this case, inetd finds that there is still
+data on the listening socket and so it restarts the server which of course crashes again before
+clearing the listening socket. The new server has as part of its crash routine some code to
+clear the listening socket and thus put a stop to inetd trying to restart the server. Note
+however that this bug can still occur if the server crashes in an untrappable way, this
+loophole will be fixed at some time in the future.
+
+
+<H4>READ/WRITE options for setting global access permissions to a database</H4>
+
+<P>The <CODE>READ</CODE> and <CODE>WRITE</CODE> options can be specified in
+<CODE>wspec/serverconfig.wrm</CODE> and allow 'global' control of the access level
+for all users in the read or write groups.
+
+<P>Three levels of control are available:
+<DL>
+  <DT>WORLD
+  <DD>any user can have access, including users not specified in <CODE>wspec/serverpasswd.wrm</CODE>
+  <DT>PASSWD
+  <DD>only users specified in <CODE>wspec/serverpasswd.wrm</CODE> can gain access (with a password)
+  <DT>NONE
+  <DD>no users can have access
+</DL>
+
+<P>The access level is specified on the same line as the keywords <CODE>READ</CODE> or
+<CODE>WRITE</CODE>, e.g. to give read access to everyone and write access to no one,
+<CODE>wspec/serverconfig.wrm</CODE> should contain the lines:
+<PRE>
+READ WORLD
+WRITE NONE
+</PRE>
+
+<P>Admin group users always have write access to the database but this access is via a password.
+
+
+
+<H4>READONLY_DATABASE option</H4>
+
+<P>Normally the server must have read/write access to at least some of the files
+and directories within an acedb database (e.g. for logging). This option allows
+the server to run on a database where it only has read permission for <b>all</b>
+directories and files within the database. This can be useful as extra level of security
+for a database which has been made available as a "read only" copy, perhaps to
+any user anywhere on the internet.
+
+<p>You should note that when this option is specified, the server will not do
+any logging of requests or crashes, so there will be <b>no</b> record of users
+interactions with the server.
+
+
+<H4>DEBUG option</H4>
+
+<P>This option can be specified in <CODE>wspec/serverconfig.wrm</CODE> and will cause the server
+to send debugging output to <CODE>database/server.log</CODE>, if the server is being run
+in the foreground then the output will also be sent to stderr. Currently this information
+is patchy but this release of the server includes the basic mechanism (setting up callback
+routines for the messout/messerror routines) for easy output of debugging messages which
+was missing in previous servers.
+
+
+<HR>
+<H3 ALIGN="CENTER">ACEDB Version 4_9</H3>
+
+
+<HR>
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Tue Apr 22 16:41:50 BST 2003
+<!-- hhmts end -->
+
+</BLOCKQUOTE>
+</BODY>
+</HTML>

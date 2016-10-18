@@ -1,0 +1,323 @@
+<HTML>
+
+
+<!-- Stuff you should alter is highlighted with "***" -->
+
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - March 2001</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - March 2001</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P>This month sees the first contributions from acedb users to the newsletters,
+thanks to Keith Bradnam and Dan Lawson. There are a number of important bug fixes
+which in particular affect people who use the giface code to produce gif versions
+of fmap etc. Hewlett Packard have contacted the AceDB developers as they would like
+AceDB to be part of their IA-64 program.
+
+
+
+<!--******************************************************************** -->
+<a name="New"></a><H2>New Features</H2>
+
+<a name="exporting"></a><H3>exporting of cDNA from non-CDS objects</H3>
+
+<P>Previously you could only export the cDNA for a sequence object if that object
+was marked as a CDS. In a rigorous way this makes sense but can be irritating if
+you have an object for which you'd just like to take a quick look at the cDNA.
+This restriction has now been removed so that, provided the object is in some way
+"attached" to some DNA, you can export a cDNA for it. It is of course up to you to interpret what
+that DNA might mean (!).
+
+
+<a name="log"></a><H3>log switching</H3>
+
+<P>AceDB log files can grow very quickly and up until now a new log file was only
+started if the database was reinitialised, or if the existing log file was moved
+aside manually. This is not very convenient, particularly when running an acedb server
+on a database.
+
+<P>Support has been added to start a new log using the following methods:
+
+<dl>
+  <dt><b><code>tace/giface</code></b>
+  <dd>Use the "Newlog" command to start a new log.wrm, you must have
+      write access to the database to be able to do this.
+  <dt><b><code>sace/sgiface-server</code></b>
+  <dd>Use the "Serverlog" command to start a new log.wrm and a new serverlog.wrm, you must have
+      admin permissions to the database to be able to do this.
+      <P>You can also send the server a
+      <code>SIGHUP</code> signal which has the same effect, but note that if you use this method,
+      the new logs will not be started until the <b>next</b> record is written to the relevant
+      log.
+</dl>
+
+
+<a name="No"></a><H3>"No_display" tag in ?Method objects for F-map display</H3>
+
+<P><I>This article was kindly supplied by
+<A href="mailto:dl1@sanger.ac.uk">Dan Lawson
+&lt;dl1@sanger.ac.uk&gt;</A>, he wins a beer for being the second
+voluntary contributor to the newsletter.</I>
+
+<P>The way in which objects are displayed in the F-map display
+is defined by the Method class. The Method object contains
+information such as the colour and column priority for the
+drawing of the F-map. The Method object also contains GFF
+definitions for the labelling of the GFF dumps of an object.
+
+<P>Recently in the worm database we have extended the use of
+the ?Method tag in the Sequence class to be bi-functional. 
+The tag continues to point to a Method object for drawing 
+the F-map but is also used in the generation of subclasses 
+(similar to using a standard type tag in the Properties e.g. 
+Genomic_canonical or CDS.) An example of a new Method is 
+'Link' which indicates more explicitly which Sequence objects
+are link objects - i.e. those which contain the golden path 
+for a group of overlapping genome sequences.
+
+<P>As every Sequence will have a Method the xace code will 
+attempt to display the object in the F-map. If the Method 
+object does not contain colour/column priority information 
+then the default blue box with a low column priority will be 
+displayed. Some types of objects should not be displayed in
+the F-map (the Link objects are a good example), and so we 
+have introduced a new tag into the Method class. If you set 
+this tag then all objects using the Method will not be drawn.
+The tag is called 'No_display' and should be set as part of
+the general Method descriptions. 
+
+<P>The above modifications allow features to be dumped to GFF 
+files with sensible definitions without cluttering the F-map
+view of a genomic region. If you have any queries regarding 
+these changes please contact
+<A href="mailto:dl1@sanger.ac.uk">Daniel Lawson &lt;dl1@sanger.ac.uk&gt;</A>.
+
+
+
+<!--******************************************************************** -->
+<a name="Articles">
+<H2>Articles</H2>
+
+<a name="Porting"></a><H3>Porting acedb to latest HP machines, including new IA-64 based machines.</H3>
+
+<P>Hewlett Packard have recently ported AceDB to their latest machines/operating
+system versions and are keen for AceDB to be part of their "Developers Program"
+for their new range of IA-64 based machines. The IA-64 is Intels 64-bit CPU chip
+and is being used by HP for some of their new machines. We should be receiving an HP
+test machine within the next few weeks.
+
+
+<a name="Undocumented"></a><H3>Undocumented/hidden features in Acedb</H3>
+
+<P><I>This article was kindly supplied by
+<A href="mailto:keith@thale.life.nottingham.ac.uk">Keith Bradnam
+&lt;keith@thale.life.nottingham.ac.uk&gt;</A>, he wins a beer for being the first
+voluntary contributor to the newsletter.</I>
+
+<P>Whilst the quest for the legendary 'Golden Manual of Ace' continues, mere
+mortals will have to content themselves with picking up tips and
+second-hand rumours from the unchartered back-waters of the internet.  
+
+<P>The sometimes-annoying truth is that many useful Acedb features remain
+undocumented. But maybe we (the Acedb community) can help to change
+that. I'll make a start by revealing a couple of useful Acedb features
+that I (accidentally) discovered after browsing the ACeDB (worm) database
+one day.
+
+<a name="Arrows"></a><H4>1) Adding 'arrows' to sequence displays</H4>
+
+<P>It is not always easy to draw attention to tiny features that are
+present on very large sequences.  E.g. a 50 bp BLAST homology object which
+is present on a 200 kb sequence object appears as a narrow black line.
+
+<P>It would also be useful if you could draw attention to a feature by
+displaying it in another way, e.g. as an arrow which points to a
+particular range of bases (or even a single nucleotide). Well, the good
+news is that you can.  The trick is to create 'Allele' tags within a
+sequence object.  
+
+<P>Such tags allow you to create an arrow-like object which appears in the
+'Alleles' column of the sequence display.  Arrows can have a 'direction'
+(up or down) as they are accompanied by a smaller, side arrow.  They
+can also have some associated text which appears on the sequence display. 
+
+<P>E.g. consider the following ace file:
+<pre><code>Sequence : "EMBL:A47152"
+Allele "Test1" 50 100 "Message1"
+
+Allele "Test2" 400 300 "Message 2"
+Allele "Test3" 1000 1000 "Message 3"
+</code></pre>
+
+<P>This file (when read into an appropriate database) will create three
+arrows that appear on the sequence display for 'EMBL:A47152'.  The first
+arrow points to a region of 50 bp (between coordinates 50 and 100) and
+will display the accompanying message.  Because the second coordinate is
+larger than the first, the arrow appears with the smaller side arrow
+pointing downwards.
+
+<P>The second object displays an arrow which will point in the the up
+direction (first coordinate larger than the second).  The third arrow will
+also point upwards but corresponds to a single nucleotide in the sequence.
+
+<P>If you zoom in on these arrows they will eventually transform into 'open
+rectangles' (a bit like a ']').  The point at which an arrow turns into an
+open rectangle depends on how large a region the Allele tag corresponds
+to.
+
+<P>If all this sounds a bit confusing, look at these examples which were
+created to show the positions of insertion events (note that
+AceBrowser displays the arrows a little bit differently from xace):
+<pre><code><A href="http://ukcrop.net/perl/ace/pic/AGR?name=EMBL%3AAB018109&class=Sequence">
+http://ukcrop.net/perl/ace/pic/AGR?name=EMBL%3AAB018109&class=Sequence</A>
+
+<A href="http://wormbase.sanger.ac.uk/perl/ace/elegans/misc/epic?name=T21F2&class=Sequence">
+http://wormbase.sanger.ac.uk/perl/ace/elegans/misc/epic?name=T21F2&class=Sequence</A>
+</code></pre>
+
+
+<a name="more_text"></a><H4>2) Adding more text information to sequence displays</H4>
+
+<P>Apart from the above example, sequence displays don't usually display any
+text.  Sometimes it would be useful to display a gene name or gene
+function (where known) next to a coding sequence on a sequence display.
+
+<P>To add text information, simply add a line that reads 'Show_text' to the
+'Coding' Method object, e.g. your Method object should looks something
+like:
+<pre><code>Coding Display Colour BLUE
+               Frame_sensitive
+               Strand_sensitive Show_up_strand
+               Overlap_mode Bumpable
+               Width 2
+               Right_priority 2
+               Show_text
+       Blastn
+       Blixem  Blixem_X
+               Blixem_N
+</code></pre>
+
+<P>The rules governing what text is displayed seem hard to determine but
+contents of 'Remark', 'Gene_name', 'Gene_function' tags always seem to be
+displayed.  In AceBrowser, these don't always work as stable links when
+clicked apon.  
+
+<P>Both these examples are heavily used in the Arabidopsis Genome Resource
+(AGR) at <A href="http://ukcrop.net/agr">http://ukcrop.net/agr</A>
+
+
+
+<!--******************************************************************** -->
+<a name="Bugs"></a><H2>Bugs Fixed</H2>
+
+<a name="Problem"></a><H3>Problem with printer list in print window</H3>
+
+<P>Several people reported that when they tried to print something from AceDB, the
+list of printers in the print window contained large numbers of blank/unusable
+buttons which made the print window unusable. This problem was caused by System
+Support inadvertantly changing the format of the system file /etc/printcap
+which contains the list of printers available. The change in format meant that
+acedb no longer correctly parsed the printer names, hence the blank buttons. The
+file has now been returned to its previous (unix standard) format and the print
+window should now work correctly.
+
+
+<a name="cDNA"></a><H3>cDNA objects no longer silently created in the database</H3>
+
+<P>When using fmap, displaying the cDNA for a gene resulted in the silent creation
+of a DNA object for the cDNA. If, after you did this, you did a save, the cDNA object
+would also be saved into the database. Over time this gradually clutters up the database
+with redundant and unwanted objects. fmap has now been changed so that the cDNA objects
+are removed when the fmap displaying the cDNA is destroyed (e.g. by using the "quit" item
+from the main menu).
+
+
+<a name="fmap"></a><H3>fmap window title did not get refreshed correctly from tree window</H3>
+
+<P>If you reused an fmap window to display an object that you clicked on from
+the tree window, in some circumstances the title did not get updated to the name
+of the new object in 4_8. This is now fixed.
+
+
+<a name="Help"></a><H3>Help crashes</H3>
+
+<P>The help code in AceDB crashed for some cases where it could not find the help
+files, this is now fixed.
+
+
+<a name="Setting"></a><H3>Setting size for gif maps crashed acedb sometimes.</H3>
+
+<P>When using the "gif" submenu from giface or sgifaceserver, it is possible
+to set the size of the virtual graph using the "dimensions" option. In cleaning
+up the virtual graph code a bug was introduced which meant that when the dimensions
+option was used the graph produced would be very small which resulted in the code
+looping and consuming memory until it crashed or simply producing a graph of
+zero size. This is now fixed.
+
+
+<a name="GIF"></a><H3>GIF creation caused acedb to swallow memory.</H3>
+
+<P>As part of the clean up of the virtual graph system used to produce gif
+versions of AceDB windows, a bug was introduced which resulted in AceDB gradually
+using up memory because any data associated with the graph was not freed correctly.
+The error was in gifcommand.c, which used the test aceInIsInteractive() to decide
+whether to set isGifDisplay to TRUE. This always fails because command.c (which
+calls gifcommand.c) always copies the terminals input into a text string, this
+is by definition non-interactive !  In addition to this, this test will always
+fail for the server where no input is ever interactive. The fix was to
+initialise isGifDisplay to FALSE, but it's then set to TRUE by
+the main()s for giface and sgifaceserver, this then ensures that sequence and
+display stuff is freed correctly.
+
+
+<!-- ******************************************************************** -->
+<H2>March monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<H2>Next User Group Meeting - D319, 2.30pm, Thursday, 19th April 2001</H2>
+
+<p><b>!*! Please note changed venue !*!</b>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon May 21 14:52:54 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

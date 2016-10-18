@@ -1,0 +1,47 @@
+
+The GNU GENERAL PUBLIC LICENSE
+==============================
+
+Acedb is now under the GNU General Public License. We have made
+this change so that we can incorporate GNU code into Acedb without
+problems.
+
+
+You will find a copy of the license in this directory in the file:
+
+	GNU_GENERAL_PUBLIC_LICENSE
+
+
+You should also refer to information about the license at the GNU
+web site if you are in doubt about what the license means:
+
+	http://www.uk.gnu.org/
+
+
+
+The license in acedb code
+=========================
+
+This is the license exactly as it appears in our code, if you
+change this then you should update the emacslisp file in
+
+             /nfs/disk4/sysman/sys/emacs/doc-c.el
+
+which is used to insert this text into the module header of a
+new code module:
+
+
+ * Acedb is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * or see the on-line version at http://www.gnu.org/copyleft/gpl.txt

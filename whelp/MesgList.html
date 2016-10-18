@@ -1,0 +1,100 @@
+<head>
+<title>MesgList Window</title>
+</head>
+
+<BODY BGCOLOR=#ffffff>
+
+
+<h2>MesgList Window</h2>
+
+<P>This window displays a rolling list of AceDB informational and error
+messages that would normally be displayed in individual "popup" dialog windows
+which require the user to click on an "OK" button to get rid of the window.
+This window provides a good alternative for situations where a large number
+of messages get displayed (e.g. when there are DNA mismatches) and clicking "OK"
+would get <b>very</b> annoying.
+
+<P>You can choose between having errors
+reported in the usual "popup" dialogs or instead having this single "message list" window
+which will display a rolling list of messages as
+they are generated. The messages do not need to be replied to, they are displayed
+in the window and when a new message arrives it is displayed in red and
+the window is raised above other acedb windows to alert you to the new message.
+Each message is preceded with a time stamp so that, if a large number of identical
+messages are being generated, it's possible to see that new messages are
+being generated.
+
+<P>(<b>Note</b> that Exit or Crash messages are still displayed in an individual
+"popup" dialog window.)
+
+<P>The "message list" is configured from the "Admin.." menu from the main window.
+Select "Preferences", and then from the "Preferences Editor" window you can set:
+
+<dl>
+  <dt><b><code>USE_MSG_LIST</code></b>
+  <dd>Set this "on" to use the message list window instead of popups, or "off"
+      to go back to popups.
+  <dt><b><code>MAX_MSG_LIST_LENGTH</code></b>
+  <dd>You can control the number of messages that the window will display
+      so that if you want to record all messages you could set this to
+      some very large figure, perhaps several hundred. (The maximum possible is
+      2,000.)
+</dl>
+
+<P><b>N.B.</b> You should note that for any preferences where you have to
+type a value, you <b>must</b> press the <b><code>return</code></b> key
+before you click the "Apply" or "Save" buttons. If you don't do this, the
+value you have entered will be ignored.
+
+<P>Once you have selected <b><code>USE_MSG_LIST</code></b> and clicked
+the "Apply" or "Save" buttons, a new window with the title
+"AceDB Normal/Error Messages" will appear. The window has scroll bars
+so that you can adjust it to the size you want and also scroll through
+messages.
+
+<P>If there are no messages then the window will show
+
+<P>"&lt; No messages currently &gt;"
+
+<P>As messages arrive they are displayed with the newest at the bottom displayed in
+red, older messages are scrolled off the top once the list has reached
+<b><code>MAX_MSG_LIST_LENGTH</code></b> in size. Each message is shown with
+a time stamp so that you can see when it arrived. You will see something
+like this:
+
+<pre>
+  <font color="black">2001-06-14_16:35:30:  Sorry, no help subject registered for this window !
+  2001-06-14_16:35:31:  Sorry Roger, none of your DNA matches !
+  2001-06-14_16:35:32:  Your Source_Exons are off the end of your sequence !
+  <font color="red">2001-06-14_16:35:33:  Please use AceDB 4_9 from now on !</font>
+
+</pre>
+
+<P>You can do the following from the message list window menu:
+<dl>
+  <dt><b>"Quit"</b>
+  <dd>Completely remove the message list window, but note that the next
+      time AceDB needs to display an informational/error message
+      the window will be recreated unless you use the "Preferences Editor"
+      to return to "popup" messages.
+  <dt><b>"Reset"</b>
+  <dd>Will remove all currently displayed messages from the window.
+  <dt><b>"Refresh"</b>
+  <dd>Simply redraws the window exactly as-is.
+  <dt><b>"Save"</b>
+  <dd>Save the contents of the window to a file of your choice.
+  <dt><b>"Print"</b>
+  <dd>Send the contents of the window to a printer, a file or mail to a user.
+  <dt><b>"Help"</b>
+  <dd>Display this file. 
+</dl>
+
+<P>You can return to having individual popups at any time by
+setting <b><code>USE_MSG_LIST</code></b> "off" from the "Preferences Editor"
+window.
+
+<p>to <a href="TOC.html">Table of Contents</a>
+
+<p>last edited: Jun 2001
+
+</BODY>

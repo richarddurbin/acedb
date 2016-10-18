@@ -1,0 +1,54 @@
+================================================================================
+                              AceDB/ZMap - July MAR
+
+
+Executive summary.                                                                        
+------------------                                                                        
+
+Acedb has been ported to run on machines using AMD's Opteron chip which is
+their version of a 64-bit Intel compatible chip.
+
+ZMap new code includes an initial stab at merging of data from different
+servers into one view, drawing of more types of feature, each zmap can now
+show multiple sections of a single large sequence (e.g. chromosome) or
+multiple sections of different large sequences (e.g. sections of chromosomes
+from different organisms.
+
+Rob Clack attended the BOSC/ISMB/ECCB extravaganza and gave a talk + demo of
+ZMap at BOSC.
+
+
+Acedb
+-----
+
+The CVS comment says simply "Add stack alignment for 64-bit intel-like chips",
+the reality is a lot of emails and debugging by ourselves and Duncan Napier
+<dgnapier@sfu.ca>. The result is that acedb is running on another 64-bit chip
+with a one liner code change.
+
+
+
+ZMap - code
+-----------
+
+ZMap has seen some reorganising of code to improve control/pane/window
+management and improve the concept of a "view" which equates to a single
+sequence/feature dataset to be displayed. The result is that ZMap can display
+in a single ZMap multiple sets of different data, multiple views of a single
+dataset or any combination.
+
+ZMap now also has code to allow tailoring of display of features, this is the
+preamble to supporting DAS v2 like style-sheets.
+
+
+ZMap - conferences
+------------------
+
+Rob Clack attended
+                                                                                          
+BOSC Bioinformatics Open Source Conference which was a SIG of                             
+ISMB Intelligent Systems for Molecular Biology which was combined with                    
+ECCB European Conference on Computational Biology                                         
+
+and gave a lightning talk on ZMap and also demo'ed the software.
+

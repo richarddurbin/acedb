@@ -1,0 +1,94 @@
+#! /bin/sh
+# getandmake -- script to run on remote sites
+#               gets the source from the central place and unpacks
+#               and builds it
+
+TARGET=all
+VERBOSE=false
+
+while true
+do
+  case $1 in
+    -static)    TARGET=all_static
+                shift
+                ;;
+    -v)         VERBOSE=true
+                shift
+                ;;
+    *)          break
+                ;;
+  esac
+done
+
+RELEASE=${1-DAILY}
+
+FTPTMP=/tmp/ftptmp$$
+
+ftp ftp.sanger.ac.uk > $FTPTMP << ENDFIRSTFTP
+cd pub/acedb/$RELEASE/
+ls
+quit
+ENDFIRSTFTP
+
+TARBALL=`grep -i acedb-source $FTPTMP`
+
+if $VERBOSE
+then
+  echo Tarball name is $TARBALL
+fi
+
+rm -f $FTPTMP
+
+if [ -d $RELEASE ]
+then
+  rm -rf $RELEASE
+fi
+
+mkdir $RELEASE
+cd $RELEASE
+
+ftp ftp.sanger.ac.uk << ENDSECONDFTP
+cd pub/acedb/$RELEASE/
+get $TARBALL
+quit
+ENDSECONDFTP
+
+if $VERBOSE
+then
+  echo -n File has arrived:
+  ls -l $TARBALL
+fi
+
+gunzip -f $TARBALL
+
+tar xf *.tar
+
+if $VERBOSE
+then
+  echo compiling $TARGET
+fi
+
+ln -s wmake/makefile
+
+OSTYPE=`ostype`
+case $OSTYPE in
+     OSF1) ACEDB_MACHINE=ALPHA_4
+   	   ;;
+    SunOS) ACEDB_MACHINE=SUN_4
+           ;;
+  Solaris) ACEDB_MACHINE=SOLARIS_4
+           ;;
+     Irix) ACEDB_MACHINE=SGI_4
+           ;;
+    Linux) ACEDB_MACHINE=LINUX_4
+	   ;;
+esac
+
+export ACEDB_MACHINE
+
+if $VERBOSE
+then
+  echo compiling for $ACEDB_MACHINE
+fi
+
+make $TARGET

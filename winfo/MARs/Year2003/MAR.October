@@ -1,0 +1,72 @@
+=========================================================================
+                        AceDB - October MAR
+
+
+Executive summary.                                                                        
+------------------                                                                        
+
+October has seen the AceDB group go from three to two with the departure
+of Simon Kelley for the systems group. Accordingly the month has consisted
+partly of tying up loose ends before Simons departure, including introducing
+support for GTK2, introducing a "Composite class" mechanism and various
+blixem fixes. Other work includes improving the genefinder/gene annotation
+code used mostly by the Worm annotation group to support their new gene
+model.
+
+
+GFF dumping
+-----------
+Facility to filter out objects before a virtual sequence is built is now done, this allows mapping
+of subsets of features across an entire chromosome without the requirement for vast amounts of
+memory. Now included in overnight test system.
+
+
+ZMap
+----
+Handover of existing ZMap display code from Simon Kelley completed, Rob Clack
+is familiarising himself with the code.
+
+
+GTK2 support
+-----------
+Acedb can now run with GTK2 (a substantial new version of the graphics
+library used by much GNOME software). This has been tested on Linux but
+not on the Alphas so far as GTK2 unavailable on these systems.
+
+
+Composite classes
+-----------------
+For some years it has been possible to specify variants of existing
+database classes using the "subclass" mechanism. These new subclasses
+could be used just like normal classes for the purposes of querying,
+display and so on. Now it is also possible to cluster several existing
+and disparate classes into one "Composite" class that can be used in
+querying, display and so on. This allows the user to easily do searches 
+over "joins" of several classes.
+
+
+FMap improvements
+-----------------
+
+As curators make more use of the Smap to add their own classes for virtual
+sequence construction parts of FMap have to be recoded to generalise them
+for handling arbitrary classes. This includes work to support more generalised
+user interactions with mapped objects of different classes and also
+support for user creation of new "gene" objects which might be any one of
+a number of different classes.
+
+
+SMap support
+------------
+There is a continuing discussion about how best to support multiple
+classes in terms of displaying and dumping. Many code improvements are
+being made to support the rapidly evolving database schema being
+developed by the Worm annotation group.
+
+
+blixem
+------
+With the introduction of the Human annotation groups otter system, a 
+number of improvements/bug fixes have had to be made to blixem.
+
+

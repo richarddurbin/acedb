@@ -1,0 +1,5 @@
+// $Id: types.qry,v 1.1 1995-08-08 15:14:54 srk Exp $
+Find  Chrom_Band Colour#magenta
+(location = fk)#(freezer = test)
+ (location & next)#(freezer = test)
+(location and ( next=*))#(freezer = test)

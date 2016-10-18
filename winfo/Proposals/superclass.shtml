@@ -1,0 +1,50 @@
+<HTML>
+<!--#include virtual="/perl/header" -->
+<!--#set var="author" value="edgrif@sanger.ac.uk" -->
+
+<HEAD>
+<TITLE>Superclasses</TITLE>
+</HEAD>
+
+<BODY>
+
+
+<PRE>
+
+Keith,                                                                                    
+                                                                                          
+> This is not really that important to us, but now we have the ?CDS class                 
+> up and running I thought I would try to get Simon's 'composite class'                   
+> working so that we can search across the name space of several 'gene-like'              
+> classes in one go.                                                                      
+>                                                                                         
+> It doesn't seem to work when using 4.9w or 4.9x (RELEASE.EXPERIMENTAL) but              
+> I'm not sure if this might be because Simon's code hasn't been folded into              
+> the main code?  We can return to this later as it is not a real high                    
+> priority for us.  More details below.                                                   
+                                                                                          
+OK, this doesn't work at the moment. Simons code to initialise the struct that            
+holds the superclass information was flawed (because he tested it on Linux (32            
+bit) and not Alphas (64 bit). In fact his code would stop you initialising an             
+acedb database on Alphas with a superclass defined so I've had to fix it !                
+                                                                                          
+Now I've fixed that but there is another problem in that the superclass now           
+appears in the "other class" list in the main window but not in query                     
+builder.....sigh....                                                                      
+                                                                                          
+You would have thought that there might be just one way call to prepare the list          
+of classes for the main window or query builder or.... but no, there are several          
+routines, all undocumented.                                                               
+                                                                                          
+I think that main window stuff will work but other bits will not, you'll just             
+have to push me when you come to need them.                                               
+                                                                                          
+                                                                                          
+cheers Ed                                                                                 
+
+</PRE>
+
+<!--#include virtual="/perl/footer" -->
+
+</BODY>
+</HTML>

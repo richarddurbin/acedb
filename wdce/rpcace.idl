@@ -1,0 +1,90 @@
+/* @(#)rpcace.idl	1.1 2/12/97 */
+
+/*
+** This interface definition language (IDL) file
+** gets processed by a DCE IDL compiler
+** to make machine specific rpc library hooks
+**
+** Interface adapted from rpcace.x (ONC RPC - rpcgen input file)
+** (version 1.8) by Richard Bruskiewich
+**
+** Suggested MS IDL compilation command:
+**
+**		midl /align4 /osf rpcace.idl
+**
+**	where align4 provides 4 byte structure alignment...
+*/
+
+/* 
+  ACE_DATA parameter:
+	2 way communication of query status with the following fields:
+
+		   question:
+			  set by client: contains the request
+
+		   reponse:
+			  set by server: contains the answer
+
+		   encore:
+			  set by server to: -1 if more data remains to be transmitted
+			  set by client to: -1 to get the the remainder
+								-2 to abort the running query
+
+		   clientId:
+			  set by server on first connection,
+					 must be retransmitted by client each time.
+		   magic:
+			  negotiated between  the client and the server,
+					 must be retransmitted by client each time.
+
+		   cardinal:
+			  set by server to: number of objects in the active list.
+
+		   aceError:
+			  set by server to: 100 Unrecognised or NULL command
+								200 Out of context command
+								300 Invalid command (bad nb of parms etc)
+								400 Syntax error in body of command 
+		   kBytes:
+			  set by client to: Desired max size of answer in kilobytes, 
+								NOT strict, server is allowed to return more
+								Server only splits on ace boundaries.
+*/
+
+[
+uuid(d76e4030-69f5-11d0-a540-008048b9aa78),
+version(1.2),
+pointer_default(ptr)
+]
+interface RPC_ACE
+{
+typedef struct {
+	[string] unsigned char *lpszServerStringBinding ;
+	         handle_t hServerBinding ; /* bound to RPC server connection */
+} SERVER ;
+
+typedef SERVER *LP_SERVER ;
+
+typedef struct  {
+  [string, unique] char *question ;
+  [string, unique] char *reponse ;
+  long      clientId ;
+  long      magic ;
+  long      cardinal ;
+  long      encore ;   
+  long      aceError ;
+  long      kBytes ;
+  } ACE_DATA ;
+
+typedef ACE_DATA *LP_ACE_DATA ;
+ 
+/*
+ *	The ACEDB RPC call prototype
+ */
+void ace_server(  [in, out, ref] LP_ACE_DATA ace_data,
+		  [out, ref] error_status_t *ace_rpc_status) ;
+}
+
+/********* end of file **********/
+
+

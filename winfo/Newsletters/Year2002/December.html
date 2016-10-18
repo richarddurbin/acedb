@@ -1,0 +1,170 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - December 2003</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - December 2003</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<P>This month was mostly a month of bug fixes with some improvements to
+fmap display.
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+
+<a name="fmap_display"></a><H3>Better FMap and Tree display interactions</H3>
+
+<P>When displaying objects in the Tree display window, its always been
+possible to click on a sequence object key within the tree display and see
+the FMap display of that object. The problem with this in the past has been that
+in the case where the sequence object is actually the parent of the object in
+the tree display the subsequent fmap is not that helpful in that it displays the
+whole of the object instead of the part that relates to the object in the
+tree display. The acedb display system will now show the sequence object
+zoomed and positioned around the object in the tree display.
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="embl_file"></a><H3>EMBL file bugs</H3>
+
+<P>The EMBL output code will now dump Transcript class objects (as used in Wormbase)
+correctly, they are output in the same way that gene objects are dumped.
+
+<P>The EMBL error message code had a bug in it, it specified a "<code>%d</code>"
+instead of "<code>%s</code>" in the format string producing garbage messages.
+
+
+<a name="gtk_file"></a><H3>GTK file chooser</H3>
+
+<P>The gtk file selector to now correctly retains the file name when
+the complete default filename is already known.
+
+
+<a name="table_bug"></a><H3>Tablemaker output bug</H3>
+
+<P>Fixed bug in tablemaker output file handling, file was not closed until
+a) user quit acedb or b) user made another table. Confusing and annoying because
+it looks like the file hasn't been written.
+
+<P>I thought I had fixed all the bugs caused by aceOutPrint(fo, ptr_str)
+where the string pointed to happens to have a "%" in it, but not so,
+hopefully this is the last one. This bug caused tablemaker to fail.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+
+
+<a name="aceOutPrintStr"></a><H3>New aceOutPrintStr() function</H3>
+
+<P>I've added a new <code>aceOutPrintStr()</code> call for printing simple strings.
+This is try and dissuade people from using aceOutPrint() for this purpose which leads to
+bugs if the string happens to contain a "%" which is then interpreted as a formatting
+instruction with usually bad results.
+
+
+<a name="msort"></a><H3>qsort/msort routines</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Mieg</I>
+<A HREF="mailto:mieg@ray.nlm.nih.gov">mieg@ray.nlm.nih.gov</A>)
+
+<P>Replaced qsort by self contained msort,
+incredibly qsort crashed (rarely but reproducibly) under solaris 5.7
+on sparc machines.
+
+
+<a name="dict"></a><H3>New version of dict</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Mieg</I>
+<A HREF="mailto:mieg@ray.nlm.nih.gov">mieg@ray.nlm.nih.gov</A>)
+
+<P>Wonderful new version of the dict with stable memory
+that means after you add in dict and get a name out of the dict
+that char* is stable until the dict is destroyed.
+Whereas before it went out of scope if by chance
+the dict was realocted by an implicit arrayExpand.
+
+<P>All the relocatable memory addresses are now fully
+hidden from the user by the modified obscure dict.h
+
+<P>Truly, it is a tremendous improvement !!!
+
+
+<a name="smap_area"></a><H3>SMap "area"</H3>
+
+<P>(<I>This article is courtesy of Simon Kelley</I>
+<A HREF="mailto:srk@sanger.ac.uk">srk@sanger.ac.uk</A>)
+
+<P>Added new facility to specify "area". Any object completely outside
+the area is elided, and sMapDNA returns DNA only for the area.
+
+<P><code>sMapCreate()</code> sets the area to be the whole smap, so backwards
+compatibility is ensured. <code>sMapCreateEx()</code> allows setting the area.
+Note that the area is specficied in terms of the smap coordinate
+system, ie 1-based and with area1 &lt; area2 always.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>December monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="User_Group"><H2>Next User Group Meeting - D319, 2.30pm, Thursday, 19th December 2002</H2>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Fri Feb 28 16:01:50 GMT 2003
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

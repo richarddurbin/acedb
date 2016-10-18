@@ -1,0 +1,300 @@
+<html>
+<head>
+<title>Acedb Newsletters for Year 2000</title>
+<link rel="stylesheet" type="text/css" href="../newsletter.css" TITLE="Style sheet for Newsletters">
+</head>
+<body>
+<h1 align="center">Acedb Newsletters for Year 2000</h1>
+
+
+<h3>March</h3>
+<ul>
+    <ul>
+      <li><a href="./March.html#acedev">Who are the acedb developers and how do I contact them ?</a></li>
+    </ul>
+    <ul>
+      <li><a href="./March.html#Newdirs">New directories for Release Versions of Acedb</a></li>
+    </ul>
+  <li><a href="./March.html#New">New Features</a></li>
+    <ul>
+      <li><a href="./March.html#Acedbgtk">Acedb and GTK</a></li>
+    </ul>
+    <ul>
+      <li><a href="./March.html#Acedbwindows">Acedb on Windows</a></li>
+    </ul>
+    <ul>
+      <li><a href="./March.html#acedbwormCD">The Windows Version Acedb + Worm CD !</a></li>
+    </ul>
+    <ul>
+      <li><a href="./March.html#Sockets">A Sockets based server/client (password system etc)</a></li>
+    </ul>
+  <li><a href="./March.html#Education">Education</a></li>
+</ul><br />
+<h3>April</h3>
+<ul>
+  <li><a href="./April.html#General">General News</a></li>
+  <li><a href="./April.html#New">New Features</a></li>
+    <ul>
+      <li><a href="./April.html#web">New web pages</a></li>
+    </ul>
+    <ul>
+      <li><a href="./April.html#sockets">The sockets based server</a></li>
+    </ul>
+    <ul>
+      <li><a href="./April.html#BioJava">BioJava and acedb</a></li>
+    </ul>
+    <ul>
+      <li><a href="./April.html#fmap">fmap</a></li>
+    </ul>
+    <ul>
+      <li><a href="./April.html#NFS">NFS & acedb</a></li>
+    </ul>
+  <li><a href="./April.html#Bugs">Bugs</a></li>
+    <ul>
+      <li><a href="./April.html#version">What version of acedb am I using ?</a></li>
+    </ul>
+    <ul>
+      <li><a href="./April.html#Debugging">Debugging - advanced users</a></li>
+    </ul>
+</ul><br />
+<h3>May</h3>
+<ul>
+  <li><a href="./May.html#General">General News</a></li>
+  <li><a href="./May.html#New">New Features</a></li>
+    <ul>
+      <li><a href="./May.html#Finding">Finding acedb configuration and help files...</a></li>
+    </ul>
+    <ul>
+      <li><a href="./May.html#Specifying">Specifying a database directory from xace...</a></li>
+    </ul>
+    <ul>
+      <li><a href="./May.html#fmap">fmap cascading menus...</a></li>
+    </ul>
+  <li><a href="./May.html#Query">Query not working any more...</a></li>
+  <li><a href="./May.html#User">User Group meetings</a></li>
+</ul><br />
+<h3>June</h3>
+<ul>
+  <li><a href="./June.html#General">General News</a></li>
+    <ul>
+      <li><a href="./June.html#Apologies">Apologies</a></li>
+    </ul>
+    <ul>
+      <li><a href="./June.html#newsletter">The Newsletter</a></li>
+    </ul>
+  <li><a href="./June.html#Acedb2000">Acedb2000 at Vancouver</a></li>
+    <ul>
+      <li><a href="./June.html#Grid">Grid</a></li>
+    </ul>
+    <ul>
+      <li><a href="./June.html#Zacedb">Zacedb</a></li>
+    </ul>
+    <ul>
+      <li><a href="./June.html#website">The acedb web site</a></li>
+    </ul>
+    <ul>
+      <li><a href="./June.html#socket">socket server</a></li>
+    </ul>
+    <ul>
+      <li><a href="./June.html#SMAP">SMAP - a new way to construct sequences</a></li>
+    </ul>
+    <ul>
+      <li><a href="./June.html#AQL">AQL</a></li>
+    </ul>
+    <ul>
+      <li><a href="./June.html#Acedbmac">Acedb and the Mac</a></li>
+    </ul>
+</ul><br />
+<h3>July</h3>
+<ul>
+  <li><a href="./July.html#General">General News</a></li>
+  <li><a href="./July.html#New">New Features</a></li>
+    <ul>
+      <li><a href="./July.html#helpfiles">New help files for Comparative maps</a></li>
+    </ul>
+    <ul>
+      <li><a href="./July.html#dumpformat">New dump formats</a></li>
+    </ul>
+    <ul>
+      <li><a href="./July.html#Read">Read only databases with socket server</a></li>
+    </ul>
+  <li><a href="./July.html#parse">"parse"</a></li>
+  <li><a href="./July.html#Bugs">Bugs Fixed</a></li>
+    <ul>
+      <li><a href="./July.html#Huge">Huge log files after parsing with server</a></li>
+    </ul>
+    <ul>
+      <li><a href="./July.html#aceclient">aceclient (RPC & socket versions) bugs</a></li>
+    </ul>
+    <ul>
+      <li><a href="./July.html#aceserver">aceserver bug</a></li>
+    </ul>
+    <ul>
+      <li><a href="./July.html#xace">xace - Solaris 5.7 only bug</a></li>
+    </ul>
+  <li><a href="./July.html#Education">Education</a></li>
+</ul><br />
+<h3>August</h3>
+<ul>
+  <li><a href="./August.html#General">General News</a></li>
+    <ul>
+      <li><a href="./August.html#Acedb">Acedb and running out of memory</a></li>
+    </ul>
+  <li><a href="./August.html#New">New Features</a></li>
+    <ul>
+      <li><a href="./August.html#Change">Change to output from (p)parse command</a></li>
+    </ul>
+    <ul>
+      <li><a href="./August.html#logformat">Change to log.wrm format</a></li>
+    </ul>
+  <li><a href="./August.html#Bugs">Bugs Fixed</a></li>
+    <ul>
+      <li><a href="./August.html#Protein">Protein Translation Bugs in fmap</a></li>
+    </ul>
+    <ul>
+      <li><a href="./August.html#treewindow">Incompletely drawn tree display window when updating</a></li>
+    </ul>
+</ul><br />
+<h3>September</h3>
+<ul>
+    <ul>
+      <li><a href="./September.html#Apologies">Apologies</a></li>
+    </ul>
+  <li><a href="./September.html#General">General News</a></li>
+  <li><a href="./September.html#New">New Features</a></li>
+    <ul>
+      <li><a href="./September.html#tacecommand">tace command sets</a></li>
+    </ul>
+  <li><a href="./September.html#Bugs">Bugs Fixed</a></li>
+    <ul>
+      <li><a href="./September.html#tacebug">tace bug</a></li>
+    </ul>
+    <ul>
+      <li><a href="./September.html#Expanding">Expanding database</a></li>
+    </ul>
+    <ul>
+      <li><a href="./September.html#CDSstartend">CDS start/end positions</a></li>
+    </ul>
+    <ul>
+      <li><a href="./September.html#CDSreverse">CDS start/end positions not working for reverse genes</a></li>
+    </ul>
+    <ul>
+      <li><a href="./September.html#Obscure">Obscure socket server bug</a></li>
+    </ul>
+    <ul>
+      <li><a href="./September.html#XREF">XREF problem</a></li>
+    </ul>
+</ul><br />
+<h3>October</h3>
+<ul>
+  <li><a href="./October.html#New">New Features</a></li>
+    <ul>
+      <li><a href="./October.html#AcedbCD">Acedb MS-Windows CD packaging improvements</a></li>
+    </ul>
+    <ul>
+      <li><a href="./October.html#URLs">URLs on Acedb MS-Windows</a></li>
+    </ul>
+    <ul>
+      <li><a href="./October.html#wrmfilesMS">".wrm" files on Acedb MS-Windows</a></li>
+    </ul>
+  <li><a href="./October.html#Bugs">Bugs Fixed</a></li>
+    <ul>
+      <li><a href="./October.html#percentbug">"%" Dumping bug</a></li>
+    </ul>
+    <ul>
+      <li><a href="./October.html#Incorrect">Incorrect ordering of output to screen under tace</a></li>
+    </ul>
+    <ul>
+      <li><a href="./October.html#Loss">Loss of window focus</a></li>
+    </ul>
+</ul><br />
+<h3>November</h3>
+<ul>
+  <li><a href="./November.html#General">General News</a></li>
+    <ul>
+      <li><a href="./November.html#Newacedev">New acedb developer</a></li>
+    </ul>
+  <li><a href="./November.html#New">New Features</a></li>
+    <ul>
+      <li><a href="./November.html#Treetext">"Tree/Text" view and "Tag search" menu item</a></li>
+    </ul>
+    <ul>
+      <li><a href="./November.html#Fmap">Fmap Horizontal Scrolling</a></li>
+    </ul>
+    <ul>
+      <li><a href="./November.html#Support">Support for 2-button mouse users</a></li>
+    </ul>
+    <ul>
+      <li><a href="./November.html#Change">Change to help in tace</a></li>
+    </ul>
+    <ul>
+      <li><a href="./November.html#Newspick">New "spick" addtion to keyset manipulating commands in tace.</a></li>
+    </ul>
+  <li><a href="./November.html#Bugs">Bugs Fixed</a></li>
+    <ul>
+      <li><a href="./November.html#Twomsbugs">Two Acedb MS-Windows bug fixes</a></li>
+    </ul>
+    <ul>
+      <li><a href="./November.html#xacehang">xace/tace hang when trying to get write access</a></li>
+    </ul>
+    <ul>
+      <li><a href="./November.html#gene">gene finder bug</a></li>
+    </ul>
+    <ul>
+      <li><a href="./November.html#tab">Tab key:</a></li>
+    </ul>
+</ul><br />
+<h3>December</h3>
+<ul>
+  <li><a href="./December.html#General">General News</a></li>
+    <ul>
+      <li><a href="./December.html#ChickAce">ChickAce</a></li>
+    </ul>
+  <li><a href="./December.html#Articles">Articles</a></li>
+    <ul>
+      <li><a href="./December.html#User">User Environment Limits and Acedb on Unix</a></li>
+    </ul>
+    <ul>
+      <li><a href="./December.html#Acedb">Acedb Web Pages re-organisation</a></li>
+    </ul>
+  <li><a href="./December.html#New">New Features</a></li>
+    <ul>
+      <li><a href="./December.html#position">New position readout in fmap</a></li>
+    </ul>
+    <ul>
+      <li><a href="./December.html#diagnostics">Better diagnotics from Rename/Alias failures</a></li>
+    </ul>
+  <li><a href="./December.html#Bugs">Bugs Fixed</a></li>
+    <ul>
+      <li><a href="./December.html#Colours">Colours bug with gifs</a></li>
+    </ul>
+    <ul>
+      <li><a href="./December.html#Dumping">Dumping objects with very large tag values</a></li>
+    </ul>
+    <ul>
+      <li><a href="./December.html#Filechooser">File Chooser irritations</a></li>
+    </ul>
+    <ul>
+      <li><a href="./December.html#Cut">Cut/Paste bug fixed</a></li>
+    </ul>
+    <ul>
+      <li><a href="./December.html#Main">Main Window reset after "Clean Up"</a></li>
+    </ul>
+    <ul>
+      <li><a href="./December.html#Socket">Socket Server Admin users permissions bug</a></li>
+    </ul>
+  <li><a href="./December.html#Education">Education</a></li>
+  <li><a href="./December.html#Future">Future Plans</a></li>
+    <ul>
+      <li><a href="./December.html#installRevised">Revised INSTALL script for Acedb</a></li>
+    </ul>
+    <ul>
+      <li><a href="./December.html#Enhancements">Enhancements to "Rename"</a></li>
+    </ul>
+</ul><br />
+
+<HR>
+<ADDRESS><A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A></ADDRESS>
+
+</body>
+</html>

@@ -1,0 +1,277 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - August 2001</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - August 2001</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P>A very short newsletter for August, I was tempted to include some silly
+season stuff but while writing this terrible things were happening
+in the States.
+
+<P>Truly grim, sympathies and condolences to all readers in the US.
+
+
+<!-- ******************************************************************** -->
+<a name="General_News"></a><H2>General News</H2>
+
+
+<a name="ftp_warning"></a><H3>WARNING about for ULCC ftp users.</H3>
+
+<P>The Sanger Centre has had to tighten up security in recent months and
+this has prompted some changes to ftp protocols. This change has affected
+a number of users who regularly ftp to Sanger, ULCC users will now be
+affected by these changes.
+The following mail from one of our Systems Support staff says it all:
+
+<pre>&gt; We have just noticed that all the virtual hosts on the remote FTP server
+&gt; at ULCC allow connections from remote hosts without a reverse DNS entry.
+&gt; For security reasons this is not ideal and should be enabled. Currently
+&gt; the following virtual hosts are hosted by our remote FTP server:
+&gt;
+&gt;       ftp.sanger.ac.uk
+&gt;       ftp.ensembl.org
+&gt;       ftp.ebi.ac.uk
+&gt;
+&gt; We propose that we enable reverse DNS entry checks as soon as possible.
+&gt; Therefore, we will change the FTP access configuration file for Sanger and
+&gt; Ensembl (not EBI) at midday tomorrow (Thursday 13th). This will obviously
+&gt; effect a few of our collaborators and possible lead to a few days/weeks
+&gt; worth of email complaints. Sorry, for this we apologies.
+&gt;
+&gt; When a host does not have a valid reverse DNS entry the following error
+&gt; message will be displayed:
+&gt;
+&gt; -- start --
+&gt;       Your host does not have a reverse DNS entry.
+&gt;
+&gt;       Connections are not permitted unless there is a valid reverse DNS.
+&gt;
+&gt;       Please contact your network administrator to resolve this problem.
+&gt; -- end --
+</pre>
+
+<P>If you work at ULCC or have queries about the changes to ftp at Sanger please
+could you contact Systems Support direct by sending mail to 
+<A HREF="mailto:ssg@sanger.ac.uk">ssg@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<a name="New_Features"></a><H2>New Features</H2>
+
+<a name="tsuser_option"></a><H3>New "-tsuser" command line option for tace.</H3>
+
+<P>A common practice in the Sanger Centre is to update the main databases
+via overnight queues of cron jobs which in essence use <b>tace</b> to
+parse in the database modifications. One problem with this is that all
+the jobs tend to be run using the same userid, so all changes by all jobs
+will be labelled with that same userid. This makes it difficult to establish
+exactly which job caused which changes.
+
+<P>A new command line option to tace allows the changes to be registered
+using an alternative label to that of the current userid. This means
+that each cron job could be given its own label so that changes made
+by that cron job can be identified.
+
+<P>Use tace like this:
+<pre><code>tace -tsuser new_label /your/database</code>
+</pre>
+
+<P>You can also use this option on the command line for xace as well.
+
+
+<a name="efetch_homol"></a><H3>New fmap option to efetch homols.</H3>
+
+<P>The right button menu that appears when you click on a dna or peptide homology
+now includes an option to efetch the sequence for that homology.
+
+
+
+<!-- ******************************************************************** -->
+<a name="Articles"></a><H2>Articles</H2>
+
+<a name="core_dumps"></a><H3>Xace, "core" dumps and Signal Catching.</H3>
+
+<P>Sometimes (hard to believe I know), acedb crashes because of some fundamental
+error either in the code (or even in the hardware) that is detected by the operating
+system. When this happens the operating system
+does two things: it sends the program a special "signal" that the error has happened, the
+program can ignore this or perhaps do some cleaning up before exitting, if the program
+takes no action then the operating
+system will then try to take a copy of the program in memory from which its possible to see what the
+program was doing when it crashed. The copy is held in the familiar "core" file.
+
+<P>By default acedb intercepts the "signal" from the operating system so it can
+close the database properly before asking the operating system to make a core file.
+The core file produced by this is often useless for debugging however
+as its initial entries are about the section of code to close the database, and
+it can be impossible to get back from there to the original point of failure.
+
+<P>More useful is to turn off this signal catching by acedb so that the operating
+system will produce a core file that contains exactly the point of failure,
+To do this you need to:
+<ol>
+  <li>Make sure that you do not have write access to the database, or work
+      with a copy of your database !
+  <li>Set your user limit for core dumps to "unlimited" by typing
+      "unlimit core" (this is for csh, other shells will have the equivalent
+      command).
+  <li>Either start xace specifying the "-nosigcatch" commandline option, or
+      turn signal catching off from the "Admin.." menu.
+  <li>Then reproduce the bug and give the resultant core file to us (note the
+      file may be very large so don't send it as mail but simply tell us where
+      we can access it !!).
+  <li>We will also need the copy of xace that you used.
+</ol>
+
+
+
+<a name="AQL_change"></a><H3>A change to the way AQL searches for locators</H3>
+
+<P>An attempted optimisation in AQL introduced a bug which has now been fixed.
+
+<P>(<I>This article is courtesy of John Sturdy</I>
+<A HREF="mailto:jcgs@sanger.ac.uk">jcgs@sanger.ac.uk</A>)
+
+<P>Consider the following fragment of aql:
+
+<pre><code><b>select paper, author1, institute1, author2, institute2
+  from paper in class Paper,
+       author1 in paper->Author,
+       institute1 in author1->Institute,
+       author2 in paper->Author,
+       institute2 in author2->Institute
+  where (institute1 = "MRC-LMB") and (institute2 = "CNRS")
+</b></code></pre>
+
+<P>AQL used to use a spurious attempt at optimisation which, in this example,
+resulted in institute1 being substituted for institute2, which resulted in
+no objects matching the query (since institute1 could not be equal to two
+different things simultaneously). This bug is now fixed.
+
+<P>In some cases, this change may cause unwanted large
+cross products. If this is a problem please send bug reports to
+<A HREF="mailto:jcgs@sanger.ac.uk">jcgs@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+<a name="graphUpdate"></a><H3>Bug in graphUpdateEditors()</H3>
+
+<P>This function is hardly ever used, which is good because it
+could not have worked correctly: it handled neither toggle or colour editors,
+but instead called graphTextScrollEntry() on them both producing garbage in whatever window
+they were displayed in. The function now correctly updates the state of the displayed
+editor boxes.
+
+
+<a name="message_window"></a><H3>Multiline messages in Message window.</H3>
+
+<P>The message window did not handle multiline messages correctly.
+Multiline messages are now displayed on a single line with a &lt;TAB&gt;
+added in place of each newline character. This leaves the messages
+as readable and avoids the window becoming full with large multiline
+messages.
+
+
+<a name="sigcatch_menu"></a><H3>Signal Catching menu/window item.</H3>
+
+<P>The "Signal Catching" item (from the "Admin.." button on the main window)
+got out of synch with the actual state of signal catching in xace. This is now
+fixed.
+
+
+
+<a name="WWWdisplay"></a><H3>WWWdisplay() function</H3>
+
+<P>bug fixes to WWWdisplay() and addition to look for Web_location in
+the class Class object if not found in the object itself
+
+
+<a name="peptide_translation"></a><H3>Peptide translation</H3>
+
+<P>Several small bugs were fixed in peptide translation:
+<ul>
+  <li>The stop codon was translated for some functions, the stop
+      codon is not now included for any translation.
+  <li>Translation was proceeding too far for the case where the end
+      of the CDS is not included in the current set of exons. Translation
+      is now up to and including the last complete codon for a CDS with
+      the End_not_found tag set.
+  <li>an unnoticeable bug (except in usage of memory): the array to hold
+      the translation was almost 3x bigger than it needed to be because
+      of missing brackets around the maths to calculate the array size.
+</ul>
+
+
+
+<a name="checkSequenceLength"></a><H3>checkSequenceLength() failed for simple
+DNA only objects.</H3>
+
+<P>Last months xace did not display simple dna objects in an fmap because
+of a trivial error in the checkSequenceLength() function which detects when
+users ask to view very big sequences and gives them the chance to cancel
+the fmap display.
+
+<a name="blixem_toolbar"></a><H3>Blixem Toolbar bug</H3>
+
+<P>Recent changes to Blixem included a removable toolbar, this introduced a
+but whereby the window could not be collapsed when the toolbar was "docked",
+this has now been fixed.
+
+
+<!-- ******************************************************************** -->
+<H2>August monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<H2>Next User Group Meeting - G201, 2.30pm, Thursday, 20th September 2001</H2>
+
+<b>!! PLEASE NOTE THAT THIS MEETING IS IN A DIFFERENT ROOM FROM THE NORMAL ONE: G201 !!</b>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Wed Sep 19 10:08:35 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

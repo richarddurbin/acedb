@@ -1,0 +1,168 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - March 2002</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - March 2002</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="General_News"></a><H2>General News</H2>
+
+This months sees a new package for accessing the socket server using the C programming
+language, also a new Java package for the same purpose. Otherwise it has been a month
+of bug fixes and more work on the new smap code.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+<a name="AceConn"></a><H3>AceConn a C package for accessing the Socket Server.</H3>
+
+<P>Previously there were the following ways to access the socket server:
+
+<ul>
+  <li><b>saceclient:</b> a command line based program that could be driven by scripts.
+  <li><b>AcePerl:</b> perl package interfacing directly to the socket server.
+  <li><b>BioJava:</b> contains a package interfacing directly to the socket server
+       (but also see <A HREF="#Java_package">next article</A>).
+  <li><b>BioPython:</b> contains a package interfacing directly to the socket server.
+</dl>
+
+<P>There was no package for a client written in C to interface to the server.
+
+<P>This gap has now been filled with a new package called AceConn. This is a small library of
+C routines enabling a C based client to interface to the server. The main components
+of the interface are:
+
+<dl>
+  <dt><b>AceConnCreate():</b>
+  <dd>creates the initial connection structure which is the handle for all subsequent
+      calls to the package routines.
+  <dt><b>AceConnConnect():</b>
+  <dd>makes the intial connection to the server doing all the necessary hand shaking,
+       if this call succeeds then the client can start sending requests.
+  <dt><b>AceConnRequest():</b>
+  <dd>Sends a request to the server and returns the reply.
+  <dt><b>AceConnDisconnect():</b>
+  <dd>terminates the connection to the server doing all the necessary handshaking.
+  <dt><b>AceConnDestroy():</b>
+  <dd>Frees the connection allocated by AceConnCreate().
+</dl>
+
+<P>The interface sends text commands just as the user would type in when using saceclient
+and then returns the reply from the server in a buffer. Usually this reply is text but it could
+be an image as produced by some of the gif subcommands. The client must parse the returned data
+itself.
+
+<P>Each request will wait for a client specified number of seconds before timing out.
+The timeout may be set to zero for the client never to timeout, or negative to reset
+to the default timeout (120 seconds). This allows the client code to retain
+control of how long it remains blocked waiting for a request.
+
+<P>If a client makes a request that produces a very large reply, the server returns
+the reply in slices so that other requests from other clients can also be processed.
+The AceConnRequest() call automatically batches up these requests into a single reply.
+While this is convenient you should be aware that this can lead to the client
+using up considerable amounts of memory for large requests.
+
+<P>You can see further documentation by downloading the
+<A HREF="http://www.acedb.org/Software/Downloads/extras.shtml">Ace-Conn package</A>
+from the acedb website.
+
+
+<a name="Java_package"></a><H3>A useful new Java package for accessing the socket server.</H3>
+
+<P>Kemin Zhou formerly of Affymetrix has contributed a Java package for accessing data
+from the socket server. You can download the package from the
+acedb web site:
+<A HREF="http://www.acedb.org/Software/Downloads/extras.shtml">Java-Zhou package</A>
+
+<P>Kemin's description:
+
+<P>"This simple package is meant to give a basic interface to ACEDB.
+You can view the documentation with webbrowser
+
+<P>Type netscape index.html then you are there.
+
+<P>You need to put the acedb directory in your CLASSPATH
+Or just use the ace.jar file.
+In you java program say import acedb.*;
+
+<P>You have to set up your own Acedb and Saceserver, that is not
+difficult.
+
+<P>This package is to be used by programers who knows both
+Java and ACEDB."
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+<a name="read_models"></a><H3>No "read models" in client/server interface.</H3>
+
+<P>It is not possible to use the "readmodels" command from the client.
+The client/server interface does not support the level of interaction
+required for this operation currently.
+
+<a name="init_db"></a><H3>Missing test for "wspec/database.wrm" at initialisation.</H3>
+
+<P>The code did not explicitly test for the system file "wspec/database.wrm" with the
+result that an obscure error message was displayed some way into program initialisation.
+Now if the file is missing an error message issued and the program exits.
+
+<a name="print"></a><H3>Fixed hard to reproduce bug in print dialog</H3>
+
+<P>Acedb sometimes hung when the print dialog was displayed, this is now
+fixed.
+
+<a name="dna_display"></a><H3>Old bug in fmap dna display.</H3>
+
+<P>An obscure bug in the display of dna within the fmap meant that if you
+zoomed in until there should be just two bases per line, only one was shown !
+This is now fixed.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<H2>March monthly build not available.</H2>
+
+<P>Apologies, once again there was no build this month due to the major
+SMap development work.
+
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon Nov 11 08:59:59 GMT 2002
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

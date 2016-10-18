@@ -1,0 +1,58 @@
+<HTML>
+
+<HEAD>
+  <TITLE>AQL - MovieDB setup</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="../aql.css" TITLE="Style sheet for AQL docs">
+</HEAD>
+<BODY>
+
+<H2>AQL - MovieDB setup</H2>
+
+Some basic experience with Ace-databases and some knoweldge of UNIX will 
+be useful to follow these instructions.
+
+<OL>
+ <LI><A HREF="ftp://ftp.sanger.ac.uk/pub/acedb/">download</A> the latest
+     version of <A HREF="http://www.sanger.ac.uk/Software/Acedb/">acedb</A>.
+
+ <LI>install only the executable programs. You'll only need the programs
+     <CODE>xace</CODE>, <CODE>tace</CODE> and <CODE>taql</CODE> for this 
+     execise. Copy those programs into a "bin" directory of your choice.
+     This may be /usr/local/bin/, /usr/local/acedb/bin, $HOME/bin
+     or simply the current directory.
+
+ <LI>Create a new directory "MovieDB".
+
+ <LI>In the directory MovieDB/ create two subdirectories
+     "database" and "wspec".
+
+ <LI>Download all <A HREF="wspec/index.shtml">wspec-files</A> and copy them into 
+     your local "wspec"-subdirectory.
+
+ <LI>Download the <A HREF="MovieDB.ace">MovieDB datafile</A> and copy
+     it into your local "MovieDB"-directory.
+
+ <LI>Open up the file "passwd.wrm" from your local "wspec"-directory in a
+     text-editor and add a line containing your username.
+
+ <LI>Initialise the database by running
+     <PRE>% xace MovieDB</PRE>
+     Click "Yes" when you're asked whether it's OK to initialise the database.
+
+ <LI>When the main-window pops up, select "read .ace file" form the Edit-menu.
+     Click "Open ace file" and select "MovieDB.ace" the filechooser.
+     Then click on "Read all" to parse all the data.
+
+ <LI>Select "Save (drop write access)" from the Save-menu in the main-window.
+    
+ <LI>Database setup complete!
+
+</UL>
+
+
+
+<HR>
+<ADDRESS><A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A></ADDRESS>
+
+</BODY>
+</HTML>

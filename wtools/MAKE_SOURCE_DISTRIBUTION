@@ -1,0 +1,53 @@
+#!/bin/csh 
+
+# $Id: MAKE_SOURCE_DISTRIBUTION,v 1.1 1998-12-09 15:13:30 edgrif Exp $
+
+if ($#argv != 2) then
+   echo "usage - makeSoureDistribution <version> <destination_directory>"
+   exit 1
+endif
+
+if (! -e ~/tmp) mkdir ~/tmp
+cd ~/tmp
+mkdir tmp_acedb_src
+cd tmp_acedb_src
+setenv ACEDB_SRC `pwd`
+cat > DIRECTORIES <<END
+w1
+w2
+w3
+w4
+w5
+w6
+w7
+w8
+w9
+wace
+wdoc
+wgd
+wgf
+wh
+whelp
+whooks
+wmake
+wrpc
+wscripts
+wspec
+wstaden
+wtools
+END
+
+acetree
+/bin/rm DIRECTORIES */SCCS 
+
+chmod u+w */*
+
+tar cf tarfile *
+cd
+cd $2
+cp ~/tmp/tmp_acedb_src/tarfile source.$1.tar
+compress source.$1.tar
+/bin/rm -rf ~/tmp/tmp_acedb_src
+
+
+

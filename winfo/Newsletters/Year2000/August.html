@@ -1,0 +1,294 @@
+<HTML>
+
+
+<!-- Stuff you should alter is highlighted with "***" -->
+
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - August 2000</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<H1>ACEDB User Group Newsletter - August 2000</H1>
+
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+<P>This month sees some changes to output from the (p)parse commands
+to give more accurate and informative results about the parsing of acedb data.
+There is also a small but important change to acedb logging data
+to allow easier analysis of database activity. And there's a tip about what
+to do when acedb runs out of memory.
+
+
+<a name="General"></a><H2>General News</H2>
+
+<a name="Acedb"></a><H4>Acedb and running out of memory</H4>
+
+<p>Most people who have used acedb for some time will have seen a message like this:
+
+<pre><code>
+"Memory allocation failure, when requesting 100000 bytes, 20034340 already allocated"
+</code></pre>
+
+<P>If you were using <code>xace</code> all you can do is click the "OK" button and then
+xace terminates.
+
+<p>Acedb can run out of memory for a number of reasons:
+<ul>
+  <li>The machine is being heavily used and has run out of memory.
+  <li>There is an error in the code and it is asking for some huge amount of memory.
+  <li>The object you are trying to load from the database is just too large to
+      be viewed on this machine.
+  <li>Your personal "process datasize limit" is set too low.
+</ul>
+
+<p>If you are using acedb and memory allocation fails when trying to allocate some fairly
+small amount of memory e.g. perhaps 5MB ( about 5,000,000 bytes), then there is a good
+chance that its because of the last reason mentioned in the list above. In this case
+you will probably be able to do something about it straight away.
+
+<P>To check this you should do the
+following (assuming you use C shell which is what most people at Sanger use):
+
+<P><b>1)</b> Add up the total number of bytes that acedb needed when it crashed:
+<pre><code>
+"Memory allocation failure, when requesting 5242880 bytes, 125829120 already allocated"
+</code></pre>
+<P>In this case a total of 125829120 + 5242880 = 131072000 bytes (or about 125 MB)
+
+<P><b>2)</b> Find out what your current limit is:
+<pre><code>
+griffin[edgrif]65: limit datasize
+datasize        131072 kbytes
+</code></pre>
+<P>In this case the limit is 128MB, although this is more than the 125MB acedb needs,
+acedb makes use of other libraries which use up memory so this is close enough to
+suspect that the datasize limit is the problem.
+
+<P><b>3)</b> Find out if you can increase you current limit:
+<pre><code>
+griffin[edgrif]66: limit -h datasize
+datasize        1048576 kbytes
+</code></pre>
+<P>Here the upper limit is set to 1024MB so there is plenty of
+scope to increase the datasize limit.
+
+<P><b>4)</b> Increase the limit and rerun acedb:
+<pre><code>
+griffin[edgrif]66: limit datasize 524288
+</code></pre>
+<P>This sets the datasize to 512MB, the limit can be increased further
+as required.
+
+
+<a name="New"></a><H2>New Features</H2>
+
+<a name="Change"></a><H4>Change to output from (p)parse command</H4>
+
+<P>The output from the parse and pparse commands has been changed
+to give more complete information about the ace data parsed. Previously
+no reporting was done for array objects parsed (e.g. raw DNA data) or
+for attempts to delete objects. In addition not all errors were trapped
+or reported.
+
+<p>The new output has these main changes:
+<ul>
+  <li>the following information is shown for each error found:
+      <ul>
+	<li>the type of object being processed
+	<li>the first line of the object being processed, which shows its type.
+	<li>the reason why parsing of the object failed is more reliably reported.
+      </ul>
+  <li>the summary now includes counts of <b>all</b> objects found and shows the numbers
+      that failed or were parsed correctly.
+  <li>a larger summary can be requested that shows stats for array and normal objects separately
+      and also records error stats where the type of the object could not be determined.
+</ul>
+
+<P>Originally the commands produced:
+
+<pre><code>
+acedb&gt; pparse some_file.ace
+// Parsing file  some_file.ace
+// Parse error near line 5 in eds_grid1 : Unknown tag "FunnyLine1"
+// Parse error near line 57 in eds_grid1.2 : Unknown tag "FunnyLine2"
+// Parse error near line 163 in eds_grid1.9 : Unknown tag "FunnyLine3"
+// 18 objects read with 3 errors
+// 15 Active Objects
+acedb&gt; 
+</code></pre>
+
+<p>The commands now produce:
+<pre><code>
+acedb&gt; pparse some_file.ace
+// Parsing file some_file.ace
+// ERROR: parse error (object) near line 5 in "grid : "eds_grid1"", error was: Unknown tag "FunnyLine1"
+// ERROR: parse error (object) near line 57 in "grid : "eds_grid1.2"", error was: Unknown tag "FunnyLine2"
+// ERROR: parse error (object) near line 163 in "grid : "eds_grid1.9"", error was: Unknown tag "FunnyLine3"
+// <b>objects processed: 18 found, 15 parsed ok, 3 parse failed</b>
+// 15 Active Objects
+acedb&gt; 
+</code></pre>
+
+<p>Individual errors are now reported like this:
+
+<pre><code>
+// ERROR: parse error (<b>object</b>) near line 5 in <b>"grid : "eds_grid1""</b>, error was: <b>Unknown tag "FunnyLine1"</b>
+</code></pre>
+
+<P>so you get to know the type of thing being parsed ("general", "object" or "array", 
+where general means "can't ascertain the type"). You see the first line of the
+object/paragraph which should contain the type and name of the object. You also
+get to see the original error message which describes what was wrong with the
+object.
+
+<P>At the end of parsing you now see a summary:
+
+<pre><code>
+// objects processed: 18 found, 15 parsed ok, 3 parse failed
+</code></pre>
+
+<p>where it should be true that: found = ok + failed.
+
+<p>If you specify "-v" for parse or pparse you see more detail:
+
+<pre><code>
+// total processed: 18 found, 15 parsed ok, 3 parse failed
+//         general: 0 errors
+//         objects: 15 added, 0 editted, 0 deleted, 0 renamed, 0 aliased, 3 errors
+//          arrays: 0 added, 0 empty, 0 deleted, 0 errors
+</code></pre>
+
+<p>So you get to see general errors, e.g. no class name specified for a delete
+operation, ordinary object operations and array object operations, normal object
+stats and array object stats separately.
+
+
+
+<a name="logformat"></a><H4>Change to <code>log.wrm</code> format</H4>
+
+<P><code>log.wrm</code> is the file where acedb programs write information
+about who is using the database, what they are using the database for
+and also information about any serious errors.
+
+<P>Currently the first log record for a user starting a new session on a
+database looks like this:
+<pre>
+New start User:edgrif,  ACEDB 4_8b,  compiled on: Oct  5 1999 14:43:15
+</pre>
+
+<P>whereas the standard record format for all other log messages is:
+<pre>
+2000-04-03_17:21:09 griffin 20611	***some action***
+</pre>
+
+<P>This is not ideal for serveral reasons:
+<ul>
+  <li>having a different first record needlessly complicates parsing of the log file.
+  <li>there is no easy to tie the new session record
+      for a user with the subsequent records for that user.
+  <li>there is no time record for when the user started.
+  <li>there is no record of which acedb program the user was running.
+</ul>
+
+<P>To address these issues the first record for a new user session has been changed
+so that:
+
+<P><b>All log records now have the standard prefix:</b>
+<pre><code>
+     "date_time network_id PID"
+
+e.g. "2000-04-03_17:21:09 griffin 20611"
+</code></pre>
+
+<P><b>The new user session record format is:</b>
+<pre><code>
+     "date_time network_id PID  NEW_START: User:userid, Program:progname, Level:ace_level, compiled on: date time"
+
+e.g. "2000-07-20_14:20:37 griffin 19877    NEW_START: User:edgrif, Program:tace, Level:ACEDB 4_8c, compiled on: Jul 20 2000 14:14:21
+</code></pre>
+
+<P>This means all logs records will now have the same prefix and that the user can
+now be tied to their log records via the PID/network_id,
+the time of their first use of the database will be
+recorded and also which program and which machine they were using.
+
+
+<a name="Bugs"></a><H2>Bugs Fixed</H2>
+
+<a name="Protein"></a><H4>Protein Translation Bugs in fmap</H4>
+
+<p><b>Protein translation displayed in fmap window:</b> display of protein translations
+for <code>CDS</code>'s in the fmap window did not
+work correctly for reverse strand genes. If you set the beginning position
+for translation by altering:
+
+<pre>
+<code>
+Properties -&gt; Coding -&gt; CDS  &lt;new start position&gt;
+</code>
+</pre>
+
+then the protein translation did not get updated to reflect the change.
+If you set the end position as well then the translation was shown correctly.
+This is now fixed so the correct translation is always shown.
+
+<p><b>Protein translation displayed in separate protein window:</b> Several users
+have noticed that when they set the end position in the <code>CDS</code> (as mentioned above),
+they get huge numbers of the character 'X' appended to the end of the translation.
+This is because the <code>CDS</code> positions <b>must</b> be specified in the spliced DNA coordinates,
+<b>not</b> the <code>Source_Exons</code> coordinates. If you use the latter then you will be specifying
+an end position well past the end of the spliced DNA, thus causing the code to append the
+'X's to "fill in" the missing data.
+
+<P>Code will be added to give a warning that the specified positions are outside of the
+spliced DNA coordinate range.
+
+
+<a name="treewindow"></a><H4>Incompletely drawn tree display window when updating</H4>
+
+<P>Many users have noticed how sometimes when they try to "Update" the tree display
+(i.e. the class viewer window), the window is sometimes only partly drawn with the
+lower part of the window being blank until the window is scrolled up and down. This
+very irritating bug has finally be pinned down to an error, not in acedb, but in the
+underlying GTK toolkit. A work around is in place until the new fixed versions of GTK
+filter through.
+
+
+<H2>August monthly build NOT yet available.</H2>
+
+<P>Currently the acedb test system is not working correctly so only half of the code has
+been tested. This should be fixed this week. You will receive email when testing has
+been completed.
+
+<P>Note that this means that some of the features mentioned above will not be available
+until testing has been completed.
+
+
+<H2>Next User Group Meeting - D213, 2.30pm, Thursday 14th September.</H2>
+
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon May 21 15:35:57 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

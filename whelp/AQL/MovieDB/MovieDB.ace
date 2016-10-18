@@ -1,0 +1,2382 @@
+
+
+ // Class KeySet 
+
+
+
+ // Class LongText 
+
+
+
+ // Class Table 
+
+Table : "bond"
+Title	 "James Bond Movies"
+Precompute	 "bond#"
+Sortcolumn	 4
+Colonne	 1 Subtitle "movie name"
+Colonne	 1 From 1
+Colonne	 1 Visible
+Colonne	 1 Width 12
+Colonne	 1 Optional
+Colonne	 1 A_Class "Movie"
+Colonne	 2 Subtitle "bond actor"
+Colonne	 2 From 1
+Colonne	 2 Tag "Cast"
+Colonne	 2 Hidden
+Colonne	 2 Width 12
+Colonne	 2 Optional
+Colonne	 2 A_Class "Person"
+Colonne	 3 Subtitle "temp colonne"
+Colonne	 3 Right_of 2
+Colonne	 3 Tag "HERE"
+Colonne	 3 Hidden
+Colonne	 3 Width 12
+Colonne	 3 Mandatory
+Colonne	 3 Condition "\"James Bond\""
+Colonne	 3 A_Text
+Colonne	 4 Subtitle "release date"
+Colonne	 4 From 1
+Colonne	 4 Tag "Date"
+Colonne	 4 Visible
+Colonne	 4 Width 12
+Colonne	 4 Optional
+Colonne	 4 A_Date
+
+Table : "characters"
+Title	 "character names"
+Sortcolumn	 1
+Colonne	 1 Subtitle "movie"
+Colonne	 1 From 1
+Colonne	 1 Visible
+Colonne	 1 Width 25
+Colonne	 1 Optional
+Colonne	 1 A_Class "Movie"
+Colonne	 2 Subtitle "actor"
+Colonne	 2 From 1
+Colonne	 2 Tag "Cast"
+Colonne	 2 Visible
+Colonne	 2 Width 20
+Colonne	 2 Optional
+Colonne	 2 A_Class "Person"
+Colonne	 3 Subtitle "character name"
+Colonne	 3 Right_of 2
+Colonne	 3 Tag "HERE"
+Colonne	 3 Visible
+Colonne	 3 Width 30
+Colonne	 3 Optional
+Colonne	 3 A_Text
+
+Table : "other"
+Title	 "Other movies of the cast of \%1"
+Sortcolumn	 1
+Parameters	 "default"
+Colonne	 1 Subtitle "Cast member"
+Colonne	 1 From 1
+Colonne	 1 Visible
+Colonne	 1 Width 30
+Colonne	 1 Optional
+Colonne	 1 A_Class "Person"
+Colonne	 2 From 1
+Colonne	 2 Tag "Stars_in"
+Colonne	 2 Hidden
+Colonne	 2 Width 12
+Colonne	 2 Optional
+Colonne	 2 Boolean
+Colonne	 3 Right_of 2
+Colonne	 3 Tag "Stars_in"
+Colonne	 3 Hidden
+Colonne	 3 Width 12
+Colonne	 3 Mandatory
+Colonne	 3 Condition "\%1"
+Colonne	 3 A_Class "Movie"
+Colonne	 4 Subtitle "Other movie"
+Colonne	 4 From 1
+Colonne	 4 Tag "Stars_in"
+Colonne	 4 Visible
+Colonne	 4 Width 12
+Colonne	 4 Optional
+Colonne	 4 Condition "NOT \%1"
+Colonne	 4 A_Class "Movie"
+
+
+
+ // Class TableResult 
+
+
+
+ // Class Peptide 
+
+
+
+ // Class DNA 
+
+
+
+ // Class MatchTable 
+
+
+
+ // Class Tag 
+
+Tag : "Quoted_in"
+
+Tag : "Title"
+
+Tag : "Comment"
+
+Tag : "Precompute"
+
+Tag : "Sortcolumn"
+
+Tag : "Parameters"
+
+Tag : "Colonne"
+
+Tag : "Display"
+
+Tag : "StandAloneDisplay"
+
+Tag : "Type"
+
+Tag : "SourceFile"
+
+Tag : "Uses_tags"
+
+Tag : "Uses_class"
+
+Tag : "Includes"
+
+Tag : "Included_by"
+
+Tag : "Parent_tag"
+
+Tag : "Related_tags"
+
+Tag : "Used_for"
+
+Tag : "Appears_in_class"
+
+Tag : "Appears_in_source_code"
+
+Tag : "Subtitle"
+
+Tag : "Origin"
+
+Tag : "Tag"
+
+Tag : "Visibility"
+
+Tag : "Width"
+
+Tag : "Presence"
+
+Tag : "Condition"
+
+Tag : "Extract"
+
+Tag : "Release"
+
+Tag : "Cast"
+
+Tag : "Director"
+
+Tag : "Writer"
+
+Tag : "Aka"
+
+Tag : "Based_on"
+
+Tag : "Links"
+
+Tag : "Rating"
+
+Tag : "Released"
+
+Tag : "Distributed"
+
+Tag : "Owned_by"
+
+Tag : "Founded"
+
+Tag : "Real_name"
+
+Tag : "Date_of_Birth"
+
+Tag : "Address"
+
+Tag : "Height"
+
+Tag : "Stars_in"
+
+Tag : "Directed"
+
+Tag : "Scripted"
+
+Tag : "Wrote"
+
+Tag : "Relations"
+
+Tag : "Reference"
+
+Tag : "Author"
+
+Tag : "Script_for"
+
+Tag : "Distributors"
+
+Tag : "Production_company"
+
+
+
+ // Class Movie 
+
+Movie : "The Godfather"
+Date	 1972
+Production_company	 "Paramount Pictures"
+Cast	 "Marlon Brando" "Vito Corleone"
+Cast	 "Al Pacino" "Michael Corleone"
+Cast	 "Robert Duvall" "Tom Hagen"
+Cast	 "James Caan" "Sonny Corleone"
+Director	 "Francis Coppola"
+Writer	 "Francis Coppola"
+Writer	 "Mario Puzo" -C "also novel"
+Aka	 "Mario Puzo's The Godfather" "USA"
+Aka	 "Der Pate" "german"
+Rating	 8.600000 11257
+
+Movie : "Carlito's Way"
+Date	 1993
+Cast	 "Al Pacino" "Carlito Brigante"
+Cast	 "Sean Penn" "David Kleinfeld"
+Director	 "Brain De Palma"
+Writer	 "David Koepp"
+Rating	 7.600000
+
+Movie : "Heat"
+Date	 1995
+Cast	 "Al Pacino" "Vincent Hanna"
+Cast	 "Robert De Niro" "Neil McCauley"
+Cast	 "Val Kilmer" "Chris Shiherlis"
+Cast	 "John Voight" "Nate"
+Cast	 "Tom Sizemore" "Michael Cheritto"
+Cast	 "Natalie Portman" "Lauren"
+Director	 "Michael Mann"
+Director	 "Alan Smithee"
+Writer	 "Michael Mann"
+Rating	 7.800000 5020
+
+Movie : "City Hall"
+Date	 1996
+Cast	 "Al Pacino" "Mayor John Pappas"
+Cast	 "Bridget Fonda" "Marybeth Cogan"
+Cast	 "Danny Aiello" "Frank Anselmo"
+Director	 "Harold Becker"
+Rating	 6.900000 528
+
+Movie : "Donnie Brasco"
+Date	 1997
+Production_company	 "TriStar Pictures"
+Distributors	 "TriPictures" "Spain"
+Distributors	 "TriStar Pictures" "USA"
+Distributors	 "Sony Pictures Entertainment" "USA"
+Cast	 "Al Pacino" "Lefty"
+Cast	 "Johnny Depp" "Donnie"
+Cast	 "Michael Madsen" "Sonny"
+Director	 "Mike Newell"
+
+Movie : "Apocalypse Now"
+Date	 1979
+Production_company	 "Zoetrope Studios"
+Distributors	 "Tobis Filmkunst" "Germany"
+Distributors	 "Paramount Home Video" "video"
+Distributors	 "United Artists" "USA"
+Cast	 "Marlon Brando" "Colonel Walter E. Kurtz"
+Cast	 "Robert Duvall" "Lieutenant Colonel Kilgore"
+Cast	 "Martin Sheen" "Captain Benjamin L. Willard"
+Cast	 "Dennis Hopper" "Freelance Photographer"
+Cast	 "Harrison Ford" "Colonel G Lucas"
+Director	 "Francis Coppola"
+Based_on	 "Heart of Darkness"
+
+Movie : "True Romance"
+Date	 1993
+Production_company	 "Morgan Creek Productions"
+Production_company	 "August Entertainment"
+Distributors	 "Warner Brothers" "USA"
+Distributors	 "TriPictures" "Spain"
+Cast	 "Dennis Hopper" "Clifford Worley"
+Cast	 "Christian Slater" "Clarence Worley"
+Cast	 "Patricia Arquette" "Alabama Whitman"
+Cast	 "Val Kilmer" "Mentor (Elvis)"
+Cast	 "Gary Oldman" "Drexl Spivey"
+Cast	 "Samuel L. Jackson" "Big Don"
+Cast	 "Brad Pitt" "Floyd"
+Cast	 "Tom Sizemore" "Cody Nicholson"
+Director	 "Tony Scott"
+Writer	 "Quentin Tarantino" "original screenplay"
+Writer	 "Roger Avary"
+Rating	 7.700000 3621
+
+Movie : "Easy Rider"
+Date	 1969
+Production_company	 "Columbia Pictures Corporation"
+Cast	 "Dennis Hopper" "Billy"
+Cast	 "Peter Fonda" "Wyatt (Captain America)"
+Director	 "Dennis Hopper"
+Writer	 "Dennis Hopper"
+Writer	 "Peter Fonda"
+Rating	 7.400000
+
+Movie : "Red Rock West"
+Date	 1992
+Cast	 "Dennis Hopper" "Lyle"
+Cast	 "Nicolas Cage"
+Director	 "John Dahl"
+
+Movie : "Indiana Jones and the Last Crusade"
+Date	 1989
+Production_company	 "Paramount Pictures"
+Production_company	 "Lucasfilm Ltd."
+Distributors	 "Paramount Pictures"
+Cast	 "Harrison Ford" "Indiana Jones"
+Cast	 "Sean Connery" "Professor Henry Jones"
+Cast	 "River Phoenix" "young Indy"
+Director	 "Steven Spielberg"
+Writer	 "George Lucas" "story"
+Follows	 "Indiana Jones and the Temple of Doom"
+Follows	 "Raiders of the Lost Ark"
+Rating	 7.800000 8118
+
+Movie : "Indiana Jones and the Temple of Doom"
+Date	 1984
+Production_company	 "Lucasfilm Ltd."
+Cast	 "Harrison Ford" "Indiana Jones"
+Director	 "Steven Spielberg"
+Writer	 "George Lucas" "story"
+Aka	 "Indiana Jones and the Temple of Death" "working title"
+Follows	 "Raiders of the Lost Ark"
+Followed_by	 "Indiana Jones and the Last Crusade"
+References	 "Star Wars"
+Rating	 6.900000 4198
+
+Movie : "Raiders of the Lost Ark"
+Date	 1981
+Production_company	 "Paramount Pictures"
+Production_company	 "Lucasfilm Ltd."
+Distributors	 "Paramount Pictures"
+Cast	 "Harrison Ford" "Indiana Jones"
+Director	 "Steven Spielberg"
+Writer	 "George Lucas" "story"
+Followed_by	 "Indiana Jones and the Last Crusade"
+Followed_by	 "Indiana Jones and the Temple of Doom"
+References	 "Star Wars"
+
+Movie : "Star Wars"
+Date	 1977
+Cast	 "Harrison Ford" "Han Solo"
+Cast	 "Mark Hamill" "Luke Skywalker"
+Cast	 "Alec Guiness" "Ben (Obi-Wan) Kenobi"
+Cast	 "Carrie Fisher" "Princess Leia Organa"
+Director	 "George Lucas"
+Writer	 "George Lucas"
+Aka	 "Star Wars: Episode IV: A New Hope" "USA new title"
+Follows	 "Star Wars: Episode I - The Phantom Menace"
+Follows	 "Star Wars: Episode II"
+Follows	 "Star Wars: Episode III"
+Followed_by	 "The Empire Strikes Back"
+Followed_by	 "Return of the Jedi"
+Spoofed_in	 "Toy Story"
+Spoofed_in	 "Space Balls"
+Spoofed_in	 "Austin Powers: International Man of Mystery"
+Spoofed_in	 "Antz"
+Referenced_in	 "Indiana Jones and the Temple of Doom"
+Referenced_in	 "Raiders of the Lost Ark"
+Referenced_in	 "The Color of Money"
+Referenced_in	 "The Fifth Element"
+Referenced_in	 "Boogie Nights"
+Referenced_in	 "Antz"
+Referenced_in	 "The Hustler"
+Rating	 8.700000 23277
+
+Movie : "Star Wars: Episode I - The Phantom Menace"
+Date	 1999
+Production_company	 "Lucasfilm Ltd."
+Followed_by	 "Star Wars"
+Followed_by	 "The Empire Strikes Back"
+Followed_by	 "Return of the Jedi"
+Followed_by	 "Star Wars: Episode II"
+Followed_by	 "Star Wars: Episode III"
+
+Movie : "Star Wars: Episode II"
+Date	
+Production_company	 "Lucasfilm Ltd."
+Follows	 "Star Wars: Episode I - The Phantom Menace"
+Followed_by	 "Star Wars"
+Followed_by	 "The Empire Strikes Back"
+Followed_by	 "Return of the Jedi"
+Followed_by	 "Star Wars: Episode III"
+
+Movie : "Star Wars: Episode III"
+Date	
+Production_company	 "Lucasfilm Ltd."
+Follows	 "Star Wars: Episode I - The Phantom Menace"
+Follows	 "Star Wars: Episode II"
+Followed_by	 "Star Wars"
+Followed_by	 "The Empire Strikes Back"
+Followed_by	 "Return of the Jedi"
+
+Movie : "The Empire Strikes Back"
+Date	 1980
+Production_company	 "Lucasfilm Ltd."
+Cast	 "Mark Hamill" "Luke Skywalker"
+Cast	 "Harrison Ford" "Han Solo"
+Cast	 "Carrie Fisher" "Princess Leia"
+Cast	 "David Prowse" "Darth Vader"
+Cast	 "Alec Guiness" "Ben (Obi-Wan) Kenobi"
+Director	 "Irvin Kershner"
+Writer	 "George Lucas" "story"
+Writer	 "Leigh Bracket"
+Aka	 "Star Wars: Episode V: The Empire Strikes Back"
+Follows	 "Star Wars"
+Follows	 "Star Wars: Episode I - The Phantom Menace"
+Follows	 "Star Wars: Episode II"
+Follows	 "Star Wars: Episode III"
+Followed_by	 "Return of the Jedi"
+Spoofed_in	 "Space Balls"
+
+Movie : "Return of the Jedi"
+Date	 1983
+Production_company	 "Lucasfilm Ltd."
+Cast	 "Mark Hamill" "Luke Skywalker"
+Cast	 "Harrison Ford" "Han Solo"
+Cast	 "Carrie Fisher" "Princess Leia"
+Cast	 "David Prowse" "Darth Vader"
+Cast	 "Alec Guiness" "Ben (Obi-Wan) Kenobi"
+Follows	 "Star Wars"
+Follows	 "Star Wars: Episode I - The Phantom Menace"
+Follows	 "Star Wars: Episode II"
+Follows	 "Star Wars: Episode III"
+Follows	 "The Empire Strikes Back"
+Followed_by	
+Spoofed_in	 "Space Balls"
+
+Movie : "Toy Story"
+Date	 1995
+Cast	 "Tom Hanks" "Woody (voice)"
+Cast	 "Tim Allen" "Buzz Lightyear"
+Director	 "John Lasseter"
+Writer	 "John Lasseter"
+Spoofs	 "Star Wars"
+
+Movie : "Space Balls"
+Date	 1987
+Cast	 "Rick Moranis" "Dark Helmet"
+Cast	 "Bill Pullman" "Lone Star"
+Cast	 "John Candy"
+Cast	 "Mel Brooks" "President Skroob\/Yogurt"
+Spoofs	 "Star Wars"
+Spoofs	 "The Empire Strikes Back"
+Spoofs	 "Return of the Jedi"
+
+Movie : "Austin Powers: International Man of Mystery"
+Date	 1997
+Cast	 "Mike Myers" "Austin Powers\/Dr. Evil"
+Cast	 "Elizabeth Hurley" "Vanessa Kensington"
+Cast	 "Michael York" "Basil Exposition"
+Cast	 "Mimi Rogers" "Mrs. Kensington"
+Cast	 "Robert Wagner" "Number Two"
+Director	 "M. Jay Roach"
+Writer	 "Mike Myers"
+Aka	 "Austin Powers" "working title"
+Spoofs	 "Star Wars"
+Spoofs	 "Dr. No"
+Spoofs	 "Thunderball"
+Spoofs	 "Octopussy"
+Spoofs	 "GoldenEye"
+
+Movie : "Antz"
+Date	 1998
+Cast	 "Woody Allen" "Z-4195 (voice)"
+Cast	 "Sharon Stone" "Bala (voice)"
+Cast	 "Sylvester Stallone" "Weaver (voice)"
+Cast	 "Christopher Walken" "Colonel Cutter (voice)"
+Spoofs	 "Star Wars"
+Spoofs	 "Pulp Fiction"
+References	 "Star Wars"
+Rating	 7.500000 2029
+
+Movie : "The Color of Money"
+Date	 1986
+Cast	 "Paul Newman" "Eddie Felson"
+Cast	 "Tom Cruise" "Vincent Lauria"
+Cast	 "Mary Elizabeth Mastrantonio" "Carmen"
+Follows	 "The Hustler"
+References	 "Star Wars"
+Rating	 6.600000 1160
+
+Movie : "The Fifth Element"
+Date	 1997
+Production_company	 "Columbia Pictures Corporation"
+Production_company	 "Gaumont International"
+Cast	 "Bruce Willis" "Korben Dallas"
+Cast	 "Gary Oldman" "Zorg"
+Director	 "Luc Besson"
+Writer	 "Luc Besson" "also story"
+References	 "Star Wars"
+References	 "Blade Runner"
+
+Movie : "Boogie Nights"
+Date	 1997
+Cast	 "Mark Wahlberg" "Eddie Adams\/Dirk Diggler"
+Director	 "Paul Thomas Anderson"
+Writer	 "Paul Thomas Anderson"
+References	 "Star Wars"
+References	 "Raging Bull"
+References	 "Casino"
+
+Movie : "The Hustler"
+Date	 1961
+Production_company	 "20th Century Fox"
+Distributors	 "Key Video" "video"
+Cast	 "Paul Newman" "Eddie Felson"
+Director	 "Robert Rossen"
+Writer	 "Sidney Carroll"
+Writer	 "Robert Rossen"
+Writer	 "Walter Tevis" "novel"
+Followed_by	 "The Color of Money"
+References	 "Star Wars"
+Referenced_in	 "Trainspotting"
+Rating	 8.300000 632
+
+Movie : "Dr. No"
+Date	 1962
+Cast	 "Sean Connery" "James Bond"
+Cast	 "Ursula Andress" "Honey Ryder"
+Director	 "Terence Young"
+Writer	 "Ian Fleming" "novel"
+Writer	 "Richard Maibaum"
+Followed_by	 "Never Say Never Again"
+Followed_by	 "From Russia With Love"
+Followed_by	 "Goldfinger"
+Followed_by	 "Thunderball"
+Followed_by	 "You Only Live Twice"
+Followed_by	 "On Her Majesty's Secret Service"
+Followed_by	 "Diamonds are Forever"
+Followed_by	 "Live and Let Die"
+Followed_by	 "Man With the Golden Gun"
+Followed_by	 "The Spy Who Loved Me"
+Followed_by	 "Moonraker"
+Followed_by	 "For You Eyes Only"
+Followed_by	 "Octopussy"
+Followed_by	 "A View to a Kill"
+Followed_by	 "The Living Daylights"
+Followed_by	 "Licence to Kill"
+Followed_by	 "GoldenEye"
+Followed_by	 "Tomorrow Never Dies"
+Followed_by	 "The World is Not Enough"
+Spoofed_in	 "Austin Powers: International Man of Mystery"
+Referenced_in	 "Trainspotting"
+Referenced_in	 "Live and Let Die"
+Rating	 7.300000 1285
+
+Movie : "Thunderball"
+Date	 1965
+Cast	 "Sean Connery" "James Bond"
+Director	 "Terence Young"
+Writer	 "Ian Fleming" "novel"
+Writer	 "Kevin McClory"
+Follows	 "Dr. No"
+Follows	 "From Russia With Love"
+Follows	 "Goldfinger"
+Followed_by	 "Never Say Never Again"
+Followed_by	 "For You Eyes Only"
+Followed_by	 "Octopussy"
+Followed_by	 "The World is Not Enough"
+Followed_by	 "Tomorrow Never Dies"
+Followed_by	 "GoldenEye"
+Followed_by	 "Licence to Kill"
+Followed_by	 "The Living Daylights"
+Followed_by	 "A View to a Kill"
+Followed_by	 "Moonraker"
+Followed_by	 "The Spy Who Loved Me"
+Followed_by	 "Man With the Golden Gun"
+Followed_by	 "Live and Let Die"
+Followed_by	 "Diamonds are Forever"
+Followed_by	 "On Her Majesty's Secret Service"
+Followed_by	 "You Only Live Twice"
+Spoofed_in	 "Austin Powers: International Man of Mystery"
+Spoofed_in	 "Spy Hard"
+Referenced_in	 "Trainspotting"
+
+Movie : "Octopussy"
+Date	 1983
+Cast	 "Roger Moore" "James Bond"
+Director	 "John Glen"
+Writer	 "Ian Fleming" "story"
+Follows	 "Dr. No"
+Follows	 "Thunderball"
+Follows	 "For You Eyes Only"
+Follows	 "From Russia With Love"
+Follows	 "Goldfinger"
+Follows	 "You Only Live Twice"
+Follows	 "On Her Majesty's Secret Service"
+Follows	 "Diamonds are Forever"
+Follows	 "Live and Let Die"
+Follows	 "Man With the Golden Gun"
+Follows	 "The Spy Who Loved Me"
+Follows	 "Moonraker"
+Followed_by	 "Never Say Never Again"
+Followed_by	 "The World is Not Enough"
+Followed_by	 "Tomorrow Never Dies"
+Followed_by	 "GoldenEye"
+Followed_by	 "Licence to Kill"
+Followed_by	 "The Living Daylights"
+Followed_by	 "A View to a Kill"
+Spoofed_in	 "Austin Powers: International Man of Mystery"
+
+Movie : "GoldenEye"
+Date	 1995
+Cast	 "Pierce Brosnan" "James Bond"
+Cast	 "Judi Dench" "M"
+Follows	 "Dr. No"
+Follows	 "Thunderball"
+Follows	 "Octopussy"
+Follows	 "Never Say Never Again"
+Follows	 "For You Eyes Only"
+Follows	 "From Russia With Love"
+Follows	 "Goldfinger"
+Follows	 "You Only Live Twice"
+Follows	 "On Her Majesty's Secret Service"
+Follows	 "Diamonds are Forever"
+Follows	 "Live and Let Die"
+Follows	 "Man With the Golden Gun"
+Follows	 "The Spy Who Loved Me"
+Follows	 "Moonraker"
+Follows	 "A View to a Kill"
+Follows	 "The Living Daylights"
+Follows	 "Licence to Kill"
+Followed_by	 "The World is Not Enough"
+Followed_by	 "Tomorrow Never Dies"
+Spoofed_in	 "Austin Powers: International Man of Mystery"
+Spoofed_in	 "Spy Hard"
+
+Movie : "Pulp Fiction"
+Date	 1994
+Cast	 "John Travolta" "Vincent Vega"
+Cast	 "Samuel L. Jackson" "Jules Winfield"
+Cast	 "Uma Thurman" "Mia Wallace"
+Cast	 "Harvey Keitel" "Winston Wolf"
+Cast	 "Tim Roth" "Pumpkin"
+Cast	 "Eric Stoltz" "Lance"
+Cast	 "Rosanne Arquette" "Jody"
+Director	 "Quentin Tarantino"
+Writer	 "Roger Avary" "stories"
+Writer	 "Quentin Tarantino"
+Spoofed_in	 "Antz"
+Spoofed_in	 "Spy Hard"
+References	 "Psycho"
+References	 "Killing Zoe"
+Referenced_in	 "Jackie Brown"
+Referenced_in	 "The Usual Suspects"
+
+Movie : "Blade Runner"
+Date	 1982-06-25 "USA"
+Date	 1982-09-10 "Sweden"
+Date	 1982-09-15 "France"
+Date	 1982-10-14 "West Germany"
+Distributors	 "Warner Brothers"
+Cast	 "Harrison Ford" "Rick Deckard"
+Cast	 "Rutger Hauer" "Roy Batty"
+Director	 "Ridley Scott"
+Writer	 "Philip K. Dick" "book"
+Based_on	 "Do Androids Dream of Electric Sheep?"
+Referenced_in	 "The Fifth Element"
+
+Movie : "Raging Bull"
+Date	 1980
+Cast	 "Robert De Niro" "Jake La Motta"
+Cast	 "Joe Pesci" "Joey La Motta"
+Cast	 "Cathy Moriarty" "Vickie La Motta"
+Director	 "Martin Scorsese"
+References	 "Psycho"
+Referenced_in	 "Boogie Nights"
+
+Movie : "Casino"
+Date	 1995
+Cast	 "Robert De Niro" "Sam \"Ace\" Rothstein"
+Cast	 "Sharon Stone" "Ginger McKenna"
+Cast	 "Joe Pesci" "Nicky Santoro"
+Cast	 "James Woods" "Lester Diamond"
+Director	 "Martin Scorsese"
+Writer	 "Nicholas Pileggi"
+Writer	 "Martin Scorsese"
+Referenced_in	 "Boogie Nights"
+Rating	 7.600000 2938
+
+Movie : "Trainspotting"
+Date	 1996
+Production_company	 "Channel Four Films"
+Production_company	 "PolyGram Filmed Entertainment"
+Distributors	 "PolyGram Filmed Entertainment"
+Distributors	 "Miramax Films"
+Distributors	 "Sogepaq Distribucin" "Spain"
+Cast	 "Ewan McGregor" "Mark Renton"
+Cast	 "Johnny Lee Miller" "Daniel \"Spud\" Murphy"
+Cast	 "Robert Carlyle" "Begbie"
+Director	 "Danny Boyle"
+Writer	 "Irvine Welsh"
+Based_on	 "Trainspotting"
+References	 "The Hustler"
+References	 "Dr. No"
+References	 "Thunderball"
+References	 "Goldfinger"
+References	 "The Name of the Rose"
+References	 "Goodfellas"
+References	 "Taxi Driver"
+
+Movie : "Never Say Never Again"
+Date	 1983
+Cast	 "Sean Connery" "James Bond"
+Cast	 "Kim Basinger" "Domino Petachi"
+Follows	 "Dr. No"
+Follows	 "Thunderball"
+Follows	 "Octopussy"
+Follows	 "For You Eyes Only"
+Follows	 "From Russia With Love"
+Follows	 "Goldfinger"
+Follows	 "You Only Live Twice"
+Follows	 "On Her Majesty's Secret Service"
+Follows	 "Diamonds are Forever"
+Follows	 "Live and Let Die"
+Follows	 "Man With the Golden Gun"
+Follows	 "The Spy Who Loved Me"
+Follows	 "Moonraker"
+Followed_by	 "GoldenEye"
+Followed_by	 "The World is Not Enough"
+Followed_by	 "Tomorrow Never Dies"
+Followed_by	 "Licence to Kill"
+Followed_by	 "The Living Daylights"
+Followed_by	 "A View to a Kill"
+
+Movie : "From Russia With Love"
+Date	 1963
+Cast	 "Sean Connery" "James Bond"
+Director	 "Terence Young"
+Writer	 "Ian Fleming" "novel"
+Writer	 "Johanna Harwood"
+Follows	 "Dr. No"
+Followed_by	 "Thunderball"
+Followed_by	 "Octopussy"
+Followed_by	 "GoldenEye"
+Followed_by	 "Never Say Never Again"
+Followed_by	 "For You Eyes Only"
+Followed_by	 "Goldfinger"
+Followed_by	 "You Only Live Twice"
+Followed_by	 "On Her Majesty's Secret Service"
+Followed_by	 "Live and Let Die"
+Followed_by	 "Man With the Golden Gun"
+Followed_by	 "The Spy Who Loved Me"
+Followed_by	 "Moonraker"
+Followed_by	 "A View to a Kill"
+Followed_by	 "The Living Daylights"
+Followed_by	 "Licence to Kill"
+Followed_by	 "Tomorrow Never Dies"
+Followed_by	 "The World is Not Enough"
+Followed_by	 "Diamonds are Forever"
+Rating	 7.300000
+
+Movie : "Goldfinger"
+Date	 1964
+Cast	 "Sean Connery" "James Bond"
+Cast	 "Bernard Lee" "M"
+Cast	 "Gert Froebe" "Auric Goldfinger"
+Follows	 "Dr. No"
+Follows	 "From Russia With Love"
+Followed_by	 "Thunderball"
+Followed_by	 "Octopussy"
+Followed_by	 "GoldenEye"
+Followed_by	 "Never Say Never Again"
+Followed_by	 "For You Eyes Only"
+Followed_by	 "The World is Not Enough"
+Followed_by	 "Tomorrow Never Dies"
+Followed_by	 "Licence to Kill"
+Followed_by	 "The Living Daylights"
+Followed_by	 "A View to a Kill"
+Followed_by	 "Moonraker"
+Followed_by	 "The Spy Who Loved Me"
+Followed_by	 "Man With the Golden Gun"
+Followed_by	 "Live and Let Die"
+Followed_by	 "Diamonds are Forever"
+Followed_by	 "On Her Majesty's Secret Service"
+Followed_by	 "You Only Live Twice"
+Referenced_in	 "Trainspotting"
+Referenced_in	 "True Lies"
+
+Movie : "You Only Live Twice"
+Date	 1967
+Cast	 "Sean Connery" "James Bond"
+Follows	 "Dr. No"
+Follows	 "Thunderball"
+Follows	 "From Russia With Love"
+Follows	 "Goldfinger"
+Followed_by	 "Octopussy"
+Followed_by	 "GoldenEye"
+Followed_by	 "Never Say Never Again"
+Followed_by	 "For You Eyes Only"
+Followed_by	 "The World is Not Enough"
+Followed_by	 "Tomorrow Never Dies"
+Followed_by	 "Licence to Kill"
+Followed_by	 "The Living Daylights"
+Followed_by	 "A View to a Kill"
+Followed_by	 "Moonraker"
+Followed_by	 "The Spy Who Loved Me"
+Followed_by	 "Man With the Golden Gun"
+Followed_by	 "Live and Let Die"
+Followed_by	 "Diamonds are Forever"
+Followed_by	 "On Her Majesty's Secret Service"
+
+Movie : "On Her Majesty's Secret Service"
+Date	 1969
+Cast	 "George Lazenby" "James Bond"
+Writer	 "Ian Fleming" "novel"
+Writer	 "Richard Maibaum"
+Follows	 "Dr. No"
+Follows	 "Thunderball"
+Follows	 "From Russia With Love"
+Follows	 "Goldfinger"
+Follows	 "You Only Live Twice"
+Followed_by	 "Octopussy"
+Followed_by	 "GoldenEye"
+Followed_by	 "Never Say Never Again"
+Followed_by	 "For You Eyes Only"
+Followed_by	 "The World is Not Enough"
+Followed_by	 "Tomorrow Never Dies"
+Followed_by	 "Licence to Kill"
+Followed_by	 "The Living Daylights"
+Followed_by	 "A View to a Kill"
+Followed_by	 "Moonraker"
+Followed_by	 "The Spy Who Loved Me"
+Followed_by	 "Man With the Golden Gun"
+Followed_by	 "Live and Let Die"
+Followed_by	 "Diamonds are Forever"
+
+Movie : "Diamonds are Forever"
+Date	 1971
+Cast	 "Sean Connery" "James Bond"
+Director	 "Guy Hamilton"
+Writer	 "Ian Fleming" "novel"
+Writer	 "Richard Maibaum"
+Follows	 "Dr. No"
+Follows	 "Thunderball"
+Follows	 "From Russia With Love"
+Follows	 "Goldfinger"
+Follows	 "You Only Live Twice"
+Follows	 "On Her Majesty's Secret Service"
+Followed_by	 "Octopussy"
+Followed_by	 "GoldenEye"
+Followed_by	 "Never Say Never Again"
+Followed_by	 "For You Eyes Only"
+Followed_by	 "Tomorrow Never Dies"
+Followed_by	 "Licence to Kill"
+Followed_by	 "The Living Daylights"
+Followed_by	 "A View to a Kill"
+Followed_by	 "Moonraker"
+Followed_by	 "The Spy Who Loved Me"
+Followed_by	 "Man With the Golden Gun"
+Followed_by	 "Live and Let Die"
+Followed_by	 "The World is Not Enough"
+
+Movie : "Live and Let Die"
+Date	 1973
+Cast	 "Roger Moore" "James Bond"
+Director	 "Guy Hamilton"
+Writer	 "Ian Fleming"
+Writer	 "Tom Mankiewicz"
+Follows	 "Dr. No"
+Follows	 "Thunderball"
+Follows	 "From Russia With Love"
+Follows	 "Goldfinger"
+Follows	 "You Only Live Twice"
+Follows	 "On Her Majesty's Secret Service"
+Follows	 "Diamonds are Forever"
+Followed_by	 "Octopussy"
+Followed_by	 "GoldenEye"
+Followed_by	 "Never Say Never Again"
+Followed_by	 "For You Eyes Only"
+Followed_by	 "The World is Not Enough"
+Followed_by	 "Tomorrow Never Dies"
+Followed_by	 "Licence to Kill"
+Followed_by	 "The Living Daylights"
+Followed_by	 "A View to a Kill"
+Followed_by	 "Moonraker"
+Followed_by	 "The Spy Who Loved Me"
+Followed_by	 "Man With the Golden Gun"
+References	 "Dr. No"
+Referenced_in	 "Man With the Golden Gun"
+
+Movie : "Man With the Golden Gun"
+Date	 1974
+Cast	 "Roger Moore" "James Bond"
+Director	 "Guy Hamilton"
+Writer	 "Ian Fleming"
+Writer	 "Richard Maibaum"
+Follows	 "Dr. No"
+Follows	 "Thunderball"
+Follows	 "From Russia With Love"
+Follows	 "Goldfinger"
+Follows	 "You Only Live Twice"
+Follows	 "On Her Majesty's Secret Service"
+Follows	 "Diamonds are Forever"
+Follows	 "Live and Let Die"
+Followed_by	 "Octopussy"
+Followed_by	 "GoldenEye"
+Followed_by	 "Never Say Never Again"
+Followed_by	 "For You Eyes Only"
+Followed_by	 "The World is Not Enough"
+Followed_by	 "Tomorrow Never Dies"
+Followed_by	 "Licence to Kill"
+Followed_by	 "The Living Daylights"
+Followed_by	 "A View to a Kill"
+Followed_by	 "Moonraker"
+Followed_by	 "The Spy Who Loved Me"
+References	 "Live and Let Die"
+
+Movie : "The Spy Who Loved Me"
+Date	 1977
+Cast	 "Roger Moore" "James Bond"
+Follows	 "Dr. No"
+Follows	 "Thunderball"
+Follows	 "From Russia With Love"
+Follows	 "Goldfinger"
+Follows	 "You Only Live Twice"
+Follows	 "On Her Majesty's Secret Service"
+Follows	 "Diamonds are Forever"
+Follows	 "Live and Let Die"
+Follows	 "Man With the Golden Gun"
+Followed_by	 "Octopussy"
+Followed_by	 "GoldenEye"
+Followed_by	 "Never Say Never Again"
+Followed_by	 "For You Eyes Only"
+Followed_by	 "The World is Not Enough"
+Followed_by	 "Tomorrow Never Dies"
+Followed_by	 "Licence to Kill"
+Followed_by	 "The Living Daylights"
+Followed_by	 "A View to a Kill"
+Followed_by	 "Moonraker"
+Referenced_in	 "True Lies"
+
+Movie : "Moonraker"
+Date	 1979
+Cast	 "Roger Moore" "James Bond"
+Director	 "Lewis Gilbert"
+Writer	 "Ian Fleming" "novel"
+Writer	 "Christopher Wood"
+Follows	 "Dr. No"
+Follows	 "Thunderball"
+Follows	 "From Russia With Love"
+Follows	 "Goldfinger"
+Follows	 "You Only Live Twice"
+Follows	 "On Her Majesty's Secret Service"
+Follows	 "Diamonds are Forever"
+Follows	 "Live and Let Die"
+Follows	 "Man With the Golden Gun"
+Follows	 "The Spy Who Loved Me"
+Followed_by	 "Octopussy"
+Followed_by	 "GoldenEye"
+Followed_by	 "Never Say Never Again"
+Followed_by	 "For You Eyes Only"
+Followed_by	 "The World is Not Enough"
+Followed_by	 "Tomorrow Never Dies"
+Followed_by	 "Licence to Kill"
+Followed_by	 "The Living Daylights"
+Followed_by	 "A View to a Kill"
+
+Movie : "For You Eyes Only"
+Date	 1981
+Cast	 "Roger Moore" "James Bond"
+Director	 "John Glen"
+Writer	 "Ian Fleming" "stories..."
+Writer	 "Richard Maibaum"
+Follows	 "Dr. No"
+Follows	 "Thunderball"
+Follows	 "Goldfinger"
+Follows	 "From Russia With Love"
+Follows	 "You Only Live Twice"
+Follows	 "On Her Majesty's Secret Service"
+Follows	 "Diamonds are Forever"
+Follows	 "Live and Let Die"
+Follows	 "Man With the Golden Gun"
+Follows	 "The Spy Who Loved Me"
+Follows	 "Moonraker"
+Followed_by	 "Octopussy"
+Followed_by	 "GoldenEye"
+Followed_by	 "Never Say Never Again"
+Followed_by	 "A View to a Kill"
+Followed_by	 "The Living Daylights"
+Followed_by	 "Licence to Kill"
+Followed_by	 "Tomorrow Never Dies"
+Followed_by	 "The World is Not Enough"
+Referenced_in	 "True Lies"
+
+Movie : "A View to a Kill"
+Date	 1985
+Cast	 "Roger Moore" "James Bond"
+Director	 "John Glen"
+Writer	 "Ian Fleming" "story"
+Writer	 "Richard Maibaum"
+Follows	 "Dr. No"
+Follows	 "Thunderball"
+Follows	 "Octopussy"
+Follows	 "Never Say Never Again"
+Follows	 "For You Eyes Only"
+Follows	 "From Russia With Love"
+Follows	 "Goldfinger"
+Follows	 "You Only Live Twice"
+Follows	 "On Her Majesty's Secret Service"
+Follows	 "Diamonds are Forever"
+Follows	 "Live and Let Die"
+Follows	 "Man With the Golden Gun"
+Follows	 "The Spy Who Loved Me"
+Follows	 "Moonraker"
+Followed_by	 "GoldenEye"
+Followed_by	 "The World is Not Enough"
+Followed_by	 "Tomorrow Never Dies"
+Followed_by	 "Licence to Kill"
+Followed_by	 "The Living Daylights"
+
+Movie : "The Living Daylights"
+Date	 1987
+Cast	 "Timothy Dalton" "James Bond"
+Director	 "John Glen"
+Writer	 "Ian Fleming" "novel"
+Writer	 "Richard Maibaum"
+Follows	 "Dr. No"
+Follows	 "Thunderball"
+Follows	 "Octopussy"
+Follows	 "Never Say Never Again"
+Follows	 "For You Eyes Only"
+Follows	 "From Russia With Love"
+Follows	 "Goldfinger"
+Follows	 "You Only Live Twice"
+Follows	 "On Her Majesty's Secret Service"
+Follows	 "Diamonds are Forever"
+Follows	 "Live and Let Die"
+Follows	 "Man With the Golden Gun"
+Follows	 "The Spy Who Loved Me"
+Follows	 "Moonraker"
+Follows	 "A View to a Kill"
+Followed_by	 "GoldenEye"
+Followed_by	 "The World is Not Enough"
+Followed_by	 "Tomorrow Never Dies"
+Followed_by	 "Licence to Kill"
+
+Movie : "Licence to Kill"
+Date	 1989
+Cast	 "Timothy Dalton" "James Bond"
+Cast	 "Benicio del Toro" "Dario"
+Director	 "John Glen"
+Writer	 "Ian Fleming" "novel"
+Follows	 "Dr. No"
+Follows	 "Thunderball"
+Follows	 "Octopussy"
+Follows	 "Never Say Never Again"
+Follows	 "For You Eyes Only"
+Follows	 "From Russia With Love"
+Follows	 "Goldfinger"
+Follows	 "You Only Live Twice"
+Follows	 "On Her Majesty's Secret Service"
+Follows	 "Diamonds are Forever"
+Follows	 "Live and Let Die"
+Follows	 "Man With the Golden Gun"
+Follows	 "The Spy Who Loved Me"
+Follows	 "Moonraker"
+Follows	 "A View to a Kill"
+Follows	 "The Living Daylights"
+Followed_by	 "GoldenEye"
+Followed_by	 "The World is Not Enough"
+Followed_by	 "Tomorrow Never Dies"
+
+Movie : "Tomorrow Never Dies"
+Date	 1997
+Cast	 "Pierce Brosnan" "James Bond"
+Cast	 "Teri Hatcher" "Paris Carver"
+Cast	 "Judi Dench" "M"
+Director	 "Roger Spottiswoode"
+Writer	 "Bruse Feirstein"
+Follows	 "Dr. No"
+Follows	 "Thunderball"
+Follows	 "Octopussy"
+Follows	 "GoldenEye"
+Follows	 "Never Say Never Again"
+Follows	 "For You Eyes Only"
+Follows	 "From Russia With Love"
+Follows	 "Goldfinger"
+Follows	 "You Only Live Twice"
+Follows	 "On Her Majesty's Secret Service"
+Follows	 "Diamonds are Forever"
+Follows	 "Live and Let Die"
+Follows	 "Man With the Golden Gun"
+Follows	 "The Spy Who Loved Me"
+Follows	 "Moonraker"
+Follows	 "A View to a Kill"
+Follows	 "The Living Daylights"
+Follows	 "Licence to Kill"
+Followed_by	 "The World is Not Enough"
+
+Movie : "The World is Not Enough"
+Date	 1999
+Cast	 "Pierce Brosnan" "James Bond"
+Cast	 "Sophie Marceau"
+Director	 "Michael Apted"
+Writer	 "Bruse Feirstein"
+Writer	 "Neal Purvis"
+Follows	 "Dr. No"
+Follows	 "Thunderball"
+Follows	 "Octopussy"
+Follows	 "GoldenEye"
+Follows	 "Never Say Never Again"
+Follows	 "For You Eyes Only"
+Follows	 "From Russia With Love"
+Follows	 "Goldfinger"
+Follows	 "You Only Live Twice"
+Follows	 "On Her Majesty's Secret Service"
+Follows	 "Diamonds are Forever"
+Follows	 "Live and Let Die"
+Follows	 "Man With the Golden Gun"
+Follows	 "The Spy Who Loved Me"
+Follows	 "Moonraker"
+Follows	 "A View to a Kill"
+Follows	 "The Living Daylights"
+Follows	 "Licence to Kill"
+Follows	 "Tomorrow Never Dies"
+
+Movie : "Spy Hard"
+Date	 1996
+Cast	 "Leslie Nielsen"
+Spoofs	 "Thunderball"
+Spoofs	 "GoldenEye"
+Spoofs	 "Pulp Fiction"
+Spoofs	 "True Lies"
+Spoofs	 "Die Hard"
+Spoofs	 "Jurassic Park"
+
+Movie : "Psycho"
+Date	 1960
+Cast	 "Anthony Perkins" "Norman Bates"
+Cast	 "Janet Leigh" "Marion Crane"
+Director	 "Alfred Hitchcock"
+Writer	 "Robert Bloch" "novel"
+Followed_by	 "Psycho II"
+Followed_by	 "Psycho III"
+Followed_by	 "Psycho IV: The Beginning"
+Referenced_in	 "Pulp Fiction"
+Referenced_in	 "Raging Bull"
+Referenced_in	 "Twelve Monkeys"
+Featured_in	 "Psycho II"
+
+Movie : "Killing Zoe"
+Date	 1994
+Cast	 "Eric Stoltz" "Zed"
+Cast	 "Julie Delphy" "Zoe"
+Cast	 "Jean-Hugues Anglade" "Eric"
+Referenced_in	 "Pulp Fiction"
+
+Movie : "Jackie Brown"
+Date	 1997
+Cast	 "Samuel L. Jackson" "Ordell Robbie"
+Cast	 "Robert De Niro" "Louis Gara"
+Cast	 "Bridget Fonda" "Melanie"
+Cast	 "Michael Keaton" "Ray Nicolet"
+Cast	 "Pam Grier" "Jackie Brown"
+Director	 "Quentin Tarantino"
+References	 "Pulp Fiction"
+
+Movie : "The Usual Suspects"
+Date	 1995
+Production_company	 "PolyGram Filmed Entertainment"
+Distributors	 "Columbia TriStar Home Video" "video"
+Cast	 "Kevin Spacey" "Verbal Kint"
+Cast	 "Benicio del Toro" "Fred Fenster"
+Cast	 "Chazz Palminteri" "Dave Kujan"
+Cast	 "Gabriel Byrne" "Dean Keaton"
+Director	 "Bryan Singer"
+References	 "Pulp Fiction"
+
+Movie : "The Name of the Rose"
+Date	 1986
+Cast	 "Sean Connery" "William Baskerville"
+Cast	 "Christian Slater" "Adso von Melk"
+Aka	 "Der Name der Rose" "german"
+Aka	 "Le Nom de la rose" "France"
+Aka	 "Il Nome della rosa" "Italy"
+Referenced_in	 "Trainspotting"
+Rating	 7.700000 2047
+
+Movie : "Goodfellas"
+Date	 1990
+Distributors	
+Cast	 "Robert De Niro" "James Conway"
+Cast	 "Ray Liotta" "Henry Hill"
+Cast	 "Joe Pesci" "Tommy De Vito"
+Cast	 "Lorraine Bracco"
+Cast	 "Paul Sorvino" "Paulie"
+Director	 "Martin Scorsese"
+Writer	 "Nicholas Pileggi" "novel"
+Referenced_in	 "Trainspotting"
+Referenced_in	 "Shallow Grave"
+Rating	 8.300000 6994
+
+Movie : "Taxi Driver"
+Date	 1976
+Cast	 "Robert De Niro" "Travis Bickle"
+Cast	 "Jody Foster" "Iris"
+Cast	 "Dianne Abbot" "Concession Girl"
+Director	 "Martin Scorsese"
+Writer	 "Paul Schrader"
+Referenced_in	 "Trainspotting"
+
+Movie : "True Lies"
+Cast	 "Arnold Schwarzenegger" "Harry Tasker"
+Cast	 "Jamie Lee Curtis" "Helen Tasker"
+Director	 "James Cameron"
+Spoofed_in	 "Spy Hard"
+References	 "For You Eyes Only"
+References	 "Goldfinger"
+References	 "The Spy Who Loved Me"
+References	 "Total Recall"
+
+Movie : "Total Recall"
+Date	 1990
+Production_company	 "TriStar Pictures"
+Cast	 "Arnold Schwarzenegger" "Quaid"
+Cast	 "Sharon Stone" "Lori"
+Director	 "Paul Verhoeven"
+Referenced_in	 "True Lies"
+Rating	 7.000000 3700
+
+Movie : "Die Hard"
+Date	 1988
+Cast	 "Bruce Willis" "John McClane"
+Cast	 "Alan Rickman" "Hans Gruber"
+Followed_by	 "Die Hard 2"
+Followed_by	 "Die Hard: With a Vengeance"
+Spoofed_in	 "Spy Hard"
+Referenced_in	 "The Acid House"
+
+Movie : "Jurassic Park"
+Date	 1993
+Cast	 "Sam Neill" "Dr. Alan Grant"
+Cast	 "Jeff Goldblum" "Ian Malcolm"
+Cast	 "Laura Dern" "Dr. Ellie Sattler"
+Cast	 "Samuel L. Jackson" "Ray Arnold"
+Director	 "Steven Spielberg"
+Writer	 "Michael Crichton" "novel"
+Spoofed_in	 "Spy Hard"
+
+Movie : "The Hunt for Red October"
+Date	 1990
+Cast	 "Sean Connery" "Ramius"
+Cast	 "Sam Neill" "Cmdr. Vasili Borodin"
+
+Movie : "Shallow Grave"
+Date	 1994
+Production_company	 "Channel Four Films"
+Production_company	 "PolyGram Filmed Entertainment"
+Distributors	 "Miramax Films" "USA"
+Distributors	 "Alta Films" "Spain"
+Cast	 "Ewan McGregor" "Alex Law"
+Director	 "Danny Boyle"
+References	 "Goodfellas"
+
+Movie : "Die Hard 2"
+Date	 1990
+Cast	 "Bruce Willis" "John McClane"
+Follows	 "Die Hard"
+Followed_by	 "Die Hard: With a Vengeance"
+Referenced_in	 "The Acid House"
+
+Movie : "Die Hard: With a Vengeance"
+Date	 1995
+Cast	 "Bruce Willis" "John McClane"
+Cast	 "Jeremy Irons" "Simon Gruber\/Peter Krieg"
+Cast	 "Samuel L. Jackson" "Zeus Carver"
+Director	 "John McTiernan"
+Aka	 "Die Hard 3"
+Aka	 "Simon Says" "USA:working title"
+Follows	 "Die Hard"
+Follows	 "Die Hard 2"
+
+Movie : "The Acid House"
+Date	 1998
+Cast	 "Irvine Welsh" "Parkie"
+Director	 "Paul McGuigan"
+Writer	 "Irvine Welsh"
+Aka	 "The Granton Star Cause" "working title"
+Based_on	 "The Acid House"
+References	 "Die Hard"
+References	 "Die Hard 2"
+
+Movie : "A Bronx Tale"
+Date	 1993
+Production_company	 "Tribeca Productions"
+Production_company	 "Savoy Pictures"
+Cast	 "Robert De Niro" "Lorenzo"
+Cast	 "Joe Pesci" "Carmine"
+Cast	 "Chazz Palminteri" "Sonny"
+Director	 "Robert De Niro"
+Writer	 "Chazz Palminteri" "(also play)"
+
+Movie : "Deer Hunter"
+Date	 1978
+Production_company	 "Universal Pictures"
+Cast	 "Robert De Niro" "Michael"
+Cast	 "Christopher Walken" "Nick"
+Cast	 "Meryl Streep" "Linda"
+Cast	 "John Savage"
+Director	 "Michael Cimino"
+Writer	 "Michael Cimino" "story"
+Rating	 8.000000 2866
+
+Movie : "The Godfather: Part II"
+Date	 1974
+Date	 1975-07-28 "Sweden"
+Date	 1975-08-15 "Finland"
+Date	 1975-09-25 "West Germany"
+Cast	 "Robert De Niro" "Vito Corleone"
+Cast	 "Al Pacino" "Michael Corleone"
+Cast	 "Robert Duvall" "Tom Hagen"
+Director	 "Francis Coppola"
+Writer	 "Francis Coppola"
+
+Movie : "Psycho II"
+Date	 1983
+Cast	 "Anthony Perkins" "Norman Bates"
+Director	 "Richard Franklin"
+Writer	 "Tom Holland"
+Follows	 "Psycho"
+Followed_by	 "Psycho III"
+Followed_by	 "Psycho IV: The Beginning"
+Features	 "Psycho"
+Rating	 5.800000 355
+
+Movie : "Psycho III"
+Date	 1986
+Cast	 "Anthony Perkins" "Norman Bates"
+Director	 "Anthony Perkins"
+Follows	 "Psycho"
+Follows	 "Psycho II"
+Followed_by	 "Psycho IV: The Beginning"
+Rating	 5.200000 167
+
+Movie : "Psycho IV: The Beginning"
+Date	 1991 "TV"
+Cast	 "Anthony Perkins" "Norman Bates"
+Follows	 "Psycho"
+Follows	 "Psycho II"
+Follows	 "Psycho III"
+Rating	 6.600000 66
+
+Movie : "Twelve Monkeys"
+Date	 1995
+Production_company	 "Universal Pictures"
+Cast	 "Brad Pitt"
+Cast	 "Bruce Willis"
+Director	 "Terry Gilliam"
+Links	 -C "remake of 'La Jete'"
+Links	 Follows
+Links	 References "Psycho"
+
+Movie : "Angel Heart"
+Date	 1987
+Production_company	 "TriStar Pictures"
+Cast	 "Robert De Niro" "Louis Cyphre"
+Cast	 "Mickey Rourke" "Harry Angel"
+Cast	 "Lisa Bonet" "Epiphany Proudfoot"
+Director	 "Alan Parker"
+Writer	 "Alan Parker"
+Rating	 7.300000 1198
+
+Movie : "Ronin"
+Cast	 "Robert De Niro" "Sam"
+Cast	 "Jean Reno" "Vincent"
+Cast	 "Sean Bean" "Spence"
+Director	 "John Frankenheimer"
+
+Movie : "The Big Blue"
+Date	 1988
+Production_company	 "Gaumont International"
+Distributors	 "20th Century Fox"
+Cast	 "Jean Reno" "Enzo Molinari" -C "\"Enzo Meiorca\" in real life"
+Cast	 "Jean Marc-Barr" "Jaques Mayol"
+Cast	 "Rosanne Arquette" "Johanna"
+Director	 "Luc Besson"
+Writer	 "Robert Garland"
+Writer	 "Luc Besson" "also"
+Aka	 "Le Grand Blue" "french"
+Rating	 7.800000 1524
+
+Movie : "A Bugs Life"
+Date	 1998
+Cast	 "Kevin Spacey" "Hopper"
+Cast	 "Dennis Leary" "Francis"
+Director	 "John Lasseter"
+Writer	 "John Lasseter"
+Rating	 8.100000
+
+Movie : "Seven"
+Date	 1995
+Cast	 "Kevin Spacey" "John Doe"
+Cast	 "Brad Pitt" "David Mills"
+Cast	 "Gwyneth Paltrow" "Tracy Mills"
+Cast	 "Morgan Freeman" "William Somerset"
+Aka	 "Se7en" "alternative spelling"
+
+Movie : "L.A. Confidential"
+Date	 1997
+Cast	 "Kevin Spacey" "Jack Vincennes"
+Cast	 "Kim Basinger" "Lynn Bracken"
+
+Movie : "Wild at Heart"
+Date	 1990
+Cast	 "Laura Dern" "Lula"
+Cast	 "Willem Dafoe"
+Cast	 "Nicolas Cage" "Sailor Ripley"
+Director	 "David Lynch"
+
+Movie : "Platoon"
+Date	 1986
+Cast	 "Willem Dafoe" "Sgt. Elias"
+Cast	 "Charlie Sheen" "Chris"
+Cast	 "Tom Berenger" "Sgt. Barnes"
+Cast	 "Johnny Depp" "Lerner"
+Director	 "Oliver Stone"
+Writer	 "Oliver Stone"
+Followed_by	 "Born on the Fourth of July"
+Followed_by	 "Heaven and Earth"
+
+Movie : "Born on the Fourth of July"
+Date	 1989
+Cast	 "Tom Cruise" "Ron Kovic"
+Director	 "Oliver Stone"
+Follows	 "Platoon"
+
+Movie : "Heaven and Earth"
+Date	 1993
+Cast	 "Tommy Lee Jones" "Steve Butler"
+Director	 "Oliver Stone"
+Writer	 "Oliver Stone"
+Follows	 "Platoon"
+
+
+
+ // Class Company 
+
+Company : "Paramount Pictures"
+Released	 "The Godfather"
+Released	 "Indiana Jones and the Last Crusade"
+Released	 "Raiders of the Lost Ark"
+Distributed	 "Indiana Jones and the Last Crusade"
+Distributed	 "Raiders of the Lost Ark"
+
+Company : "TriStar Pictures"
+Released	 "Donnie Brasco"
+Released	 "Total Recall"
+Released	 "Angel Heart"
+Distributed	 "Donnie Brasco"
+
+Company : "TriPictures"
+Distributed	 "Donnie Brasco"
+Distributed	 "True Romance"
+
+Company : "Sony Pictures Entertainment"
+Distributed	 "Donnie Brasco"
+
+Company : "Zoetrope Studios"
+Released	 "Apocalypse Now"
+
+Company : "Tobis Filmkunst"
+Distributed	 "Apocalypse Now"
+
+Company : "Paramount Home Video"
+Distributed	 "Apocalypse Now"
+
+Company : "United Artists"
+Distributed	 "Apocalypse Now"
+
+Company : "Morgan Creek Productions"
+Released	 "True Romance"
+
+Company : "August Entertainment"
+Released	 "True Romance"
+
+Company : "Warner Brothers"
+Distributed	 "True Romance"
+Distributed	 "Blade Runner"
+
+Company : "Columbia Pictures Corporation"
+Released	 "Easy Rider"
+Released	 "The Fifth Element"
+
+Company : "Lucasfilm Ltd."
+Released	 "Indiana Jones and the Last Crusade"
+Released	 "Indiana Jones and the Temple of Doom"
+Released	 "Raiders of the Lost Ark"
+Released	 "Star Wars: Episode I - The Phantom Menace"
+Released	 "Star Wars: Episode II"
+Released	 "Star Wars: Episode III"
+Released	 "The Empire Strikes Back"
+Released	 "Return of the Jedi"
+
+Company : "Gaumont International"
+Released	 "The Fifth Element"
+Released	 "The Big Blue"
+
+Company : "20th Century Fox"
+Released	 "The Hustler"
+Distributed	 "The Big Blue"
+
+Company : "Key Video"
+Distributed	 "The Hustler"
+
+Company : "Channel Four Films"
+Released	 "Trainspotting"
+Released	 "Shallow Grave"
+
+Company : "PolyGram Filmed Entertainment"
+Released	 "Trainspotting"
+Released	 "Shallow Grave"
+Released	 "The Usual Suspects"
+Distributed	 "Trainspotting"
+
+Company : "Miramax Films"
+Distributed	 "Trainspotting"
+Distributed	 "Shallow Grave"
+
+Company : "Sogepaq Distribucin"
+Distributed	 "Trainspotting"
+
+Company : "Alta Films"
+Distributed	 "Shallow Grave"
+
+Company : "Tribeca Productions"
+Released	 "A Bronx Tale"
+
+Company : "Savoy Pictures"
+Released	 "A Bronx Tale"
+
+Company : "Universal Pictures"
+Released	 "Deer Hunter"
+Released	 "Twelve Monkeys"
+
+Company : "Columbia TriStar Home Video"
+Distributed	 "The Usual Suspects"
+
+
+
+ // Class Person 
+
+Person : "Marlon Brando"
+Real_name	 "Marlon Brando Jr."
+Date_of_Birth	 1924-04-03 "Omaha Nebraska, USA"
+Stars_in	 "The Godfather"
+Stars_in	 "Apocalypse Now"
+Spouse	 "Movita" 1960 1962
+Spouse	 "Anna Kashfi" 1957 1958
+Spouse	 "Tarita"
+
+Person : "Al Pacino"
+Real_name	 "Alfredo James Pacino"
+Date_of_Birth	 1940-04-25 "New York"
+Stars_in	 "The Godfather"
+Stars_in	 "Carlito's Way"
+Stars_in	 "Heat"
+Stars_in	 "City Hall"
+Stars_in	 "Donnie Brasco"
+Stars_in	 "The Godfather: Part II"
+
+Person : "Robert Duvall"
+Stars_in	 "The Godfather"
+Stars_in	 "Apocalypse Now"
+Stars_in	 "The Godfather: Part II"
+
+Person : "James Caan"
+Stars_in	 "The Godfather"
+
+Person : "Sean Penn"
+Stars_in	 "Carlito's Way"
+
+Person : "Robert De Niro"
+Date_of_Birth	 1943-08-17 "New York City, USA"
+Imperial	 5 9
+Stars_in	 "Heat"
+Stars_in	 "Raging Bull"
+Stars_in	 "Casino"
+Stars_in	 "Goodfellas"
+Stars_in	 "Taxi Driver"
+Stars_in	 "A Bronx Tale"
+Stars_in	 "Deer Hunter"
+Stars_in	 "The Godfather: Part II"
+Stars_in	 "Angel Heart"
+Stars_in	 "Ronin"
+Stars_in	 "Jackie Brown"
+Directed	 "A Bronx Tale"
+Spouse	 "Dianne Abbot" 1976 1988 -C "divorced"
+Spouse	 "Grace Hightower" -C "1 child"
+Spouse	 "Grace Hightower" 1997-06-17
+
+Person : "Val Kilmer"
+Stars_in	 "Heat"
+Stars_in	 "True Romance"
+
+Person : "John Voight"
+Stars_in	 "Heat"
+
+Person : "Tom Sizemore"
+Date_of_Birth	 1964 "Detroit, Michigan, USA"
+Stars_in	 "Heat"
+Stars_in	 "True Romance"
+Spouse	 "Maeve Quinlan" 1996-09-01
+
+Person : "Natalie Portman"
+Stars_in	 "Heat"
+
+Person : "Bridget Fonda"
+Stars_in	 "City Hall"
+Stars_in	 "Jackie Brown"
+
+Person : "Danny Aiello"
+Stars_in	 "City Hall"
+
+Person : "Johnny Depp"
+Stars_in	 "Donnie Brasco"
+Stars_in	 "Platoon"
+
+Person : "Michael Madsen"
+Stars_in	 "Donnie Brasco"
+
+Person : "Martin Sheen"
+Real_name	 "Ramon Estevez"
+Date_of_Birth	 1940-08-03 "Dayton, Ohio, USA"
+Imperial	 5 7
+Stars_in	 "Apocalypse Now"
+Spouse	 "Janet"
+
+Person : "Dennis Hopper"
+Date_of_Birth	 1936-05-17 "Dodge City, Kansas, USA"
+Stars_in	 "Apocalypse Now"
+Stars_in	 "True Romance"
+Stars_in	 "Easy Rider"
+Stars_in	 "Red Rock West"
+Directed	 "Easy Rider"
+Scripted	 "Easy Rider"
+
+Person : "Harrison Ford"
+Date_of_Birth	 1942-07-13 "Chicago, Illinois, USA"
+Imperial	 6 1
+Stars_in	 "Apocalypse Now"
+Stars_in	 "Indiana Jones and the Last Crusade"
+Stars_in	 "Indiana Jones and the Temple of Doom"
+Stars_in	 "Raiders of the Lost Ark"
+Stars_in	 "Star Wars"
+Stars_in	 "The Empire Strikes Back"
+Stars_in	 "Return of the Jedi"
+Stars_in	 "Blade Runner"
+Spouse	 "Melissa Mathison" -C "2 children"
+Spouse	 "Melissa Mathison" 1983-03-14
+Spouse	 "Maru Marquart" -C "2 children"
+Spouse	 "Maru Marquart" 1964-06-18 1979 -C "divorced"
+
+Person : "Christian Slater"
+Real_name	 "Christian Michael Leonard Hawkins"
+Date_of_Birth	 1969-08-18 "New York, USA"
+Stars_in	 "True Romance"
+Stars_in	 "The Name of the Rose"
+Father	 "Michael Hawkins"
+Mother	 "Mary Jo Slater"
+
+Person : "Patricia Arquette"
+Stars_in	 "True Romance"
+
+Person : "Gary Oldman"
+Stars_in	 "True Romance"
+Stars_in	 "The Fifth Element"
+
+Person : "Samuel L. Jackson"
+Real_name	 "Samuel Leroy Jackson"
+Date_of_Birth	 1948-12-21 "Washington D.C., USA"
+Stars_in	 "True Romance"
+Stars_in	 "Pulp Fiction"
+Stars_in	 "Jurassic Park"
+Stars_in	 "Jackie Brown"
+Stars_in	 "Die Hard: With a Vengeance"
+Spouse	 "LaTanya Richardson" -C "1 daughter"
+Spouse	 "LaTanya Richardson" 1980
+
+Person : "Brad Pitt"
+Real_name	 "William Bradley Pitt"
+Date_of_Birth	 1963-12-18 "Shawnee, Oklahoma, USA"
+Stars_in	 "True Romance"
+Stars_in	 "Twelve Monkeys"
+Stars_in	 "Seven"
+
+Person : "Peter Fonda"
+Stars_in	 "Easy Rider"
+Scripted	 "Easy Rider"
+
+Person : "Nicolas Cage"
+Real_name	 "Nicholas Kim Coppola"
+Date_of_Birth	 1964 "California, USA"
+Stars_in	 "Red Rock West"
+Stars_in	 "Wild at Heart"
+
+Person : "Sean Connery"
+Date_of_Birth	 1930-08-25 "Edinburgh, Scotland, UK"
+Stars_in	 "Indiana Jones and the Last Crusade"
+Stars_in	 "Dr. No"
+Stars_in	 "Thunderball"
+Stars_in	 "Never Say Never Again"
+Stars_in	 "From Russia With Love"
+Stars_in	 "Goldfinger"
+Stars_in	 "You Only Live Twice"
+Stars_in	 "Diamonds are Forever"
+Stars_in	 "The Hunt for Red October"
+Stars_in	 "The Name of the Rose"
+
+Person : "River Phoenix"
+Stars_in	 "Indiana Jones and the Last Crusade"
+
+Person : "Mark Hamill"
+Stars_in	 "Star Wars"
+Stars_in	 "The Empire Strikes Back"
+Stars_in	 "Return of the Jedi"
+
+Person : "Alec Guiness"
+Stars_in	 "Star Wars"
+Stars_in	 "The Empire Strikes Back"
+Stars_in	 "Return of the Jedi"
+
+Person : "Carrie Fisher"
+Stars_in	 "Star Wars"
+Stars_in	 "The Empire Strikes Back"
+Stars_in	 "Return of the Jedi"
+
+Person : "David Prowse"
+Stars_in	 "The Empire Strikes Back"
+Stars_in	 "Return of the Jedi"
+
+Person : "Tom Hanks"
+Stars_in	 "Toy Story"
+
+Person : "Tim Allen"
+Stars_in	 "Toy Story"
+
+Person : "Rick Moranis"
+Stars_in	 "Space Balls"
+
+Person : "Bill Pullman"
+Stars_in	 "Space Balls"
+
+Person : "John Candy"
+Stars_in	 "Space Balls"
+
+Person : "Mel Brooks"
+Stars_in	 "Space Balls"
+
+Person : "Mike Myers"
+Stars_in	 "Austin Powers: International Man of Mystery"
+Scripted	 "Austin Powers: International Man of Mystery"
+
+Person : "Elizabeth Hurley"
+Stars_in	 "Austin Powers: International Man of Mystery"
+
+Person : "Michael York"
+Stars_in	 "Austin Powers: International Man of Mystery"
+
+Person : "Mimi Rogers"
+Stars_in	 "Austin Powers: International Man of Mystery"
+
+Person : "Robert Wagner"
+Stars_in	 "Austin Powers: International Man of Mystery"
+
+Person : "Woody Allen"
+Stars_in	 "Antz"
+
+Person : "Sharon Stone"
+Stars_in	 "Antz"
+Stars_in	 "Casino"
+Stars_in	 "Total Recall"
+
+Person : "Sylvester Stallone"
+Stars_in	 "Antz"
+
+Person : "Christopher Walken"
+Stars_in	 "Antz"
+Stars_in	 "Deer Hunter"
+
+Person : "Paul Newman"
+Stars_in	 "The Color of Money"
+Stars_in	 "The Hustler"
+
+Person : "Tom Cruise"
+Real_name	 "Thomas Cruise Mapother IV"
+Date_of_Birth	 1963-07-03 "Syracuse, New York, USA"
+Imperial	 5 7
+Stars_in	 "The Color of Money"
+Stars_in	 "Born on the Fourth of July"
+Spouse	 "Mimi Rogers" 1987-05-09 1990 -C "divorced"
+Spouse	 "Nicole Kidman" 1990-12-24
+
+Person : "Mary Elizabeth Mastrantonio"
+Stars_in	 "The Color of Money"
+
+Person : "Bruce Willis"
+Stars_in	 "The Fifth Element"
+Stars_in	 "Die Hard"
+Stars_in	 "Die Hard 2"
+Stars_in	 "Twelve Monkeys"
+Stars_in	 "Die Hard: With a Vengeance"
+
+Person : "Mark Wahlberg"
+Stars_in	 "Boogie Nights"
+
+Person : "Kim Basinger"
+Date_of_Birth	 1953-12-08 "Athens, Georgia, USA"
+Stars_in	 "Never Say Never Again"
+Stars_in	 "L.A. Confidential"
+
+Person : "Ursula Andress"
+Stars_in	 "Dr. No"
+
+Person : "Roger Moore"
+Stars_in	 "Octopussy"
+Stars_in	 "For You Eyes Only"
+Stars_in	 "Live and Let Die"
+Stars_in	 "Man With the Golden Gun"
+Stars_in	 "The Spy Who Loved Me"
+Stars_in	 "Moonraker"
+Stars_in	 "A View to a Kill"
+
+Person : "Bernard Lee"
+Stars_in	 "Goldfinger"
+
+Person : "Gert Froebe"
+Stars_in	 "Goldfinger"
+
+Person : "George Lazenby"
+Stars_in	 "On Her Majesty's Secret Service"
+
+Person : "Pierce Brosnan"
+Stars_in	 "GoldenEye"
+Stars_in	 "The World is Not Enough"
+Stars_in	 "Tomorrow Never Dies"
+
+Person : "Sophie Marceau"
+Stars_in	 "The World is Not Enough"
+
+Person : "Teri Hatcher"
+Stars_in	 "Tomorrow Never Dies"
+
+Person : "Judi Dench"
+Stars_in	 "GoldenEye"
+Stars_in	 "Tomorrow Never Dies"
+
+Person : "Timothy Dalton"
+Stars_in	 "Licence to Kill"
+Stars_in	 "The Living Daylights"
+
+Person : "Benicio del Toro"
+Stars_in	 "Licence to Kill"
+Stars_in	 "The Usual Suspects"
+
+Person : "Sam Neill"
+Real_name	 "Nigel Neill"
+Date_of_Birth	 1947 "Northern Ireland, UK"
+Stars_in	 "The Hunt for Red October"
+Stars_in	 "Jurassic Park"
+
+Person : "Ewan McGregor"
+Stars_in	 "Trainspotting"
+Stars_in	 "Shallow Grave"
+
+Person : "Johnny Lee Miller"
+Stars_in	 "Trainspotting"
+
+Person : "Robert Carlyle"
+Stars_in	 "Trainspotting"
+
+Person : "Irvine Welsh"
+Stars_in	 "The Acid House"
+Scripted	 "Trainspotting"
+Scripted	 "The Acid House"
+Wrote	 "Trainspotting"
+Wrote	 "The Acid House"
+
+Person : "Ray Liotta"
+Stars_in	 "Goodfellas"
+
+Person : "Joe Pesci"
+Stars_in	 "Raging Bull"
+Stars_in	 "Casino"
+Stars_in	 "Goodfellas"
+Stars_in	 "A Bronx Tale"
+
+Person : "Lorraine Bracco"
+Stars_in	 "Goodfellas"
+
+Person : "Paul Sorvino"
+Stars_in	 "Goodfellas"
+
+Person : "Jody Foster"
+Stars_in	 "Taxi Driver"
+
+Person : "Dianne Abbot"
+Stars_in	 "Taxi Driver"
+
+Person : "Arnold Schwarzenegger"
+Stars_in	 "True Lies"
+Stars_in	 "Total Recall"
+
+Person : "Jamie Lee Curtis"
+Stars_in	 "True Lies"
+
+Person : "Leslie Nielsen"
+Stars_in	 "Spy Hard"
+
+Person : "Chazz Palminteri"
+Stars_in	 "A Bronx Tale"
+Stars_in	 "The Usual Suspects"
+Scripted	 "A Bronx Tale"
+
+Person : "Meryl Streep"
+Stars_in	 "Deer Hunter"
+
+Person : "John Savage"
+Stars_in	 "Deer Hunter"
+
+Person : "Cathy Moriarty"
+Stars_in	 "Raging Bull"
+
+Person : "Anthony Perkins"
+Date_of_Birth	 1932-04-04 "New York, USA"
+Stars_in	 "Psycho"
+Stars_in	 "Psycho II"
+Stars_in	 "Psycho III"
+Stars_in	 "Psycho IV: The Beginning"
+Directed	 "Psycho III"
+
+Person : "Janet Leigh"
+Stars_in	 "Psycho"
+
+Person : "Mickey Rourke"
+Stars_in	 "Angel Heart"
+
+Person : "Lisa Bonet"
+Date_of_Birth	 1967-11-16 "Los Angeles, California, USA."
+Stars_in	 "Angel Heart"
+Spouse	 "Lenny Kravitz" -C "divorced"
+Spouse	 "Lenny Kravitz" 1988 1992
+
+Person : "James Woods"
+Stars_in	 "Casino"
+
+Person : "Jean Reno"
+Stars_in	 "Ronin"
+Stars_in	 "The Big Blue"
+
+Person : "Sean Bean"
+Stars_in	 "Ronin"
+
+Person : "John Travolta"
+Stars_in	 "Pulp Fiction"
+
+Person : "Uma Thurman"
+Stars_in	 "Pulp Fiction"
+
+Person : "Harvey Keitel"
+Stars_in	 "Pulp Fiction"
+
+Person : "Tim Roth"
+Stars_in	 "Pulp Fiction"
+
+Person : "Eric Stoltz"
+Stars_in	 "Pulp Fiction"
+Stars_in	 "Killing Zoe"
+
+Person : "Rosanne Arquette"
+Stars_in	 "Pulp Fiction"
+Stars_in	 "The Big Blue"
+
+Person : "Alan Rickman"
+Stars_in	 "Die Hard"
+
+Person : "Jeff Goldblum"
+Stars_in	 "Jurassic Park"
+
+Person : "Laura Dern"
+Real_name	 "Laura Elizabeth Dern"
+Date_of_Birth	 1967-02-10 "Los Angeles, California, USA"
+Imperial	 5 10
+Stars_in	 "Jurassic Park"
+Stars_in	 "Wild at Heart"
+
+Person : "Julie Delphy"
+Stars_in	 "Killing Zoe"
+
+Person : "Jean-Hugues Anglade"
+Stars_in	 "Killing Zoe"
+
+Person : "Michael Keaton"
+Stars_in	 "Jackie Brown"
+
+Person : "Pam Grier"
+Stars_in	 "Jackie Brown"
+
+Person : "Kevin Spacey"
+Real_name	 "Kevin Matthew Fowler"
+Date_of_Birth	 1959-07-26 "New Jersey, USA"
+Stars_in	 "The Usual Suspects"
+Stars_in	 "A Bugs Life"
+Stars_in	 "Seven"
+Stars_in	 "L.A. Confidential"
+
+Person : "Gabriel Byrne"
+Stars_in	 "The Usual Suspects"
+
+Person : "Jean Marc-Barr"
+Stars_in	 "The Big Blue"
+
+Person : "Dennis Leary"
+Stars_in	 "A Bugs Life"
+
+Person : "Gwyneth Paltrow"
+Stars_in	 "Seven"
+
+Person : "Morgan Freeman"
+Stars_in	 "Seven"
+
+Person : "Willem Dafoe"
+Stars_in	 "Wild at Heart"
+Stars_in	 "Platoon"
+
+Person : "Charlie Sheen"
+Stars_in	 "Platoon"
+
+Person : "Tom Berenger"
+Stars_in	 "Platoon"
+
+Person : "Tommy Lee Jones"
+Stars_in	 "Heaven and Earth"
+
+Person : "Rutger Hauer"
+Stars_in	 "Blade Runner"
+
+Person : "Jeremy Irons"
+Stars_in	 "Die Hard: With a Vengeance"
+
+Person : "Francis Coppola"
+Directed	 "The Godfather"
+Directed	 "Apocalypse Now"
+Directed	 "The Godfather: Part II"
+Scripted	 "The Godfather"
+Scripted	 "The Godfather: Part II"
+
+Person : "Mario Puzo"
+Scripted	 "The Godfather"
+
+Person : "Brain De Palma"
+Directed	 "Carlito's Way"
+
+Person : "David Koepp"
+Scripted	 "Carlito's Way"
+
+Person : "Michael Mann"
+Directed	 "Heat"
+Scripted	 "Heat"
+
+Person : "Alan Smithee"
+Directed	 "Heat"
+
+Person : "Harold Becker"
+Directed	 "City Hall"
+
+Person : "Mike Newell"
+Directed	 "Donnie Brasco"
+
+Person : "Tony Scott"
+Directed	 "True Romance"
+
+Person : "Quentin Tarantino"
+Directed	 "Pulp Fiction"
+Directed	 "Jackie Brown"
+Scripted	 "True Romance"
+Scripted	 "Pulp Fiction"
+
+Person : "Roger Avary"
+Scripted	 "True Romance"
+Scripted	 "Pulp Fiction"
+
+Person : "John Dahl"
+Directed	 "Red Rock West"
+
+Person : "Steven Spielberg"
+Directed	 "Indiana Jones and the Last Crusade"
+Directed	 "Indiana Jones and the Temple of Doom"
+Directed	 "Raiders of the Lost Ark"
+Directed	 "Jurassic Park"
+
+Person : "George Lucas"
+Real_name	 "George Walton Lucas Jr."
+Date_of_Birth	 1944-05-14 "Modesto, California, USA"
+Directed	 "Star Wars"
+Scripted	 "Indiana Jones and the Last Crusade"
+Scripted	 "Indiana Jones and the Temple of Doom"
+Scripted	 "Raiders of the Lost Ark"
+Scripted	 "Star Wars"
+Scripted	 "The Empire Strikes Back"
+
+Person : "Irvin Kershner"
+Directed	 "The Empire Strikes Back"
+
+Person : "Leigh Bracket"
+Scripted	 "The Empire Strikes Back"
+
+Person : "John Lasseter"
+Date_of_Birth	 1957 "Hollywood"
+Directed	 "Toy Story"
+Directed	 "A Bugs Life"
+Scripted	 "Toy Story"
+Scripted	 "A Bugs Life"
+
+Person : "M. Jay Roach"
+Directed	 "Austin Powers: International Man of Mystery"
+
+Person : "Luc Besson"
+Directed	 "The Fifth Element"
+Directed	 "The Big Blue"
+Scripted	 "The Fifth Element"
+Scripted	 "The Big Blue"
+
+Person : "Paul Thomas Anderson"
+Directed	 "Boogie Nights"
+Scripted	 "Boogie Nights"
+
+Person : "Robert Rossen"
+Directed	 "The Hustler"
+Scripted	 "The Hustler"
+
+Person : "Sidney Carroll"
+Scripted	 "The Hustler"
+
+Person : "Walter Tevis"
+Scripted	 "The Hustler"
+
+Person : "Terence Young"
+Directed	 "Dr. No"
+Directed	 "Thunderball"
+Directed	 "From Russia With Love"
+
+Person : "Ian Fleming"
+Scripted	 "Dr. No"
+Scripted	 "Thunderball"
+Scripted	 "Octopussy"
+Scripted	 "For You Eyes Only"
+Scripted	 "From Russia With Love"
+Scripted	 "On Her Majesty's Secret Service"
+Scripted	 "Diamonds are Forever"
+Scripted	 "Live and Let Die"
+Scripted	 "Man With the Golden Gun"
+Scripted	 "Moonraker"
+Scripted	 "Licence to Kill"
+Scripted	 "The Living Daylights"
+Scripted	 "A View to a Kill"
+
+Person : "Richard Maibaum"
+Scripted	 "Dr. No"
+Scripted	 "For You Eyes Only"
+Scripted	 "On Her Majesty's Secret Service"
+Scripted	 "Diamonds are Forever"
+Scripted	 "Man With the Golden Gun"
+Scripted	 "The Living Daylights"
+Scripted	 "A View to a Kill"
+
+Person : "Kevin McClory"
+Scripted	 "Thunderball"
+
+Person : "John Glen"
+Directed	 "Octopussy"
+Directed	 "For You Eyes Only"
+Directed	 "Licence to Kill"
+Directed	 "The Living Daylights"
+Directed	 "A View to a Kill"
+
+Person : "Ridley Scott"
+Directed	 "Blade Runner"
+
+Person : "Philip K. Dick"
+Scripted	 "Blade Runner"
+Wrote	 "Do Androids Dream of Electric Sheep?"
+
+Person : "Martin Scorsese"
+Directed	 "Raging Bull"
+Directed	 "Casino"
+Directed	 "Goodfellas"
+Directed	 "Taxi Driver"
+Scripted	 "Casino"
+
+Person : "Nicholas Pileggi"
+Scripted	 "Casino"
+Scripted	 "Goodfellas"
+
+Person : "Danny Boyle"
+Directed	 "Trainspotting"
+Directed	 "Shallow Grave"
+
+Person : "Johanna Harwood"
+Scripted	 "From Russia With Love"
+
+Person : "Guy Hamilton"
+Directed	 "Diamonds are Forever"
+Directed	 "Live and Let Die"
+Directed	 "Man With the Golden Gun"
+
+Person : "Tom Mankiewicz"
+Scripted	 "Live and Let Die"
+
+Person : "Lewis Gilbert"
+Directed	 "Moonraker"
+
+Person : "Christopher Wood"
+Scripted	 "Moonraker"
+
+Person : "Michael Apted"
+Directed	 "The World is Not Enough"
+
+Person : "Bruse Feirstein"
+Scripted	 "The World is Not Enough"
+Scripted	 "Tomorrow Never Dies"
+
+Person : "Neal Purvis"
+Scripted	 "The World is Not Enough"
+
+Person : "Roger Spottiswoode"
+Directed	 "Tomorrow Never Dies"
+
+Person : "James Cameron"
+Directed	 "True Lies"
+
+Person : "Paul Schrader"
+Scripted	 "Taxi Driver"
+
+Person : "Paul Verhoeven"
+Directed	 "Total Recall"
+
+Person : "Michael Crichton"
+Scripted	 "Jurassic Park"
+
+Person : "Paul McGuigan"
+Directed	 "The Acid House"
+
+Person : "Michael Cimino"
+Directed	 "Deer Hunter"
+Scripted	 "Deer Hunter"
+
+Person : "Alfred Hitchcock"
+Real_name	 "Alfred Joseph Hitchcock"
+Date_of_Birth	 -C "13 August 1899, Leytonstone, London, England, UK"
+Directed	 "Psycho"
+
+Person : "Robert Bloch"
+Scripted	 "Psycho"
+
+Person : "Richard Franklin"
+Directed	 "Psycho II"
+
+Person : "Tom Holland"
+Scripted	 "Psycho II"
+
+Person : "Terry Gilliam"
+Directed	 "Twelve Monkeys"
+
+Person : "Alan Parker"
+Directed	 "Angel Heart"
+Scripted	 "Angel Heart"
+
+Person : "John Frankenheimer"
+Directed	 "Ronin"
+
+Person : "Bryan Singer"
+Directed	 "The Usual Suspects"
+
+Person : "John McTiernan"
+Directed	 "Die Hard: With a Vengeance"
+
+Person : "Robert Garland"
+Scripted	 "The Big Blue"
+
+Person : "David Lynch"
+Directed	 "Wild at Heart"
+
+Person : "Oliver Stone"
+Directed	 "Platoon"
+Directed	 "Born on the Fourth of July"
+Directed	 "Heaven and Earth"
+Scripted	 "Platoon"
+Scripted	 "Heaven and Earth"
+
+Person : "Movita"
+
+Person : "Anna Kashfi"
+
+Person : "Tarita"
+
+Person : "Grace Hightower"
+
+Person : "Maeve Quinlan"
+
+Person : "Janet"
+
+Person : "Melissa Mathison"
+
+Person : "Maru Marquart"
+
+Person : "Michael Hawkins"
+
+Person : "Mary Jo Slater"
+
+Person : "LaTanya Richardson"
+
+Person : "Nicole Kidman"
+
+Person : "Lenny Kravitz"
+
+Person : "Joseph Conrad"
+Real_name	 "Jzef Teodor Konrad Korzeniowski"
+Date_of_Birth	 -C "1857-12-03"
+Date_of_Birth	 -C "Berdichev, Poland, Russian Empire. [now Berdychiv, Ukraine]"
+Wrote	 "Heart of Darkness"
+
+
+
+ // Class Book 
+
+Book : "Heart of Darkness"
+Author	 "Joseph Conrad"
+Script_for	 "Apocalypse Now" -C "only roughly based upon"
+
+Book : "Do Androids Dream of Electric Sheep?"
+Author	 "Philip K. Dick"
+Script_for	 "Blade Runner"
+
+Book : "Trainspotting"
+Author	 "Irvine Welsh"
+Script_for	 "Trainspotting"
+
+Book : "The Acid House"
+Author	 "Irvine Welsh"
+Script_for	 "The Acid House"
+
+
+
+ // End of this dump file 
+

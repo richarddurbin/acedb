@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+
+<LINK rel=stylesheet type="text/css"
+href="../acedocs.css"
+title="Style sheet for general ace documents">
+
+    <title>ACEDB - in the Long Term</title>
+    <meta name="keywords" content="acedb, future, plan, strategy, changes">
+    <meta name="description" content="Thoughts/ideas about how Acedb will develop in the future.">
+
+</HEAD>
+
+
+<BODY>
+
+<h1>ACEDB - in the Long Term</h1>
+
+<A name="intro">
+<FONT color="blue">
+<H2>Introduction</H2>
+</FONT>
+</A>
+<p>Probably most of the items on this page will be either major coding efforts
+or will reflect some probable change in the genome mapping community or
+computing industry (e.g. the rise and rise of Windows/NT ??).</p>
+
+<A name="windows">
+<FONT color="blue">
+<H2>Windows support</H2>
+</FONT>
+</A>
+<p>In the longer term serious consideration needs to be given to the long term support
+of windows platforms. This could be done in a number of phases:
+<OL>
+  <LI>Support windows as a client only, with the database still on Unix platforms.
+       Initially support could be via a Java or perl based application to avoid the
+       need to learn windows like calls.
+  <LI>Port the server to windows separately from the clients.
+</OL>
+
+<A name="threading">
+<FONT color="blue">
+<H2>Threading</H2>
+</FONT>
+</A>
+<p>Currently there is no part of acedb code that is threaded. The only place that "overlapping"
+execution takes place is in the acedb server when a client makes a very large request. In this
+case the server chops up the request and only executes and returns a portion 
+at a time to the client.</p>
+
+<P>There are three major reasons for threading an application:
+<OL>
+  <LI>To increase throughput
+  <LI>To increase responsiveness of GUI applications (e.g. netscape)
+  <LI>To simplify code where several tasks may need to be handled 'simultaneously' (perhaps
+ 	the overlapping mentioned above would be an example of this).
+</OL>
+
+<P>There are two major parts to threading acedb code:
+<UL>
+  <LI>The acedb kernel
+  <LI>The graphical applications
+</UL>
+
+<p>The major reasons for threading the kernel are to increase throughput and perhaps to make
+some of the handling of multiple clients conceptually easier. Note that throughput may be
+servicing a large request for one particular client (e.g. a large query search in parallel)
+or lots of smaller requests for multiple clients. For the acedb GUI applications
+the major reason would be to allow the GUI to remain responsive while perhaps waiting for data
+from a network connection.</P>
+
+<p>Threading will require a number of preliminary steps:
+<DL>
+  <DT>introduction of tighter layering
+  <DD>Although a large part of acedb is now in self contained libraries, there is still
+a large body of code that is not layered. Much of the kernel code needs to be more strictly
+layered to allow different parts of it to be threaded. This is an important preliminary step
+towards threading because it will reduce the linkage between different areas of code to
+well defined interfaces. It will also reveal which layers can be reentrant and which by
+their nature cannot.
+  <DT>Making the base libraries reentrant
+  <DD>Substantial recoding of base level libraries needs to take place because
+of the extensive use of static data and lack of context passing for the various packages.
+This will be fundamental because the base libraries are used throughout acecb code and they
+must be fully re-entrant, or if not then they must at least be serially reusable with mutex locks
+around vulnerable code.
+  <DT>
+  <DD>The acedb kernel needs to be analysed for places where threading can improve performance
+perhaps by overlapping disk I/O or by overlapping tasks that are waiting for network/client input
+or by using multiple threads for tasks that are inherently parallel.
+</DL>
+
+
+<A name="C++">
+<FONT color="blue">
+<H2>Conversion from C to C++</H2>
+</FONT>
+</A>
+
+<p>Currently acedb is written in C, this is because work on acedb was started before robust
+implementations of C++ were generally available on a wide variety of platforms. Work has
+continued to be in C and there is some sense to this in that the standard ANSI C library
+is available on all unix platforms, windows and some versions of the MAC, providing a
+constant programming environment. C++ libraries are not usually available unless the C++
+compiler has been installed. Perhaps even more importantly the C++ Standard Template Library
+(STL), which would provide a major incentive for swopping to C++ is even less generally
+available. Never the less C++ has much to offer that acedb could make use of. Large parts of
+the acedb code use 'object' like concepts and deal with 'object' like data that could more
+usefully become fully fledged objects, blah, blah, blah. Currently this is all pipe dreams,
+there aren't the resources/experience to do much about this....pity.</p>
+
+
+<A name="client_server">
+<FONT color="blue">
+<H2>Client-server only</H2>
+</FONT>
+</A>
+
+<p>Currently there are two models for applications accessing databases:
+<OL>
+  <LI>The application accesses the database directly and makes whatever
+       calls it likes to access the database.
+  <LI>The application is a client and can only make certain client requests
+       to a database server.
+</OL>
+<p>It may simplify coding/maintenance etc. to have only one model, the client/server one.
+Performance issues could be solved by providing different methods of communication between the client
+and server: if both are on the same machine, shared memory could be used for speed, if on different
+machines then sockets or whatever could be used.</p>
+
+<A name="dbase">
+<FONT color="blue">
+<H2>A different database</H2>
+</FONT>
+</A>
+
+<p>Should acedb be replaced with oracle ? should users be able to keep their data in an
+Oracle database but have a transaction supplied which extract acedb like data, this
+way oracle would deal with concurrency/backups/disasters etc but the front end could
+still work on acedb like data.</p>
+
+</body>
+</html>
+

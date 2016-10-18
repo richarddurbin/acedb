@@ -1,0 +1,32 @@
+#!sh
+# $Id: display_script,v 1.2 1997/04/28 12:31:25 rd Exp $ 
+
+# NOTE the #! line above. There will not in general exist /bin/sh
+# But the acedb distribution includes sh.exe, which will be on the 
+# path, so the form above will run that. The current distribution
+# doesn't include any other interpreters, so all scripts had better
+# be written in sh
+
+# winaceshell is also on the path, it takes arg1 and converts  it into
+# a windows path, then gives it to the windows shell to open.
+# So as long as windows knows how to display .jpegs (in this case)
+# All is hunky-dory
+
+# The worm database seems to be schizoid about weather to include
+# the .jpeg extension or not, so we cover all the bases.
+
+if [ -e "$ACEDB"/pictures/$1 ]
+then
+    winaceshell "$ACEDB"/pictures/$1
+fi
+
+if [ -e "$ACEDB"/pictures/$1.jpeg ] 
+then
+    winaceshell "$ACEDB"/pictures/$1.jpeg
+fi
+
+
+if [ -e "$ACEDB"/pictures/$1.jpg ]
+then
+    winaceshell "$ACEDB"/pictures/$1.jpg
+fi

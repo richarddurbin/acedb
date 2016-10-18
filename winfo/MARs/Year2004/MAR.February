@@ -1,0 +1,45 @@
+================================================================================
+                              AceDB - February MAR
+
+
+Executive summary.                                                                        
+------------------                                                                        
+
+Prototypes for ZMap for multi-threads per window for data loading, vertically
+and horizontally splittable window, zooming and rapid scrolling via gnome
+canvas.
+
+Visit to SANBI, Cape Town to work on DAS 2 with Lincoln Stein.
+
+Fixes to acedb to support Wormbase/Havana.
+
+
+ZMap
+----
+
+Now uses Gnome Canvas for scrolling/zooming. Extensive testing of
+performance. Work on multiwindow display, splittable horizontally or
+vertically.
+
+Each ZMap window now runs multiple threads to contact multiple servers to do
+the data retrieval/loading.
+
+Working on new xace build which is prototype for incorporating ZMap into xace.
+
+
+DAS 2
+-----
+
+The DAS 2 protocol is one of the protocols that ZMap will use and the Acedb
+team have been involved in developing the DAS 2 spec with Lincoln Stein for
+some time. Ed Griffiths was invited by Lincoln Stein to visit him at SANBI in
+Cape Town where he is on sabbatical to continue work on DAS 2.
+
+
+Subsection
+----------
+
+Bug fixes in support of Wormbase and Havana including fixes to blixem, intron
+mapping code, composite class code, embl dumping.
+
+

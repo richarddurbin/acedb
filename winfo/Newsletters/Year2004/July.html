@@ -1,0 +1,103 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - July 2004</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - July 2004</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+
+<P>Acedb goes live on the Opteron !
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="General_News"></a><H2>General News</H2>
+
+
+<a name="Opteraon"></a><H3>Acedb on the AMD Opteron !</H3>
+
+<P>(<I>Thanks to Duncan Napier who is the true hero of this article</I>
+<A HREF="mailto:dgnapier@sfu.ca">dgnapier@sfu.ca</A>)
+
+<P>Acedb has been ported to run on machines using AMD's Opteron chip (this is the AMD
+64-bit Intel compatible chip).
+
+<P>After lots of email exchange with Duncan Napier and some good debugging
+by him, it turned out that a simple one line change was all that was
+needed:
+
+<pre><code>      /* NEW ADDITION for the AMD64/Opteron */
+      #if defined(__x86_64__)                                                                 
+      #  define STACK_ALIGNMENT 8                                                             
+      #endif                                                                                  
+</code></pre>
+
+<P>This change in wh/mystdlib.h ensures that the acedb code when compiled
+for the opteron uses a stack word length of 8 bytes.
+
+<P>The main work to port acedb onto 64-bit machines was done about 10 years ago for the
+then DEC (subsequently COMPAQ, now HP)                
+Alpha chip. This allowed rapid porting subsequently to SGI, HP and IBM-6000 machines.
+
+<P>To be able to configure acedb so easily for this new chip, which                          
+is bound to become very popular over the next 2 or 3 years, is a definite                 
+coup, proving once again the great portability of the ACEDB kernel.                               
+
+<P>Thanks Duncan !
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>July no monthly build available.</H2>
+
+<P>A monthly build incorporating Duncans port to the Opteron will be available
+by mid August along with a number of fixes. More news next month.
+
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Tue Aug 10 10:48:17 BST 2004
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

@@ -1,0 +1,176 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - November 2003</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - November 2003</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+
+<P>A short newsletter this month as most work has been on the new ZMap code
+which will form the new split off FMap client.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="General_News"></a><H2>General News</H2>
+
+<P>Highlights for this month include: Acedb can now be compiled with either
+GTK version 1 or 2 now that GTK2 is available on the Alphas,
+ZMap can now be compiled into xace/Acedb or run as a stand alone client,
+several significant FMap/GFF enhancements/fixes were made to support Wormbase,
+plus a number of fixes to Blixem to support the Otter/lace system.
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+
+<a name="GTK"></a><H3>GTK versions 1 and 2</H3>
+
+<P>Thanks to Simon Kelley we now have a provisional/testable installed GTK2 and
+acedb can be compiled and run with this new version of the toolkit both on linux
+and the Alphas.
+
+<P>Acedb users can choose to build with GTK1 or 2 and either from our own
+distributed versions of the libraries or from their own system installed ones.
+
+
+
+<a name="Aceconn"></a><H3>AceConn error message routine</H3>
+
+<P>The AceConn error message routines have been revamped
+so that just one routine returns all
+error messages whether they are the simple hard coded ones or the
+dynamically constructed "last error" messages held within each AceConn
+control block.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+
+<a name="GFF"></a><H3>Improved GFF dumping</H3>
+
+<P>Improvements/fixes should lead to substantial throughput gains for worm builds
+as non-essential data is filtered out and not dumped at all. Special HOMOL_GAP segs
+were created to support joining up homologies with lines (in much the same way
+that exons are joined up but intron lines), these mean nothing in biological terms
+so are filtered out which hugely reduces the size of GFF output files.
+
+<P>A number of improvements have been made
+to the way the Method object and Feature object data is handled, especially
+for features that have a parent-child structure such as transcripts where records
+must be written both for the overall feature and for its constituent parts.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="smap_bug"></a><H3>SMap bug with Align tag</H3>
+
+<P>Fix bug in the way we position stuff that has the Align tag set, we were
+not calculating the length correctly. This led to the end coordinate being
+truncated by the offset specified in the child start as specified following
+the Align tag. In this case the child contained DNA and so had its own explicit
+length which should have been used to correctly calculate the offset and length
+in the child.
+
+<P>This feels like a missing bit of design.
+We need to look for DNA and use this as an explicit length of an object,
+if there is no DNA we need to use whichever is the longer of the position
+in the parent or the maximum extent of the children.
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+
+<a name="zmap_work"></a><H3>ZMap Work</H3>
+
+<P>The stand alone library has been reworked so that the ZMap window code can be
+compiled either into xace or into the stand alone client without code
+modification. This will allow testing of the interface from within xace and
+the existing Otter/lace system in parallel with continuing development of the
+stand alone client.
+
+<P>The stand alone client is threaded and can be compiled as a C++ executable to
+allow use of the more extensive C++ libraries available for handling XML
+datastreams.
+
+<P>Work is also continuing on providing acedb routines to interface to the ZMap
+code when compiled directly into xace.
+
+
+
+
+<a name="zmap_work"></a><H3>Build/Test</H3>
+
+<P>There have been a number of general build/test improvements to provide better
+automation of testing in line with slimming down the effort required for daily
+maintenance of Acedb.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>November monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Thu Jan  8 11:34:16 GMT 2004
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

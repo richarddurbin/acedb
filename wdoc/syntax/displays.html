@@ -1,0 +1,74 @@
+<head>
+<title>AceDB displays.wrm syntax</title>
+
+<LINK rel=stylesheet type="text/css"
+href="../wdoc.css"
+title="Style sheet for wdoc documents">
+
+</head>
+
+<body>
+<h2>AceDB displays.wrm syntax</h2>
+
+
+<p>This file is read only at execution time by graphical
+acedb applications. Non-graphical applications
+(e.g. tace) ignore this file.</p>
+
+<p>It holds the display definitions necessary to the 
+graphic interface.</p>
+
+<p>You can freely edit this file without recompiling
+but it must remain consistent with the other wspec files.</p>
+
+<p>Line starting with _DDisplayType are parsed, they are expected
+to contain a la Unix a set of -Option parameters.
+Options for unknown DisplayTypes are ignored without
+errors. To check the names of available displays,
+list the members of the class 'Display' with the
+query 'FIND Display' or 'select all class Display' (in AQL)
+This query is not guaranteed in non-graphical acedb applications.</p>
+
+<p>Options names can be abbreviated, recognized options are</p>
+
+<dl>
+  <dt><code>-Title <i>text</i></code>
+  <dd> A default title for that graph, sometimes overridden
+      by the applications.
+  <dt><code>-Width <i>w</i> -Height <i>h</i> -Xposition <i>x</i> -Yposition <i>y</i></code>
+  <dd> Real numbers in the following range 
+      0 < x,w  < 1.3   ;  0 < y,h < 1.0
+      These fractions are relative to a window 900x900 pixels.
+      for example '-width 1.0 -height 0.5' sets the default
+      window size for the display to 900x450 pixels.
+
+<dt><code>-Columns <i>c</i> -Rows <i>r</i></code>
+<dd>	     Alternatives to <code>-Width</code> and <code>-Height</code>, the arguments are
+	     in units of pixels (<code>PIXEL_*</code> type graphs) or
+	     characters (<code>TEXT_*</code>) type graphs. These are most useful 
+	     for displays whose ideal size depends on the text
+	     size. (eg main windows, keyset window...)
+
+<dt><code>-Menu <i>text</i></code>
+    <dd> Adds this display type, under name <code><i>text</i></code>, to the
+	     "Show as" menu in the KeySet window.
+	     The standard options in that menu are 'Graph',
+	     which chooses the configured default and 'Text'
+	     which forces the tree display. This options
+	     adds further items.
+
+<dt><code> -Help <i>section</i></code>
+    <dd> The corresponding Help file in whelp/
+
+	(without the .html or .shtml file extension)
+</dl>
+
+<p>Displays that aren't configured in this file, the default
+window size is 0.5 x 0.3 (450x300 pixels), title "acedb"
+and default "help" is acedb.html, which describes the main-window.     		    
+The displays can be registered as the preferred display type of
+a class in the file wspec/options.wrm.</p>
+
+
+</body>
+</html>

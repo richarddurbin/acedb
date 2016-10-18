@@ -1,0 +1,28 @@
+# $Id: SOLARIS_GCC_DEF,v 1.8 1994-07-06 02:14:17 mieg Exp $ #
+
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+############### wmake/NEW_SUN_CC_DEF  July-15-1993 ##############
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+########### for the Solaris OS                 ##################
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+NAME = SOLARIS
+COMPILER = gcc -g -DNO_LEFT_CASTING 
+LINKER = gcc -g
+
+# -DWCS causes a problem, class versus Xlib.h
+LIBS = -lm  -lsocket
+RANLIB_NEEDED = false
+AR_OPTIONS = ru
+
+#################################################################
+#################################################################
+

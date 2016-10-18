@@ -1,0 +1,333 @@
+<HTML>
+
+<!--                                                                          -->
+<!-- Stuff you should alter is highlighted with "***"                         -->
+<!--                                                                          -->
+<!-- The newsletters are parsed by a script to automatically produce the      -->
+<!-- index file for the directory. If you change the format of this template  -->
+<!-- you had better change the script as well.                                -->
+<!--                                                                          -->
+
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - May 2001</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - May 2001</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P>There are still places available on the AceDB course in June. There are
+some improvements to the command line interface (see items on status and lastmodified).
+The usage of the CDS tag in Sequence objects has been tightened up but restrictions
+on translation of Sequence objects have correspondingly been relaxed. If you use
+tags which have names consisting of numerics only you should read the article
+non-numeric tags. There are a number of bug fixes.
+
+
+
+<!-- ******************************************************************** -->
+<a name="General_News"></a><H2>General News</H2>
+
+<P>We are still struggling to build AceDB 4_9 on our Solaris system
+for a variety of excrutiatingly boring reasons. We are now close to finishing
+the build so Solaris users please hang on. The problems are genuinely not
+AceDB but system based.... This means that this months monthly build does
+not at the moment include Solaris binaries.
+
+
+
+<!-- ******************************************************************** -->
+<a name="Education"></a><H2>Education</H2>
+
+<P>There are still places available on the 1-day AceDB introductory course on 19th June
+and the 3-day advanced AceDB course on 20th-22nd June at the Dept. of Genetics,
+Cambridge University, Cambridge.
+
+<p>For further details please visit:
+<ul>
+  <li><A href="http://www.hgmp.mrc.ac.uk/About/Courses/2001/comp.acedb.course.html">
+      http://www.hgmp.mrc.ac.uk/About/Courses/2001/comp.acedb.course.html</A>
+</ul>
+
+<!-- ******************************************************************** -->
+<a name="New_Features"></a><H2>New Features</H2>
+
+<a name="last_modified"></a><H3>Last Modified command line interface</H3>
+
+<P>To help systems that interface to AceDB via the server or via tace, a
+last modified command has been introduced. The command returns the time
+the last command was executed that changed the database. This is currently a
+bit crude in a "fail-safe" way in that the time may be updated for some
+commands where in fact no modification took place.
+
+<P>The intention of this command is to allow systems such as Lincoln Steins
+wormbase servers to cache features they have requested from the server for
+faster performance. They can use the last modified command to check the database
+has not been modified.
+
+<P><b>Command description:</b><pre>
+lastmodified : Returns time database was last modified as a string in AceDB time format.
+</pre>
+<P><b>Example:</b><pre>
+acedb> lastmodified
+2001-05-29_21:30:54
+// 0 Active Objects
+acedb>
+</pre>
+
+
+<a name="status_cmd"></a><H3>New format 'status' display</H3>
+
+<P>It's possible to look at AceDB program status either from graphical xace
+(via "Admin" -> "Program Status" menu item from the main window)
+and from command line programs such as tace and giface using the "status"
+command.
+
+<P>The format of the status display has been changed to make it more readable,
+and from the command line it is possible to ask for one or more subsets
+of the status report statistics.
+
+<P><b>Command description:</b><pre>
+Status {on | off} : toggle memory statistics
+       {-code -database -disk -lexiques -hash -index
+        -cache -cache1 -cache2 -array -memory -all} : select stats to print
+</pre>
+<P><b>Example:</b><pre>
+acedb> status -code -database
+ // ************************************************
+ // AceDB status at 2001-05-29_23:44:41
+ // 
+ // - Code
+ //             Program: tace
+ //             Version: ACEDB 4_9a
+ //               Build: May 29 2001 23:42:39
+ // - Database
+ //               Title: <undefined>
+ //                Name: <undefined>
+ //             Release: 4_0
+ //           Directory: /home/edgrif/acedb/databases/bA404F10_db
+ //             Session: 9
+ //                User: edgrif
+ //        Write Access: No
+ //      Global Address: 351
+ // 
+ // ************************************************
+
+// 0 Active Objects
+acedb> 
+</pre>
+
+<a name="non_cds_translation"></a><H3>Translation of non-CDS Sequence objects now possible.</H3>
+
+<P>In previous versions of AceDB it was only possible to translate
+Sequence objects that were tagged as CDS objects. Although this seems logical it is not very
+helpful as users often wanted to do translations of other Sequence objects just to see what
+sort of protein might be produced. This led to some database administrators tagging most
+Sequence objects in their databases as CDS objects just so they could do protein translations
+which is not desireable. The code has been altered so that its possible to translate
+all Sequence objects which are positioned on a piece of dna. There should not be any need
+now to add the CDS tag just to see a protein translation.
+
+<P>If you have any problems with this, please send mail to
+<A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+
+
+<!-- ******************************************************************** -->
+<a name="Articles"></a><H2>Articles</H2>
+
+<a name="numeric_tags"></a><H3>Non-numeric tags</H3>
+
+<P>Naming of tags in AceDB is reasonably flexible, but a recent bug report
+for a query that involved a tag that had a name that consisted only of numerics
+(i.e. 0 - 9) has forced a rethink. The query in question failed because if
+numeric tags are allowed then the query language has an inherent ambiguity because
+it is not possible to distinguish between a tag that has a name consisting only
+of numerics and a particular position following a tag, e.g. the code cannot
+disambiguate the user saying <code>"find me the tag following whose name is '3'"</code>
+from <code>"find me the 3rd value over from where we are now"</code>.
+
+<P>It would be possible to alter the query language in some incompatible way, but
+more desireable is simply that numeric only tag names should not be used. The code
+has been modified to issue a warning every time it encounters a numeric only tag
+name in a <code>wspec/models.wrm</code> file.
+
+<P>You should note that it is likely that support will be withdrawn for tags with
+numeric only names in the near future. It is likely that tags will be restricted to
+the regular expression "[a-zA-Z][a-zA-Z0-9_]*", i.e. tags must begin with a lower or
+upper case letter and must consist only of letters, numbers and the underscore
+character.
+
+<a name="cds_tags"></a><H3>Yet more on CDS tags</H3>
+
+<P>Following an AceDB user group meeting this month, it was decided to tighten up
+the use of tags for defining the position of a CDS in a Sequence object.
+The relevant parts of the Sequence class that can be used to define the position
+of a CDS within a sequence object are as follows:<pre>
+?Sequence.....
+	  Structure.....
+				Source_Exons Int UNIQUE Int
+	  Properties.....
+			Coding	CDS UNIQUE Int UNIQUE Int // start, end in spliced DNA coords,
+                                                          // default:  1, length_of_Source_Exons
+			End_not_found
+			Start_not_found UNIQUE  Int // Gives position of start frame for protein
+                                                    // translation when start of CDS is before first
+                                                    // exon in this object (should be in range 1 -> 3).
+</pre>
+
+<P>Description of the tags:
+<dl>
+  <dt><b>Source_Exons</b>
+  <dd>Define the transcription unit, only part of which may be the CDS.
+  <dt><b>CDS UNIQUE Int UNIQUE Int</b>
+  <dd>Defines which section of the the transcription unit is the CDS, the <b>Int</b>'s
+      specify the start/end of the CDS in spliced DNA coordinates, i.e. the start of the
+      transcription unit is "1" and the end is "(sum of all exon lengths)".
+      If the second
+      int is not specified it defaults to the end of the transcription unit, if the
+      first int is not specified it defaults to the beginning of the transcripton
+      unit.
+  <dt><b>Start_not_found UNIQUE Int</b>
+  <dd>For a CDS object this tag specifies that the CDS is incomplete
+      because there are further exon(s) upstream. In this case the reading frame for translation
+      of the CDS may incorrect, the <b>Int</b> can be used to alter the reading frame. The
+      <b>Int</b> must have the value 1, 2 or 3, it defaults to 1.
+  <dt><b>End_not_found</b>
+  <dd>For a CDS object this tag specifies that the CDS is incomplete
+      because there are further exon(s) downstream. This implies that translation of
+      the CDS may end before the end of the CDS depending on the alignment of the reading
+      frame and the end of the CDS.
+</dl>
+
+<P>The rules for specifying the tags are:
+<dl>
+  <dt><b>CDS UNIQUE Int UNIQUE Int</b>
+  <dd>If the <b>Int</b>'s are not specified to lie within the extent of the spliced DNA
+      of the Source_Exons they will be ignored and the code will issue an error message
+      and the only translation allowed will be of the entire transcription unit.
+  <dt><b>Start_not_found UNIQUE Int</b>
+  <dd>If this tag is set, then the CDS tag <b>must</b> specify that the CDS starts
+      at the beginning of the transcription unit. Otherwise the code will issue an error message
+      and the only translation allowed will be of the entire transcription unit.
+  <dt><b>End_not_found</b>
+  <dd>When this tag is set the CDS tag should specify that the CDS ends at the end
+      of the transcription unit, this condition is not enforced at the moment.
+</dl>
+
+<P>These rules are intended to reflect the biology of translation, if you feel that this
+system does not then please email
+<A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+
+<!-- ******************************************************************** -->
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+<a name="dna_cmd"></a><H3>DNA command misnamed files</H3>
+
+<P>A bug was introduced in the <b><code>"dna"</code></b> command (part of the
+<code>tace/giface</code> interface) which led to files being called <code>"-f"</code> if
+the user specified the file as <code>"-f your_filename"</code>. This is now fixed,
+the file can be specified in either of these forms:
+<ul>
+  <li><code>"dna your_filename"</code>
+  <li><code>"dna -f your_filename"</code>
+</ul>
+
+
+<a name="seqfeatures"></a><H3>Asking for coordinates off the end of clone crashed giface.</H3>
+
+<P>Using "seqfeatures" with "-coords" that are a long way off the start/end of the Sequence
+object caused giface or sgifaceserver to crash. This bug has probably not emerged before
+because the code coped with coordinates that were only a little off the start/end of
+the Sequence because it adjusted the coordinates to lie within the Sequence. Coordinates
+that were a long way off resulted in arrays of negative size being created which unsurprisingly
+crashed the code.
+
+<P>The bug is now fixed, the "seqfeatures" request is now terminated with an error reporting
+that the coordinates are outside of the Sequence object.
+
+<a name="underlining"></a><H3>Underlining of features for printing.</H3>
+
+<P>In AceDB 4_7 it was possible to set the colour of certain features in fmap/gmap to "black"
+so that when printed they came out as underlined which looks much better for printed copy.
+This feature was broken in AceDB 4_8, it has now been fixed in AceDB 4_9.
+
+<a name="static_build"></a><H3>Build of "Static" executables failed.</H3>
+
+<P>In some circumstances where users tried building of dynamically linked and then statically
+executables, the latter would fail in the build because the build must be done in a certain order.
+This is now fixed and you should use the following make targets to do the builds:
+
+<p>dynamic builds: <b>"make all"</b>
+
+<p>static builds: <b>"make all_static"</b>
+
+<p>The <code><b>all_static</b></code> target makes sure that the build directory is cleaned up correctly
+before starting the build.
+
+
+<a name="aql_crash"></a><H3>Some AQL queries could cause AceDB to crash.</H3>
+
+<P>Malformed AQL queries of the form<pre>
+  <code>select s from sequence</code>
+</pre>
+instead of the fuller<pre>
+  <code>select s from s in class sequence</code>
+</pre>
+used to crash AceDB, this is now fixed to issue an error message instead.
+
+
+<!-- ******************************************************************** -->
+<H2>May monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<H2>Next User Group Meeting - D319, 2.30pm, Thursday, 14th June 2001</H2>
+
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Thu May 31 15:01:15 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

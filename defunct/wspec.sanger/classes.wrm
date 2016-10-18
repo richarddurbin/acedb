@@ -1,0 +1,95 @@
+/*  $Id: classes.wrm,v 1.1 1994-08-03 02:19:24 rd Exp $  */
+
+  /* wspec/classes.wrm
+     
+     This file is read at compile and at execution time
+
+     It holds the enumaration of the application dependant classes.
+     Classes necessary to the kernel are defined in 
+     a second file wspec/sysclasses.wrm which should serve as
+     a model for writing this one .
+     There should be no repetitions of class numbers.
+
+     The 2 files could be appended, but this would imply a
+     recompilation of the kernel whenever the application
+     is modified.
+
+     Each #define line correspond to a class
+     The compiler and the executable read this file.
+     You can add new classes at will, but if you
+     suppress one or renumber it, you must recompile
+     and reconstruct the database from ace files.
+
+     Class properties, formerly defined in this file, are
+     now in wspec/options.wrm 
+
+     Classes only listed here will be hidden.
+
+     We need strlen(name)<32.
+     The total number of classes cannot exceed 255
+     The total number of display types cannot exceed 64
+     
+     Class numbers used so far (of course they must be unique):
+	 0  1  2  3  4  5  6  7  8	- system classes
+	10 11 12 13 14 15 16
+	20 21 22 23 24 25 26 27 28 29
+	30 31 32 33 34 35 36 37
+	40    42
+	50 51 52 53 54
+		    64 65 66 67     - Text classes (system)
+	70 71 72 73 74 75 76	       - types and systypes (probably temporary)
+       180 181 182 183 184             - metaData + more system
+	        193                    - OwnerComment
+  */
+
+/* def  _VClass_name  Class_number */
+
+#define _VMap		 20   
+#define _VClone          30  
+#define _VSequence       40  
+
+#define _VAuthor         10  
+#define _VJournal        12  
+#define _VPaper          13  
+
+#define _VGene_Class     21  
+#define _VLocus          52  
+#define _VInterval       25  
+
+#define _VAllele         23  
+#define _VStrain         24  
+#define _VLaboratory     11  
+
+#define _V2_point_data   26  
+#define _VMulti_pt_data  27  
+#define _VDf_Dup_data    28  
+
+#define _VRestriction    42  
+#define _VMutagen        15
+#define _VSpecies	 22
+
+#define _VCell           37
+#define _VMethod         16  
+#define _VLibrary        14  
+
+#define _VgMap		 29  
+#define _VClone_Grid	 34  
+
+#define _VContig         31  
+#define _VpMap           32  
+#define _VfMap           33  
+
+#define _VDNA            50  
+#define _VPeptide	 51
+#define _VMultiMap       53
+#define _VvMap           54
+
+#define _VPool           35  
+#define _VChrom_Band     36
+
+#define _VLab_Location	 70 
+#define _VMatch          72
+#define _VInterval_ends  73
+#define _VMulti_counts   74
+#define _VBalancer       75
+#define _VNeurodata      76

@@ -1,0 +1,76 @@
+/* $Id: sysoptions.wrm,v 1.4 1994-07-23 15:33:59 mieg Exp $ */ 
+
+  /* wspec/sysoptions.wrm
+     
+     Before editing this file, please contact us.
+
+	This file is read only at execution time
+
+     It holds the class definitions necessary to the acedb kernel.
+     The additional application dependant classes must
+     be defined in a second file wspec/options.wrm
+     modelled on this one with no repetitions of class names.
+
+     Line starting with _VClassName are parsed, they are expected
+     to contain a la Unix a set of  -Option parameters.
+     Class names must match their enumeration in wspec/classes.wrm
+	
+     Options names can be abbreviated, recognized options are
+     -Hidden    : this class will not be listed in the acedb Main Window.
+     -Visible   : this class will be listed in the acedb Main Window.
+     -Array     : this class is of type A, (Array or tuple).
+     -Btree     : this class is of type B, it must be further defined in models.wrm
+     -Protected : Prevents dumps and ace parsing of this class
+     -XREF      : Auto cross referencing Hidden B system class.
+     -Display  displayType : The preferred display type of the class,
+		             as enumerated in wspec/disptype.wrm
+     -Title  Tag : Tag must be a tag name listed in wspec/tags.wrm (or systags)
+	           If present in some object of that class, the text following it
+                   will be used preferentially when referring to that object.
+
+     Classes default as -B -V -D TREE
+     A classes further default as -H -D ZERO
+     X Classes are always Protected
+
+     Displays:
+	Every display type needs a display function.
+     Parsers:
+        Special code must be provided for A Classes
+     Dumps:
+        Special code must be provided to dump A classes
+     
+     These routines must be registered in file wspec/quovadis.h before
+     recompilation.
+  */
+
+/* def  _VClass_name  Class_table  Hidden/Visible Storage_type Display_type */
+
+_VSystem        -A -H -D ZERO -Protected
+_VGlobal        -A -D ZERO -Protected
+_VSession     -B -H -Protected
+_VVoc          -A -D ZERO -Protected
+_VBat             -A -D ZERO -Protected
+
+_VKeySet        -V -A -D DtKeySet
+_VModel         -V -B -Protected   
+
+ /* up to _VModel, the model cannot use #constructs */
+
+_VCalcul         -A -D ZERO -Protected
+_VColour        -H -D ZERO -Protected
+
+                     /* if Storage_type is X auto XREF is enabled */
+_VText          -X
+_VComment       -X 
+_VLongText      -A -D DtLongText
+_VOwnerComment  -X 
+_VKeyword       -X 
+_VTag           -H -Protected // since needed to check consistency
+_VSourceCode    -H 
+_VInclude       -H
+_VClass         -H -Protected // since needed to check consistency
+_VQuery         -A -H -Protected // i just need the names
+_VImage         -H // -D DtImage - not linked in yet
+_VDisplay       -H -Protected
+
+/************ end of file **********/

@@ -1,0 +1,385 @@
+<HTML>
+
+<HEAD>
+  <TITLE>AQL examples - internals</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="./aql.css" TITLE="Style sheet for AQL docs">
+</HEAD>
+<BODY>
+
+<H2>AQL - internals</H2>
+
+
+<H3>Part 1 : Parsing</H3>
+
+<P>An AQL query is sumbitted as plain text that contains keywords,
+   database indentifiers (e.g. names of tags and classes) and
+   language specific tokens (e.g. ->, ::, []) which are translated
+   into an internal representation of the query for further 
+   processing.</P>
+
+<P>The <A HREF="http://www.combo.org/lex_yacc_page/">lex/yacc system</A>
+   is used to generate program fragments that build the AQL parser.
+   This strategy allowed us to build a comprehensive parser in a well
+   structured and almost self-documenting manner, as the source-files
+   for lex/yacc closely relate the documentation of the
+   <A HREF="syntax.shtml">AQL syntax</A>).
+   <BR>
+   The drawback is the inablity of a lex/yacc generated parser to 
+   present meaningful error-messages to the user in the event of
+   a syntax error. However, errors messages reported during the 
+   preprocessing stage are much more 
+   <A HREF="errorcodes.shtml">explanatory</A>.</P>
+
+	<H4>The lexer</H4>
+
+<P>The source file for 
+   <A HREF="http://www.combo.org/lex_yacc_page/lex.html"><I>lex</I></A> 
+   is <A HREF="ftp://ftp.sanger.ac.uk/pub/acedb_src/waql/aqlparse.l"><EM>aqlparse.l</EM></A>.
+   It defines all language keywords, operators and lexical rules
+   for identifiers, numeral constants and date values.</P>
+
+<P>The interface to the lex/yacc system isn't threadsafe and the C-module
+   which is comprised of lex and yacc-generated code has a global static
+   variable <TT>aql_L</TT> which holds all global status of the query
+   that the various code-snippets access.</P>
+
+<P>The API to lex/yacc is quite restrictive and its POSIX standard
+   requires that the input has to be a <TT>FILE*</TT> pointer.
+   Various loopholes in the API allowed us to read the lex input
+   directly from a text-buffer containing the query-string.
+   Note that those loopholes are different in AT&mp;T based <I>lex</I>
+   implemetations and the GNU lex-clone <I>flex</I>. See the
+   comments at the top of <EM>aqlparse.l</EM> for details.
+   </P>
+
+<P>Furthermore, the limited API only allows the programmer
+   to keep track of the line-number of each token.
+   This is very restrictive for AQL queries which in most cases
+   constist only of one line of text.
+   For better error-reporting the array <TT>tokPos[]</TT> 
+   is used to keep track of the position of a token in the 
+   query-string. Errors reported in the preprocessing stage 
+   can therefore point to the specific word in the querystring 
+   that was responsible for the error. 
+   (see <TT>aqlerror.c:aqlError()</TT>)</P>
+
+
+
+	<H4>The yacc parser</H4>
+
+<P>The source file for 
+   <A HREF="http://www.combo.org/lex_yacc_page/yacc.html"><I>yacc</I></A> 
+   is <A HREF="ftp://ftp.sanger.ac.uk/pub/acedb_src/waql/aqlparse.y"><EM>aqlparse.y</EM></A>.
+   It defines the language syntax in BNF grammar and contains the code sippets
+   that build the parse-tree.<P>
+
+<P>The parse-tree is made up from nodes of various types wich are enumerated
+   by the enum-type <TT>AqlNodeType</TT> in in the header-file 
+   <A HREF="ftp://ftp.sanger.ac.uk/pub/acedb_src/waql/aql_.h"><EM>aql_.h</EM></A>.
+   The is no direct relationship between the enum-identifiers used in
+   aqlparse.l and the node-types. The token-identifiers used by the lexer
+   generally correspond directly to the keyword that they represent,
+   whereas the identifiers of the node-types decribe the language construct.</P>
+
+
+	<H4>The initial parse-tree</H4>
+
+<P>The utility <TT>taql</TT> is a test-bed for aql queries
+   and provides a few hooks into the AQL internals than <TT>tace</TT>
+   which allows nothing but the input of a query-text. The most useful
+   function is the ability to turn on the debugging flags in the
+   AQL kernel.<P>
+
+<PRE>
+% taql -d 2 $ACEDB
+</PRE>
+
+<P>The debug level 2 will output a textual parse-tree, which is useful
+   to study how the query is processed at each stage. Let's study
+   an example of a parse-tree at the parsing stage, i.e. the tree
+   directly constructed by <EM>aqlparse.y</EM><P>
+
+<P>This example query will be converted into the following parse-tree :<BR><BR>
+   <CODE><EM>select</EM> a, a->paper <EM>from</EM> a <EM>in class</EM> author <EM>where</EM> a.<EM>name</EM> <EM>like</EM> "m*"</CODE>
+</P>
+
+<PRE>
+<B>TABLE_SFW</B>          <I>1405c0460</I>
+ left   <B>FROM_LOC</B> name "a"               <I>1404da3a0</I>
+  left   <B>CLASS</B> name "author"            <I>1404da440</I>
+  right  <B>BOOL_COMPARISON</B> op like                <I>1405c03c0</I>
+   left   <B>LOC_VAR</B> name "a"              <I>1404da4e0</I>
+   next   <B>LOC_METHOD</B> name "name"                <I>1404da580</I>
+   right  <B>TEXT</B> m*               <I>1405c0320</I>
+ right  <B>SELECT_FIELD</B>            <I>1404da120</I>
+  left   <B>LOC_VAR</B> name "a"               <I>1404c7380</I>
+ next   <B>SELECT_FIELD</B>            <I>1404da300</I>
+  left   <B>LOC_VAR</B> name "a"               <I>1404da1c0</I>
+  next   <B>LOC_FOLLOW_TAG_NAME</B> name "paper"               <I>1404da260</I>
+</PRE>
+
+<P>The nodes in the tree are linked by pointers <I>left</I>, <I>right</I> and <I>next</I>
+   and the tree is traversed recursivly in that order.
+   The memory addresses in italics may be ignored for now, they can be used
+   when nodes-structures are inspected in the debugger. The words in bold
+   are the names of each node as declared by the <TT>AqlNodeType</TT> 
+   enumerator in <EM>aql_.h</EM></P>
+
+<P>The graphical representation of the debug-output would look like this :<BR>
+
+<!-- close the wrapper table of the sanger-header -->
+</TD></TR></TABLE>
+
+   <IMG SRC="parse-tree.gif"><BR>
+
+<!-- re-open the header-table -->
+<TABLE BORDER="0" WIDTH="80%"><TR><TD ALIGN="LEFT" HALIGN="TOP">
+
+   The graphical tree has 4 levels, that correspond to the 4 indentation levels
+   of the debug output. The types of nodes that are allowed for the 
+   <I>left</I>, <I>right</I> and <I>next</I> pointers varies for each type
+   and implies a different meaning depending on each type of node.</P>
+
+<P>At this stage the parse tree is still very unorganised and needs to
+   be pre-processed before it can be executed to produce the query-results.</P>
+
+<H3>Part 2 : Preprocessing</H3>
+
+<P>The parse-tree is quite dramatically altered at this stage. The goal is to
+   turn the parsetree into a canonical form which can be executed and is
+   guaranteed to be syntactically and semantically correct.
+   The pre-processing is divided into 2 main parts, which are performed by
+   the functions <TT>aqlcheck.c:aqlCheck1()</TT> and
+   <TT>aqlrun.c:aqlCheck2()</TT>. During check1 the parse-tree
+   is converted into a canonical form ready for query execution
+   and check2 accesses the database to verify the validity of
+   identifiers such as class-names and tag-names.
+   </P>
+
+<P>An important concept to the internals of the AQL engine is the <B>locator</B>.
+   A locator is a data-carrier for certain nodes, which provides valuable
+   linkage information across the tree. In the debug-ouput below, one can see,
+   that the <B>LOC_VAR</B> <TT>"a"</TT> is mentioned multiple times in the
+   tree, but careful examination of the locator address reveals that all these
+   node carry the same locator <I>(loc=1405d2e20)</I>. Therefore the state
+   of the variable <TT>"a"</TT> will be the same whichever part of the parse is looking 
+   at it, e.g. <TT>a.<EM>name</EM></TT> and <TT>a->paper</TT> will eventually
+   only have to eveluate <TT>"a"</TT> once, and then the result of the <EM>name</EM>-method
+   and the dereferncing to the tag <TT>"paper"</TT> will be based on the same value for <TT>"a"</TT>.<BR>
+   The assignment of locators to certain nodes is a vital part of the work
+   done during pre-processing.</P>
+  
+
+<H4>Check1> :</H4>
+<P>The debug output of the canonical parse-tree
+   after semantic pre-processing :</P>
+
+<PRE>
+<B>TABLE_SFW</B>                <I>1405c0460</I>
+ left   <B>FROM_LOC</B> name "a"               <I>1404da3a0 (loc=1405d2e20)</I>
+  left   <B>CLASS</B> name "author"            <I>1404da440</I>
+ next   <B>FROM_LOC</B> name "_1"              <I>1405d1660 (loc=1405d2ec0)</I>
+  left   <B>LOC_VAR</B> name "a"               <I>1405d1700 (loc=1405d2e20)</I>
+  next   <B>LOC_METHOD</B> name "name"         <I>1404da580</I>
+ next   <B>FROM_LOC</B> name "_2"              <I>1405d17a0 (loc=1405d2f60)</I>
+  left   <B>LOC_VAR</B> name "a"               <I>1405d1840 (loc=1405d2e20)</I>
+  next   <B>LOC_FOLLOW_TAG_NAME</B> name "paper"               <I>1404da260</I>
+ next   <B>FROM_LOC</B> name "_3"              <I>1405d18e0 (loc=1405d30a0)</I>
+  left   <B>LOC_VAR</B> name "_2"              <I>1405d1980 (loc=1405d2f60)</I>
+  next   <B>LOC_LOCAL_POS</B> number 1         <I>1405d1520</I>
+  right  <B>BOOL_COMPARISON</B> op like                <I>1405c03c0</I>
+   left   <B>LOC_VAR</B> name "_1"             <I>1404da4e0 (loc=1405d2ec0)</I>
+   right  <B>TEXT</B> m*               <I>1405c0320</I>
+ right  <B>LOC_VAR</B> name "a"                <I>1404c7380 (loc=1405d2e20)</I>
+ next   <B>LOC_VAR</B> name "_3"               <I>1404da1c0 (loc=1405d30a0)</I>
+</PRE>
+
+<P>The graphical representation of the debug-output would look like this :<BR>
+
+<!-- close the wrapper table of the sanger-header -->
+</TD></TR></TABLE>
+
+   <IMG SRC="parse-tree2.gif"><BR>
+
+<!-- re-open the header-table -->
+<TABLE BORDER="0" WIDTH="80%"><TR><TD ALIGN="LEFT" HALIGN="TOP">
+
+   The parse-tree has gained a lot of new nodes and some nodes have even been lost.
+   The guts of the query have been converted to a series of <B>FROM_LOC</B>
+   nodes which are reminiscent of the <EM>from</EM> keyword. They are the declarations
+   of internal iterators. The user has already declared one iterator (<TT>"a"</TT>)
+   in the <U>from-clause</U> of the query. This iterator is class-based and will
+   therefore loop over all objects in the class <I>"Author"</I>.<BR>
+   The other iterators (with names like <TT>"_1"</TT>) have been added by the 
+   check1 pre-processor.
+   </P>
+
+<P>The reader is reminded of the convention on positions in an Acedb-model.
+   From every tag you can move a certain number of steps to the right
+   to retrieve a specific data-field. In AQL the default tag-position is 1, 
+   i.e. the expression <TT>a->paper</TT> really means <TT>a->paper[1]</TT> and will 
+   therefore return the data-element which is one position to the right of 
+   the tag <TT>"paper"</TT> in an Author-object. The tag-position 0 refers to the 
+   tag itself. The pre-processor will create some extra tag-positiong nodes 
+   where the user has not specified one.</P>
+
+<P>The <B>SELECT_FIELD</B> nodes have disappeared, after some processing
+   they are no longer required, because the node to the right of
+   a <B>TABLE_SFW</B> node automatically identifies itself as a select-field.
+   The 2 select-fields are preserved as <B>LOC_VAR</B> nodes.
+   This query will report 2 columns with the values of the locators <TT>"a"</TT> and <TT>"_3"</TT>
+   at each iteration cycle. Where did the <TT>"_3"</TT> variable come from ?</P>
+
+<P>The variable with names that start with an underscore "_" are internal variables.
+   They could have been declared by the user, but usually the query 
+   is presented in a somewhat abbreviated form.
+   Internally, the query generates 4 results  :
+   <OL>
+     <LI>the iterator "a" itself  ( "a" )
+     <LI>the method "a.name" ( "_1" ) 
+     <LI>the tag itself "a->paper[0]" ( "_2" ) 
+     <LI>the datafield to its right "[1]" ( "_3" ) 
+   </OL>
+   
+   One can now see from the select-fields what the 2 output columns will contain.
+   The internal iterators <TT>"_1"</TT> and <TT>"_2"</TT> can be thought of as hidden columns.
+   They aren't requested by the select-cause and will therefore not be reported
+   but nevertheless must be computed.</P>
+
+<P>So, all the internal iterators become a linked list of <B>FROM_LOC</B>
+   nodes attached to the left of the <B>TABLE_SFW</B> node, which is
+   the root-node. If a variable is declared to be based on a table-variable
+   (e.g. <CODE>select a:1 from a in @results</CODE>) rather than a class, those 
+   iterators are <B>FROM_TABLE</B> nodes.</P>
+
+<P>The where-clause was parsed straight into the appropriate <B>BOOL_...</B>
+   node by the yacc-parser without the need of intermediate <B>WHERE_...</B>
+   nodes (like those needed for the <N>SELECT_FIELD</B>s).
+   The where-clause is represented by a node attached to the right of a 
+   <B>FROM_LOC</B>. This right node represents a condition on the
+   from-clause. In the example the <B>FROM_LOC</B> called <TT>"_3"</TT>
+   is only worth reporting if the expression to its right evaluates TRUE.
+   </P>
+
+<P>The operands of the where-clause expression can only refer to previously
+   declared <B>LOC_VAR</B>s. That's why the previous declaration of
+   <B>FROM_LOC</B> "_1" is required. The <B>BOOL_COMPARISON</B>
+   node is fairly straight forward - it's operator is the <EM>like</EM>
+   function which compares the left node's value to the right node's value.
+   If TRUE, the locator "_3" is valid and the <B>LOC_VAR</B> node "_3"
+   in the select-clause will therefor report the result.
+   </P>
+
+
+<P>The parse-tree now represents the query in a canonical form which contains
+   all the internal declarations needed for the query execution.</P>
+
+<P><B>Check2</B> : The parse-trees is checked against the database.
+   It also determines how the internals locators will be executed.
+   This is the debug output of the parse-tree after <TT>aqlCheck2()</TT> :</P>
+
+<PRE>
+<B>TABLE_SFW</B>                <I>1405c0460</I>
+ left   <B>FROM_LOC</B> name "a"               <I>1404da3a0 (loc=1405d2e20, IS_CLASS)</I>
+  left   <B>CLASS</B> name "author"            <I>1404da440</I>
+ next   <B>FROM_LOC</B> name "_1"              <I>1405d1660 (loc=1405d2ec0, IS_METHOD)</I>
+  left   <B>LOC_VAR</B> name "a"               <I>1405d1700 (loc=1405d2e20, IS_CLASS)</I>
+  next   <B>LOC_METHOD</B> name "name"         <I>1404da580</I>
+ next   <B>FROM_LOC</B> name "_2"              <I>1405d17a0 (loc=1405d2f60, IS_FOLLOW_TAG)</I>
+  left   <B>LOC_VAR</B> name "a"               <I>1405d1840 (loc=1405d2e20, IS_CLASS)</I>
+  next   <B>LOC_FOLLOW_TAG</B> name "paper"            <I>1404da260</I>
+ next   <B>FROM_LOC</B> name "_3"              <I>1405d18e0 (loc=1405d30a0, IS_LOCAL_POS)</I>
+  left   <B>LOC_VAR</B> name "_2"              <I>1405d1980 (loc=1405d2f60, IS_FOLLOW_TAG)</I>
+  next   <B>LOC_LOCAL_POS</B> number 1         <I>1405d1520</I>
+  right  <B>BOOL_COMPARISON</B> op like                <I>1405c03c0</I>
+   left   <B>LOC_VAR</B> name "_1"             <I>1404da4e0 (loc=1405d2ec0, IS_METHOD)</I>
+   right  <B>TEXT</B> m*               <I>1405c0320</I>
+ right  <B>LOC_VAR</B> name "a"                <I>1404c7380 (loc=1405d2e20, IS_CLASS)</I>
+ next   <B>LOC_VAR</B> name "_3"               <I>1404da1c0 (loc=1405d30a0, IS_LOCAL_POS)</I>
+</PRE>
+
+<P>The parse-tree has largely unchanged, but the locators have been assigned types. Those
+   types will dictate how a node is treated during query execution.</P>
+
+
+
+<H3>Part 3 : Query execution</H3>
+
+<P>The parse-tree can now be passed to the function <TT>aqlrun.c:aqlEval()</TT>
+   which executes the query starting from the root.</P>
+
+<P><B>Fuzzy logic</B> : The query is executed twice, in fuzzy and non-fuzzy mode.
+   The <B>first-pass</B> in fuzzy mode will never open any objects and therefore
+   execute very quickly. Any result in fuzzy mode can have one of 3 states :
+   <B>NULL</B>, <B>FUZZY</B> or <B>KNOWN</B>. Some queries can be satisfied
+   without ever having to open any objects and will return a KNOWN-value
+   after the fuzzy-pass (which saves time).<BR>
+   Most queries however, will have to open an object at some time to
+   get a result. During the fuzzy-run the result will have the FUZZY state.
+   Any expression using a FUZZY value will be tainted as FUZZY too, so if the 
+   result of the root-node is still fuzzy after the first-pass a re-run 
+   is required.<BR>
+   The <B>second-pass</B> runs the query in non-fuzzy (i.e. exact) mode.
+   By opening objects (the time-consuming part) all FUZZY result will 
+   be evaluated as either NULL or KNOWN. The results of the non-fuzzy re-run
+   can never be fuzzy.</P>
+
+<P><B>The execution loop</B> : The guts of the query-execution is the linked list of 
+   <B>FROM_LOC</B> nodes which is attached to the left of 
+   the <B>TABLE_SFW</B> node.<BR>
+   The query-execution will loop over those nodes in turn and at every
+   <B>FROM_LOC</B> it will exhaust all possibilities
+   for that locator. The locator <TT>"a"</TT> will re-loop over <TT>"_1"</TT> to <TT>"_3"</TT>
+   for every KEY found in the given class. The locator <TT>"_3"</TT> will
+   be repeatedly processed for all its results, i.e. all data-fields
+   that are found one position to the right of the <TT>"paper"</TT>-tag.<P>
+
+<P>The type of each locator specifies the way it is being processed.
+   There are single-valued and multi-valued locators.
+   In our example there are the following types :
+   <UL>
+     <LI><B>IS_CLASS</B> - multi-valued - loops over all KEYS in the given class
+     <LI><B>IS_METHOD</B> - single-valued - performs given method
+     <LI><B>IS_FOLLOW_TAG</B> - single-valued - find the given tag in the object
+     <LI><B>IS_LOCAL_POS</B> - multi-valued - position to the right, then loop down
+   </UL>
+   For details on the other types, see the function <TT>aqlrun.c:loopVariables()</TT>.
+   </P>
+
+<P>The other important part of the query-execution loop is the processing of
+   each locator at every stage in the loop. Every locator is subjected to this
+   (<TT>aqlrun.c:processThisLoc()</TT>) at the end of a loop-cycle.
+   To find out whether the locator is valid we need to check for its where-clause
+   and evaluate it if necessary. The boolean value of the expression-node
+   which is attached to the right of a <B>FROM_LOC</B> node is used 
+   for this decision. If the where-clause expression is TRUE we can move 
+   on to the next <B>FROM_LOC</B> node to advance the cycle.
+   <BR>
+   When the cycle gets to its end (the <B>FROM_LOC</B> is the end in the chain
+   or the where-clause failed and we terminate the cycle) we have everything
+   we need for this particualr state in the recursion cycle.
+   It is now time to look at the select-field nodes to the right of the
+   top-level table-expression (the <B>TABLE_SFW</B> node) and copy
+   the results into the results table before continuing to loop.
+   The select-fields are expressions, which are evaluated and their results
+   are added to the end of the table. A <B>LOC_VAR</B> expression
+   is easy to evaluate - just copy the value of its locator into the table.
+   </P>
+
+<P>The loop can now continue and the recursion will bubble up to the 
+   last multi-valued node that wasn't yet exhausted. Thereby every possible
+   combination is visited and the results are gathered row-by-row in the
+   results-table which is attached to the top-level <B>TABLE_SFW</B> node.
+   When the recursion has finished this table-value is returned as the final result.
+   </P>
+   
+   
+
+<HR>
+written by Fred Wobus, 06/Dec/1999
+
+<ADDRESS><A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A></ADDRESS>
+
+</BODY>
+</HTML>
+

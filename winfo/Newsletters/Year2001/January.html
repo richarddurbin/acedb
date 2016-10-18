@@ -1,0 +1,256 @@
+<HTML>
+
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - January 2001</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - January 2001</H1>
+
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+
+<!-- ******************************************************************** -->
+<P>This is the post-Christmas/not that much has changed report. There
+are small but important changes to the acedb database log format, a short
+article about the introduction of better web-based downloads for acedb and
+a number of bug fixes.
+
+
+<!--******************************************************************** -->
+<a name="General"></a><h2>General News</H2>
+
+<a name="File"></a><h3>File Chooser and selecting a directory</H3>
+
+<p>A number of users didn't see last months newsletter and wanted to know how
+to go directly to a directory using the 4_8c file chooser. 
+I'll just repeat last months item about how to do this:
+<ul>
+  <li>If you want to go directly to a directory using the file chooser
+      window, you can do this by
+      typing the directory name in the bottom "selection" window
+      and pressing the &lt;tab&gt; key. This will point the file chooser
+      to this directory so you can then choose files from there.
+  <li><b>Note</b> that the &lt;tab&gt; key also does C-shell style filename completion
+      just like you get when using an xterm window. So if you type part of
+      a directory and press &lt;tab&gt; the rest will be filled in for
+      you (as far as this can be done unambiguously).
+</ul>
+
+<P>Hope that's useful.
+
+
+
+<!--******************************************************************** -->
+<a name="New"></a><h2>New Features</H2>
+
+<a name="Acedb"></a><h3>Acedb on windows</H3>
+
+<P>The acedb locking/write access mechanism now works on Windows 95/98.
+
+
+<a name="Better"></a><h3>Better information for signals</H3>
+
+<P>When an internal error happens in acedb or the system runs out of resources
+(e.g. program stack space), the operating system may send a "signal" to acedb
+which stops the program from running. When this happens acedb runs a special
+signal handling routine which attempts to terminate the acedb program with
+a message about what has happened.
+
+<P>The message that acedb outputs has been improved in the following ways:
+<ul>
+  <li>The message now includes an operating system defined message that
+      identifies the cause of the signal.
+  <li>The text of the message has been changed so more accurately indicate
+      whether the signal is likely to have been caused by an acedb error
+      or by a system resource error.
+</ul>
+
+<P>So if one of the acedb programs you are using exits with a message like this:
+
+<pre><code>
+// ABORT : Fatal error, program received signal....
+</code></pre>
+
+and you can remember/reproduce the sequence of actions that caused it then please
+get in touch with the acedb developers
+(<A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>).
+
+
+<a name="Preserve"></a><h3>"Preserve" behaviour restored</H3>
+
+<P>Due to popular demand, the "preserve" button has been added back for the
+tree window display, selecting this item on a tree window menu will ensure
+that the window stays around until explicitly "quit".
+
+
+
+<!--******************************************************************** -->
+<a name="Articles"></a><h2>Articles</H2>
+
+
+<a name="Rearrangements"></a><h3>Rearrangements to acedb downloads</code></H3>
+
+<P>Its possible to download acedb code in one of two ways:
+
+<dl>
+  <dt><b>FTP site</b>
+  <dd>login to the sanger ftp site and go to /pub/acedb
+  <dt><b>Web site</b>
+  <dd>visit <A href="http://www.acedb.org/Software/Downloads/">http://www.acedb.org/Software/Downloads/</A>
+</dl>
+
+<P>We've introduced the web pages to make it easier to navigate the acedb
+downloads directories and get the download package you want.
+On visiting <A href="http://www.acedb.org/Software/Downloads/">http://www.acedb.org/Software/Downloads/</A>
+you will find there are three levels of code you can download and a
+quick summary of the current build status available
+at the bottom of the page.
+
+<P>The three levels of code that can be downloaded are:
+<dl>
+  <dt><b>Public</b>
+  <dd>This is the most stable and supported code. It has the fewest bugs and
+      should be used for critical databases.
+  <dt><b>Monthly</b>
+  <dd>This is a montly build of the development code and will have been tested
+      by developers and with the overnight build/test system. This code
+      will have most of the latest features/bug fixes in it. The code is widely
+      used within the Sanger Centre and should be fairly bug free, if you find
+      a bug in this code please report it as soon as possible.
+  <dt><b>Overnight</b>
+  <dd>This code is the very latest and is not guaranteed to compile/run or anything,
+      its there only to allow other developers to see the latest acedb code and
+      perhaps to allow some users to try out very new features.
+      <b>You shouldn't use this code without talking to the
+      <A HREF="mailto:acedb@sanger.ac.uk">acedb developers</A> first.</b>
+</dl>
+
+<P>If you visit the page for one of these levels of code you will see that there
+are various packages that can be downloaded ranging from the source code, to
+precompiled binaries for various platforms to a demonstration database. If you find
+any problems with any aspect of the download pages then please let the
+<A HREF="mailto:acedb@sanger.ac.uk">acedb developers</A> know.
+
+
+
+
+<!--******************************************************************** -->
+<a name="Bugs"></a><h2>Bugs Fixed</H2>
+
+<a name="Drawing"></a><h3>Drawing performance bug</code></H3>
+
+<P>Drawing of some fmap/gmap displays was very slow because a bug
+in the acedb code was causing the displays to be drawn twice. This should
+now be fixed for all acedb displays, please email the
+<A HREF="mailto:acedb@sanger.ac.uk">acedb developers</A> if this is not
+so in the latest monthly build code.
+
+<P>A another smaller bug was that gmap code would try to map loci or regions
+even if they had no given map coordinates, this has also been fixed. In this
+case the loci/regions are displayed in a text window.
+
+<a name="Objects"></a><h3>Objects missing from active keyset after rename</H3>
+
+<P>Where a simple rename of an object was done via parsing an acefile,
+the object was not left in the active keyset. Now the renamed object
+will be in the active keyset allowing a quick check of renames.
+
+
+<a name="Log"></a><h3>Log entries in <code>database/log.wrm</code></H3>
+
+<P>Logging information in acedb was not complete because although the start
+of a new user session was recorded, the end of the session was not. This meant
+that if acedb failed in a way that could not be caught by the error handling
+routines, there was no record in the log that this had happened.
+
+<P>Now all session starts/ends shouid be bracketed by:
+
+<pre><code>
+&lt;date/time&gt; &lt;machine&gt; &lt;process&gt;  <b>SESSION_START -  </b>&lt;user/program details&gt;
+
+&lt;date/time&gt; &lt;machine&gt; &lt;process&gt;  session information
+
+&lt;date/time&gt; &lt;machine&gt; &lt;process&gt;  <b>SESSION_END -  </b>&lt;<b>session end type</b>&gt;
+
+</code></pre>
+
+<p>where <b><code>"session end type"</code></b> can be one of:
+<dl>
+  <dt><b><code>NORMAL EXIT</code></b>
+  <dd>acedb program exitted normally.
+  <dt><b><code>ABNORMAL EXIT</code></b>
+  <dd>acedb program did not crash, but rather detected an error such as
+      "database not found" and so could not continue.
+  <dt><b><code>CRASH</code></b>
+  <dd>acedb detected an unrecoverable error such as an internal programming fault,
+      or the system running out of memory.
+</dl>
+
+<P>If a <b><code>SESSION_START</code></b> is found in the log without a corresponding
+<b><code>SESSION_END</code></b>, this means (assuming the acedb program is no longer running)
+that acedb crashed severely in a way
+that it could not detect (e.g. if the program was killed with "kill -9" or on some
+systems if it ran out of stack space). This type of crash <b>may</b> have left the database
+corrupted if the program crashed while updating the database,
+and certainly if the database does become corrupted you should look
+in the log for either a <b><code>SESSION_END -  CRASH</code></b> or an unmatched
+<b><code>SESSION_START</code></b>.
+
+<p>Note that a little care is required in parsing the log file for these paired
+starts and ends, process ids can be reused by the operating system. This means
+that you need to first find the <b><code>"SESSION_START/machine/process_id"</code></b> and then
+look for both a new <b><code>"SESSION_START/machine/same_process_id"</code></b> <I>and
+a</I> <b><code>"SESSION_END/machine/process_id"</code></b>. If you find the former, or don't
+find the latter it means the acedb program crashed severely.
+
+
+<!-- ******************************************************************** -->
+<H2>January monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+
+<!-- ******************************************************************** -->
+<H2>Next User Group Meeting - D319, 2.30pm, Thursday 15th February 2001</H2>
+
+<p><b>!*! Please note changed venue !*!</b>
+
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon May 21 14:40:20 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

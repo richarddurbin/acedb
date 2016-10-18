@@ -1,0 +1,57 @@
+<HTML>
+<HEAD>
+<TITLE> The display of comparative mapping data using ACEDB </TITLE>
+</HEAD>
+<BODY>
+<H1> The Comparative Map Chooser </H1>
+<P>This is the gateway to the comparative maps. Two top-level maps, the Oxford Grid and the Species Grid, may be accessed via the Comparative Map Chooser and other maps may be accessed in turn from these. The Comparative Map Chooser contains two blue-bordered areas.</P>
+
+<P>The boxes within the larger of these two areas may be used to produce Oxford Grids. The Map_set 1 and Map_set 2 drop-down menus (as usual, use your right mouse button to view a menu) list all Map-sets held within the database. Select any two of these (if you wish, they may be the same Map_set) and click on the OxGrid button at the top of the Comparative Map Chooser window. If data for it exist, an Oxford Grid will then appear. This may take a little while. Some of the larger grids take in the region of 30 seconds to draw. If there are no data, you will be informed of this.</P>
+
+<P>The Homology Search menu gives you a choice of two data searching methods. For most Oxford Grids, it is usual to use the default Normal search. This will find all homologies specified in the Homology_group class. Data in this class take one of two formats :</P>
+
+<P>
+Homology_group A<BR>
+Pairwise Human-A Mouse-A
+</P>
+
+<P>
+Homology_group B<BR>
+Fuzzy Rice-B<BR>
+Fuzzy Maize-B<BR>
+Fuzzy Sorghum-B<BR>
+Fuzzy Wheat-B<BR>
+Fuzzy Barley-B
+</P>
+
+<P>
+The first of these says that locus A in the human is homologous to locus A in the mouse. This Pairwise method is the usual way of specifying homologies in mammals. The second group shows five loci, one of each being in rice, maize, sorghum, wheat and barley. This Fuzzy method of grouping implies that each member of the list is homologous to all other members. This is the usual way of specifying homologies in plants. The comparative maps support both methods.
+
+There may be some additional homologies in the database that do not belong to this class, but which have been specified as follows :</P>
+
+Locus A<BR>
+Map Human1 Position 5.7<BR>
+Map Mouse3 Position 14.2
+
+<P>This is in effect saying that there is an homology between a locus on Human chromosome 1 and a locus on Mouse chromosome 3. While we do not encourage this method of specifying homologies, the "Include self-homology" searching method will find these.</P>
+
+<P>Please note that a paralogy grid may be drawn by selecting a Map_set against itself, if the data for it (homologies linking loci within the same species) exist within the database.</P>
+
+<P>The second area in the Comparative Map Chooser is used to produce Species Grids. The single drop-down menu contains a list of all Maps in the database. This list is often very long. Therefore, it is often better to choose a Map by using the left mouse button (and then by double clicking on a Map) rather than the right mouse button. Select a Map and click on the SpecGrid button at the top of the window. A Species Grid will then appear, if data for it exist.</P>
+
+<P>Button/Menu options available within the Comparative Map Chooser are :<BR>
+<UL>
+<LI>Quit     - destroys the Comparative Map Chooser window
+<LI>Help     - displays this help information
+<LI>Print    - brings up the Print/Mail Selection tool
+<LI>Preserve - preserves the current Comparative Map Chooser
+<LI>OxGrid   - brings up an Oxford Grid, once two Map_sets and (optionally) a search method have been chosen
+<LI>SpecGrid - brings up a Species Grid, once a Map has been chosen
+</UL>
+
+
+<H1>Acknowledgments</H1>
+<P> The project to write these comparative maps for ACEDB was funded by the Medical Research Council's UK Human Genome Mapping Project, under the supervision of Professor J. H. Edwards of the University of Oxford. Dr A. G. Searle of the MRC Mammalian Genetics Unit in Harwell kindly provided human-mouse homology data vital for their testing. Much of this work was carried out in collaboration with Michelle Kirby, also of this unit. Thanks must go to Dr Martin Bishop (HGMP, Hinxton), Dr Sam Cartinhour (Texas A&M University), Dr Dave Matthews (Cornell Univerity) and Dr Otto Ritter (DKFZ, Heidelberg) for their help with this project. All maps were written by Jo Dicks. If you have comments or suggestions, please email "jo.dicks@bbsrc.ac.uk".</P>
+</BODY>
+</HTML>
+

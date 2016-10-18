@@ -1,0 +1,33 @@
+# $Id: HP_4_GCC_DEF,v 1.4 2003-02-25 20:14:09 srk Exp $
+
+
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+########### wmake/DEC_ALPHA_DEF    March-18-1993       ##########
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+####### for the DEC-Alpha 3000 model 500 running Unix ###########
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+NAME = HP
+# Compiler used to build 3rd party libraries 
+LIBCC = gcc
+RPCGEN_FLAGS = -b -I -K -1
+
+
+COMPILER = gcc -g -DNO_LEFT_CASTING -DACEDB4 `../w3rdparty/include-config -I/usr/contrib/X11R6/include`
+
+LINKER = gcc -g 
+
+LIBS = -L/usr/local/lib -lgcc_s `../w3rdparty/libs-config -L/usr/local/lib` -lm -lreadline  -ly -lcurses -lrpcsvc
+
+RANLIB_NEEDED = false
+#################################################################
+#################################################################
+ 

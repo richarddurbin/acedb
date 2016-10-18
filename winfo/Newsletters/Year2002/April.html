@@ -1,0 +1,280 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - April 2002</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - April 2002</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<P>This month sees some new features to support driving of acedb programs
+from scripts, some Gene Finder changes and as usual some bug fixes.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="General_News"></a><H2>General News</H2>
+
+<P>We continue to work on the introduction of the new SMap code which is
+taking some time as it has many anticipated and many unanticipated (!)
+effects on the FMap code in particular.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+<a name="Save_write"></a><H3>New "Save" and "WriteAccess" commands/options</H3>
+
+<P>Previously users have had more control over saving and write access when
+using xace (e.g. "Save session and keep write access")
+than with the command line tace and giface programs. New options have been
+added to the "Save" command and a new "WriteAccess" command has been added:
+
+<pre><code>Save : [-drop | -regain]
+    Save current state otherwise the system saves every 600 seconds
+       -drop   (default) drop write access after saving
+       -regain regain write access after saving
+
+Writeaccess : [-gain | -drop [save | nosave]]
+    Set write access status
+       -gain (default) get write access
+       -drop lose write access, with or without saving
+</code></pre>
+
+<P>These commands are particularly useful for scripts that need to update a
+database and perhaps need to hold on to write access while parsing in several
+files of data.
+
+
+<a name="xremote"></a><H3>New options for giface commands to give more power to xremote</H3>
+
+<P>The giface program allows the creation of "virtual" displays (e.g. fmap, gmap)
+and then the dumping of those displays in various formats, e.g. GFF, postscript,
+etc. Perhaps less well known is that xace can be driven by the same commands
+via the xremote program distributed with AceDB.
+
+<P>For instance:
+
+<pre><code>xremote -remote 'gif ; seqget bA314N13 ; seqdisplay'</code>
+</pre>
+
+<P>Will get you an FMap of clone bA314N13 displayed by xace (you must have xace running
+<b>before</b> you issue the xremote command.
+
+<P>This mechansim is used as a core part of the <b>"lace"</b> annotation tool maintained by
+James Gilbert
+<A href="mailto:jgrg@sanger.ac.uk">James Gilbert &lt;jgrg@sanger.ac.uk&gt;</A>
+for the human annotation project at the Sanger Institute.
+
+<P>The new options include:
+
+<pre><code><b>seqdisplay</b> ..... [-new] [-title title]
+     Works on current sequence, use gif or ps to actually dump the display
+        -new     make a new sequence, current one is preserved (for use only with xremote currently)
+        -title   give your own title to the sequence
+</code></pre>
+
+<pre><code><b>seqrecalc</b>
+     Causes the sequence to be recalculated for the active graph
+</code></pre>
+
+
+<P>You could for example use the new commands/options to construct a script which:
+
+<ol>
+  <li>Starts up an xace for the user, and then automatically displays a sequence
+      in an fmap:
+<pre><code>xremote -remote 'gif ; seqget sequence_name ; seqdisplay'</code>
+</pre>
+  <li>Adds new data into the database and gets the fmap to recalculate and show
+      the new data by:
+<pre><code>xremote -remote 'gif ; seqrecalc'</code>
+</pre>
+  <li>Replaces the sequence in the fmap with a new sequence:
+<pre><code>xremote -remote 'gif ; seqget new_sequence_name ; seqdisplay'</code>
+</pre>
+  <li>Displays a new sequence in an entirely new fmap (which becomes the current fmap, the existing
+  current one is preserved):
+<pre><code>xremote -remote 'gif ; seqget another_sequence_name ; seqdisplay -new -title "Super New Sequence'</code>
+</pre>
+</ol>
+
+
+<P><hr width="62%" align=left>
+<H2>March monthly build not available.</H2>
+
+<P>Apologies, once again there was no build this month due to the major
+SMap development work.
+
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+
+<a name="gfcode"></a><H3>Gene Finder changes</H3>
+
+<P><A HREF="mailto:klh@sanger.ac.uk">Kevin Howe &lt;klh@sanger.ac.uk&gt;</A>
+has made some changes to the Gene Finder code (originally written by Phil
+Green of Washington University Medical School) which while not strictly
+affecting acedb are worth documenting here (most of the changes affect
+the stand alone version of the gene finder code).
+
+<P>Kevins comments:
+
+<P>You can do a diff on the file yourself to see what I've changed. The
+standalone-only stuff I've protected with "#ifndef ACEDB", but I'll
+just summarise the other changes here:
+
+<ol>
+  <li>The array "cumVec" is now double instead of float (and this has
+      some knock-on effects in places where this array is used/passed,
+      parameter types etc). This is because the float precision is
+      inadequate for sequences more than 10kb or so. You may want to change
+      this back.
+  <li>I've changed the constant SEGSCORECUTOFF from a #define to a static
+      float. This is so that the value can be modified by a command-line
+      option in the standalone version.
+  <li>The main calculation of the coding segments and genefinder features
+      in "aceFeatures" and "aceSites" is now protected with checks that
+      that tables for each site-type are non-null. This will have no
+      impact in ACEDB, because the tables are always non-null, but I've
+      extended the standalone version to be more flexible in what it
+      expects in the tables file. If you don't want ATG predictions, then
+      you can make a tables file with no ATG tables, and the code will now
+      happily not try to predict ATGs.
+  <li>In aceMaxSegs, there was a mistake which meant that some GF_CODING
+      segments were calculated in the wrong frame, which I've fixed.  In
+      aceFeatures, I also added a fix which ensures that coding segments
+      that bridge a stop codon are broken into two segments, one either
+      side. I discussed this one with Richard and he agreed that this is
+      the now the correct behaviour.
+</ol>
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="show_as"></a><H3>Inappropriate "Show As" actions</H3>
+
+<P>The code to decide what to do when a user tried to display an object
+from the keyset window when the "Show as" display type was incorrect did not
+always work very sensibly or, in some cases, did not work at all.
+
+<P>The code to decide what to do when there was an object/display type mismatche
+was scattered across some 15 files which compounded the problem.
+All the code to choose what to do is now in display.c and takes a consistent
+series of steps to cope with this problem, ending with the Tree display if no other
+appropriate display can be found. In addition the
+code will now warn the user when the object simply cannot be displayed.
+
+
+<a name="restriction"></a><H3>Buglet in restriction dialog for Fmap</H3>
+
+<P>The search pattern in the dialog box is now also reset to blank when the
+user clicks the "clear" button.
+
+
+<a name="gff_dump"></a><H3>Bad bug in the GFF dumper.</H3>
+
+<P>A change in the way the strings that hold an objects name are handled
+caused the GFF dumper to reference deallocated storage when printing out
+the objects name, now fixed.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+<P>If you wish to make comments/suggestions about any of the below, please mail them
+to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>
+
+
+<a name="bindex"></a><H3>Replacing bIndexFind() with bIndexTag()</H3>
+
+<P>The bindex package in acedb provides a call to use the index to test
+whether a particular tag exists in an object:
+
+<pre><code>BindexFindResult bIndexFind(KEY originalKey, KEY tag) ;</code>
+</pre>
+
+<P>But there is a trap for the unwary here in that the call can return
+one of three possible values (BINDEX_TAG_ABSENT, BINDEX_TAG_UNCLEAR, BINDEX_TAG_PRESENT)
+and its very easy to forget this and write code that assumes that a Boolean value is
+returned:
+
+<pre><code>if (bIndexFind(key,tag))</code>
+</pre>
+
+<P>This call will sometimes return BINDEX_TAG_UNCLEAR and sometimes BINDEX_TAG_PRESENT
+with consequent confusion in the code following the test.
+
+<P>In fact Jean had already added some functions (keyGetNNN) to bssubs.c
+to use bIndexFind() but then open the object and look for the tag if the
+return from bIndexFind() was BINDEX_TAG_UNCLEAR. These calls returned an unambiguous
+Boolean value to indicate whether the tag was present or absent.
+
+<P>These calls have now been renamed and moved to bindex.c as it seems more logical/obvious
+for them to be with bIndexFind, they are:
+
+
+<P><code><b>BOOL bIndexTag(KEY key, KEY tag) ;</b></code>
+
+<P>returns <b>TRUE</b> if <b>tag</b> is found in object <b>key</b>.
+
+<P><code><b>BOOL bIndexGetKey(KEY key, KEY tag, KEY *key_out) ;</b></code>
+
+<P>returns <b>TRUE</b> if
+<b>tag</b> is found in object <b>key</b> and will return the key following <b>tag</b>
+in <b>key_out</b> if <b>key_out</b> is non-NULL.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<H2>April monthly build not available.</H2>
+
+<P>Apologies, once again there was no build this month due to the major
+SMap development work.
+
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon Nov 11 12:25:27 GMT 2002
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

@@ -1,0 +1,75 @@
+=========================================================================
+                        AceDB - September MAR
+
+
+Executive summary.                                                                        
+------------------                                                                        
+
+A big change in the AceDB team this month, Simon is leaving for pastures
+new (working for Phil Butcher on Linux kernel type stuff). This has meant
+some reassessment of priorities including the following:
+
+- in future we will only be supporting the Unix and Mac builds, Windows
+  support will be dropped unless someone else wants to take this up.
+
+- work will continue on the replacement for FMap (aka ZMap) which will be
+  available as part of xace and as a stand alone client.
+
+- bug fixing and modifications to acedb will be limited in the future to
+  time allowed by work on Zmap.
+
+
+Porting work
+------------
+
+Windows port now includes:
+
+	- MakeAceDB, a script to create new databases with correct
+	  subdirectories, files, permissions etc.
+
+	- dotter/blixem package
+
+	- much work to get a final windows build done with a new version
+          of cygwin.
+
+Mac port now includes:
+
+	- xremote added, allows programmatic control of a running xace process.
+
+	- dotter/blixem package
+
+All available from AceDB downloads page(s).
+
+
+Move to GTK 2
+-------------
+
+Its time for AceDB to move on to a later version of GTK (the graphics package
+used by AceDB) as the current version (1.2) is no longer actively supported.
+This is work in progress (including getting GTK installed on the Alphas).
+
+
+Support of Wormbase
+-------------------
+
+Much testing of code to allow building of virtual sequences that contain only
+specified subsets of features. Provides much needed efficiency improvement
+both for Wormbase and for the bi-weekly worm DB builds here at Sanger.
+
+As a spin off we improve our overnight test system with extra Smap/virtual
+sequence tests.
+
+Extending gene curation tools in fMap to allow annotation of objects in any
+class that is sMappable, part of on going work to support complete revision
+of wormbase schema for representing genes.
+
+
+ZMap
+----
+
+Have working multi-threaded prototype which contacts servers and displays the
+results in simple text windows currently. All server contact/data processing
+is via sub-threads allowing user to cancel database connections/continue
+working while waiting for data etc.
+
+

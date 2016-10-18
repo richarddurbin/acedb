@@ -1,0 +1,54 @@
+Standalone genefeatures program.
+
+This program scans a sequence in FASTA format for localised gene 
+features.  These features are then written to stdout in GFF format.
+
+Usage: genefeatures [opts] <tablefile> <sequencefile>
+eg     genefeatures tables b0334.dna
+
+  -h(elp)      : print this message
+  -v(ersion)   : print genefeatures version info
+  -segs <n>    : cutoff for segment scores (default 1.0)
+  -splice3 <n> : cutoff for splice3 scores (default -2.0)
+  -splice5 <n> : cutoff for splice5 scores (default 0.0)
+  -atg <n>     : cutoff for ATG scores (default 0.0)
+  -stop <n>    : cutoff for stop scores (default -2.0)
+
+To predict features, you give it sequence profiles of the features 
+that you're interested in.  Examples of these are included with 
+this distribution, eg humtab.atg. 
+
+The <tablefile> parameter is the name of a file containing a list 
+of all the profile files to be used.
+
+In fact, you make two files for each feature: one representing a profile of
+positive examples of the feature of interest (e.g. real splice sites), and
+the other a profile of identical dimensions made from "pseudo" examples of
+the feature (e.g. pieces of sequence that have some splice-site
+characteristics, but are not splice-sites.  This second table is most often
+made by just making a profile from random pieces of DNA, hence the
+presence of table names that start with "ranseq").
+
+Although the gene_features binary can be anywhere you like, you must be 
+in the directory where the profile and sequence files exist when you 
+run the program, or it won't be able to find the data to process.
+
+The <sequencefile> holds the FASTA-format sequence you want to scan, 
+of course.
+
+To build a new binary from the source.
+
+A Makefile is provided, so as long as you have all the source code,
+you should just be able to type "make".
+
+The files included with this distribution are as follows:
+
+Makefile
+README
+gfcode.c
+readseq.c
+readseq.h
+regular.h
+genefeatures
+
+

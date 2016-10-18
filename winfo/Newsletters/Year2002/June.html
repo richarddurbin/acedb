@@ -1,0 +1,208 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - June 2002</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - June 2002</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<P>This month, some new homology drawing tags/code, some bug fixes and some
+general gubbins for developers.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="General_News"></a><H2>General News</H2>
+
+<P>More smap and more smap and more smap.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="blixem"></a><H3>New Blixem Preference</H3>
+
+<P>From the xace "Preferences" dialog you can now specify a path for the script
+that launches the stand alone version of blixem (you need to set the BLIXEM_EXTERNAL
+preference to use the stand alone version). This allows users to select
+which version of blixem they want to run which can be useful for testing new versions.
+
+
+<a name="Homols_ESTs"></a><H3>Display of Homologies and EST read pairs in FMap</H3>
+
+<P>The FMap display now supports drawing of lines between the blocks for
+a single feature, e.g. all the blocks of a single homolgy match.
+This is very useful when there are lots of homologies in a column or when
+a homology is spread out over a long distance as it makes it easy to see which
+blocks belong with each other or whether there are further blocks off screen.
+This is extended for EST read
+pairs so that the blocks for each match are joined by lines and the pair are
+also joined with a dashed line. The line drawing is turned on when the display mode
+for a feature/homology column is set to "cluster" (cluster mode already vertically aligns the blocks
+for each feature).
+
+<P>Line drawing for all features is controlled by:
+
+<P><b><code>Join_blocks</code>:</b>This is a new tag in the <code>Display</code>
+section of the <code>?Method</code> class, if present in the Method object
+for a feature then blocks will be joined by lines when the column display mode is "cluster".
+
+<P>In addition to specifying the <code>Join_blocks</code> tag,
+connecting of EST read pairs by a dashed
+line is controlled by the following tags within the two Sequence
+class objects representing the EST read pair:
+
+<P><b><code>Paired_read ?Sequence XREF Paired_read</code>:</b> each EST Sequence object
+must cross reference the other.
+
+<P><b><code>EST_5</code> or <code>EST_3</code>:</b> one EST Sequence object must have the
+<code>EST_5</code> tag and one the <code>EST_3</code> tag to 
+indicate whether they are the 5' or 3' read.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="Model_bug"></a><H3>Small bug in "Model" command</H3>
+
+<P>Fixed a small buglet in "Model" command which meant code read past the end
+of the class definition to be displayed and showed irrelevant comments that
+happened to follow the definition.
+
+
+<a name="databasefile_bug"></a><H3>Write access to database.map</H3>
+
+<P>The code now crashes if it cannot write the database.map file, it
+used to fail silently potentially leaving a corrupted database.
+
+
+<a name="reverse_strand"></a><H3>Show_in_reverse_orientation bug</H3>
+
+<P>Homols that have the Show_in_reverse_orientation tag set get swopped to
+the opposite strand, they must be swopped back to their original strand
+when passed to Blixem.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+<P>If you wish to make comments/suggestions about any of the below, please mail them
+to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>
+
+
+<a name="messubs_changes"></a><H3>Some messubs changes</H3>
+
+<P><b>messcrash message format:</b> The format of the message now contains
+information about the program running, userid etc. in a more easily parsed/uniform
+way:
+<pre><code>// FATAL ERROR (ruid: XXX, euid: XXX, nodeid: XXX, program: XXX, version: XXX, file: XXX.c, line: XXXX)
+   -  Unable to update database/database.map file (system error 13 - Permission denied)
+</code></pre>
+
+<P><b><code>messcrash</code> optional <code>abort()</code> call:</b> You can control whether messcrash calls
+<code>abort()</code> or not using the <code>messAbortOnCrash()</code> routine prior to the messcrash call. This
+call is used in the implementation of the <code>messAssert()</code> macro described below.
+
+
+<P><b>A safer hprintf():</b> <code>hprintf()</code> (and other XXprintf style routines)
+have been a problem in Standard C because there was no way to tell whether you had
+allocated a big enough buffer to hold the string that they produce. Some operating
+systems and the latest version of the C standard library overcome this to some
+extent with XXnprintf versions of the calls which print at most "n" characters.
+Glib already provides these type of calls, e.g. g_vsnprintf(), and hprintf() now
+makes use of this.
+
+
+<P><b>Some messNNN macros():</b> The following macros have been added to
+regular.h which should help with producing concise but error-checking code:
+
+<dl>
+  <dt><b>messCheck()</b>
+  <dd>allows more succint (one line) checking of whether calls such as printf()
+      worked. Can be used in either of these formats:
+      <pre><code>messCheck( var = func(arg1, arg2), cond) ;
+messCheck( func(arg1, arg2), cond) ;</code></pre>
+      Note that you don't have to assign the function result to a variable and that
+      "cond" should be a simple equality test like  != 0  or  == NULL.
+  <dt><b>messAssert()</b>
+  <dd>this macro works just like the standard C library assert() but calls messcrash()
+      instead of directly calling abort().
+</dl>
+
+<P>If the checks fail then messcrash is called with a string which shows the condition
+that failed.
+
+
+<a name="graph_changes"></a><H3>Graph package changes</H3>
+
+<P>You can now set the graph line style via the <code>graphLineStyle()</code> call to either
+<code>GRAPH_LINE_SOLID</code> or <code>GRAPH_LINE_DASHED</code>.
+
+<P>There is a new <code>graphBoxSetDim()</code> function which you can use to set the dimensions
+of a box, this enables you to do things like draw a single pixel wide line but
+in a box that is several pixels wide so that the user can more easily click on the
+line (this is used in the homology block line drawing code so that the user
+can click on the lines between homology boxes to select that particular homology match.
+
+
+
+<a name="smap_changes"></a><H3>SMap changes</H3>
+
+<P>The smap code now makes use of the NO_OVERLAP_EXTERNAL status flags to detect
+which end of a feature has been clipped if the feature extends beyond the end of
+the current smap. We can make use of this to draw at least part of very long
+features that extend beyond the ends of the current FMap context for instance.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<H2>June monthly build not available.</H2>
+
+<P>Apologies, once again there was no build this month due to the major
+SMap development work.
+
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Wed Dec 18 16:33:20 GMT 2002
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

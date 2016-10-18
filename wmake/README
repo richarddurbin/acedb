@@ -1,0 +1,36 @@
+
+Description of make system used for acedb code.
+===============================================
+
+Introduction
+------------
+This file describes various aspects of the make system used for acedb.
+Use this file to explain things rather than cluttering up the makefiles
+themselves.
+
+
+
+
+
+Libraries
+---------
+
+The recommended order of object files/libraries for linking is:
+
+
+cc -o <exename>  <acedb object files> <OEM libraries> <system libraries>
+
+The variable LIBS should be used in the _DEF files to specify the OEM and system
+libraries.
+
+This order minimises problems with unresolved symbols but does impose the penalty
+that acedb files must not supply external symbols with the same name as those
+in the OEM and system libraries. If this happens the acedb symbol will override
+the library symbol to produce in the worst case subtle bugs.
+
+(Note that the aims of minimising unresolved symbol errors and minimising problems
+with duplicate symbols clash, they require oppposite orderings. It is up to us
+to make sure we don't duplicate existing library symbols and use (where possible)
+linker warnings to tell us about this.)
+
+

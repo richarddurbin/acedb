@@ -1,0 +1,21 @@
+Class Actor
+Visible
+Is_a_subclass_of Person
+Filter Stars_in
+
+Class Director
+Visible
+Is_a_subclass_of Person
+Filter Directed
+
+Class ScriptWriter
+Visible
+Is_a_subclass_of Person
+Filter Scripted
+
+Class Author
+Visible
+Is_a_subclass_of Person
+Filter Wrote
+
+

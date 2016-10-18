@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+
+<HEAD>
+
+<LINK rel=stylesheet type="text/css"
+href="../acedocs.css"
+title="Style sheet for general ace documents">
+
+    <title>ACEDB - in the Short Term</title>
+    <meta name="keywords" content="acedb, future, plan, strategy, changes">
+    <meta name="description" content="Thoughts/ideas about how Acedb will develop in the future.">
+
+</HEAD>
+
+
+<BODY>
+
+<h1>ACEDB - in the Short Term</h1>
+
+<A name="intro">
+<FONT color="blue">
+<h2>Introduction</h2>
+</FONT>
+</A>
+
+<p>Some of these changes are really just bugs, others are smaller changes
+that could be made for relatively little effort.</p>
+
+<h2>For users</h2>
+
+<A name="windows">
+<FONT color="blue">
+<H3>acedb on MS windows</H3>
+</FONT>
+</A>
+
+<p>Thanks to <A href="mailto:rbsk@sanger.ac.uk">Richard Bruskiewich</A> we have had a windows
+version of acedb for a while. One problem with this version was that it required different code
+for the windowing routines on Unix and Windows. Thanks to
+<A href="mailto:srk@sanger.ac.uk">Simon Kelley</A> we now have a version of acedb based on the
+GTK widget set which can be used on Windows and Unix. More importantly Simon has also installed a
+working environment under Windows that provides the unix utilities for building acedb. This means
+that it will be much easier to produce windows and unix versions in unison. This version of acedb
+will be available in acedb 4_8.</p>
+
+<A name="widget">
+<FONT color="blue">
+<H3>New Widget Set</H3>
+</FONT>
+</A>
+
+<p>The new GTK widget set is being introduced with ACeDB 4_8 which will greatly improve the
+look/feel of acedb applications. This widget set has been chosen because it is free and is
+supported on both Unix and Windows. This means that for the first time we can have one version
+of the source code that will run on both Windows and Unix. The interface will bring the
+following advantages:</p>
+<OL>
+  
+  <LI>the interface will look like other common interfaces (Motif, Windows).
+  <LI>Common interface actions such as:
+       <OL>
+	 <LI>fully edittable text fields
+	 <LI>keyboard short cuts (page up/down keys, ESC to cancel an action, etc.)
+	 <LI>copy & paste or drag & drop (for acedb and other application windows)
+       </OL>
+       will be implemented using the new widget set instead of having to write code
+       within acedb to do this.
+  <LI>displays will be clearly separated into 'control' sections (buttons/sliders etc.) and
+       'data' sections. The data sections will be completely acedb controlled as before
+       using the graph package. The control sections will use the GTK widget set.
+       Printing will be of the data sections only.
+</OL>
+<p>The major disadvantage of the GTK widget set is that it is not supported on the Mac.</p>
+
+
+
+<A name="help">
+<FONT color="blue">
+<H3>Help files</H3>
+</FONT>
+</A>
+<p>Just about all the help files are in html now and are displayed either via a browser (usually
+netscape) or via a cut down internal html parser which may not display all help files perfectly.
+The help files must still be in a predefined directory
+within the the target database directory tree (whelp).</p>
+
+<P>There have been several suggestions to do with improving the help facilities:
+<UL>
+  <LI>Users should be able to specify whether the acedb html parser is used to display
+       help files or whether an external browser should be used.
+  <LI>We should allow help files to be local to the directory database or via http url.
+  <LI>Help needs to be divided into two sections: the first would be common to all databases
+       (e.g. a description of how the keyset window can be used), the second would be
+       specific to a database (e.g. describing the actual columns in an fmap display).
+       No decision has been made about how this should be done yet.
+</UL>
+</p>
+
+<h2>For developers</h2>
+
+<A name="nfs">
+<FONT color="blue">
+<H3>NFS and acedb databases</H3>
+</FONT>
+</A>
+<p>There is an ongoing problem with having acedb databases accessed for writing on NFS mounted
+disks. The problem is that acedb writes of the database are done using buffered writing, this
+means that if for any reason the NFS write fails then the acedb application does not see it.
+We could set the database files to be written to synchronously but this will probably clobber
+performance. This seems to be the reason for database corruption on several occasions recently.
+Trials are going on to look at doing synchronous writes.</p>
+
+
+<A name="sockets">
+<FONT color="blue">
+<H3>Sockets</H3>
+</FONT>
+</A>
+<p>The current mechanism for communicating between an acedb server and client is based on rpc,
+this method is being changed to sockets for the following reasons:
+<DL>
+  <DT>Portability
+  <DD>rpc has been difficult to maintain on all unix systems and is known to be buggy
+       on windows systems. sockets, being a fundamental method of communication are
+       solidly implemented on all these systems.
+  <DT>Connectivity
+  <DD>Sockets are such a standard way of communicating that access to them is provided
+       in many environments (e.g. perl). Providing a socket interface to the server
+       makes it more easily available to other programs/interfaces (e.g. aceperl).
+  <DT>Efficiency
+  <DD>with rpc we are stuck with just one level of efficiency, using our own transport layer
+       based on sockets will allow us to use different communication methods according to where
+       the client and server are running:
+       <DL>
+	 <DT>tcp sockets
+	 <DD>used where client and server are on different machines, least efficient.
+	 <DT>unix domain protocol
+	 <DD>used where client and server are on same machine but shared memory does
+	      not exist, probably at least twice as fast as tcp sockets.
+	 <DT>shared memory
+	 <DD>used where client and server are on same machine, maybe an order of magnitude
+	      faster than tcp sockets
+       </DL>
+       Currently there is code for tcp sockets but with minimal tweaking this will support
+       unix domain protocol communication. Shared memory will require more work.
+  <DT>Reliability
+  <DD>rpc provides a simplified interface to network communcation, this is fine as long
+       as everything is working, when errors occur it is very difficult to identify the
+       precise cause. Sockets provide more information about the errors.
+</DL>      
+There is prototype code working with serveral clients communicating with an ace server. The aim
+is to provide socket based client/servers for acedb 4_8, this will then become the way for
+clients/servers to communicate, support for rpc will be withdrawn.</p>
+
+<P><B>There is still a disussion going on about whether the new version of the client should
+connect to both rpc and socket based servers.</B> There are pros and cons, on the one hand
+it's easier for users if it connects to both, on the other it may not be possible for us
+to reliably detect what protocol the server is using (MS Windows anyone...?) and also it could
+be a good mechanism for us getting users to update there servers/clients if the new client only
+works with the new server. <B>This needs a bit of thought.</B></p>
+
+<A name="bugs">
+<FONT color="blue">
+<H3>Bugs...</H3>
+</FONT>
+</A>
+
+<p>There are (not surprisingly) a number of bugs that have crept into
+acedb over the years, here are some of them.
+<DL>
+  <DT>Hard coded strings/numbers
+  <DD>There are many instances where numbers or strings are hard coded rather than via
+       a common symbol, this applies to buffer sizes, directory names etc. etc.
+       The number is being reduced and where possible enums are being used because they
+       can be seen by the debugger.
+<DT>Redeclaring Values
+<DD>Much progress has been made in restructuring header files into sets of private/public
+     headers for each package within acedb. There is still some work to be done by the
+     reorganisation of the code into libraries has greatly cleaned up the structure of the code.
+<DT>Redeclaring functions
+<DD>There are a number of files which contain redeclarations of functions
+     already in declared in a header files, sadly this is still true, the number is reducing
+     but there are still some instances.
+     e.g. in ./w9/gfcode.c
+     <PRE>
+extern void fMapAddGfSite (int type, int pos, float score, BOOL comp) ;
+     </PRE>
+     <FONT color="red">This is terrible...</FONT> it opens up the possibility
+     of functions being declared
+     slightly wrongly which can introduce subtle bugs that are very difficult
+     to find. Functions with external scope should be declared in just one header
+     file only.
+<DT>'char' vs. 'unsigned char'
+<DD>anything declared as 'char' is at the whim of the compiler as
+to whether it is signed or unsigned (see the ANSI C standard), this can
+be serious if the data is for instance image data and should be treated
+as having values in the range 0 - 255.
+<P>
+A possible example can be seen in file graphxlib.c in the declaration of
+function rawImage:
+<PRE>
+static XImage *rawImage (char *data, int w, int h, int len)
+</PRE>
+<DT>not checking return code of common system calls
+<DD>call such as printf, fprintf, sprintf etc. all return a return code which is rarely
+checked, this is certainly true of acedb code. We should decide if this is to
+be continued and documented as a hole in the code or rectified.
+<DT>use of sprintf/vsprintf
+<DD>there are a number of places in acecb code where sprintf or vsprintf are used to
+     write data into a buffer. Unfortunately there is no way of knowing in advance how
+     much data will be written nor can the amount of data written be controlled. This
+     produces the real danger that the buffer will overflow. The messprintf code has
+     been altered to handle this as well as possible, there is also a new call in some
+     libc versions called snprintf which will only print out up to the requested number
+     of bytes. When this call becomes more widely available it will be included in the code.
+     (perhaps we should #ifdef this in for operating systems that support this new call ??)
+</DL>
+
+<A name="makefiles">
+<FONT color="blue">
+<H3>Makefiles</H3>
+</FONT>
+</A>
+
+<p>The following discussion talks about the directory structure for each individual
+developer, this is NOT a shared directory structure.</p>
+
+<P>Currently the makefiles allow a user to log onto different machines (Sun, HP etc),
+type 'make' and have the make run and put its results into a machine specific
+directory. There are still some improvements to be made:</p>
+
+
+<OL>
+  <LI>The directory hierachy has been substantially reorganised/renamed so that directory names
+       reflect the purpose of the code within them but there is still some work to do.
+  <LI>The private header files for a package should be kept in the same directory as the
+       code files for the package, the public header files for the package can go in the
+       common wh directory. This work is mostly done but many source files do not correctly specify
+       the acedb header files as either <B>&lt;wh/header.h&gt;</B> for public headers or as
+       <B>&lt;wpackage/header.h&gt;</B> for private headers.
+  <LI>We should consider altering the make files to allow
+       compilation from within that directory,
+       at the very least it should be possible to say something like 'make fmapcontrol.o'
+       and just compile a single object file. The makefile at the bottom of the tree will
+       allow a developer to type 'make' and have the entire the development tree remake
+       itself. This bottom level makefile will also ensure that the code is built in the
+       correct order (libraries first, applications next).
+  <LI>Dependencies still need a lot of work so that code is correctly recompiled (we can also
+       use the makedepend tool to help with this).
+  <LI>extra targets such as 'clean' and 'install' need tidying up,
+</OL>
+
+<A name="dbase_paths">
+<FONT color="blue">
+<H3>acedb directories</H3>
+</FONT>
+</A>
+
+<p>acedb applications expect databases that they are run against to have a standard
+directory tree format, e.g. given a database directory of "cgc" then "cgc/database"
+will contain the actual database files, "cgc/wspec" will contain the files
+describing the format of the database files etc. etc. Unfortunately this database
+tree structure is scattered across the code as individual strings embedded in
+routines (e.g. "wspec"). This seems like encapsulation but in fact means that
+to alter or see the directory structure (or debug errors such as not being able
+find help pages) is very difficult. The directory structure should be encapsulated
+in one file (perhaps an include file) so it can be easily altered or inspected.
+If encapsulation of say the spec reading routines is desired then they should be
+initialised with the path to the spec files.</p>
+
+<p>Note that this spreading of directory
+names across the code has also lead to a duplication of code to find the database
+directory and hence the required subdirectory to several places in the code.
+Clearly there should be one place in any application where the database directory
+is found and after that individual subdirectories will be identified from this.
+(This was clearly the intent in help.c which has a helpInit function which is
+supposed to initialise a static variable to point forever at the directory
+where the help is to be found. This does not happen in fact and help.c did not
+find its help files correctly until recently.</p>
+
+</body>
+</html>

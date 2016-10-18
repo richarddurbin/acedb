@@ -1,0 +1,5 @@
+"Sean Connery"	10
+"Roger Moore"	7
+"Pierce Brosnan"	3
+"George Lazenby"	1
+"Timothy Dalton"	2

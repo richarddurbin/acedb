@@ -1,0 +1,76 @@
+# $Id: LINUX_64_BLXNEW_DEF,v 1.9 2011-05-03 14:45:48 edgrif Exp $ #
+
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+############### ported to Linux by Ken Letovski    ##############
+############### wmake/LINUX_DEF    Feb-2-1993      ##############
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+###########    for generic intel-based LINUX   ##################
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+NAME = OPTERON
+
+# Alternative blixem compile directory and new files/objects to include for new blixem.
+DISPLAYTOOLS = SeqTools
+
+BLIXEM_SOURCES = blxview.c blxmain.c blxselect.c blxparser.c blxFetch.c \
+        sequencecellrenderer.c bigpicture.c bigpicturegrid.c \
+        detailview.c detailviewtree.c blxwindow.c exonview.c \
+        utilities.c blxdotter.c blxGff3Parser.c seqtoolsWebBrowser.c \
+        blxmsp.c seqtoolsExonView.c greyramptool.c alignmenttool.c dotplot.c 
+
+SEQTOOLS_OBJS = dotter.o dotterKarlin.o sequencecellrenderer.o bigpicture.o bigpicturegrid.o detailview.o \
+                detailviewtree.o blxwindow.o exonview.o utilities.o blxdotter.o blxGff3Parser.o seqtoolsWebBrowser.o \
+                blxmsp.o seqtoolsExonView.o greyramptool.o alignmenttool.o dotplot.o 
+
+
+# Set up pkg-config/gtk etc compile stuff...
+PKGPATH = -local /software/acedb/gtk
+
+
+# Compiler used to build 3rd party libraries 
+LIBCC = gcc
+
+COPT = -g
+
+LOPT = -g -Xlinker -rpath -Xlinker /software/acedb/lib
+
+GLIB_VER = glib-2.0
+GLIB_LIBS = `../w3rdparty/libs-config $(PKGPATH) $(GLIB_VER)` -lm -lcurses -lreadline
+
+GTKVER = gtk+-2.0
+LIBS = -L/usr/X11R6/lib `../w3rdparty/libs-config $(PKGPATH) $(GTKVER)` -lm -lcurses -lreadline
+
+COMPILER = gcc $(COPT) -Wall  -DACEDB4 `../w3rdparty/include-config $(PKGPATH) $(GTKVER)`
+
+LINKER = gcc $(LOPT)
+
+### Linux uses flex to emulate the standard 'lex' program
+LEX_LIBS = -lfl
+### flex -l emulates AT&T lex as accurately as possible
+LEX = flex
+LEX_OPTIONS = -l
+
+### linux may use bison with flag -y if yacc doesn't exist
+YACC = yacc
+YACC_OPTIONS =
+
+RPCGEN_FLAGS = -b -I -K -1
+
+AR_COMMAND = ar
+AR_OPTIONS = cru
+RANLIB_NEEDED = true
+
+#################################################################
+#################################################################
+ 
+ 
+ 
+ 

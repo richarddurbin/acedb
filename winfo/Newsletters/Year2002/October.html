@@ -1,0 +1,232 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - October 2002</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - October 2002</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+
+<P>This month sees some improvements to the "gif smap" commands, to column
+overlap control in FMap and to EMBL dumping. There are some performance
+improvements to the socket server and some improvements to SMap, a bug fix
+and for developers some improvements to the ACEIO package.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="gif_smap"></a><H3>Improvements to "gif smap" command</H3>
+
+<P>The "<code>smap</code>" command available from the the "<code>gif</code>" submenu allows you to map the
+coordinates from one sequence into the coordinate frame of another related sequence.
+The format of the command is:
+
+<pre><code>smap -coords x1 x2 -from class:object -to class:object
+</code></pre>
+
+<P>If you do not specify the <code><b>-to</b></code> argument it now defaults
+to the root of the smap tree containing the -from sequence.
+
+<P>If you do not specify the <code><b>-coords</b></code> argument it now defaults
+to the start and stop coordinates of the -from sequence.
+
+
+<a name="col_overlap"></a><H3>Improvements to column overlap mode in xace</H3>
+
+<P>The different columns in the fmap correspond to the different Method objects
+in the database, on the forward strand they are given the name of the Method
+object, on the reverse strand the name is prepended with a "-". Some of the
+Method object data is shared for both columns, some is column specific. Up until
+now the overlap mode was shared which meant that if you selected "bump" it would
+be applied to both forward and reverse strands which could be very irritating as
+the whole display would be shifted by a large amount to the right. Now overlap
+mode can be set independently for the forward and reverse strands. The mode is
+specific to the strand so that if you select "overlap" for the reverse strand,
+then it will remain as overlap when you for instance reverse complement the display.
+
+
+<a name="embl_dump_logic"></a><H3>Changes to the EMBL dumping code within AceDB</H3>
+
+<P>(<I>This article is courtesy of Dan Lawson</I>
+<A HREF="mailto:dl1@sanger.ac.uk">dl1@sanger.ac.uk</A>)
+
+
+<P>AceDB has the ability to dump a genome sequence in
+EMBL format. One facet of this code is the addition
+of /note qualifies for matching EST/mRNA transcript
+evidence to a CDS feature. AceDB 4.7 checked whether
+each of the cross-reference EST objects had a
+Database line with an EMBL accession and would output
+one of the following:
+
+<P><pre> if the EST has an EMBL accession stored.
+
+      /note="cDNA EST EMBL:D72339 comes from this gene"
+
+ else the object name is returned.
+
+      /note="cDNA EST yk97e6.3 comes from this gene"
+</pre>
+
+<P>AceDB 4.9 no longer performs this check and will always
+return a note line which use the AceDB object name.
+
+<P><pre>e.g.  /note="cDNA EST yk97e6.3 comes from this gene"
+</pre>
+
+<P>This ensures that a curator has control over the
+transcript name in the EMBL file such that consistency
+is maintained within the AceDB namespace rather than
+the EMBL namespace.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+
+
+<a name="socket_server"></a><H3>Socket server performance improvements</H3>
+
+<P>A while ago a request was received to add time stamps to each log file
+message written by the server which seems reasonable. Unfortunately this
+turned out to be a very bad idea performance-wise since the operation
+of finding the current time is always very expensive. This simple change
+had a major impact on server performance, especially where a client issued
+a whole series of AceDB commands, each one requiring a time stamp !
+
+<P>Having a timestamp for every log message is now optional, the default
+is to have them only for session start/end messages. In the future an option
+will be added to allow the server administrator to specify a timestamp
+per every NN messages.
+
+<P>Socket server performance is now significantly better than the RPC based
+AceDB 4_7 server.
+
+
+
+<a name="smap_design"></a><H3>A Change to smap design</H3>
+
+<P>There was a design problem with sMap: it could not encode strand infomation for
+single-base mappings.
+
+<P>In addition there was an implementation problem where a mapping with a
+single-base DNA block as a result of the uncertain strand mapping would sometimes be
+complemented incorrectly.
+
+<P>The following changes have been made to SMap:
+
+<ul>
+  <li>Allow a single-base mapping on the reverse strand to be represented
+      in the database like this:
+
+      <P>S_Child tag2 100 100 Align 100 1 -1
+      <P>
+      
+  <li>Track strands though the sMap data structures.
+
+  <li>Provide a new call: sMapIsReverse(info, x1, x2)
+
+      <P>This takes the same arguments as sMapMap and disambiguates the case
+      were the output from sMapMap has <code><b>y1==y2</b></code>. In the cases where the result
+      of calling sMapMap is <code><b>y1!=y2</b></code> this function just returns TRUE when
+      <code><b>y1&gt;y2</b></code> and FALSE otherwise.
+      <P>
+</ul>
+
+<P>These changes fix the one-base mapping and DNA complementing problems.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+<a name="xremote_bug"></a><H3>Fix xremote problems with driving FMap</H3>
+
+<P>Fixed bug in code to support xremote calls to fmap routines, the
+current fmap graph in the display system was not reset correctly
+after destroying an fmap which is to be replaced by a new one.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+<P>If you wish to make comments/suggestions about any of the below, please mail them
+to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>
+
+
+
+<a name="acein_out"></a><H3>Improvements to AceIn/AceOut package</H3>
+
+<P>The AceIn/Out packages could be expensive to use in the case where
+the caller wanted to replace the text in an existing AceIn/Out object,
+to do this required destroying the existing object and recreating a new
+one with the new text. This was expensive for instance in the server
+where new commands are constantly read in and new replies sent out.
+
+<P>Two new calls have been added which allow replacement of existing text
+with new text in an existing AceIn or AceOut
+object. The calls are:
+
+<pre><code>void aceInSetNewText(ACEIN fi, char *text, char *params) ;
+
+void aceOutSetNewStack(ACEOUT fo, Stack s) ;
+</code></pre>
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>Monthly build not available.</H2>
+
+<P>No monthly build, sorry.
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="User_Group"><H2>Next User Group Meeting - D319, 2.30pm, Thursday, 17th October 2002</H2>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Fri Feb 28 10:33:36 GMT 2003
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

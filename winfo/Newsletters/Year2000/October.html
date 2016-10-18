@@ -1,0 +1,106 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - October 2000</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<H1>ACEDB User Group Newsletter - October 2000</H1>
+
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+<P>Like last month, this month has been a month of bug fixes in preparation
+for the release of Acedb 4_9.
+
+
+<a name="New"></a><H2>New Features</H2>
+
+
+<a name="AcedbCD"></a><H3>Acedb MS-Windows CD packaging improvements</H3>
+
+<p>The following improvements have been made to the <code>Install</code>
+process:
+<ul>
+  <li>- there's a new database wizard in the for the installation, it will
+      install the acedb binaries and set up a new/empty default database.
+  <li>- the file extension ".wrm" is automatically registered with MS-Windows
+      to be opened with MS-Windows Notepad as this is a suitable editor
+      for altering them.
+  <li>- The latest Worm WS releases are now regularly packaged with the Acedb
+      MS-Windows CD.
+</ul>
+
+<p><b>Coming soon -</b> at the <A HREF="http://www.acedb.org/">Acedb web site</A>,
+a document on how to make windows packages, databases, cds,
+for acedb.
+
+<a name="URLs"></a><H3>URLs on Acedb MS-Windows</H3>
+
+<p>URLs in objects now work correctly in the MS-Windows version of acedb, the URL will
+be displayed by whichever program is registered with MS-Windows to deal with URLs (this
+might be Internet Explorer or maybe Netscape).
+
+<a name="wrmfilesMS"></a><H3>".wrm" files on Acedb MS-Windows</H3>
+
+<p>A problem with Unix vs. MS-Windows is that they signal the end of a line
+of text in a different way. This matters if you edit one of acedbs text files
+(e.g. models.wrm) on Windows and then try to edit again on a Unix machine.
+Acedb expects ".wrm" text files to use the Unix way of representing an end-of-line,
+but the MS-Windows version will also cope with the MS-Windows way of doing this.
+This means that Acedb will continue to work if you have editted your models.wrm
+file on an MS-Windows machine.
+
+
+<a name="Bugs"></a><H2>Bugs Fixed</H2>
+
+<a name="percentbug"></a><H3>"%" Dumping bug</H3>
+
+<P>acedb 4_8 had a bug whereby <code>"%"</code> signs within data in the database
+e.g. "GC content 48%" would not be dumped correctly because the <code>"%"</code>
+was read as a formatting instruction. This is now fixed.
+
+<a name="Incorrect"></a><H3>Incorrect ordering of output to screen under tace</H3>
+
+<P>Error messages in tace could get tangled with the <code>"acedb>"</code> prompt
+which was confusing. This has now been fixed. 
+
+
+<a name="Loss"></a><H3>Loss of window focus</H3>
+
+<p>Sometimes when acedb popped up messages (warnings, information etc.), this could
+lead to the acedb losing the keyboard focus, i.e. any typing by the user would be
+lost. This is now fixed.
+
+
+<H2>No monthly build available.</H2>
+
+<P>Unfortunately, due to system problems at the Sanger Centre a monthly build has
+not been possible for September.
+
+<H2>Next User Group Meeting - D213, 2.30pm, Thursday, 12th October</H2>
+
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon May 21 15:39:43 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

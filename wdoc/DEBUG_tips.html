@@ -1,0 +1,68 @@
+<HTML>
+
+<HEAD>
+<TITLE>Debugging Tips for Developers</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="./wdoc.css"
+title="Style sheet for wdoc developer documents">
+
+</HEAD>
+
+
+<BODY>
+
+<BLOCKQUOTE>
+<DIV ALIGN=CENTER>
+ <IMG SRC="images/sub.gif" ALT="[ACEDB DOCUMENTATION]" align=middle>
+ <H3>
+  ACEDB
+ </H3>
+</DIV>
+
+
+<DIV ALIGN=CENTER>
+
+<H1 align=center>
+Debugging Tips for Developers
+</H1>
+
+<ADDRESS>Originally written by<BR>
+Ed Griffiths &lt;edgrif@sanger.ac.uk&gt, October 2000</ADDRESS>
+
+</DIV>
+
+<H2>Checking what dynamic libraries are used by an executable</H2>
+
+<P>To check which libraries are picked up at runtime use ldd if it's available on
+your machine otherwise try one of the following, just set the environmental
+variable(s) and then run the executable.
+
+<pre><CODE>
+ALPHA
+        setenv _RLD_ARGS -v     
+
+
+SGI
+        setenv _RLDN32_PATH /usr/lib32/rld.debug
+        setenv _RLD_ARGS -v
+        
+
+SOLARIS and LINUX
+        setenv LD_DEBUG libs
+</CODE></pre>
+
+
+<HR>
+<H3 ALIGN="CENTER">ACEDB</H3>
+
+
+<HR>
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Thu Oct 19 10:33:01 BST 2000
+<!-- hhmts end -->
+
+</BLOCKQUOTE>
+</BODY>
+</HTML>

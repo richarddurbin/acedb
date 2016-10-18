@@ -1,0 +1,49 @@
+# $Id: LINUX_MAC_4_DEF,v 1.2 2000-04-11 13:22:09 srk Exp $ #
+
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+############### ported to Linux by Ken Letovski    ##############
+############### wmake/LINUX_DEF    Feb-2-1993      ##############
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+###########    for generic intel-based LINUX   ##################
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+NAME = LINUX
+
+# Compiler used to build 3rd party libraries 
+LIBCC = gcc
+
+COMPILER = gcc -g -fwritable-strings -Wall -O2  -DLINUX_MAC -DACEDB4 `../w3rdparty/include-config`
+
+LINKER = gcc -g
+
+# The arg to libs-config is used if our private copy not installed.
+LIBS = `../w3rdparty/libs-config` -lm -lcurses -lreadline
+
+### Linux uses flex to emulate the standard 'lex' program
+LEX_LIBS = -lfl
+### flex -l emulates AT&T lex as accurately as possible
+LEX = flex
+LEX_OPTIONS = -l
+
+### linux may use bison with flag -y if yacc doesn't exist
+YACC = yacc
+YACC_OPTIONS =
+
+RPCGEN_FLAGS = -b -I -K -1
+
+RANLIB_NEEDED = false
+
+#################################################################
+#################################################################
+ 
+ 
+ 
+ 

@@ -1,0 +1,28 @@
+<!--#config timefmt="%d-%b-%C%y, %I:%M %p" -->
+<!--#set var="title" value="AQL - movie DB result" --> 
+<!--#set var="icon" value="blank.gif" --> 
+<!--#set var="author" value="fw" --> 
+
+<!--#exec cgi="/cgi-bin/header" -->
+
+
+<H2 ALIGN=CENTER>AQL - Movie DB result (10)</H2>
+
+<CODE><B>
+select m->Cast->Full_name from m in class Movie where m = "truerom" 
+</CODE></B>
+
+<PRE><HR>
+Result table with 5 lines
+------------------------------
+Christian Slater
+Patricia Arquette
+Dennis Hopper
+Gary Oldman
+Christopher Walken
+------------------------------
+</PRE>
+
+<!--#exec cgi="/cgi-bin/footer" -->
+
+

@@ -1,0 +1,10 @@
+# This is an example of how to run MakeAceDB, providing the run-time parameters
+# in a command file.  In this case, the command file is MakeAceDB.com and resides
+# in the current directory.
+# I use it for testing, hence the need to remove the existing "newdb" directory.
+
+if [ -d newdb ]
+then
+	rm -r newdb
+fi
+./MakeAceDB -f MakeAceDB.com

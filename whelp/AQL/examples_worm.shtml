@@ -1,0 +1,641 @@
+<HTML>
+
+<HEAD>
+  <TITLE>AQL examples - C.elegans Genome Database</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="./aql.css" TITLE="Style sheet for AQL docs">
+  <STYLE type="text/css">
+  <!--
+  code { white-space: pre; margin-top: 15; margin-bottom: 2; }
+  -->
+  </STYLE>
+</HEAD>
+<BODY>
+
+<H2>AQL examples - C.elegans Genome Database </H2>
+
+<P>These queries work on the full-sized 
+   <A HREF="http://wormsrv1.sanger.ac.uk"><I>C. elegans</I> Genome Database</A> 
+   and most will work on the sequence-less smaller version, 
+   the mini version used in acedb courses and on other genomic 
+   databases, with only minor alterations.</P>
+
+
+<P>The queries were originally designed to utilise all the operators 
+   or keywords provided in the old query lvanguage.
+   The old language is still functional, but the queries have been
+   converted to AQL. These examples make use of recent AQL features
+   which are available in version 4.8b and above. 
+   <BR>
+   Some queries have been formatted over multiple lines for readability.
+   When typing multi-line queries in the standard acedb command-shell <B>tace</B>,
+   the backslash character has to be appended to the end of each line,
+   which will allow one command to be continued over more than one input line.
+   <BR>
+   Multiline queries can be typed in the AQL test-program <B>taql</B>.
+   The query is executed after entering a blank line.
+   </P>
+
+
+<P>Only a small subset of classes are used in order to simplify matters. It is 
+   essential to know the class model of any class before writing a query.
+   <BR>
+   On an active database you can select a list of all the Class models,
+   then open the relevant one. Or you can open the models file using
+   a text editor. This file is in the wspec directory as models.wrm.</P>
+
+<P>There are several different ways of writing each query, 
+   only some of which are ilustrated below.</P>
+
+<P>Questions 1 to 5 give answers in the form of tables, at their simplest
+   1 column tables, which therefore resemble a list.  Question 6 requires
+   a numerical answer having counted the number of objects which satisfy
+   a condition.  In question 7, the query jumps from one class to another
+   and back again For simplicity this is hown in two stages.</P>
+
+<P>Question 8 demonstrates the power of AQL to move along a horizontal
+   line in a model from primary tag to secondary or along several
+   consecutive data-fields.</P>
+
+<H3>Listing objects using conditions on tags and object names</H3>
+
+<DL>
+  <DT><H4>1a. Find all Loci starting with the letters dp</H4></DT>
+
+  <DD><CODE>select l from l in class locus where l.name like "dp*"</CODE></DD>
+  <DD><CODE>select all from class locus where .name like "dp*"</CODE></DD>
+  <DD><CODE>select all from class locus."dp*"</CODE>
+      This notation is reminiscent of the <TT>Find Locus dp*</TT> notation
+      of the old query-language. It may run marginally quicker than
+      the first two queries.
+      </DD>
+  <DD><CODE>select l from l in class locus."dp*"</CODE>
+      The query, but using a named iterator "l".
+      </DD>
+</DL>
+
+<DL>
+  <DT><H4>1b. Find all Authors starting with the letters Ba</H4></DT>
+
+  <DD><CODE>select all class author where .name like "ba*"</CODE>
+      Same as 1a. All the variations also apply.
+      </DD>
+</DL>
+
+<DL>
+  <DT><H4>2a. Find all Authors with email addresses</H4></DT>
+
+  <DD><CODE>select all class Author where exists_tag ->E_mail</CODE>
+      The <B>exists_tag</B> keyword is a boolean expression, which
+      causes the where-clause to succeed or fail depending on 
+      whether the iterator succeeds to find the tag.<BR>
+      The expression ->E_mail would normally be expanded to ->E_mail[1]
+      (i.e. return the first data-field to the right of the tag), but
+      <B>exists_tag</B> will inhibit this particular behaviour
+      for the expression that follows.
+      </DD>
+  <DD><CODE>select all from class Author where exists_tag ->E_mail</CODE></DD>
+  <DD><CODE>select a from a in class Author where exists a->E_mail[0]</CODE>
+      When using the keyword <B>exists</B> the normal behaviour on
+      tag-expressions applies. In order to refer to the existence
+      of the tag E_mail, we specify the 0'th position from the tag, i.e.
+      the tag itself. This is the long-hand version of the first query,
+      which will internally be converted to this query anyway before
+      execution. Both versions are therefore identical.
+      </DD>
+</DL>
+
+<H3>Use of logical operators : and or xor not</H3>
+
+
+<DL>
+  <DT><H4>2b. Find all Authors whose name begins with C, and who have  email addresses</H4></DT>
+
+  <DD><CODE>select a from a in class Author 
+    where a.name like "C*" and exists_tag a->E_mail</CODE>
+      </DD>
+</DL>
+
+<DL>
+  <DT><H4>2c. find all the authors whose object_name (surname) starts with 'a' and contains  'o'.</H4></DT>
+
+  <DD><CODE>select all class Author where .name like "a*" and .name like "*o*"</CODE></DD>
+</DL>
+
+
+
+<DL>
+  <DT><H4>3a. Find all Authors that have either an address OR a published paper.</H4></DT>
+
+  <DD><CODE>select all class Author 
+            where exists_tag ->Address or exists_tag ->Paper</CODE></DD>
+</DL>
+
+
+<DL>
+  <DT><H4>3b. Find all Authors starting with C, with an address OR a paper.</H4></DT>
+
+  <DD><CODE>select all class Author where .name like "C*" 
+        and 
+      (exists_tag ->Address or exists_tag ->Paper)</CODE></DD>
+</DL>
+
+<DL>
+  <DT><H4>3c. Find all Authors starting with C, with address AND a Paper</H4></DT>
+
+  <DD><CODE>select all class Author where .name like "C*" and 
+                              exists_tag ->Address and 
+			      exists_tag ->Paper</CODE></DD>
+</DL>
+
+<DL>
+  <DT><H4>3d.Find all Authors starting with c, with either an address or a Paper but NOT both.</H4></DT>
+
+  <DD><CODE>select all class Author where .name like "C*" 
+              and 
+         (exists_tag ->Address xor exists_tag ->Paper)</CODE></DD>
+</DL>
+
+<DL>
+  <DT><H4>3e. Find all Authors starting with c, with NO address</H4></DT>
+
+  <DD><CODE>select all class Author where not exists_tag ->Address</CODE></DD>
+</DL>
+
+
+<H3>Conditions on tags and their values</H3>
+
+
+<DL>
+  <DT><H4>4a. Find authors who live in California OR Japan.</H4></DT>
+
+  <DD><CODE>select all class Author 
+ where ->Mail like "*Calif*" or ->Mail like "*Japan"</CODE></DD>
+  <DD><CODE>select a, a->mail from a in class Author 
+  where a->Mail like "*Calif*" or a->Mail like "*Japan"</CODE></DD>
+</DL>
+
+<DL>
+  <DT><H4>4b. Find authors who live in USA and work in an American University.</H4></DT>
+
+  <DD><CODE>select all class Author where ->E_Mail like "*edu"</CODE></DD>
+  <DD><CODE>select a, a->E_mail from a in class Author where a->E_Mail like "*edu"</CODE></DD>
+  <DD><CODE>select a, a->E_mail from a in class Author where a->E_Mail like "*edu" order</CODE></DD>
+  <DD><CODE>select a, a->E_mail from a in class Author 
+       where a->E_Mail like "*edu" order by :1 asc, :2 asc</CODE></DD>
+  <DD><CODE>select a, a->E_mail from a in class Author 
+       where a->E_Mail like "*edu" order by :E_mail</CODE></DD>
+</DL>
+
+<DL>
+  <DT><H4>5. Find the Authors who have more than 5 papers published.</H4></DT>
+
+  <DD><CODE>select all class author where count (select ->Paper) > 5</CODE></DD>
+  <DD><CODE>select a, count (select a->Paper) from a in class author 
+              where count (select a->Paper) > 5</CODE></DD>
+  <DD><CODE>select a,c from a in class author, c in count (select a->Paper) where c > 5</CODE>
+      Here the iterator c is declared upoin the value of the <B>count</B> expression.
+      We can now refer to <B>c</B> in various places in the query without having
+      to repeat the <B>count</B> function like in the previous query.
+      </DD>
+</DL>
+
+<H3>Crossing between classes</H3>
+
+<DL>
+  <DT><H4>6a. Find papers published by Ian Hope.</H4></DT>
+
+  <DD><CODE>select ->paper from class Author."hope*"</CODE></DD>
+  <DD><CODE>select a, a->paper from a in class Author where a.name like "*hope*"</CODE>
+      We find the author by matching every auhtor's name against the
+      template "*hope*". The iterator <B>a</B> will therefore loop over all
+      authors, just to find one single entry.
+      </DD>
+  <DD><CODE>select hope->paper from hope in object("Author", "Hope IA")</CODE>
+      The <B>object</B>-constructor is perfect for situations where we know the exact
+      class and object-name. Rather than the class-based declaration <B>a in class Author</B>
+      which return multiple entries, the object constructor will only return
+      one single entry and is very quick to execute. No wildcards are allowed
+      in the class or object-name text.
+      </DD>
+  <DD><CODE>select object("Author", "Hope IA")->paper</CODE>
+      The same query but shorter. The return value from the <B>object</B>-constructor
+      can be dereferenced directly. and without an explicit from-clause, this
+      query forms a complete table-expression.
+      </DD>
+</DL>
+
+<DL>
+  <DT><H4>6b. Find the co-authors of papers published by Ian Hope.</H4></DT>
+
+  <DD><CODE>select a->paper->author from a in class Author where a.name like "*hope*"</CODE>
+      Any expression, such as <B>a->paper</B> which returns another object-value
+      can be further dereferenced to any tag in the model of that object.
+      </DD>
+  <DD><CODE>select ca from a in class Author where a.name like "*hope*", ca in a->paper->author</CODE></DD>
+  <DD><CODE>select ca from a in class Author."*hope*", ca in a->paper->author</CODE></DD>
+  <DD><CODE>select hope->Paper->Author from hope in object ("Author", "Hope IA")</CODE> - fastest</DD>
+  <DD><CODE>select hope->paper, hope->paper->Author from hope in object ("Author", "Hope IA")</CODE></DD>
+</DL>
+
+<H3>Moving along a line in a model</h3>
+
+<DL>
+  <DT><H4>7. Find Sequences from DDBJ whose Accession number contains *269*</H4></DT>
+
+  <DD><P>Looking at the relevant part of the Sequence model before starting this complex query :</P>
+
+<PRE>
+?Sequence
+  ..
+	DB_info Database ?Database Text Text
+  ..
+</PRE>
+     <P>where DB_info is a major tag similar to Address, Database is a sub-tag like Town and 
+        takes the name of the database, the text fields take the Identity name followed by the 
+	Accession number.</P>
+      </DD>
+
+  <DD><CODE>select s from s in class Sequence, 
+              db in s->Database 
+                 where db = "DDBJ" and 
+		       db[2] like "*269*"</CODE>
+      We have already learned that the default position of a tag-expression
+      will refer to the first data-field along from that tag. <B>s->Database</B>
+      is therefore automatically treated as <B>s->Database[1]</B> in the above
+      declaration of <B>db</B>. The notation <B>db[2]</B> will now move two
+      position further along from <B>s->Database[1]</B> to return the last 
+      <I>Text</I>-element in the model. Moving along the model is incremental,
+      to the last <I>Text</I>-element is in fact <B>s->Database[1][2]</B>
+      or can also be written as <B>s->Database[3]</B> directly.
+      </DD>
+  <DD><CODE>select s, t from s  in class Sequence,
+                 db in s->Database 
+		       where db = "DDBJ",
+                 t  in db[2] 
+		       where t like "*269*"</CODE>
+      Same query, but this time using two iterator declarations.
+      </DD>
+</DL>
+
+<DL>
+  <DT><H4>8a. Find genes on chromosome IV which have been sequenced.</H4></DT>
+
+  <DD><CODE>
+select l from l in class locus 
+                where l->Map = "IV" and exists_tag l->Sequence</CODE></DD>
+  <DD><CODE>
+select l, m, s from l in class locus, 
+                    m in l->Map where m = "IV", 
+		    s in l->Sequence</CODE></DD>
+  <DD><CODE>
+select l, m, s from l in class locus,
+                    m in l->Map where m = "IV", 
+                    s in l->Sequence where s</CODE>
+      The last where-clause is treating the iterator <B>s</B> as a boolean
+      expression. <B>s</B> is declared on <B>l->Sequence</B> and the where-clause
+      whill be TRUE if there is a data attached to that tag, and FALSE
+      when there is no data.</DD>
+  <DD><CODE>select l, m, iss from l in class locus, 
+                      m in l->Map where m = "IV", 
+		      iss in exists_tag l->Sequence where iss</CODE>
+      In this query the variable <B>iss</B> is a boolean variable which is 
+      declared upon the result of the exists_tag function.</DD>
+</DL>
+
+<DL>
+  <DT><H4>8b. Variations on 8a.</H4></DT>
+
+  <DD><P>try another chromosome  such as III, use OR, 
+         find those NOT sequenced, any other variations.</P></DD>
+</DL>
+
+<DL>
+  <DT><H4>9. List objects mapped on chromosome III with their map position</H4></DT>
+
+  <DD><CODE>select g, gm[Position]
+from g in object("Map","III")->Contains[2], gm in g->Map
+     where gm = "III"</CODE>
+      The construction -&gt;Contains[2] will find the items that are 
+      2 positions away from the tag Contains , i.e. its 
+      grandchildren, rather than its children.
+      <BR>
+      Next note that we must require that <B>gm = "III" </B>because <B>g</B> 
+      may have positions on multiple maps.  Finally, note that we have 
+      written <B>gm[Position]</B>in the select-clause, because we do not 
+      want to dereference <B>gm</B> as an object pointer; instead we want 
+      to look at the attribute following <B>gm</B> in the <B>g</B> object.
+      The positioning inside the same object is done here by name
+      rather than by tag-position.
+  </DD>
+</DL>
+
+
+<H3>Queries on objects containing hash structures.</H3>
+
+
+<DL>
+  <DT><H4>10. Find loci between positions 5 and 10 on chromosome IV</H4></DT>
+
+  <DD><P>Hash structures are inlined model-definition with their own name-space.
+   They are defined using the # (hash) character in the model.wrm file.
+   The use of those hash structures is totally transparent in AQL, and when
+   constructing a query it is best to think of the hash-model to be inlined at the
+   given position.</P>
+
+   <P>Class Locus contains the following line where Map_position
+   is a # (hash) structure :</P>
+<PRE>
+?Locus  ...
+	...
+	Map ?Map XREF Locus #Map_position
+	...
+
+?Map_position UNIQUE  Position UNIQUE Float
+                      Ends Left UNIQUE Float
+                           Right UNIQUE Float
+</PRE>
+
+   <P>Loci have point positions (see Position) on the genetic maps.</P>
+   </DD>
+
+  <DD><CODE>select l, pos from l in class Locus, 
+              map in l->Map where map = "IV",
+              pos in map[Position] where pos > 5.0 and pos < 10.0</CODE></DD>
+</DL>
+
+<DL>
+  <DT><H4>11a. Find Rearrangements with a right ends beyond position 5 on chromosome IV</H4></DT>
+
+  <DD><P>Class Rearrangment has the following tags where Map_position
+         is a hash structure</P>
+<PRE>
+?Rearrangement ...
+	...
+                Map ?Map XREF Rearrangement #Map_position
+	...
+
+?Map_position UNIQUE  Position UNIQUE Float
+                     Ends Left UNIQUE Float
+                          Right UNIQUE Float
+</PRE>
+
+      <P>Rearrangements are deletions or duplications of a linear chunk of the chromosome
+         and consequently have starting (Left) and finishing points (Right) on the map.</P></DD>
+
+  <DD><CODE>select r, right from r in class Rearrangement, 
+            right in r->Map[Right] where right > 5.0</CODE></DD>
+  <DD><CODE>select r, right from r in class Rearrangement,
+                     map in r->Map where map = "IV",
+                     right in map[right] where right > 5.0</CODE></DD>
+</DL>
+
+<DL>
+  <DT><H4>11b. Find Rearrangements with left ends before position 4 on chromosome IV</H4></DT>
+
+  <DD><CODE>select r, left from r in class Rearrangement, 
+                    map in r->Map where map = "IV", 
+		    left in map[Left] where left < 4.0</CODE></DD>
+</DL>
+
+<DL>
+  <DT><H4>11c. Find Rearrangements with left ends before position 4 on chromosome IV and right ends beyond position 5</H4></DT>
+
+  <DD><CODE>select r, left, right from r in class Rearrangement, 
+                    map in r->Map where map = "IV", 
+                    left in map[Left] where left < 4.0,
+                    right in map[right] where right > 5.0</CODE></DD>
+</DL>
+
+
+
+<H3>Using table functions</H3>
+
+<P>Table functions can be applied to the result of any table expression.
+   Examples of table functions are <B>count, sum, avg, first, last</B> etc.
+   A normal select-from-where query is such a table expression. A table function
+   can only be used on tables with a single column are they have to be restricted
+   to work only on one column of the given table.</P>
+   
+
+<DL>
+  <DT><H4>12. How many predicted genes have matching cDNA.?</H4></DT>
+  <DD><P>Note : in the worm genome project, although clone objects (cosmids and
+         Yacs) have been fed into the sequencing reactions, the DNA sequence of
+	 an entire clone (e.g. AH6) is attached to a sequence object, of the
+	 same name (also AH6). After gene predictions have been made in these
+	 cosmid sequences, each coding sequence has a number such as AH6.1,
+	 AH6.2. In the database these are held as subsequences of the main AH6
+	 sequence. This particular type of subsequence has a definition called
+	 Predicted_gene in the subclass.wrm file. It is more efficient to use
+	 subclasses in queries, wherever possible.</P>
+
+      <P>The first answer would take a very long time examining 140,000
+	 sequence objects.  The second uses the subclass and is faster.
+      </P>
+  </DD>
+  <DD><CODE>select s from s in class sequence 
+         where exists_tag s->CDS 
+          and s.name like "*.*" 
+          and exists_tag s->Matching_cDNA</CODE></DD>
+  <DD><CODE>select g from g in class predicted_gene 
+               where exists_tag s->Matching_cDNA</CODE>
+       The class Predicted_Gene is a subclass of Sequence and the interator <B>g</B>
+       will loop over a much smaller set of objects that in the first query
+       when 140,000 objects are inspected.</DD>
+  <DD><CODE>select count(select g from g in class predicted_gene 
+                           where exists_tag s->Matching_cDNA)</CODE>
+      By forming a query that reports only the result of the <B>count</B>-function
+      we're left with a single number as a result.</DD>
+</DL>
+
+<DL>
+  <DT><H4>13. How many predicted genes are equivalent to Mendelian loci.?</H4></DT>
+  <DD><P>for explanation, see 12.</P></DD>
+
+  <DD><CODE>select g from g in class predicted_gene where exists g->Locus</CODE></DD>
+  <DD><CODE>select g, l from g in class predicted_gene, l in g->Locus where l</CODE></DD>
+  <DD><CODE>select count (select g from g in class predicted_gene
+                       where exists g->Locus)</CODE></DD>
+</DL>
+
+<DL>
+  <DT><H4>14. How may Clones have been finished by the Sanger centre sequencing team ?.</H4></DT>
+  <DD><P>see explanation under 12 for use of sequence class here.</P></DD>
+
+  <DD><CODE>$x := count(select s from s in class sequence where exists_tag s->Finished and s->From_Laboratory = "CB")</CODE>
+      The keyword <EM>count</EM> with the query as its argument isn't a full query in its own right.
+      To make it a valid table expression, we assign the result of the expression to a scalar variable <B>$x</B>.
+      The result of the query is therefore the value of this variable, and the result table will
+      have one row with one column containing the single result value.</DD>
+  <DD><CODE>select s from s in object("sequence", "ah6") where exists_tag s->Finished and s->From_Laboratory = "CB"</CODE></DD>
+</DL>
+
+<DL>
+  <DT><H4>15. How many contigs make up chromosome IV ?, or indeed any of the chromosomes.</H4></DT>
+
+  <DD><CODE>select num from m in class Genetic_Map 
+                  where m = "IV", 
+                num in count (select m->Contig)</CODE></DD>
+  <DD><CODE>select m, num from m in class Genetic_Map,
+                   num in count (select m->Contig)</CODE></DD>
+</DL>
+
+<DL>
+  <DT><H4>16. Which sequence objects have DNA ?</H4></DT>
+
+  <DD><CODE>select s from s in class Sequence 
+                     where exists_tag s->DNA</CODE>
+      By using the keyword <EM>exists_tag</EM> we don't have to open
+      every sequence object to look at its <I>DNA</I>-tag. This
+      tag is indexed and the lookups to the database-index are very quick.
+      Compare this qith the execution time of this query : </DD>
+
+  <DD><CODE>select s from s in class Sequence 
+                     where exists s->DNA</CODE>
+      This query will check the existsnce of a data-value for the <I>DNA</I>-tag.
+      To find this out it will have to open every sequence object,
+      which will take a very long time.</DD>
+      
+</DL>
+
+<DL>
+  <DT><H4>17. How many sequences have DNA longer than 300 base pairs.</H4></DT>
+
+  <DD><CODE>select s from s in class genome_sequence 
+             where exists_tag ->DNA, 
+             length in s->DNA[2] 
+             where length > 300</CODE></DD>
+</DL>
+
+<DL>
+  <DT><H4>18. How many cells have great grandchildren ?</H4></DT>
+
+  <DD><CODE>select count (select c from c in class cell, 
+                            d1 in c->daughter where d1, 
+			    d2 in d1->daughter where d2, 
+			    d3 in d2->daughter where d3)</CODE></DD>
+  <DD><CODE>select count (select c from c in class cell where exists c->daughter->daughter->daughter)</CODE></DD>
+
+</DL>
+
+<H3>Some queries which were designed to be performed with TableMaker.</H3>
+
+<P>When converted to AQL those queries are nothing special, and creating
+   multi-columned tables of output is the strength of AQL</P>
+
+<DL>
+  <DT><H4>19. Make a table of the email addresses and laboratories of worm authors.</H4></DT>
+
+  <DD><CODE>select a, addr, a->laboratory from a in class author 
+                                     where exists_tag a->E_mail, 
+                              addr in a->E_Mail</CODE></DD>
+  <DD><CODE>select a, addr, lab from a in class author where exists_tag a->E_mail,
+                            lab in a->laboratory where lab,
+                            addr in a->E_Mail</CODE></DD>
+  <DD><CODE>select a, addr, lab from a in class author
+                            addr in a->E_mail where addr,
+                            lab in a->laboratory where lab</CODE></DD>
+  <DD><CODE>select a, a->E_mail, a->Laboratory from a in class author
+                                           where exists_tag a->E_mail and exists_tag a->Laboratory</CODE></DD>
+</DL>
+
+<DL>
+  <DT><H4>20. Make a table of Loci whose name begins with C, and the clones to which they have been mapped.</H4></DT>
+
+  <DD><CODE>select l, c from l in class locus, 
+            c in l->positive_Clone where c.name like "c*"</CODE></DD>
+</DL>
+
+<DL>
+  <DT><H4>21. Make a table of (Mendelian) genes on chromosome IV in the order</H4></DT>
+
+  <DD><P>Note : Mendelian genes refers to those mapped by conventional crossing
+         procedures. They should have associated map data and alleles (other than
+	 those created by Tc1 insertions).</P></DD>
+  <DD><CODE>select l, pos from l in class locus where exists_tag l->Allele, 
+                    map in l->Map where map = "X", 
+                    pos in map[Position] order by :pos</CODE></DD>
+</DL>
+
+<H3>Gene expression at cellular level</H3>
+
+<DL>
+  <DT><H4>Which genes are expressed in named cells</H4></DT>
+
+  <DD><CODE>select l from l in class Locus, 
+              ex in l->Expr_pattern 
+	           where exists ex->cell order</CODE></DD>
+</DL>
+
+
+<DL>
+  <DT><H4>Which genes are expressed in neurons.</H4></DT>
+
+  <DD><CODE>select c->Expr_pattern->locus from c in class Cell 
+               where c->Fate like "*neuron*" or c->Fate like "*Neuron*"</CODE></DD>
+</DL>
+
+
+<DL>
+  <DT><H4>Which cells are known to have loci expressed in them.</H4></DT>
+
+  <DD><CODE>select c, ex, l from c in class Cell, 
+                     ex in c->Expr_pattern, 
+		     l in ex->locus where l</CODE></DD>
+</DL>
+
+
+<DL>
+  <DT><H4>Which loci are expressed in embryos ?</H4></DT>
+
+  <DD><CODE>select l from l in class Locus, 
+              ex in l->Expr_pattern 
+                    where ex->Life_stage like "*embryo*"</CODE></DD>
+
+  <DD><CODE>select l from l in class Locus, 
+              ex in l->Expr_pattern 
+                    where ex->Life_stage like "*larv*"</CODE>
+      Finds the loci expressed in larvae.</DD>
+
+</DL>
+
+<DL>
+  <DT><H4>Which loci are expressed in embryos but not in larvae ?</H4></DT>
+
+  <DD><CODE>
+select l from l in class Locus, 
+              ex in l->Expr_pattern 
+                    where ex->Life_stage like "*embryo*"  diff
+select l from l in class Locus, 
+              ex in l->Expr_pattern 
+                    where <U>not</U> ex->Life_stage like "*larv*"</CODE>
+      We have simply combined the sets of loci expressed in embryos and not expressed
+      in larvae using the the table operator <EM>union</EM>.
+      <BR>
+      Substitute the keyword <EM>union</EM> for <EM>minus</EM> or <EM>intersect</EM> to get different
+      ways of combining the two sets of loci.</DD>
+
+  <DD><CODE>select l from l in class Locus, 
+              ex in l->Expr_pattern
+	      where ex->Life_stage like "*embryo*" and 
+                    not ex->Life_stage like "*larv*"</CODE>
+      This query produces the same result, but is much quicker to write.
+  </DD>
+</DL>
+      
+
+<DL>
+  <DT><H4>Which loci have no expression information ?</H4></DT>
+
+  <DD><CODE>select l from l in class Locus where not exists l->expr_pattern</CODE></DD>
+</DL>
+      
+<HR>
+Queries designed by Fred Wobus and Sylvia Martinelli.<BR>
+The Sanger Centre, 06/Dec/1999
+
+<ADDRESS><A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A></ADDRESS>
+
+</BODY>
+</HTML>
+

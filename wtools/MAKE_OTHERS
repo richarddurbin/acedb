@@ -1,0 +1,36 @@
+#!/bin/csh -f
+#
+# script to make distribution tar files - edit as needed each time.
+#
+# $Id: MAKE_OTHERS,v 1.11 2002-07-04 09:08:49 edgrif Exp $
+
+if ($#argv != 2) then
+#  echo 'you need 2 parameters:  MAKE_OTHERS 4_3a alpha ALPHA_4_OPT
+  echo 'you need 2 parameters:  MAKE_OTHERS alpha ALPHA_4_OPT'
+  exit 1
+  endif
+
+setenv ici `pwd`
+cd ~/distrib   # test exitence 
+
+cd $ici 
+
+set version = `$ici/wtools/aceGetVersion $ici/wnq`
+
+echo 'I will prepare the distribution in ~/distrib'
+echo "version $version for $1 using bin.$2"
+
+\rm -r bin
+mv bin.$2 bin
+cp wtools/xcl bin
+tar cf ~/distrib/bin.$1.$version.tar \
+	wspec wdoc wquery wscripts wgf wtools \
+        bin/acediff bin/dotter bin/giface \
+        bin/tace bin/tagcount bin/taql \
+        bin/xace bin/xremote
+mv bin bin.$2
+
+cd ~/distrib
+gzip ~/distrib/bin.$1.$version.tar
+
+exit 0

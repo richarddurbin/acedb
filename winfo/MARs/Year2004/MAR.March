@@ -1,0 +1,40 @@
+================================================================================
+                              AceDB - March MAR
+
+
+Executive summary.                                                                        
+------------------                                                                        
+
+Continuing support of AceDB for Wormbase, Zebra Fish and Havana groups. Recent
+Worm Advisory board meeting recognised importance/usefulness of AceDB to
+rapid and frequent releases of data and development of Wormbase.
+
+ZMap developments include support for contacting DAS2 servers + improvements
+to interface to allow screen splitting for multiple views of same or different
+sequences.
+
+
+
+Wormbase, Zebra Fish, Havana
+----------------------------
+
+Wormbase: Bug fixes/enhancements to support new gene model, improvements to
+GFF dumping.
+
+Zebrafish: Enhancements to support Zebra fish annotation.
+
+Havana: Fixes to Blixem
+
+
+
+ZMap
+----
+
+Thanks to Systems Support (thanks to Simon Kelley) now have up to date
+GTK/Gnome/http/xml software on the alphas now allowing common build on linux
+and alphas. Support added for getting data from an experimental DAS 2 server
+(set up with help from web team, thanks to Roger Pettet). So ZMap now contacts
+multiple servers of more than one type (AceDB + DAS servers).
+
+ZMap interface improvements to screen control for vertical/horizontal splitting
+and use of Gnome canvas for display.

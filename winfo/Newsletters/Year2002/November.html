@@ -1,0 +1,264 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - November 2002</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - November 2002</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<P>This month sees the arrival of the first round of some long overdue keyboard shortcuts,
+some more user preferences, changes to our build platforms, and bug fixes.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="keyboard_Shortcuts"></a><H3>First round of keyboard shortcuts</H3>
+
+<P>There have always been some keyboard shortcuts in acedb, recent discussions have
+shown that there is a pressing need for some kind of rationalisation and
+extension of these. I have collated all the emails that I received about existing
+and desired shortcuts, this is round one with more to come in the next few weeks.
+
+<P>The first set of shortcuts are available from any of the main acedb windows
+and include:
+
+<ul>
+  <li><pre><code><b>Ctrl-S</b></code>:  save the database</pre>
+  <li><pre><code><b>Ctrl-W</b></code>:  close this window</pre>
+  <li><pre><code><b>Ctrl P</b></code>:  print this window</pre>
+  <li><pre><code><b>Ctrl Q</b></code>:  quit acedb</pre>
+  <li><pre><code><b>f1/f10</b></code>:  help</pre>
+  <li><pre> <code><b>f2/f9</b></code>:  print this window</pre>
+</ul>
+
+<P>The job of implementing the shortcuts has passed through a number of hands and
+hopefully now its going to get done, thanks to everyone for their patience, send mail
+direct to me, <A HREF="mailto:edgrif@sanger.ac.uk">edgrif@sanger.ac.uk</A> if you get
+fed up with waiting or have suggestions/bugs etc.
+
+
+
+<a name="splash_window"></a><H3>Splash window preference</H3>
+
+<P>Acedb displays an initial "splash" window when it starts up which with some
+window managers remains
+on top of all the other windows on the screen which can be irritating. There is
+a command line option "-nosplash" which can be used to turn off display of
+the window. Now you can also set a preference to not display the window
+at all, see "SPLASH_SCREEN" option in the preferences window which can
+be reached from the "Admin" menu on the xace main window.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+
+<a name="acedb_builds"></a><H3>Changes to Sanger Centre binaries</H3>
+
+<P>As of this month we are building acedb on the latest versions of
+OSF for the Alpha machines and Linux for the PCs:
+
+<ul>
+  <li>OSF1 V5.1 732 alpha
+  <li>Red Hat Linux release 7.3 (Valhalla) Linux 2.4.18-10 i686
+</ul>
+
+<P>If you download binaries from the Sanger site then please make sure
+that your operating system is at these levels at least otherwise the
+binaries may not run.
+
+<P>If you are running older systems you will need to download the source and
+compile it yourself. Please report any problems with doing this to:
+<A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="preferences"></a><H3>Preference bug</H3>
+
+<P>Worth noting is that the preference code cannot cope with spaces in the
+preference name, so the following was a bug: "Use CDS class", now changed to
+"Use_CDS_class".
+
+
+<a name="smap_one_long"></a><H3>Smap and one base long features</H3>
+
+<P>Simon has bravely fixed a bad oversight in the SMap code. The code continued to
+use the time honoured acedb way of detecting strand by looking for "start < end" meaning
+"forward strand" and vice versa. This all fails horribly when the feature being mapped
+is just one base long. To compound matters SMap itself does produce one base long
+mappings when getting the dna where overlaps are only a base long and then gets the strand
+wrong and complements the dna thinking it is on the reverse strand.
+This is now fixed, SMap keeps strand information separately from the coordinates.
+
+<P>To indicate a one base long feature on the reverse strand
+you need to put the following in the <b>parent</b>
+of the feature (assuming the feature is at position 100 in the parent):
+
+<pre><code>S_Child <tag2> <key> XREF <ctag2> 100 100 Align 100 1 -1
+</code></pre>
+
+<P>The final coordinate can be "1" or just omitted to indicate a one base feature on the forward
+strand.
+
+
+<a name="blixem_fixes"></a><H3>Some blixem fixes</H3>
+
+<P>Blixem used to crash if the pfetch server could not be contacted, this is
+now just a warning, otherwise this crashes xace when blixem is run as part of the xace
+program.
+
+<P>The private colourmap installation is now done earlier so warnings are displayed in
+a dialogue box rather than just in terminal window.
+
+<P>The blxparser code had a bug for SEQBL DNA sequence, used a fixed buffer that overflowed.
+
+
+<a name="acedb.wrm"></a><H3>ACEDB.wrm should not be writeable</H3>
+
+<P>Sadly a bug was introduced into the code a couple of years ago and recently reported by
+a user. model.c erroneously checked to see if database/ACEDB.wrm was
+writeable as a test to see if current user should be allowed reread the
+models file. This is a bad idea, users like to make ACEDB.wrm read only to
+prevent accidental reinitialisation of database.
+There was already an internal routine in session.c which tests for the admin
+user and does not require this incorrect predicate, I have added an external function
+to session.c to make this visible to other bits of acedb code so that the check is
+correct now.
+
+<P>Users should keep database/ACEDB.wrm as a read only file to prevent accidental
+erasing of this file followed by possibly catastrophic accidental reinitialisation
+of the database.
+
+
+
+<a name="minor_arithmetic"></a><H3>Minor bug in query language arithmetic</H3>
+
+<P>A small fix to the arithmetic parsing introduced last monht: parsing of
+<code>"[- 4 -- 3]"</code> is now correct.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+<P>If you wish to make comments/suggestions about any of the below, please mail them
+to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>
+
+
+<a name="dev_shortcuts"></a><H3>Code changes for shortcuts</H3>
+
+<P>I've made a number of changes to the code to implement short cuts in a
+way that I hope keeps knowledge of shortcuts in the right places without
+introducing too much arcaneness into the code:
+
+<ul>
+  <li>add struct to hold global graph data, pointed to from Graph_ struct.
+
+  <li>Add global keyboard shortcuts to acedb.
+      <ul>
+	<li>Add static global ptr which points to graph global data.
+	<li>Add function to register application callbacks for global application
+	    actions, e.g. Cntl-S from anywhere.
+	<li>Add functions that graphdev layer will call when appropriate keys
+	    are called.
+	<li>Add code to graphCBKeyboard to handle new key callbacks.
+      </ul>
+  <li>Add global keyboard shortcuts to acedb.
+      <ul>
+	<li>add call to register Quit and Save routines from mainpick as global
+	    routines for whole of acedb.
+      </ul>
+</ul>
+
+<P>Phew...the next round of shortcuts for FMap should be easier.
+
+
+<a name="prefs_init"></a><H3>Change to the way the prefs package is initialised.</H3>
+
+<P>Preferences initialisation now happens before the database is initialised.
+This means that the user can set preferences for things
+that happen before database initialisation such as the splash screen and
+the message window.
+
+<P>In detail: <code>prefInit()</code> now only reads <code><b>$HOME/.acedbrc</b></code>,
+a separate call, <code>prefReadDBPrefs()</code>,
+reads wspec/acebrc if it exists.
+
+
+
+<a name="aquila_changes"></a><H3>Aquila changes</H3>
+
+<P>Documentation of aquila output files and error reporting have both been
+improved. The huge, monolithic aquila test script file has been split into separate,
+individual test files.
+
+<P>aquila -u param: send email to user if aquila fails.
+
+<P>Only highlight real and cpu times if >10% different.
+
+<P>Aquila version appears at the top of results files.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>November monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="User_Group"><H2>Next User Group Meeting - D319, 2.30pm, Thursday, 14th November 2002</H2>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Fri Feb 28 11:30:06 GMT 2003
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

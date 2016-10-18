@@ -1,0 +1,58 @@
+<!--  $Id: Layout.html,v 1.4 1999-04-29 16:16:50 fw Exp $  -->
+<head>
+<title>Class Layout</title>
+</head>
+
+<BODY BGCOLOR=#ffffff>
+
+<H1>Class Layout</H1>
+
+The user can configure which classes are displayed in the main window
+for immediate selection. The configuration file <B>wspec/layout.wrm</B>
+holds this information in simple text format. The user may decide
+which classes he/she most frequently accesses and arrange them into
+groups etc..<P>
+
+The "Class Layout Editor" is effectivly a graphical editor for this
+configuration. Click on the "Set Selection" button in the main window
+to start the editor.<P>
+
+In the yellow area the classes are displayed in the same layout
+as in the main class window. You can click on any class-name and drag it
+to a new position in the text grid.<BR>
+Below the line are the remaining visible classes which can also be
+used for the default. Most often these left-over classes
+belong to the system, but they may be of interest to some users.
+The classes "KeySet" and "Model" are usually included in the class 
+layout.</BR>
+You can pick up one of these classes and drag it into the yellow area
+to position it in the layout.<BR>
+To remove a class from the layout, just drag its name below the
+line into the area of the remaining classes.<P>
+
+
+<h3>Menu items:</h3>
+<ul>
+<li><strong>Quit</strong>: quits the window, if you have
+write access to the wspec directory and you have made any unsaved
+modification you'll be asked whether you want to save them.
+Answer "No" to cancel the edits.
+
+<li><strong>Help</strong>: brings up this help.
+
+<li><strong>Print</strong>: lets you print a snapshot of the window.
+
+<li><strong>Apply</strong>: copies the current layout to the
+main window. The new layout will not be permanent until you "Save".
+
+<li><strong>Save</strong>: saves the current layout to
+wspec/layout.wrm in the database directory. Note, this button
+will not appear if you don't have write access to this file.
+</ul>
+
+
+to <a href="TOC.html">Table of Contents</a><p>
+
+last edited: April 1999<p>
+
+</BODY>

@@ -1,0 +1,35 @@
+================================================================================
+                              AceDB/ZMap - November MAR
+
+
+Executive summary.                                                                        
+------------------                                                                        
+
+Acedb is moving on to GTK2 to keep up with move to newer Linux systems at Sanger.
+Some additions to the Acedb server commands to support ZMap.
+
+ZMap now has a way to interface to an external program so that it can be used
+to display data remotely.
+
+
+Acedb
+-----
+
+Some changes to acedb server to support ZMap, new -rawmethods flag to seqfeatures
+will return true method names not GFF_source field. Bug fix for fmap to stop it
+going off the end of when displaying big sequences for humace annotators.
+Jean fixed ancient bug in aliasing.
+
+Acedb now compiling with GTK2, will switch to only support GTK2 next month.
+
+
+ZMap
+----
+
+ZMap can now be driven by an external program using xremote (a la lace). First
+use is with a program written by James Gilbert to display readpair data from
+Zemin for Richard Durbins program. The raw data is displayed by James program,
+the user can then click on a read pair match and ZMap will scroll to display
+the location of the match with other data on the sequence.
+
+Lots of improvements to display of very long sequences.

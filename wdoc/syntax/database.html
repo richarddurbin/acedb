@@ -1,0 +1,111 @@
+<head>
+<title>AceDB database.wrn syntax</title>
+
+<LINK rel=stylesheet type="text/css"
+href="../wdoc.css"
+title="Style sheet for wdoc documents">
+
+</head>
+
+<body>
+<h2>AceDB database.wrm syntax</h2>
+
+
+<p>on the line in interpreted according to the keyword.
+Current Keywords:</p>
+
+<ul>
+  <li> PART
+  <li> NAME
+  <li> SESSION_KEEP_ALIVE
+  <li> READLOCK_TIMEOUT
+  <li> NOLOCK
+  <li> SYNC_WRITE
+</ul>
+
+<p>note :</p>
+<ul>
+<li> lines beginning by // are comments
+<li> a line don't exeed 512 characters.
+</ul>
+
+<dl>
+<dt> PART = partition
+<p>Example:</p>
+
+<pre>
+//Keyword : type hostname partition_name file_name          max_size offset
+PART :       1   local    ACEDB          block1.wrm          5000      0
+PART :       1   local    ACEDB          block2.wrm          20000     0
+</pre>
+    
+    <dl>
+      <dt> partition types :
+	  <ul>
+	    <li>UNIX_FILE_SYSTEM  = 1
+	    <li>RAW_FILE_SYSTEM   = 2
+	  </ul>
+	  
+      <dt> hostname
+      <dt> partition_name
+      <dd> full path or "ACEDB" if relative to ACEDB variable.
+      <dt> file_name
+      <dd> only for unix file system : name of the partition file.
+	  for other types, "NONE"
+    </dl>
+    
+<dt> <code>NAME</code>
+<dd>  is database name, this is set in the database super block when the database
+is rebuilt. It can only be changed by rebuilding the database and can be used
+as a reliable identifier for the database. This name is used in the main window
+header and in status output.
+
+<dt> <code>TITLE</code> 
+<dd> is an additional database name that is reread each time the database is
+restarted. It can be used to give a more temporary title to a database to give
+more information about the database. This title is used in the main window
+and will override the main window title in wspec/displays.wrm, its also used in
+the status output.
+
+<dt> <code>SESSION_KEEP_ALIVE</code>
+<dd>  is the number of sessions to keep alive after
+saving an update to the database. This number must be at least 1,
+the code uses the default 2, if this value isn't set. 3 or 4 are also sensible.
+If this number is much bigger than that, the amount of diskspace taken
+up by data of old sessions that are kept alive, may be a considerable penalty.
+
+<dt> <code>READLOCK_TIMEOUT</code>
+<dd>  is the time in hours after which a readlock is regarded
+as a left-over from a crash process. Any readlock older than that will
+be removed and ignored by the current and all subsequent acedb programs.
+For newer version (>= 4.8) which clean up readlocks even after unforseen
+crashes this number may be quite small (even as low as 2 or 3), because
+readlocks of genuinely running processes are continuously restored.
+A recommended safe number is 8 to 12 depending on usage of the database.
+
+<dt> <code>NOLOCK</code>
+<dd>  On some platforms the Unix style lockf() system call is either
+not supportd or is bugged. In this case you may want to
+uncomment the NOLOCK line to prevent it being used.
+Note that this disables one of the multiple access
+checks. It therefore makes corruption of the database 
+by simultaneous access over the network more possible.
+This is particularly a problem with an nfs mounted 
+database, because NFS buffering can bypass the other
+acedb protections.
+
+<dt> <code>SYNC_WRITE</code> 
+<dd> If acedb databases are accessed via NFS, writes to the
+database can time out and fail _WITHOUT_ acedb being able to
+detect this. This can lead to corruption of the database.
+Uncommenting the below line will force acedb to open
+database files for writing in synchronous mode. This will
+slow down the writes by a factor of at least 5, _but_ acedb
+will be able to detect when writes via NFS fail. You may need
+to do this if your network becomes very overloaded but you
+still need to be able to update the database reliably.
+</dl>
+
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!--  $Id: acedb.html,v 1.10 2008-05-16 13:50:13 edgrif Exp $  -->
+<head>
+<title>Main_Window</title>
+</head>
+<BODY BGCOLOR=#ffffff>
+
+<h2>ACEDB Main Window</h2>
+
+This help contains information on how to use the ACEDB Main
+Window.<P>
+
+For more general help refer to these pages:
+
+<ul>
+
+<li><A HREF="About_acedb.html">what is Acedb ?</A>
+
+<li><a href="TOC.html">Table of Contents</a> for these help pages
+
+<li>general features of the <A HREF="Interface.html">Acedb user interface</a>
+
+<li><A HREF="Copyright.html">distribution and copyright</a> information
+
+<li><A HREF="http://probe.nalusda.gov:8000/acedocs/index.html"> Acedb documentation server</a> at Nalusda
+
+</ul>
+
+<h2>To exit the program, choose <strong>Quit</strong> from the menu in
+the Main Window.</h2>
+
+The Main Window presents a list of Classes, which are the categories 
+around which information is organized in the database. 
+For example, a class called "Locus" could
+be designed to store information about genetic markers.  Each class
+consists of a list of members called "objects". The objects named ABC1
+and xyz-1 might be members of the Locus class.<p>
+
+By default all visible classes (as specified in 
+<A HREF="Class_Configuration.html">wspec/options.wrm</A>) are
+displayed in the class chooser. The way classes are presented is
+configurable on the <A HREF="Layout.html">layout editor</A> 
+by clicking the button "Set Selection"<P>
+
+The Main Window lets you find objects in the database in several
+ways:<p>
+
+<strong>1. You can pick a visible Class</strong> by clicking with the left
+mouse button.  Clicking again will give a list of the names of all
+objects in that class in the <A HREF="KeySet.html">Main KeySet</a>,
+also called a Selection List. You can restrict this list by typing a
+template in the yellow Search box.  When you press the RETURN key you
+obtain all names matching the text in the yellow box. Name recognition
+usually is not case sensitive, except if this option was explicitly
+requested by the database curator. Do not be too fancy. Named are
+recognized as-is, backslashes quotes and punctuation will be assumed to
+belong to the name. However ? and * are used as wildcards:
+
+<ul>
+
+<li>* in the template will match anything; e.g. "S*" will match all
+names beginning with 'S', "*S*" will match all names containing an
+'S', "*a*b" all names containing an 'A' and ending with a 'B'.
+
+<li>? in the template will match any single character, e.g. "???"
+will match all names that are exactly three characters long.
+
+</ul>
+
+To actually display an object you must pick its name twice in
+the Main KeySet. A new window will open containing more information
+about the object. The new window might contain <A
+HREF="Tree.html">text</a> or be a special display, like a <A
+HREF="Genetic-map.html">genetic map</a>.<p>
+
+<strong>2. You can search the database</strong> by typing a text
+string in the Text Search box (first click on it with the left button
+to make it yellow).  This will find all the objects in the database
+which contain the search text.  More precisely, we find all objects
+whose name contains the search string, all objects that refer to this
+object, and all objects containing searchable Text (or other X class
+data) containing the search string.<p>
+
+<strong>3. You can pick any other class Class</strong> by filing the
+search box and then clicking on the black triangle following the
+words in Class: with the left or the right mouse button.
+
+In addition the Main Window menu allows access to other
+applications and functions of ACEDB, many of which have
+their own help:<p>
+
+<h3>Menu items:</h3>
+
+<ul>
+
+<li><strong>Quit</strong>: Quits entire program.
+
+<li><strong>Help</strong>: Displays this help page.
+
+<li><strong>Clean up</strong>: Kills all ACEDB windows except Main.
+
+<li><strong>Program Status</strong>: <A HREF="Status.html">Info on
+memory/disk usage</a>.
+
+<li><strong>Add Update file</strong>: To read official data <A
+HREF="Update.html">Update</a>.
+
+<li><strong>Preferences</strong>: To configure your display <A
+HREF="Preferences.html">preferences</a>.
+
+<li><strong>Query</strong>: Opens <A HREF="Query.html">Query
+Commands</a> window.
+
+<li><strong>Query by Examples</strong>: Opens <A
+HREF="Query_By_Example.html">Query by Example</a> window.
+
+<li><strong>Query builder</strong>: Opens <A
+HREF="Query_Builder.html">Query Builder</a> window.
+
+<li><strong>Table Maker</strong>: Opens <A
+HREF="Table_Maker.html">TableMaker</a> window.
+
+<li><strong>DNA</strong>: Opens <A HREF="DNA_analysis.html">DNA
+Analysis</a> window.
+
+<li><strong>Chronometer</strong>: Opens <A
+HREF="Chronometer.html">Chronometer</a> window, for timing ACEDB
+activities (for programmers).
+
+<li><strong>Sequence Assembly and Mapping</strong>: Available with
+    the <A HREF="Acembly.html">Acembly</a> program.
+
+
+<li><strong>Comparative maps</strong>: A set of tools developed
+    by John Edwards and Joe Dicks to compare chromosomes from
+    different species, also called <A HREF="Oxgrid.html">Oxgrids </a>.
+
+
+</ul>
+
+The following entries only exist if your username is registered in
+wspec/passwd.wrm:<p>
+
+<ul>
+
+<li><strong>Add/Delete/Rename/Alias Objects</strong>: Opens window for <A
+HREF="Add_New_Objects.html"> adding and editing objects</a>.
+
+<li><strong>Read .ace files</strong>: Opens 
+     <A HREF="Read_files.html">.ace file parser</a> for reading in data.
+
+<li><strong>Align maps</strong>: Opens <A
+HREF="Make_maps.html">Align</a> window for building maps.
+
+<li><strong>Read Models</strong>: Run this after modifying
+wspec/models.wrm
+
+<li><strong>Dump</strong>: <A HREF="Dump.html">Dumps</a> entire
+database in ace format.
+
+<li><strong>Session control</strong>: To preserve or backtrack to an earlier
+    state of the database. This tool can also be used to recover the database
+    in the rare case of a fatal disk error, see <A HREF="Session_control.html">Session_control</a>
+
+<li><strong>Write Access/Save</strong>: Toggle to get write access or save data to database. Save commits changes permanently and releases write access.
+   
+</ul>
+
+
+<h3>Keyboard Short Cuts</h3>
+
+<p>This section details the short cuts and actions that are standard to all acedb windows.
+
+<a name="Acedb_Cntl_keys"></a><h4>Cntl keys</h4>
+
+<ul>
+  <li><b>Cntl - h</b> Show help page for window.
+  <li><b>Cntl - p</b> Print the window
+  <li><b>Cntl - s</b> Save the window
+  <li><b>Cntl - w</b> Close the window
+  <li><b>Cntl - q</b> Quit acedb
+</ul>
+
+
+to <a href="TOC.html">Table of Contents</a><p>
+
+last edited: April 1999<p>
+
+</BODY>

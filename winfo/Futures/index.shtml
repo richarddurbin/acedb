@@ -1,0 +1,64 @@
+<!--#config timefmt="%d-%b-%C%y, %I:%M %p" -->
+<!--#set var="stylesheet" value="../../acedb.css" -->
+<!--#set var="logo" value="../../acedb-logo.gif" -->
+<!--#set var="title" value="ACEDB - The Future..." --> 
+<!--#set var="author" value="edgrif" --> 
+<!--#set var="description" value="Thoughts/ideas about how Acedb will develop in the future." -->
+<!--#set var="keywords" value="acedb, future, plan, strategy, changes" -->
+<!--#exec cgi="/perl/header" -->
+
+
+<!-- The stuff above puts in a standard header and stuff for local AltaVista searches. -->
+
+
+<H1>The future of ACEDB</H1>
+<p><i>(Last major change: <FONT color="red">01-Sept-1999</FONT>)</i></p>
+
+<H3>Introduction</H3>
+
+<p>These pages are an attempt to gather together lots of ideas that are floating
+around about how acedb <B>might</B> develop in the future. Consequently they are
+changed as new ideas emerge and existing ones are revised. The
+intention is that anyone should be able to contribute their ideas to how
+they think ACEDB should develop.</P>
+
+<p>Your views are <BOLD>important</BOLD>, please send them to me, </p>
+<address>
+  <A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths: edgrif@sanger.ac.uk</A>
+</address>
+and I will incorporate them into these pages.</p>
+
+
+<H3>Document structure</H3>
+<p>The documents are divided up into three main sections:
+<UL>
+  <LI><a href="short_term.shtml">Short term</a>: changes for the next few months to a year
+  <LI><a href="medium_term.shtml">Medium term</a>: changes over the next  1-2 years
+  <LI><a href="long_term.shtml">Long term</a>: changes over the next  2-5 years
+</UL>
+Each section is further subdivided into 'developer' and 'user' changes, the intention
+being that if, for example, you are a user of acedb and want to see what changes
+are being considered in the next 1-2 years you can go straight to the relevant
+section.</p>
+
+<!-- links now above -->
+<!--
+<H3>Accessing the documents</H3>
+<P>
+The documents can be accessed either from
+<UL>
+  <LI><A href="./frame_init.html">a frames based index</A>
+</UL>
+or you can go direct to the sections:
+<UL>
+  <LI><A href="./short_term.shtml">Short term goals</A> these are mostly bug fixes or minor
+     enhancements.</LI>
+  <LI><A href="./medium_term.shtml">Medium term goals</A> these are larger changes which may
+       take some months to design and implement.
+  <LI><A href="./long_term.shtml">Long term goals</A> these are much larger/long term changes
+       that may some years.
+</UL>
+-->
+
+<!--#exec cgi="/perl/footer" -->
+

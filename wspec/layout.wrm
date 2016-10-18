@@ -1,0 +1,9 @@
+ Chromosome    Clone            Author
+ Gene          Sequence         Laboratory
+ Rearrangement Genome_Sequence  Cell
+ Allele        cDNA_Sequence    Pathway
+ Strain        Sequence_map
+ Other_locus
+ Gene_class              Model  Keyset
+
+

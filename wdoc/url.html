@@ -1,0 +1,191 @@
+<HTML>
+
+<HEAD>
+<TITLE>A Guide To Using URLs in ACEDB</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="./wdoc.css"
+title="Style sheet for wdoc developer documents">
+
+</HEAD>
+
+
+<BODY>
+
+
+<BLOCKQUOTE>
+<DIV ALIGN=CENTER>
+ <IMG SRC="acedb-logo.gif" ALT="[ACEDB DOCUMENTATION]" align=middle>
+ <H3>
+  ACEDB Version 4_8
+ </H3>
+</DIV>
+
+
+<DIV ALIGN=CENTER>
+
+<H1 align=center>
+A Guide To Using URLs in ACEDB
+</H1>
+
+<ADDRESS>Originally written by<BR>
+Richard Durbin &lt;rd@sanger.ac.uk&gt, July 2000</ADDRESS>
+
+</DIV>
+
+<H2>Richard Durbins description of the current system</H2>
+
+<pre>There is in fact a standard acedb way to put URLs into acedb, which I
+guess Arnthor has found since he says it works for him.  This is not a
+specific class, but rather a display type.  It's behaviour is
+potentially quite complex, though it is easy to do the standard simple
+things.
+
+I think it is worth describing the full behaviour because it might be
+good to reimplement it in AceBrowser for consistency.  The original code
+is in doWWWDisplay() in display.c.
+
+1) If the object contains the tag "Url" then use the following text as
+   the URL (that's the easy case!).
+
+Else if the object contains the tag "Web_location" followed by <key>
+then we expect that the object corresponding to <key> contains template
+information that will tell you how to construct the URL from the
+original object.  The principle is that first you find some base text,
+then apply some rewriting rules.  This allows many objects to share one
+URL construction template.
+
+First to get the base text:
+
+2) If the tag "Reference_tag" occurs in the template followed by some
+   text, then assume that text is a tag name, and look for the base text
+   to follow this tag in the original object.  There is some code that
+   allows this to be done in a class-specific way, so that e.g.
+
+     Reference_tag Foo Sequence
+                   Bar Clone
+
+   would use the Foo tag when this template is applied to Sequence
+   objects and the Bar tag when applied to Clones.  The default if just
+
+     Reference_tag Foo
+
+   is to look following Foo in the original object independent of class.
+
+3) If (2) gave nothing, and the tag "Use_name" is found in the template,
+   then use the name of the original object.  This too can be class
+   qualified, so that
+
+     Use_name Locus
+              Allele
+
+   would mean that this template only uses gets the base text from the
+   name for the Locus and Allele classes.  Again, the default if the tag
+   "Use_name" is not followed by anything is to use the name for the
+   base text whatever is being displayed.
+
+
+4) Next protect unclean URL characters.
+
+5) Next if the tag "Rewrite" exists in the template, then apply the
+   first of the rewrite rules that matches and display.  Else just
+   display the base text.  Rewrite rules are given via
+
+     Rewrite &lt;new prefix&gt; &lt;new suffix&gt; [&lt;old prefix&gt; [&lt;old suffix&gt;]]
+
+   if an old prefix and/or suffix is given, then it is required to match
+   to that for the rule to apply.  If there is a match, then these are
+   deleted.  Following which, the new prefix and suffix are pre- and
+   post-pended.
+
+Example:
+
+  Protein SP:P15501
+  Web_location Expasy
+
+  URL_template Expasy
+  Use_name
+  Rewrite http://www.expasy.ch/cgi-bin/niceprot.pl? "" SP:
+
+would, if Protein SP:P15501 were displayed with display method WWW,
+generate the URL "http://www.expasy.ch/cgi-bin/niceprot.pl?P15501"
+
+Note that you would think that the absolute default behaviour if neither
+Url nor Web_location is given in the original object would be to use the
+name of the object as the URL.  That doesn't seem to be the case.
+Shouldn't it be, Simon?
+
+Richard
+
+</pre>
+
+
+<H2>Lincoln Steins comments</H2>
+
+<pre>Richard,
+
+Thanks for the information.  This sounds a bit hairy, but I
+think I can code it.  It's a little more difficult to assign
+special behaviors to tags (and combinations) of tags, than to
+specific classes, and I'm going to have to do a bit of client
+side caching of the templates in order to avoid a double-trip
+to the server for each URL displayed.
+
+Any reason you didn't do it like this?
+
+        Url ?Url_template text
+
+where text is the variant part of the Url?  Then the rewrite
+rule could just contain a placeholder for the substitution,
+such as http://foo.bar/cgi-bin?lookup=%1
+
+I notice that the C elegans models.wrm has two URL things:
+
+?Url    Url UNIQUE Text // Simple, text of URL
+        Template UNIQUE ?Url // use this object as a generic template
+        Reference_tag UNIQUE Text // look for this tag in the reffing object for url
+        Remove_prefix UNIQUE Text // prefix to remove to make url
+        Remove_postfix UNIQUE Text // postfix to remove to make url
+        Prepend UNIQUE Text // then add this to the beginning
+        Append UNIQUE Text // then add this to the end
+        Web_location UNIQUE ?WWW_server
+
+?WWW_server     Url UNIQUE Text // Simple, text of URL  
+                Use_name Text // (optional) Classname
+                Rewrite Text UNIQUE Text Text UNIQUE Text 
+                Reference_tag UNIQUE Text // look for this tag in the reffing object for
+url
+
+
+
+While RiceGenes (and many of the other agro databases) do something else:
+
+?Database       Name Text // Full name
+                Contents ?Text // Description of material included
+                WWW     Arg1_URL_prefix UNIQUE Text
+                        Arg1_URL_suffix UNIQUE Text
+                        Arg2_URL_prefix UNIQUE Text
+                        Arg2_URL_suffix UNIQUE Text
+
+I guess this has been through a number of iterations.  Should I contact
+Sam Cartinhour, Dave Matthews and the UK Cropnet folk and poll them on
+whether they are dependent on any particular version of the URL model?
+
+Lincoln
+</pre>
+
+
+
+
+<HR>
+<H3 ALIGN="CENTER">ACEDB Version 4_8</H3>
+
+<HR>
+<ADDRESS><a href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</a></ADDRESS>
+<!-- hhmts start -->
+Last modified: Tue Feb  6 13:21:44 GMT 2001
+<!-- hhmts end -->
+
+</BLOCKQUOTE>
+</BODY>
+</HTML>

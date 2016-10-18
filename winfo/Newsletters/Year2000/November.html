@@ -1,0 +1,181 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - November 2000</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<H1>ACEDB User Group Newsletter - November 2000</H1>
+
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+<P>A new acedb developer joins the team, a number of new features for users and
+a number of bug fixes.
+
+
+<a name="General"></a><H2>General News</H2>
+
+<a name="Newacedev"></a><H3>New acedb developer</H3>
+
+<p>After a hiatus of some months following the departure of Fred Wobus from our team
+(now pursuing his hobby of scuba diving in Thailand !), we have been joined by John Sturdy
+(jcgs@sanger.ac.uk). John is a Computer Science Ph.D. and has worked for various software
+companies locally for some years. Initially he will be working on improving the acedb web site
+so you should see quite a few improvements there over the next few weeks.
+
+
+<a name="New"></a><H2>New Features</H2>
+
+<a name="Treeview"></a>
+<H3>"Tree/Text" view and "update" mode</H3>
+
+<p>An irritating feature of using "update" mode in the "Tree" window has been that
+the window is repositioned at the top when the mode is selected,
+thus losing the users place each time an
+update is performed. This has now been fixed: select a tag by clicking on it,
+then select "update" from the right button menu and the tag will stay visible
+in the window.
+
+
+<a name="Treetext"></a><H3>"Tree/Text" view and "Tag search" menu item</H3>
+
+<P>Searching for a particular tag in a large object in the tree window can be
+tedious, especially when this involves opening collapsed nodes to find the tag.
+The right button menu now has an additional "Find tag" item that allows
+you to search for a tag (it will find the tag whether the tag is within a collapsed
+node or not).
+
+<a name="Fmap"></a><H3>Fmap Horizontal Scrolling</H3>
+
+<p>A horizontal scroll bar has been added to the fmap display so its no longer
+necessary to turn columns off to see whats displayed over to the right of the
+display. Headings/Titles/Column buttons
+are not redrawn as you scroll because this slows scrolling down too much.
+
+
+<a name="Support"></a><H3>Support for 2-button mouse users</H3>
+
+<p>Most <code>MS-Windows</code> users have 2-button mice which means they
+have not been able to use functions that were linked to the middle button
+on Xwindows/Unix machines. This has now been fixed by making <code>shift-leftmousebutton</code>
+do the same job as the middle button for 2-button users.
+
+
+<a name="Change"></a><H3>Change to help in tace</H3>
+
+<P>The <code><b>"?"</b></code> command to get help in tace has changed in the way it works.
+If there is only one command matching the string following <code>"?"</code> then the syntax
+for that one
+command will be printed, if there is more than one, then syntax for all matching commands will
+be printed, e.g.
+<dl>
+  <dt><code>"?"</code>
+  <dd>gives a list of all available commands
+  <dt><code>"? d"</code>
+  <dd>will give a list of all command beginning with <code>"d"</code>
+  <dt><code>"? du"</code>
+  <dd>will list the "dump" command because it's the only command that matches <code>"du"</code>
+</dl>
+
+<a name="Newspick"></a><H3>New <code>"spick"</code> addtion to keyset manipulating commands in <code>tace</code>.</H3>
+
+<p>If you use the <code>spush, spop</code> etc. commands for manipulating keysets in <code>tace</code>
+then you should
+note a useful addition to these of <code>spick</code> (courtesy of Lincoln Stein).
+<code>spick</code> allows you to
+choose one of the stacked keysets and make it the active keyset without having to <code>spop</code> the
+stack to get to the one you want.
+
+
+<a name="Bugs"></a><H2>Bugs Fixed</H2>
+
+
+<a name="Twomsbugs"></a><H3>Two Acedb MS-Windows bug fixes</H3>
+
+<p>Printing acedb windows now works from Windows 95 in the same way as for acedb
+on Unix machines.
+
+<p>You can now use the up and down arrows to scroll through the items in
+the keyset window.
+
+
+
+<a name="xacehang"></a><H3>xace/tace hang when trying to get write access</H3>
+
+<p>Oh dear, while I'd love to say this bug was fixed, its not and can't be for the foreseeable
+future. The cause of the bug is based in NFS/lockmanager problems which arise from time
+to time on the Sanger network. Acedb uses lock files to make sure that only one user
+can have write access to a database at a time, this works well most of the time. There
+can be problems in two situations however: when the network is heavily loaded so that NFS
+starts to time out meaning that requests to create/write lockfiles stall and when lock managers
+on machines remote from yours on the network begin to hang (usually because of the
+NFS problems) meaning that acedb will be unable
+to lock its lock files. In either case xace or tace will simply hang, i.e. not respond to mouse
+clicks etc..
+When this happens, all you can do is kill the program using the Unix "kill" command, you will need
+to use "ps" to find out the process id of the hung program and then type "kill -9 xxxxx" where xxxxx
+is the process id. The acedb code cannot detect that this problem has occurred because it cannot
+run while waiting to create/lock the lockfile. Sadly there is nothing we can do to
+solve this problem.
+
+
+<a name="gene"></a><H3>gene finder bug</H3>
+
+<P>There is a bug in the November code which may cause the "Gene finder" button in fmap
+to crash the xace program. The problem happens when the definition of the ?Method class in
+the models.wrm file in the users database does not match the definition in the models.wrm
+file distributed with the code. Previous versions of acedb did not detect this mismatch and
+continued to run, probably with some errors in display of some fmap information. Detection of
+this sort of parse error was tightened up recently to support new function in AcePerl, hence
+the reason for the code failing now. Database administrators should check that the definition
+of the ?Method class in their models.wrm files matches that distributed with the code level
+they are using.
+
+<P>We hope to make the code more tolerant of this problem in the future by altering the code to check
+the model of the database against its method own object and decide if it can continue if there
+is a difference. This will probably not happen until the New Year.
+
+
+<a name="tab"></a><H3><code>Tab</code> key:</H3>
+
+<P>There was a bug whereby if the user pressed the <code>Tab</code> key
+while inputting text, the window would then no longer accept input. This has now been fixed
+and tabs can be used as input to text boxes.
+
+<H2>November monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd>ftp://ftp.sanger.ac.uk/pub/acedb/Sanger-release.2000_11_21.tar.gz
+</dl>
+
+<H2>Next User Group Meeting - D213, 2.30pm, Thursday, 9th November</H2>
+
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon May 21 15:39:38 BST 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

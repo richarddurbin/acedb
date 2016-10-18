@@ -1,0 +1,43 @@
+<!--#include virtual="/perl/header" -->
+<!--#set var="title" value="GMap FAQ" -->
+<!--#set var="author" value="edgrif@acedb.org" -->
+
+<body>
+<blockquote>
+<h1>GMap FAQ</h1>
+
+<P>These answers have been contributed by many people including the Acedb team (Richard Durbin,
+Jean Thierry-Mieg, Ed Griffiths and Rob Clack.
+
+
+<P>this all needs html-ing...we need a template file to do this....
+
+<P>What is the significance of the small, transparent circle drawn on a genetic interval rendered
+by the map view "Interval_JTM"? It's almost like they're error bars.
+
+<P>The bar denotes a deletion the double bar a duplication The circle is written on the bar
+somewhere at the same level as the circle, abit more to the right in a single column you find the
+name of the deletion/duplication
+                                                                                          
+<P>when you zoom sufficiently out, the name and the circle disappear                         
+so the name is always written in the same area as the del/dup                             
+                                                                                          
+<P>in the same way, the locus/gene name show first as full names                             
+then reduce to 3 letter, then to 1 letter then drop out                                   
+but are never further of vertically than about 1cm (centimeter                            
+of screen, not centi Morgan !)                                                            
+                                                                                          
+<P>the circle is there for you to know hwo is who if you print                               
+the display as opposed to having it on screen and clicking                                
+whereby the name and the bar change color                                                 
+                                                                                          
+<P>by the way do you all know that from the menu you can                                     
+choose a scale where things are visible and print the WHOLE                               
+map. This is done in acedb by treating the printer as                                     
+a screen of finite width but potentialy infinite length                                   
+                                                                                          
+
+</blockquote>
+</body>
+
+<!--#include virtual="/perl/footer" -->

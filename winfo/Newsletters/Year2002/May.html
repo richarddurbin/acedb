@@ -1,0 +1,213 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - May 2002</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - May 2002</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<P>This month includes controlling the acedb server with signals, some
+changes to the way homologies are displayed in fmap, Acedb and the Mac,
+and some important bug fixes.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="General_News"></a><H2>General News</H2>
+
+<P>Sad to say we are still labouring on the SMap code which will bring a
+lot more power and flexibility to FMap.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="server_sigterm"></a><H3>Killing the AceDB server with SIGTERM</H3>
+
+<P>Server programs, especially those run in the background will normally accept
+certain signals as "commands" to get them to take certain actions, the <i>de facto</i>
+standard for unix includes:
+
+<ul>
+  <li><b><code>SIGHUP</code>:</b> reread server configuration file(s).
+  <li><b><code>SIGTERM</code>:</b> terminate gracefully.
+</ul>
+
+<P>The AceDB server will now respond to <code>SIGTERM</code> and shut down correctly. This is done by
+by setting a global flag from a 
+server callback routine called by the acedb signal handler function.
+The server then checks for the global flag in the main processing loop of the socket
+layer, and then initiates the save and exit of the database.
+This seems a bit contorted but avoids any issues of trying to use issue calls that are
+not signal safe from a signal handler or of trying to exit perhaps
+half way through an interrupted partial acedb save.
+
+<P>Support for <code>SIGHUP</code> will be added if required.
+
+
+<a name="fmap_changes"></a><H3>Some FMap changes</H3>
+
+<P>A number of small changes have been made to FMap:
+
+<P><b>Support for "Show_in_reverse_orientation" tag:</b> The worm database version of
+the <code>?Sequence</code> class contains a <code>Show_in_reverse_orientation</code> tag
+which is used to indicate that the 3' sequence of an EST paired read that has been
+sequenced in reverse. The FMap code now looks for this tag and will reverse the strand
+that the sequence is shown on so that it appears downstream from its 5' pair. To take
+advantage of the tag you need to add this tag to the <code>?Sequence</code> class, you can
+put the tag anywhere in the class but in the worm version it is under the "Properties"
+tag:
+
+<pre><code>Properties    Pseudogene Text
+              Genomic_canonical Gene_count UNIQUE Int
+
+              etc.
+
+              Show_in_reverse_orientation   // Draw 3' reads in reverse orientation
+
+              etc.
+</code></pre>
+
+<P><b>Improved display of homologies with a common clone parent:</b>
+Clicking on a homology box in fmap will now hilight all all the homologies in that
+column that have a common clone parent. In addition if you select to have the
+column displayed in "cluster" mode, homologies with a common parent get sorted
+into the same vertical alignment within the column, making them easier to see.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+
+<a name="darwin"></a><H3>Acedb, MAC OSX and "Darwin"</H3>
+
+<P>(<I>This article is courtesy of Simon Kelley</I>
+<A HREF="mailto:srk@sanger.ac.uk">srk@sanger.ac.uk</A>)
+
+<P>Acedb is now available to run on Apple Macintoshes running Mac OS X. We 
+are using the Fink packaging system to distribute Acedb for Macs. This 
+is available from <A HREF="http://fink.sourceforge.net/">http://fink.sourceforge.net/</A>
+
+<P>Acedb depends on a few other bits of software which don't come with OS X 
+but are available from the Fink system. The main one of these is the X 
+windows system.
+
+<P>To get Acedb on a Mac, first install fink by following the instructions 
+at <A HREF="http://fink.sourceforge.net/download/index.php">http://fink.sourceforge.net/download/index.php</A>
+
+<P>Download the package for acedb from
+<A HREF="http://www.acedb.org/Software/Downloads">http://www.acedb.org/Software/Downloads</A>
+
+<P>Install the extra software required by running the following command in 
+a Terminal Window:
+
+<pre><code>fink install xfree86-base xfree86-rootless gtk+ readline
+</code></pre>
+
+<P>and finally install acedb by runnning this command:
+
+<pre><code>dpkg -i &lt;path_to_acedb_package&gt;
+</code></pre>
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+<a name="blixem"></a><H3>Blixem and efetch/pfetch</H3>
+
+<P>Blixem now supports the use of efetch or pfetch to get its sequence
+entries from reference databases (e.g. EMBL). There was a bug which
+meant that even if the user wanted blixem to use pfetch, it would still
+try to use efetch for some purposes. Now blixem will use either efetch or
+pfetch, but not a mixture of both.
+
+<P>In addition, if pfetch is used, blixem will make use of the 
+new "--client" pfetch option which gives logging information about
+the user/client to the pfetch server.
+
+
+<a name="freeread"></a><H3>Ancient freeread() bug</H3>
+
+<P>An ancient bug in freeread() caused escaped pseudo newlines of the form
+'\' followed by 'n' to be incorrectly translated to just 'n' rather than
+being read unaltered as '\n'. freeread() is brain dead in that it does not use
+the "special" stuff used by other freeNNN routines, which is the original
+cause of the bug, this will not be fixed as
+the freeNNN routines are legacy code having been replaced by the aceIn/Out package.
+
+
+<a name="acediff"></a><H3>Ancient acediff bug</H3>
+
+<P>Two bugs fixed:
+
+<P>cmpFileParts() was altered at some time to do error checking for EOF (which was
+a good idea) but in doing the check
+read <b>twice</b> as many chars as it should have because it was doing a
+separate getc() to test EOF from the getc() to just get the next char from the file.
+This caused the program to do anything from
+fall off the end of the file to erroneously report differences.
+
+<P>oneLine() did not count lines in the file it was processing correctly, this
+is because a) the freeread() routine it called was incorrectly translating
+pseudo-newlines into just 'n' (now fixed) and b) it didn't increment the
+line count when it encountered one of these (which in acefiles signals a
+multiline text entry).
+
+
+<a name="aql"></a><H3>AQL obscure bug</H3>
+
+<P>AQL sometimes failed in obscure ways, this was because the code in aqlCreate()
+was missing the NULL terminator required for varargs so queries were not always
+interpreted correctly.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<H2>May monthly build not available.</H2>
+
+<P>Apologies, once again there was no build this month due to the major
+SMap development work.
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Wed Dec 18 16:12:57 GMT 2002
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

@@ -1,0 +1,442 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - July 2003</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - July 2003</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+
+<P>This month sees a new "subset" command, tag counts displayed in the tree window,
+a unfortunate delay to cut/paste in acedb text windows, more work on the
+Genetic_code class, a question about acedb case sensitivity and object renaming,
+future plans for a "son of FMap".
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="blixem_scroll"></a><H3>Blixem and selected homologies</H3>
+
+<P>When you select a homology in the top, "big picture", window of blixem,
+the list of homologies below now gets scrolled to the selected homologies.
+
+
+<a name="subset_command"></a><H3>New "subset" command in tace/giface</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Mieg who added this new feature</I>
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)
+
+<P>There is a new subset command available from the command line in tace or
+giface:
+
+<P><pre><code>subset x nx : returns the subset of the alphabetic active keyset from x >= 1 of length nx
+</code></pre>
+
+<P>This is an extremely efficient way to export long lists or tables to the web by
+pieces. You make an active keyset by some query, subset it,
+make a table out of the subset and export the table.
+This is better than making a slice of a table because this way you only compute the table slice
+you are really interested in.
+
+
+
+
+<a name="tagcount_option"></a><H3>New "Toggle TagCount" menu option in tree display</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Mieg who added this new feature</I>
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)
+
+<P>There is a new option in the menu of the xace tree display
+called "Toggle TagCount".
+Select it, and you see in green after each tag how many objects
+of the same class contain this tag. What is even more interesting
+is to activate this option while displaying the models.
+In that case, you will see in red all the tags which are not used 
+at all in your database and which you may wish to remove from your
+schema.
+
+<P>The counting relies on the internal acedb indexing which was 
+introduced a few years ago and should be quasi instantaneous. 
+
+<P>To see the models, double click them from the main window or
+select them from the 'other class...' button of the main window,
+or type 'find model' in a query box.
+
+<P>Tag count is disabled in update mode or in show-time-stamps mode.
+
+
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+<a name="text_edit"></a><H3>Cut, Paste and Text windows</H3>
+
+<P>(<I>This article is courtesy of Rob Clack who has been working on this new feature</I>
+<A HREF="mailto:rnc@sanger.ac.uk">rnc@sanger.ac.uk</A>)
+
+<P>The Pfetch window accessible from fmap and the text editor window 
+accessible from the Update Tree view have both been reverted to the way 
+they were in release 4_9q, ie before we started fiddling with them.
+
+<P>The attempt to provide copy-and-paste functionality was doomed as long 
+as we were using GTK 1.2.10 as there is a bug in that release which 
+breaks popup menus.
+
+<P>This bug is fixed in GTK 2.2.2 but the upgrade to the new GTK is 
+non-trivial as there are numerous incompatibilities which will need to 
+be addressed.
+
+<P>We plan to do the upgrade later this year, but in the meantime the 
+enhancements to the pfetch and text editor windows have been shelved.
+
+<P>This means that anyone who has continued to use older versions of Acedb 
+because of inadequacies in the pfetch and text editor windows can safely 
+upgrade to the new monthly version.
+
+
+
+
+<a name="genetic_code"></a><H3>Genetic_code class: one more time</H3>
+
+<P>(<I>Thanks to Jean Thierry-Mieg <A HREF="mailto:mieg@ncbi.nlm.nih.gov">
+mieg@ncbi.nlm.nih.gov</A>
+who did the original coding for this feature.</I>)
+
+<P>A <A HREF="http://www.acedb.org/winfo/Newsletters/Year2003/April.html#genetic_code">
+previous article</a> described a new class which allows you to specify different genetic
+codes for translating DNA to peptides. The proposed model for the Genetic_code class to
+do this was:
+
+<pre><code>?Genetic_code   Other_name ?Text
+                Translation  UNIQUE     Text
+                Start  UNIQUE   Text
+                Base1 UNIQUE    Text
+                Base2 UNIQUE    Text
+                Base3 UNIQUE    Text
+</code></pre>
+
+<P>The <A HREF="http://www.acedb.org/winfo/Newsletters/Year2003/May.html#selenocysteine">
+next month</a> this was then revised to include a specific tag for the rare Selenocysteine
+amino acid:
+
+<P><pre><code>?Genetic_code   Other_name ?Text
+                Translation UNIQUE Text
+                Start UNIQUE Text
+                Base1 UNIQUE Text
+                Base2 UNIQUE Text
+                Base3 UNIQUE Text
+                Selenocysteine Remark Text   // Use the Remark to document your usage of this tag.
+</code></pre>
+
+<P>After some discussion this has now been revised once more (sorry) because as far as is
+known the TGA codon when specifying Selenocysteine also acts as a stop codon when at the end of
+a transcript and so can be viewed as an "alternative stop" in the same was as some codons
+are alternative start codons.
+
+<P>Hence it makes sense to have a unified mechanism for both alternative start and stop
+codons, the new model for the Genetic_code class looks like this:
+
+<pre><code>?Genetic_code   Other_name ?Text
+                Remark Text
+                Translation UNIQUE Text
+                Start UNIQUE Text
+                Stop  UNIQUE Text
+                Base1 UNIQUE Text
+                Base2 UNIQUE Text
+                Base3 UNIQUE Text
+</code></pre>
+
+<P>An example for Selenocysteine taken from the the
+<A HREF="http://www.wormbase.org/">Wormbase database</a> illustrates usage
+of the Genetic_code class:
+
+<pre><code>Genetic_code : "Selenocysteine"
+Translation  "FFLLSSSSYY**CCUWLLLLPPPPHHQQRRRRIIMMTTTTNNKKSSSSVVVVAAAADDEEGGGG"
+Start        "---M----------------------------MMMM---------------M------------"
+Stop         "----------**--*-------------------------------------------------"
+Base1        "TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG"
+Base2        "TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG"
+Base3        "TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG"
+</code></pre>
+
+<P>In this case the <b>TGA</b> codon (in this case in column 15) will specify the
+Selenocysteine amino acid (<b>U</b>) instead of its more usual role of being a stop
+codon. This happens unless it occurs at the end of a transcript in which case it
+specifies a stop, this is indicated by the "<b>*</b>" in the corresponding column
+in the data following the "<b>Stop</b>" tag.
+
+<P>Hence alternative <b>Start</b> codons are specified by an "<b>M</b>" in the Start data and
+alternative <b>Stop</b> codons are specified by a "<b>*</b>" in the Stop data.
+
+<P>In the case of Worm base the sequence class has been modified to include
+a reference to the Genetic_code class in the Origin section:
+
+<pre><code>?Sequence DNA UNIQUE ?DNA UNIQUE Int		// Int is the length
+                             .
+                             .
+	  Origin  From_Database UNIQUE ?Database UNIQUE Int	// release number
+                             .
+                             .
+                  Genetic_code UNIQUE ?Genetic_code
+</code></pre>
+
+<P>You can see an example of this in Sequence object "C06G3.7".
+
+<P>You should note that when exporting sequences, acedb will not export the final codon
+if it translates as a valid stop codon. In FMap however, the stop codon is displayed
+so that its possible to see that the transcript ends correctly.
+
+
+
+<a name="rename_objects"></a><H3>Case sensitivity and object names</H3>
+
+<P>Recently a user sent in the following problem:
+
+<blockquote>When I was trying to create an instance of an object in ACEDB, I encountered
+some problem. The problem is as follow:
+
+I created an object called "test" with all lower case. Then I found out that
+I have to use upper case "TEST". Since I realized that ACEDB is case
+insensative, I can't just created a new object called "TEST". Therefore, I
+deleted old object called "test". And then create a new object called
+"TEST". However, somehow, when I fetched the object "TEST", I got "test"
+back even though I have deleted it and double checked it several times. It
+seems that ACEDB has some kind of memory system (still remember old deleted
+object :-)). Can someone tell me how to fix this problem? Thank you very
+much.
+</blockquote>
+
+<P>This "problem" is in essence caused by the acedb indexing system works and
+in particular by the way it handles texts such as the names of objects. Acedb
+keeps tables of strings which are indexed in a very efficient way, entries in
+these tables are not deleted until the database is rebuilt. Hence in the above
+case, when the object "test" is first created an entry is made in the index
+for the string "test". When the object is removed the entry remains in the
+index, this is done for efficiency otherwise every single string would require
+a usage count and object creation, tag usage etc. would become less efficient.
+Now when the new object "TEST" is created the name "TEST" is compared to existing
+strings in the index in a case insensitive way and is a match to "test", hence
+the object is named "test", not "TEST".
+
+<P>This seems contrary until you start to think what would happen when you update
+a database. If you wished to update existing objects you would need to get the case
+of their names <b>exactly</b> right otherwise your update would create a new object.
+In fact the case of all the tags you specified would also have to be correct and so
+on and so on. In other words the whole system is much simpler with case insensitive
+handling of strings.
+
+<P>So what to do if you wish to simply change the case of an object ?
+
+<P>The answer is to rename the existing object, when you do this the rename
+code in acedb will respect the case of the string you wich to change the
+object name to. There are a couple of ways to do this:
+
+
+<P>From xace:
+
+<P>Choose "Add/Delete/Rename/Alias Objects" from the main acedb window,
+specify the name and class of your object and then click on "Rename-Fuse".
+This will give you a dialog box where you fill in the new name in the case
+that you want.
+
+<P>From tace:
+
+<pre><code>acedb> parse
+-R My_Class oldname newname
+ctrl-D
+</code></pre>
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="reindex"></a><H3>Database reindex messages</H3>
+
+<P>If you were reindexing the database using xace, the messages reporting the
+reindexing tended to be lost because they were sent to the terminal from which
+xace was started. The messages will now be displayed in popup windows so you get
+better feedback that the redindexing has happened.
+
+
+<a name="blixem_homols"></a><H3>Blixem not showing homologies correctly (part 25)</H3>
+
+<P>Simon Kelley has doggedly nailed a bug in blixem which led to homologies being
+incorrectly shown or not shown at all. This bug turned out to be another case where
+not all data coordinates were being correctly modified when an fmap is reverse
+complemented. This meant that blixem was supplied with incorrect "gap" array data
+for the homologies. A tale of real persistence, well done Simon.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Future_Plans"></a><H2>Future Plans</H2>
+
+
+<a name="error_messages"></a><H3>Configurable error messages</H3>
+
+<P>There are several facilities in acedb where it would be useful to configure
+the way in which error messages are output and also the way in which the
+facility itself runs. A good example of an existing system is the <b>parse</b>
+command which will stop at the first failure or the <b>pparse</b> command which
+will continue on to the end of the file processing all objects that do not have
+errors, discarding ones that do. This gives the user the choice of whether to
+stop "on first failure" or not.
+
+<P>Other places where this would be advantageous include: constructing the DNA
+for an SMap and constructing a virtual sequence perhaps for FMap display or GFF dumping.
+
+<P>In particular it would help users if they could select the number of error messages
+and also "first failure" when constructing a virtual sequence. In particular users
+who have to construct large GFF files from long virtual sequences could make use of the
+facility when testing new data in their databases.
+
+<P>New code is being added to the messaging routines in acedb to provide easier control
+of error messaging and when to fail. The new messErrorCond() routine includes logic to
+detect the first failure,
+and whether none, just the first or all error messages should be output.
+
+<P>This is work in progress as it will require some alterations to the SMap DNA
+and SMap convert code.
+
+
+<a name="zmap_news"></a><H3>ZMap, Son of FMap</H3>
+
+<P><A href="mailto:edgrif@sanger.ac.uk">Simon Kelley &lt;srk@sanger.ac.uk&gt;</A>
+and myself have been working on a new acedb display, named "ZMap" for now,
+which will be a stand alone display acting as a client that contacts database servers
+for sequence information. In effect a client/server version of FMap and acedb.
+
+<P>Simon has been building the new display within xace to test it out and it will have a
+number of new features including the ability to split windows and show different parts
+of the same sequence.
+
+<P>I have been working on the main scaffold code for the application which will be
+multithreaded so that users will be able to cancel or "Stop" display of a particular
+sequence in the way that web browsers do and be able to continue to work on one
+display while another is being constructed.
+
+<P>The aim is produce a stand alone display incorporating the best parts of FMap
+but which can be used against any database that supports the protocol that the new
+display uses (likely to be DAS 2 initially).
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+
+<a name="chrono_command"></a><H3>New "chrono" command in tace/giface</H3>
+
+<P>(<I>Thanks to Jean Thierry-Mieg who added this new feature</I>
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)
+
+<P>Jean has been revamping the chrono code and has continued this by adding a "chrono"
+command to the command line interface:
+
+<pre><code>Chrono {start | stop | show} built in profiler of chrono aware routines
+</code></pre>
+
+<P>Obviously this only works for routines that have chrono calls built into them but
+its a very useful tool for localised profiling.
+
+
+
+<a name="smap_dna"></a><H3>Change to the way SMap constructs the DNA for a virtual sequence</H3>
+
+<P>While constructing some aquila tests for the SMap DNA code I found SMap didn't
+construct DNA the way I thought it did, it stops at the first DNA it finds while
+traversing down the hierachy. This means that potential mismatches may be missed
+depending on the way users have organised their data.
+
+<P>I've altered the code to find all SMap'd DNA down a hierachy, this is a small
+change to the code and we can reverse it if this produces problems. It seems more
+natural to try to map all DNA in the hierachy.
+
+<P>Users will probably not see any difference because they either have non-overlapping DNA
+or overlaps only at the end of clones.
+
+
+<a name="aquila_tests"></a><H3>Adding new tests to aquila</H3>
+
+<P>Adding new tests to aquila. We all know we should do it but.....
+
+<P>Well recently I've added a couple of new tests to our overnight aquila runs to
+test SMap DNA construction and the new genetic code routines.
+
+<P>Rob (<A href="mailto:edgrif@sanger.ac.uk">Rob Clack &lt;rnc@sanger.ac.uk&gt;</A>)
+has been adding to the aquila documentation to describe how to add tests and its really
+much easier now that aquila handles a series of small test script files rather than one
+huge file.
+
+<P>If you add a new facility to acedb or fix a difficult bug, try to add a new test to
+Aquila.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>July monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="User_Group"><H2>Next User Group Meeting - D319, 3.00pm, Thursday, 14th August 2003</H2>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Thu Aug  7 08:06:41 BST 2003
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

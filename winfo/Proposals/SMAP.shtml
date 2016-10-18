@@ -1,0 +1,61 @@
+<HTML>
+<!--#include virtual="/perl/header" -->
+<!--#set var="author" value="edgrif@sanger.ac.uk" -->
+
+<HEAD>
+<TITLE>SMap problems/enhancements etc.</TITLE>
+</HEAD>
+
+<BODY>
+
+
+<PRE>
+
+sMapLocalMap()
+--------------
+
+sMapLocalMap() is broken in that it takes not notice of the input coords for the purposes of
+clipping the local alignment block coords. It just returns an array of gaps regardless of whether
+they are outside of the specified coordinate range.
+
+I discovered this when working on a bug which caused blixem to crash. The cause turned out to be
+that there was an EST alignment in the database, one block of which extended beyond the end of its
+parent object. Unfortunately sMapLocalMap() returns all the blocks which then a call to sMapMap()
+attempts to map, the code orginally ingnored the return status from sMapMap and passed on random
+coords to blixem.
+
+Really there is little point in sMapLocalMap() returning coords for blocks that are outside their
+parent, this is A WASTE OF TIME.
+
+The fix is to add range checking to sMapLocalMap() and change its function signature so that it
+returns a status like other mapping calls and returns the gaps array as an "in/out" call
+parameter:
+
+SMapStatus sMapLocalMap(OBJ obj,    /* in parent located at #SmapInfo */
+		        int pStart, /* start coord in parent */
+		        int pEnd,   /* end coord in parent */
+		        STORE_HANDLE h,   /* return array on this. */
+                        Array *gaps) ;  /* gaps array */
+
+The way to test this is to create a parent smapped object with a homology child but make sure at
+least one of the blocks of the child is off the end of the parent.
+
+Here endeth the lesson......
+
+
+
+sMapMap()
+---------
+
+This call and what it calls,  sMapMapEx(), return values even when the thing to be mapped is
+outside the area. This is really STUPID as it encourages ignoring the status returned by these
+calls. I don't know who thought this was a good idea but it isn't. I don't have time to fix this
+just now but one day I will.
+
+
+</PRE>
+
+<!--#include virtual="/perl/footer" -->
+
+</BODY>
+</HTML>

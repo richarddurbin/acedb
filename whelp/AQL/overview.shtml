@@ -1,0 +1,1039 @@
+<HTML>
+
+<HEAD>
+  <TITLE>AQL - Language overview (Version 4_8b)</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="./aql.css" TITLE="Style sheet for AQL docs">
+</HEAD>
+<BODY>
+
+
+<H2>AQL - Language overview (Version 4_8b)</H2>
+
+   <DL><DD><!-- indent section -->
+
+	<P>Here is a simple AQL query that lists English authors with their
+	email addresses, with an example of a possible resulting table:-</P>
+
+	<CODE><EM>select</EM> a, a-&gt;Email <EM>from</EM> a <EM>in class</EM> Author <EM>where</EM> a-&gt;Mail = "England"</CODE>
+
+<PRE>
+  ---&gt;
+	"Durbin_R"	"rd@sanger.ac.uk"
+	"Durbin_R"	"rdurbin@demon.co.uk"
+	"Wobus_F"	"fw@sanger.ac.uk"
+   </PRE>
+
+        <P>Conventional database systems store their data in tables, whereas acedb organizes
+	its data in tree structured objects. However, the results of an AQL query are
+	always returned in tables made up by rows and columns.</P>
+   </DD></DL>
+
+<HR>
+
+
+<H3>1. Basic query structure</H3>
+
+   <DL><DD><!-- indent section -->
+
+	<P>Like in SQL the basic query construction comes in three parts:-</P>
+
+	<CENTER>
+	 <TABLE WIDTH=80%>
+           <TR><TD><CODE><EM>select</EM> a, a-&gt;Email</CODE></TD>		<TD><A HREF="#SELECT_CLAUSE">select-clause</A></TD></TR>
+           <TR><TD><CODE><EM>from</EM> a <EM>in class</EM> Author</CODE></TD>	<TD><A HREF="#FROM_CLAUSE">from-clause</A></TD></TR>
+	   <TR><TD><CODE><EM>where</EM> a-&gt;Mail = "England"</CODE></TD>	<TD><A HREF="#WHERE_CLAUSE">where-clause</A></TD></TR>
+         </TABLE>
+	</CENTER>
+   </DD></DL>
+
+
+   <A NAME="SELECT_CLAUSE"><H4>1.1. Select-clause</H4></A>
+   <DL><DD><!-- indent section -->
+
+	<P>The select-clause defines one or more fields that each will make up a column in the result.
+	Whether or not those columns contain useful values and the number of rows will depend entirely 
+	on the data that matches the query.</P>
+
+	<P>One can think of the whole select-from-where query as an expression whose 
+	return value is a table with rows and columns.
+	Every field in the select clause is an expression and for each iteration
+	cycle the result value will be copied to the result table.
+	These expressions usually extract data values from objects or combine them using 
+	arithmetic operators or functions.
+	The variables that are referenced by select-field expressions
+	have to be declared in the <A HREF="#FROM_CLAUSE">from-clause</A> or in 
+	an enclosing scope.</P>
+
+	<A NAME="ALIAS_OP"><H4>Field naming</H4></A>
+
+	<P>More advanced AQL features need to refer to a specific field in a row.
+	They can do this either by name or number.
+	The second select-field in the above query can be named
+	automatically by the tag that it uses, but if we want to use a
+	name for the first field we must assign it explicitly using 
+	the field naming operator <TT>'::'</TT>.</P>
+
+	<CODE><EM>select</EM> Author::a, a-&gt;Email <EM>from</EM> ...</CODE>
+
+	<P>The use of expressions in the select-clause also requires
+	those fields to be explicitly named, if they are to be 
+	referred to by name. Note the second select is again automatically
+	named by it's tag.</P>
+
+	<CODE><EM>select</EM> Age::<EM>yeardiff</EM>(a-&gt;date_of_birth, today), a-&gt;full_name <EM>from</EM> ...</CODE>
+
+   </DD></DL>
+
+
+
+   <A NAME="FROM_CLAUSE"><H4>1.2. From-clause</H4></A>
+   <DL><DD><!-- indent section -->
+        <P>This part of the query declares all iterator variables and thereby defines the source
+	of the data. Acedb stores all data in objects that belong to classes. The example query
+	declares the iterator <TT>a</TT> to range over the objects
+	in class <I>Author</I>.  The preferred AQL notation for a class declaration is</P>
+
+	<DL><DD><I>IteratorName</I> <EM>in class</EM> <I>ClassName</I></DL>
+
+	<P>although</P>
+
+	<DL>
+	   <DD><EM>class</EM> <I>ClassName</I> <EM>as</EM> <I>IteratorName</I></DD>
+	   <DD><EM>class</EM> <I>ClassName</I> <I>IteratorName</I></DD>
+	</DL>
+
+	<P>are valid variations that are borrowed from OQL.</P>
+
+	<P>Class declarations will cause the query to fill the iterator variable <TT>a</TT>
+	with values from the <I>Author</I> class.
+	Other iterators can be defined based on previously defined iterators:-</P>
+	
+	<NOBR><CODE>... <EM>from</EM> a <EM>in class</EM> author, p <EM>in</EM> a-&gt;Paper ...</CODE></NOBR>
+
+<A NAME="OBJ_CONSTRUCTOR">
+	<P>There are many cases where a specific object is wanted
+	and we want to refer to that object directly without searching through the entire class.
+	The declaration:- </P>
+</A>
+
+	<NOBR><CODE>... <EM>from</EM> s <EM>in object</EM>("Sequence","F15H10")-&gt;Subsequence ...</CODE></NOBR>
+
+	<P>finds the object F15H10 in class <I>Sequence</I> directly and then declares the iterator variable
+	<TT>s</TT> to loop over the objects that are listed under the
+	<I>Subsequence</I> tag in F15H10.</P>
+
+	<P>Variables can also be declared to be based on the result of any expression (e.g. the table-function <EM>count</EM>):-</P>
+
+	<NOBR><CODE>... <EM>from</EM> num <EM>in count</EM>(a->paper) ...</CODE></NOBR>
+
+	<P>This notation can be very useful if the value for <TT>num</TT> needs to be used
+	in the select-clause as well as in a comparison in the where-clause. Just referring
+	to the variable num saves having to calculate the <EM>count</EM>-function twice.</P>
+
+	<P><STRONG>Note</STRONG> that the from-where-clause is optional.  It is not needed if the
+	select fields don't refer to any iterators that require a declaration (in a from-clause),
+	i.e. where there are no iterators in the query or where any iterators that are present have
+	already been declared in an enclosing scope, which can happen inside a nested query.</P>
+   </DD></DL>
+
+
+
+
+   <A NAME="WHERE_CLAUSE"><H4>1.3. Where-clause</H4></A>
+   <DL><DD><!-- indent section -->
+        <P>The WHERE clause is a <A HREF="#COMPARISON">boolean condition</A> which can
+	   be attached to any declaration to act as a filter.</P>
+
+	<P>In order to evaluate the where-clause in the example query, the <I>Text</I>-data stored under the 
+	<I>Address</I> tag in every <I>Author</I> object is compared with "England".
+	The range of <I>Object</I>-values for the iterator <TT>a</TT> in the from-clause will therefore be restricted
+	to those objects where the comparison is TRUE.</P>
+
+	<P>A query can have multiple where-clauses and in queries with multiple from-clause declarations
+	   it is useful to apply the boolean condition as early as possible. The from-clauses are evaluated
+	   in turn and a FALSE where-clause will prevent any subsequent declarations to be evaluated
+	   in any cycle of the execution loop. Clever where-clauses that filter the declarations
+	   early on can therefore increase the execution speed of a query.
+	   <BR>
+	   For example the following query finds the papers of authors who
+	   live in England. In the example, the second declaration which fetches
+	   the authors papers doesn't have to be execuetd for any author where
+	   the where-clause on the first declaration (test on english address)
+	   has already failed.</P>
+
+	<CODE><EM>select</EM> a, b <EM>from</EM> a <EM>in class</EM> Author <EM>where</EM> a-&gt;Address = "England", b <EM>in</EM> a-&gt;Paper</CODE>
+
+   </DD></DL>
+
+
+<HR>
+
+
+
+<H3>2. Quoting value literals</H3>
+   
+   <DL><DD><!-- indent section -->
+	<P>The database schema, known in acedb as the 
+	<A HREF="http://www.sanger.ac.uk/Software/Acedb/Acedocs/models_guide.html">models</A> 
+	(stored in <B>wspec/models.wrm</B>), specifies a type
+	for each value that is stored. An iterator in AQL will assume that type when it binds to the
+	value in the database.  </P>
+	<P>Values can also be quoted as literals in an AQL query, e.g. in
+	comparisons with iterator values. Every expression in an AQL query (e.g. in a select-field)
+	that evaluates correctly will produce a result of a specific type.</P>
+
+	<P>These are the legal value types as used in the acedb database schema and examples of how they
+	might be quoted in an AQL query.</P>
+
+	<TABLE CELLPADDING=5>
+          <TR BGCOLOR=#c0c0c0>  
+	    <TD>Int</TD>		<TD><TT>1024<BR>-12</TT></TD>
+	  </TR><TR BGCOLOR=#e0e0e0>
+	    <TD>Float</TD>		<TD><TT>3.1415<BR>-5e3<BR>4.2E-10<BR>.2</TT></TD>
+	  </TR><TR BGCOLOR=#c0c0c0>
+	    <TD>Text<BR></TD>	<TD><TT>"England"<BR>"Durbin RM"</TT></TD>
+          </TR><TR BGCOLOR=#e0e0e0>
+	    <TD>DateType</TD>	<TD><TT>`1998-08-04_10:21:46<BR>`1989-11-09</TT></TD>
+        </TABLE>
+
+	<P>To quote an object one has to use the <A HREF="#OBJ_CONSTRUCTOR"><EM>object</EM> constructor</A> to define an iterator,
+	   whose value will be that object. If the iterator is printed to the result table, the object name will be
+	   shown as a text-string.</P>
+
+   </DD></DL>
+
+   <A NAME="DATE_TIME"><H4>Dates and Times</H4></A>
+   <DL><DD><!-- indent section -->
+         <P>The AQL syntax requires DateType literals to be prefixed by a <TT>`</TT> character.
+	 A DateType literal may specify any level of detail from just the year down to the seconds.</P>
+
+	 <P>These are valid DateType literals:-</P>
+
+         <PRE><TT>
+	 `1998-08-04_10:27:32
+	 `1998-08-04_10:27
+	 `1998-08-04_10	
+	 `1998-08-04
+	 `1998-08
+	 `1998
+	 </TT></PRE>
+
+	 <P>The literals <TT>`1998-08-04_</TT> or <TT>`1998-55</TT> would be rejected.</P>
+
+	 <P>The reserved keywords <EM>today</EM> and 
+	 <EM>now</EM> are used to refer to the current 
+	 date/time and current date respectively. For example at this 
+	 moment these keywords replace the following date/time quotations:-</P>
+
+	 <TABLE CELLPADDING=5>
+           <TR>
+	     <TD><EM>today</EM></TD>		<TD>---&gt;</TD>
+	     <TD><TT>1999-12-06_11:13:20</TT></TD>
+	   </TR>
+
+	   <TR>
+	     <TD><EM>now</EM></TD>		<TD>---&gt;</TD>
+	     <TD><TT>1999-12-06</TT></TD>
+	   </TR>
+         </TABLE>
+   </DD></DL>
+
+   <A NAME="NULL_VALUES"><H4>Null values</H4></A>
+   <DL><DD><!-- indent section -->
+        <P>The definition of Null values in AQL is borrowed from Computer Science.
+	   The possible values for any type include the valid range of the type and the value NULL.
+	   Values usually become NULL if an iterator couldn't be evaluated, e.g. a tag is not present in an object.
+           Rather than reporting 0 or an empty string - AQL will report NULL to indicate that no valid value could be found.
+	   This is because 0 and the empty string are valid values for Integer and String-types respectivly.
+	   </P>
+        <P>Expressions containing NULL values will fail and their result itself becomes NULL. This explains the
+           little quirk of boolean values, which can't only be TRUE or FALSE but also NULL.
+	   <BR>Example :
+	   <CODE> <EM>select</EM> -&gt;0, -&gt;subsequence[1], <EM>abs</EM> (-&gt;subsequence[2] - -&gt;subsequence[3]) &gt; 1000 <EM>from class</EM> Sequence</CODE>
+	   <BR>
+	   The third column is a boolean value, but it can only be evaluated if the <I>Subsequence</I> tag and its values exist for
+	   a given object. The result will be TRUE or FALSE based on the actual numbers, but NULL of the tag didn't exist and the
+	   expression couldn't be evaluated.</P>
+        <P>Note that in a boolean context (e.g. comparison, boolean operator) Integer values are converted to booleans - 
+	   zero is FALSE and non-zero is TRUE.</P>
+
+   </DD></DL>
+
+
+
+<HR>
+
+
+<H3>3. Variables</H3>
+
+   <A NAME="LOCATOR"><H4>3.1. Iterators</H4></A>
+   <DL><DD><!-- indent section -->
+	<P>The most important part of any useful query is the ability
+	to bind a variable to a database value. Iterator variables serve 
+	this purpose. Iterators are declared in <A HREF="#FROM_CLAUSE">from clauses</A> as ranging
+	over a set of values.  Object-valued iterators can then be dereferenced using the
+	<TT>-&gt;</TT> operator to extract data from inside the objects.</P>
+
+	<P>AQL maintains the notion of a scope for each iterator
+	within each select-from-where expression.  Any identifier can only 
+	be declared once within a single scope.  An inner nested query can redeclare 
+	the identifier name, shadowing the outer declaration.
+	The identifier is out of scope beyond the select-from-where expression
+	in which it was declared.</P>
+
+	<A NAME=DEF_LOC><H4>Extracting data from objects</H4></A>
+
+	<P>There are two different operators that can be used to extract data from inside an
+	object.  The most commonly used is the arrow operator <TT>-&gt;</TT>, which will
+	dereference an object valued expression, looking inside that object starting at its root
+	(remember that acedb objects are trees).  We have seen many examples of this, such as
+	<TT>a-&gt;Email</TT>.  The other data access operator is a pair of square brackets
+	<TT>[ ]</TT>, which are used to look further within the same object.  This is
+	most often seen in compound constructions, such as <TT>a-&gt;Map[Position]</TT>
+	which extracts the Position that follows the Map entry inside the <TT>a</TT> object.
+	i.e. this expects the <TT>a</TT> object to contain data looking something like
+<pre>
+	a = Locus unc-3
+	  Map "X" Position 18.5633
+</pre>
+	In contrast, <TT>a-&gt;Map-&gt;Position</TT> would give the Position in the Map
+	object, i.e. the Position field within object "X" in the above example.</P>
+
+	<P>Either type of operator can use a tag name, as above, or a (non-negative) integer.  If a
+	tag name is used, it is interpreted according to the schema (model) of the relevant acedb
+	class.  If a number is used, it is interpreted as a number of positions rightwards in the
+	tree representation of the object.  In practice, tags are normally used with the arrow
+	operator, and numbers with the brackets operator, because often the first action is to
+	extract a field by its tag name, and then further information may be stored in subsequent
+	fields to the right of it in the acedb model, which can be accessed by [1], [2]
+	etc. e.g. <CODE><EM>select</EM> a-&gt;Subsequence, a-&gt;Subsequence[1], a-&gt;Subsequence[2]</CODE>
+	will extract the names, start and end points of subsequences according to the standard
+	acedb Sequence class model.</P>
+
+<A NAME="DEF_ITERATOR"><H4>The unnamed (default) iterator</H4></A>
+
+	<P>The iterator identifier can be omitted for one declaration only, so many simple queries
+	can be abbreviated like:-</P>
+
+	<CODE><EM>select</EM> -&gt;Paper <EM>from</EM> <EM>class</EM> Author <EM>where</EM> -&gt;Address[Mail] = "England"</CODE>
+
+	<P>The default iterator that is declared by a shorthand declaration has no
+	   name, therefore we can't refer to it by name. We can however refer to
+	   using <TT>-&gt;0</TT> or <TT>[0]</TT>. Both mean exactly the same - 
+	   the object itself (in this case the default iterator).</P>
+
+	<P>In a simple select clause which reports only the values of  the iterator itself, 
+	   the keyword <EM>all</EM> can be used to represent the unidentified iterator.
+           In this case no other select-field are allowed, but the keyword <EM>from</EM>
+	   also becomes optional:-</P>
+
+	<P>To list all sequence object containing the <I>DNA</I>-tag, the query shortens drastically to:-</P>
+
+	<CODE><EM>select all class</EM> Sequence <EM>where exists_tag</EM> -&gt;DNA</CODE>
+
+        <P>This query is identical to 
+	<CODE><EM>select all from class</EM> Sequence <EM>where exists_tag</EM> -&gt;DNA</CODE>
+	<BR>
+        <CODE><EM>select</EM> -&gt;0 <EM>from class</EM> Sequence <EM>where exists</EM> -&gt;DNA[0]</CODE>
+	<BR>
+        <CODE><EM>select</EM> [0] <EM>from class</EM> Sequence <EM>where</EM> -&gt;DNA[0]</CODE>
+	<BR>
+	<CODE><EM>select</EM> s <EM>from</EM> s <EM>in class</EM> Sequence <EM>where exists_tag</EM> s-&gt;DNA</CODE>
+	<BR>
+
+   </DD></DL>
+    
+
+
+
+   <A NAME="TABLE_VAR"><H4>3.2. Table variables</H4></A>
+   <DL><DD><!-- indent section -->
+	The result of a table-expression (e.g. a select-from-where query) can be
+	assigned to a variable. The variable name starts with <TT>@</TT> 
+	followed by an identifier (like a list object in perl).  The values in 
+	that table can be re-used in subsequent query.</P>
+
+	<P>Multiple table-expressions within one query are concatenated by the 
+	semi-colon <TT>;</TT>. AQL always returns the result of the 
+	last table-expression of a query.</P>
+
+	<P>Example:-</P>
+
+	<PRE><CODE>
+@AH6subseq :=  <EM>select</EM> seq::x, x[1], x[2] 
+               <EM>from</EM> x <EM>in object</EM>("Sequence","AH6")-&gt;Subsequence ;
+<EM>select</EM> r:seq, (r:3 - r:2)
+<EM>from</EM> r <EM>in</EM> @AH6subseq <EM>where</EM> r:3 &gt; r:2
+	</CODE></PRE>
+
+	<P>The table called <TT>@AH6subseq</TT> is filled with the results 
+	of a <I>select</I> table-expression. This table contains three column, 
+	while the first column has explicitly been <A HREF="#ALIAS_OP">renamed</A> 
+	to '<TT>seq</TT>' for clarification.</P>
+
+	<P>The from-clause of the second table-expression defines a row-variable 
+	iterator <TT>r</TT> to loop over rows in the table 
+	<TT>@AH6subseq</TT>. In every evaluation cycle the iterator 
+	<TT>r</TT> will point to the next row in that table. </P>
+
+	<P>A field in a row is referred to by the row-variable name followed by
+	a colon <TT>:</TT> followed by either the column name or the column number.</P>
+
+	<P>The select-clause then generates a result table with 2 columns by 
+	extracting the '<TT>seq</TT>' field from each row and the 
+	result of subtracting the second column (<TT>r:2</TT>) from 
+	the third column (<TT>r:3</TT>).</P>
+
+	<P>In the same way fields are specified in row-variables, they can 
+	be used to extract a whole column from a table variable.
+	This is another re-use of the same table definition:-<P>
+
+	<PRE><CODE>
+@AH6subseq :=  <EM>select</EM> seq::x, x[1], x[2] 
+               <EM>from</EM> x <EM>in object</EM>("Sequence","AH6")-&gt;Subsequence ;
+<EM>select</EM> s, s-&gt;source
+<EM>from</EM> s <EM>in</EM> @AH6subseq:seq
+	</CODE></PRE>
+
+	<P>The from-clause of the second expression declares a table based iterator 
+	<TT>s</TT> that will take values (of type <I>Object</I>) from the 
+	'<TT>seq</TT>' column of the <TT>@AH6subseq</TT> table.
+	This column contains the objects that follow Subsequence in AH6, and it can therefore 
+	be dereferenced in the second select-clause expression.</P>
+
+
+
+			   <HR ALIGN=CENTER WIDTH=50%>
+
+
+
+        <H4>The unnamed (default) row-variable iterator</H4>
+
+        <P>The default iterator from the <TT><EM>select all</EM></TT> construct 
+	can also be used with table variables. Based on the definition of 
+	<TT>@AH6subseq</TT> from above, these two queries are equivalent, 
+	but the second query removes the need for the  declaration of a row-variable 
+	for each column:-</P>
+
+	<P><CODE><EM>select</EM> <I>def</I>:1, <I>def</I>:2, <I>def</I>:3 <EM>from</EM> <I>def</I> <EM>in</EM> @AH6subseq</CODE></P>
+
+	<P><CODE><EM>select all</EM> @AH6subseq</CODE></P>
+
+	<P>The default iterator that is substituted into the select-clause is not 
+	visible	in the <TT><EM>select all</EM></TT> construct, but it can be 
+	referenced in the same way as normal default iterators.</P>
+
+	<CODE><EM>select all</EM> @AH6subseq <EM>where</EM> :3 > :2</CODE>
+
+	<P>lists all rows in the table, where the the third field is greater 
+	than the second field. Columns can be referenced by name 
+	(see <A HREF="#ALIAS_OP">field naming</A>) or by number as usual.</P>
+    </DD></DL>
+
+
+
+			   <HR ALIGN=CENTER WIDTH=50%>
+
+
+
+   <A NAME=SCALAR_VAR><H4>3.3. Scalar variables</H4></A>
+   <DL><DD><!-- indent section -->
+
+	<P>Just as the results table-expressions can be assigned to variables, 
+	the results of scalar expressions can be assigned to scalar variables, 
+	i.e. single-valued objects. The variable name of a scalar variable 
+	starts with a <TT>$</TT> followed by an identifier (like an 
+	ordinary variable in perl).
+	<BR>
+	It can be of any scalar type (Integer, Float, Text, Date) and will 
+	assume the value and type of the result of evaluating the given expression.</P>
+
+	<P>Example:-</P>
+
+	<PRE><CODE>
+$x :=  <EM>avg</EM>(<EM>select</EM> x2 - x1
+           <EM>from</EM> s <EM>in object</EM>("Sequence","AH6")-&gt;Subsequence,
+               x1 in a[1], x2 in a[2]
+           <EM>where</EM> x2 > x1) ;
+<EM>select</EM> s, x2-x1
+<EM>from s <EM>in</EM> object</EM>("Sequence","AH6")-&gt;Subsequence,
+    x1 in s[1], x2 in s[2]
+<EM>where</EM> x2 - x1 > $x
+        </CODE></PRE>
+
+	<P>The first part of this query is a table-expression to find all 
+	positive sizes of subsequences of AH6. Their average if then 
+	assigned to the scalar variable $x. The second part then lists 
+	those subsequences with sizes that are bigger than average.
+	It thereby re-uses the single value for the average computed in part I.</P>
+
+	<P>A scalar can be assigned to the result of any 
+	<A HREF="syntax.shtml#EXPR">valid expression</A>, e.g. 
+	<A HREF="#TABLE_FUNC">table-functions</A>, <A HREF="#DATE_FUNC">date-functions</A>
+	or arithmetic expressions.</P>
+
+	<P>The result of a singular scalar variable assign operation will be 
+	a single column table with one row to contain the expression value. Therefore</P>
+
+	<P><CODE>$x :=  3.1415 * 3</CODE><P>
+	
+	<P>is perfectly valid as an AQL query, although slightly 
+	inappropriate for a query language to answer.</P>
+   </DD></DL>
+
+
+<HR>
+
+
+
+<A NAME="EXPR_ARITH"><H3>4. Expressions and arithmetic</H3></A>
+
+   <A NAME="COMPARISON"><H4>4.1. Comparisons</H4></A>
+   <DL><DD><!-- indent section -->
+
+	<P>Comparisons are boolean expressions, which means that the 
+	result is either TRUE or FALSE. Iterator variables can be compared 
+	to other iterators or to value literals or vice versa. It is important 
+	to understand the notion of value types, as incompatibilities lead to
+	an error when the query is processed.</P>
+
+	<P>In general only variables or literals of equal types can be compared 
+	to each other. For simplicity however, a few automatic conversions are 
+	performed that make the language <I>less fussy</I>:-</P>
+
+	<UL>
+	  <LI>Integers are promoted to Floats in numeric comparisons.
+	  <LI>Tags or Objects are promoted to Text if required.<BR>
+	      <I>Remember</I> : These are database internal codes anyway, so text is the
+	      only way to quote them literally.  When objects are compared to <U>each other</U>,
+	      though, their internal identifiers are used, not their names as Text.
+        </UL>
+	
+	<P>During evaluation a iterator will assume the value-types of 
+	the database-field that they are bound to. Therefore in most 
+	cases the query has to be run against the database to perform 
+	all the type-checking.</P>
+
+	<P>AQL will allow the following comparison operators with their usual meaning:-</P>
+
+	<PRE>
+     =    !=    &gt;    &lt;    &gt;=    &lt;=    <EM>like</EM>
+	</PRE>
+
+	<P><STRONG>Note :</STRONG> Objects and Tags, when compared to each other
+	can only be tested for equality or inequality (i.e. = and != respectively).</P>
+
+	<P>When <I>Text</I>s are compared to Objects/Tags or each other, all operators are valid.
+	The <EM>like</EM> comparator performs case-insensitive wildcard matching on <I>Text</I> values.<P>
+
+	<DL><DD>
+	<CODE>"Cambridge, England, UK" <EM>like</EM> "*england*"</CODE> --&gt; TRUE
+	</DD></DL>
+
+	<P>Possible wildcards are the usual <TT>*</TT> and <TT>?</TT>,
+	where <TT>*</TT> matches any number of characters 
+	and <TT>?</TT> matches any <U>one</U> character.</P>
+
+	<P>Apart from the <EM>like</EM> operator, all others work
+	on Int, Float (as usual) and DateType (see next section) values.</P>
+
+	<A NAME="DATE_COMPARISON"><H4>Comparison of dates</H4></A>
+
+	<P>It is easy to compare two <I>DateType</I> values, if they both specify the same level
+	of detail. In this case the concept of later/earlier is unambiguous.</P>
+
+	<PRE>
+         <TT>1996-03 &lt;  1997-04</TT>     --&gt;  TRUE
+      <TT>1998-06-07 &gt;  1998-06-12</TT>  --&gt;  FALSE
+      <TT>1998-06-07 =  1998-06-07</TT>  --&gt;  TRUE
+	</PRE>
+
+	<P>If the two dates in question however, vary in the level of detail given,
+	the outcome of the comparison expression becomes more difficult to understand.
+	<BR>
+	A comparison will only become TRUE, if the levels of detail given in the
+	two dates allows an unambiguous decision. The expression 
+	<TT>1998-06 &lt; 1998-07-09_09:51:23</TT> is TRUE,
+	which decided at <I>month</I>-level.</P>
+
+	<P>By the same rational <TT>1990 = 1990-05-02</TT> is TRUE,
+	as both dates are equal in as much information as is given in either date-value.</P>
+
+	<P>An equality comparison asks if the lesser detailed date 
+	is completely contained within the other, and the above 
+	comparison evaluates TRUE, because May 2nd 1990 is in the year 1990.</P>
+
+	<P>A comparison involving greater-than or less-than is based on
+	the amount of detail, that the decision can be based on:-<BR>
+	<TT>1998-07 &lt; 1998-07-09</TT> is FALSE,
+	because one date gives a specific day in July 1998, but as the
+	other doesn't specify the day, so we can't decide whether it is earlier
+	and the comparison evaluates FALSE.</P>
+
+	<P>To demonstrate this behavior, imagine a movie database, that contains
+	movies titles and the date on which they were released.
+	The movie "City Hall" was released in the USA on 1996-02-16.</P>
+
+	<CODE><EM>select all class</EM> Movie <EM>where</EM> -&gt;Released &lt; `1996-02</CODE>
+	<BR>
+	<CODE><EM>select all class</EM> Movie <EM>where</EM> -&gt;Released &gt; `1996-02</CODE>
+
+	<P>will both <B>EX</B>clude the movie 'City Hall', while</P>
+
+	<CODE><EM>select all class</EM> Movie <EM>where</EM> -&gt;Released &lt;= `1996-02</CODE>
+	<BR>
+	<CODE><EM>select all class</EM> Movie <EM>where</EM> -&gt;Released &gt;= `1996-02</CODE>
+	<BR>
+	<CODE><EM>select all class</EM> Movie <EM>where</EM> -&gt;Released &lt; `1996-02-17</CODE>
+	<BR>
+	<CODE><EM>select all class</EM> Movie <EM>where</EM> -&gt;Released &gt; `1996-02-15</CODE>
+	<BR>
+	<CODE><EM>select all class</EM> Movie <EM>where</EM> -&gt;Released &lt;= `1996-02-16</CODE>
+	<BR>
+	<CODE><EM>select all class</EM> Movie <EM>where</EM> -&gt;Released &gt;= `1996-02-16</CODE>
+
+	<P>will <B>IN</B>clude 'City Hall'.</P>
+
+   </DD></DL>
+
+
+			   <HR ALIGN=CENTER WIDTH=50%>
+
+
+   <A NAME="BOOL_OP"><H4>4.2. Boolean operators</H4></A>
+   <DL><DD><!-- indent section -->
+
+	<P>In addition to boolean comparisons, there are other boolean operators
+	that can be evaluated in the where-clause.</P>
+
+	<P>The following operators are supported for boolean expressions:-</P>
+
+	<CENTER>
+	<TABLE CELLPADDING=3 WIDTH=80%>
+          <TR BGCOLOR=#bfbfbf>
+	    <TH>operator</TH><TH></TH><TH>boolean value</TH>
+	  </TR><TR>
+            <TD><EM>exists</EM> <I>obj-&gt;tag</I></TD>		<TD> - </TD> <TD>TRUE if the tag has a value<BR>(if obj-&gt;tag[1] is non-NULL)</TD>
+	  </TR><TR>
+            <TD><EM>exists_tag</EM> <I>obj-&gt;tag</I></TD>		<TD> - </TD> <TD>TRUE if the tag is present<BR>(if obj-&gt;tag[0] is non-NULL)</TD>
+	  </TR><TR>
+            <TD><EM>not</EM> <I>expr</I></TD>		<TD> - </TD> <TD>TRUE if FALSE, FALSE if TRUE</TD>
+	  </TR><TR>
+	    <TD><I>expr</I> <EM>and</EM> <I>expr</I></TD>	<TD> - </TD> <TD>TRUE if both are TRUE</TD>
+	  </TR><TR>
+	    <TD><I>expr</I> <EM>or</EM> <I>expr</I></TD>	<TD> - </TD> <TD>TRUE if one is TRUE</TD>
+	  </TR><TR>
+	    <TD><I>expr</I> <EM>xor</EM> <I>expr</I></TD>	<TD> - </TD> <TD>TRUE if one or the other is TRUE, but not both</TD>
+	  </TR>
+	</TABLE>
+	</CENTER>
+   </DD></DL>
+
+
+
+			   <HR ALIGN=CENTER WIDTH=50%>
+
+
+   <A NAME="ARITH"><H4>4.3. Arithmetic</H4></A>
+   <DL><DD><!-- indent section -->
+
+
+	<P>All standard arithmetic expressions are supported, both in the 
+	<A HREF="#SELECT_CLAUSE">select-clause</A>  to produce columns of 
+	calculated values and in the <A HREF="#WHERE_CLAUSE">where-clause </A>
+	to compare expression results.</P>
+
+	<P>The following operators are supported for Integer and Floating point values types:-</P>
+
+        <CENTER>
+        <TABLE CELLPADDING=3 WIDTH=80%>
+          <TR BGCOLOR=#bfbfbf>
+ 	    <TH>operator</TH><TH></TH><TH>expression value</TH>
+ 	  </TR><TR>
+ 	    <TD><TT>-</TT> <I>expr</I></TD>		<TD> - </TD> <TD>negative value</TD>
+ 	  </TR><TR>
+ 	    <TD><EM>abs</EM> <TT>(</TT> <I>expr<I> <TT>)</TT></TD>	<TD> - </TD> <TD>absolute value</TD>
+	  </TR><TR>
+ 	    <TD><EM>mod</EM> <TT>(</TT> <I>expr</I>, <I>expr</I> <TT>)</TT></TD>	<TD> - </TD> <TD>modulus (positive remainder)</TD>
+	  </TR><TR>
+	    <TD><I>expr</I> <TT>+</TT> <I>expr</I></TD>	<TD> - </TD> <TD>Addition
+	  </TR><TR>
+ 	    <TD><I>expr</I> <TT>-</TT> <I>expr</I></TD>	<TD> - </TD> <TD>Subtraction</TD>
+ 	  </TR><TR>
+	    <TD><I>expr</I> <TT>*</TT> <I>expr</I></TD>	<TD> - </TD> <TD>Multiplication</TD>
+	  </TR><TR>
+	    <TD><I>expr</I> <TT>/</TT> <I>expr</I></TD>	<TD> - </TD> <TD>Division</TD>
+	  </TR>
+        </TABLE>
+        </CENTER>
+
+        <P>An expression that consist of Integers only will have an Integer 
+	result, but in expressions that contain Float values, all Integers are 
+	promoted to Float. An <A HREF="errorcodes.shtml#ERRNO896">error</A> is given 
+	if any side of an expression is not a numeric value type.</P>
+   </DD></DL>
+
+
+
+			   <HR ALIGN=CENTER WIDTH=50%>
+
+
+
+   <A NAME="TABLE_FUNC"><H4>4.4. Table functions</H4></A>
+   <DL><DD><!-- indent section -->
+
+	<P>As well as functions on individual expression value, a range of 
+	functions are provided to calculate aggregate values over 
+	lists of values. The table functions will only consider <B>non-NULL</B> values from the list.
+	<BR>
+	Such a list is a single column in a table. Table functions therefore work on tables 
+	with only one column, or on table expressions
+	where the selected column is explicitly specified.</P>
+
+
+	<P>In order to construct a table for the table function to work on, we have
+	had to introduce another, internal select statement.  These can either be 
+	valid on their own, or be dependent on variables defined in an outer query.
+	The argument for a table function can also be a table variable, previously assigned.</P>
+
+	<CENTER>
+	<TABLE CELLPADDING=3 WIDTH=80%>
+          <TR BGCOLOR=#bfbfbf>
+	     <TH>Table function</TH><TH></TH><TH>return value</TH>
+	  </TR><TR>
+	     <TD><EM>count</EM>	</TD><TD> - </TD> <TD>number of values</TD>
+	  </TR><TR>
+	     <TD><EM>sum</EM>	</TD><TD> - </TD> <TD>sum of (Int,Float)values</TD>
+	  </TR><TR>
+	     <TD><EM>avg</EM>	</TD><TD> - </TD> <TD>average over (Int,Float) values</TD>
+	  </TR><TR>
+	     <TD><EM>min</EM>	</TD><TD> - </TD> <TD>smallest/earliest (Int,Float,DateType) value</TD>
+	  </TR><TR>
+	     <TD><EM>max</EM>	</TD><TD> - </TD> <TD>greatest/latest (Int,Float,DateType) value</TD>
+	  </TR><TR>
+	     <TD><EM>first</EM>	</TD><TD> - </TD> <TD>first value in the list</TD>
+	  </TR><TR>
+	     <TD><EM>last</EM>	</TD><TD> - </TD> <TD>last value in the list</TD>
+	  </TR>
+        </TABLE>
+        </CENTER>       
+
+	<P>These 2 examples demonstrate the use of table functions:-</P>
+
+	<P><CODE><EM>select</EM> a, a-&gt;paper <EM>from</EM> a <EM>in class</EM> author 
+			<EM>where</EM> <EM>count</EM>(<EM>select</EM> a-&gt;Paper) > 5</CODE></P>
+
+	<P><CODE>$x := <EM>sum</EM>(<EM>select</EM> b-&gt;price <EM>from</EM> b <EM>in class</EM> Books)</CODE></P>
+
+	<P>The query :-</P>
+
+	<P><CODE>@AH6subseq := <EM>select</EM> seq::x, size::(x[2]-x[1])
+                        <BR>
+			<EM>from object</EM>("Sequence","AH6")-&gt;Subsequence <EM>as</EM> x ;
+<EM>select min</EM> @AH6subseq:size</CODE></P>
+
+	<P>is equivalent to :</P>
+
+	<P><CODE><EM>select min</EM> (<EM>select</EM> seq::x, size::(x[2]-x[1]))
+                        <BR>
+			<EM>from object</EM>("Sequence","AH6")-&gt;Subsequence <EM>as</EM> x</CODE></P>
+
+   </DD></DL>
+
+
+       
+			     <HR ALIGN=CENTER WIDTH=50%>
+
+
+
+
+   <A NAME="LOC_METHOD"><H4>4.5. Methods</H4></A>
+   <DL><DD><!-- indent section -->
+	
+	<P>Objects and certain value types have builtin methods. Here is an example:-</P>
+
+	<P><CODE><EM>select</EM> a-&gt;Full_name <EM>from</EM> a <EM>in class</EM> author <EM>where</EM> a-&gt;Full_Name.<EM>length</EM> &gt; 10</CODE></P>
+
+	<CENTER>
+	<TABLE CELLPADDING=3 WIDTH=80%>
+          <TR BGCOLOR=#bfbfbf>
+	     <TH>method name</TH><TH>locator type</TH><TH>return value</TH>
+	  </TR><TR>
+	    <TD><EM>name</EM></TD>	<TD> <I>Object</I> </TD> <TD><I>Text</I>-value for the object's name</TD>
+	  </TR><TR>
+	    <TD><EM>class</EM></TD>	<TD> <I>Object</I> </TD> <TD><I>Text</I>-value for the object's class</TD>
+	  </TR><TR>
+	    <TD><EM>length</EM></TD>	<TD> <I>Text</I> </TD> <TD><I>Int</I>-value for length of the Text-string</TD>
+	  </TR><TR>
+	    <TD><EM>create_session</EM></TD> <TD> <I>Object</I> </TD> <TD>UserSession <I>Object</I> of the session in which the object was first saved</TD>
+	  </TR><TR>
+	    <TD><EM>create_time</EM></TD> <TD> <I>Object</I> </TD> <TD><I>DateType</I>-value when the object was first created</TD>
+	  </TR><TR>
+	    <TD><EM>update_session</EM></TD> <TD> <I>Object</I> </TD> <TD>UserSession <I>Object</I> of the session in which the object was last updated</TD>
+	  </TR><TR>
+	    <TD><EM>update_time</EM></TD> <TD> <I>Object</I> </TD> <TD><I>DateType</I>-value when the object was last updated</TD>
+	  </TR><TR>
+	    <TD><EM>node_session</EM></TD> <TD> <I>Tag</I> </TD> <TD>UserSession <I>Object</I> of the session when the tag was last added/updated</TD>
+	  </TR><TR>
+	    <TD><EM>node_time</EM></TD> <TD> <I>Tag</I> </TD> <TD><I>DateType</I>-value  when the tag was last added/updated</TD>
+	  </TR>
+        </TABLE>
+        </CENTER>   
+
+	<P><STRONG>Note :</STRONG> Objects are always shown by their name in the result table, which basically
+	implies a <EM>.name</EM> method for each <I>Object</I>-iterator in the select-clause. It is therefor not
+	needed explicitly.</P>
+
+	<A NAME="TIMESTAMP"><H4>Timestamp methods</H4></A>
+
+	<P>The timestamp methods are a powerful tool to track changes in the database. The underlying mechanism
+	   has been added to the Acedb-lernel at version 4.8c. All changes to the database have to be
+	   made with database code Version 4.8c or greater for the timestamping to work correctly.</P>
+
+        <P>The objects themselves and each tag carry timestamps. A timestamp can be returned either as a 
+	   <I>DateType</I>-value or as a UserSession <I>Object</I>. The date values can be used with
+	   the <A HREF="#DATE_FUNC">date functions</A> like <CODE>yeardiff</CODE>, <CODE>daydiff</CODE>.
+	   The <CODE>?UserSession</CODE> object belongs to a built-in system class and has the following
+	   model :-</P>
+	<PRE>
+  ?UserSession	Session UNIQUE ?Session
+		Start UNIQUE DateType
+		Finish UNIQUE DateType
+		User UNIQUE Text
+	</PRE>
+
+	<P>The two <I>DateType</I>-values <CODE>Start</CODE> and <CODE>Finish</CODE> in this object
+	   denote the time from gaining write-access and saving the changes in any
+	   acedb-session. Those times are always in the most complete date/time format
+	   YYYY-MM-DD_HH:MM:SS.
+	   <BR>
+	   The tag <CODE>Session</CODE> links to another object of the system class
+	   <CODE>?Session</CODE> whcih has the following built-in system model:-</P>
+
+	<PRE>
+  ?Session	Session UNIQUE Int
+		Permanent_session     // If set, prevents automatic destruction
+		Date   UNIQUE Text
+		User   UNIQUE Text
+		Session_Title  UNIQUE Text
+		CodeRelease UNIQUE Int UNIQUE Int
+		DataRelease UNIQUE Int UNIQUE Int
+		Created_from UNIQUE ?Session
+		Up_linked_to UNIQUE ?Session
+		Destroyed_by_session UNIQUE Int
+		GlobalLex   UNIQUE Int
+		SessionLex  UNIQUE Int UNIQUE Int UNIQUE Int UNIQUE Int
+		VocLex  UNIQUE Int UNIQUE Int UNIQUE Int UNIQUE Int
+		GlobalBat UNIQUE Int UNIQUE Int  // address # blocks used
+		BatPlus  UNIQUE ?Bat  UNIQUE Int // # block set
+		BatMinus UNIQUE ?Bat  UNIQUE Int // # blocks freed
+		IndexVersion UNIQUE Int // automatic indexing
+	</PRE>
+
+   </DD></DL>
+
+
+
+			   <HR ALIGN=CENTER WIDTH=50%>
+
+
+
+   <A NAME="DATE_FUNC"><H4>4.6. Date functions</H4></A>
+   <DL><DD><!-- indent section -->
+
+	<P>Dates in acedb are extremely flexible. Any level of detail 
+	(always starting with a year) can be specified. So <TT>`1998-08-12</TT> 
+	is not automatically treated as <TT>`1998-08-12_12:07:36</TT>,
+	it just says that the time of day on the 12th of August is not known or not important.</P>
+
+	<P>This leveling, however imposes the need for functionality to access specific parts of the
+	Date/Time structure. <A HREF="#DATE_COMPARISON">Section 4.1</A> showed how tricky it
+	can be to determine whether a date is earlier/later than another. Using comparison operators
+	it is decided upon the deepest detail level that is shared by both dates.</P>
+
+	<P>In order to calculate <B>time spans</B> or make comparative decisions based on specific
+	Date/Time elements a set of functions is provided. Both arguments are expressions, that
+	will evaluate to a <I>DateType</I>-value.
+	The result value is always of type integer; the result is positive, if the first argument is earlier
+	than the second one.</P>
+
+	<CODE><EM>select</EM> a, Age::<EM>yeardiff</EM>(a-&gt;Date_of_birth, <EM>today</EM>) <EM>from</EM> a <EM>in class</EM> Author</CODE>
+
+	<P><STRONG>Note</STRONG> that the evaluation fails, if either date doesn't specify the requested
+	level of detail, no value is returned in this case. e.g. 
+	<TT><EM>monthdiff</EM>(`1997-10-12, `1998)</TT> --&gt; NULL</P>
+
+	<P>The following date functions are provided:-</P>
+
+	<DL><DD><!-- indent the table -->
+	<TABLE CELLPADDING=3 WIDTH=30%>
+          <TR BGCOLOR=#bfbfbf>
+	    <TH>Date function</TH>
+	  </TR><TR>
+	    <TD><EM>yeardiff</EM></TD>	
+	  </TR><TR>
+	    <TD><EM>monthdiff</EM></TD>	
+	  </TR><TR>
+	    <TD><EM>daydiff</EM></TD>	
+	  </TR><TR>
+	    <TD><EM>hourdiff</EM></TD>	
+	  </TR><TR>
+	    <TD><EM>mindiff</EM></TD>	
+	  </TR><TR>
+	    <TD><EM>secdiff</EM></TD>	
+	  </TR>
+        </TABLE>
+	</DD></DL>       
+
+   </DD></DL>
+
+
+
+<HR>
+
+
+<H3>5. Advanced features</H3>
+
+   <A NAME="ORDER_BY"><H4>5.1. Table sorting</H4></A>
+   <DL><DD><!-- indent section -->
+       
+	<P>The keyword <EM>order</EM> can be specified after any select-from-where table expression. It can have
+	   an optional parameter <EM>asc</EM> or <EM>desc</EM>. The default is ascending order.
+	   If the <EM>order</EM> keyword is used on its own like that the column sorting precedence is left to right.
+        </P>
+
+        <P>With the addition of the <EM>by</EM> keyword one can specify the precise column precedence of the
+           table sorting. The arguments of <EM>by</EM>
+           is a list of sort columns, specified by a colon '<TT>:</TT>', followed by the column number or name.
+        </P>
+	
+	<P>This example uses the <A HREF="#ALIAS_OP">field naming operator</A> 
+	   assign a name to the second select-field expression,
+           which is then used by the <EM>order by</EM>-clause to refer to that column:-</P>
+
+	<CODE><EM>select</EM> s, size::s[2]-s[1]<BR>
+<EM>from</EM> s <EM>in object</EM>("Sequence","LINK_AH10")-&gt;Subsequence<BR>
+<EM>order by</EM> :size</CODE>
+
+	<P>If more than one sort column is specified (separated by a comma), the left-most is the
+	most significant - equal values in that column will be arranged according to the next
+	sort criterion etc. </P>
+
+	<P>Additionally every sort criterion can have an optional parameter
+	<EM>asc</EM> or <EM>desc</EM> to specify sorting in ascending or descending order.</P>
+
+	<P>This is an example using a fictional personell database:-</P>
+	
+	<CODE><EM>select</EM> s-&gt;First_Name, s-&gt;Last_Name<BR>
+<EM>from</EM> s <EM>in</EM> <EM>class</EM> Staff<BR>
+<EM>order by</EM> :2 <EM>asc</EM>, :1 <EM>desc</EM></CODE>
+	
+	<P>might produce the following:-</P>
+	
+	<PRE>
+	Walter	Adams
+	Peter	Adams
+	John	Adams
+	Nigel	Clark
+	Jim	Clark
+	John	Cleese
+	...
+	</PRE>
+
+   </DD></DL>
+
+
+
+			   <HR ALIGN=CENTER WIDTH=50%>
+
+
+
+
+   <A NAME="TABLE_OP"><H4>5.2. Table operators</H4></A>
+   <DL><DD><!-- indent section -->
+	
+        <P>Any two tables (either select-from-where expressions or table variables) 
+	can be combined using standard set operators.</P>
+
+	<P>The result is again a table with all duplicates removed (where a row occurs in both tables).</P>
+
+	<P>Both tables have to be precisely <B>column-compatible</B> - they have 
+	to have the same number of columns and the value-types of the columns must 
+	match. The table operation is performed	after both tables have been evaluated 
+	individually, which can take quite long sometimes.</P>
+
+	<CENTER>
+	<TABLE CELLPADDING=3 WIDTH=80%>
+	  <TR BGCOLOR=#bfbfbf>
+	    <TH>Table operator</TH><TH></TH><TH>result</TH>
+	  </TR><TR>
+	    <TD><I>table</I> <EM>union</EM> <I>table</I></TD>	<TD> - </TD> <TD>all rows from both tables</TD>
+	  </TR><TR>
+	    <TD><I>table</I> <EM>diff</EM> <I>table</I></TD>	<TD> - </TD> <TD>rows from the first table except 
+	                                                                         the ones that are also in the second table, a.k.a. <EM>except</EM></TD>
+	  </TR><TR>
+	    <TD><I>table</I> <EM>intersect</EM> <I>table</I></TD>	<TD> - </TD> <TD>rows that are in one table but not the other</TD>
+	  </TR>
+        </TABLE>
+        </CENTER>
+   </DD></DL>
+
+
+
+		     <P><HR ALIGN=CENTER WIDTH=50%></P>
+
+
+
+
+   <A NAME="CONTEXT_VAR"><H4>5.3. Context variables</H4></A>
+   <DL><DD><!-- indent section -->
+	<P>It is possible for the program that uses AQL functionality to provide
+	a context for a query. The context is a set of predefined variables,
+	whose value is readily available for any subsequent query.<BR>
+       <STRONG>Note</STRONG> that this is an implementation dependent feature of AQL.</P>
+
+       <H4>Tace and the active KeySet</H4>
+       
+       In <TT>tace</TT>, every query has access to a preset <A HREF="#TABLE_VAR">table variable</A>
+       <TT>@active</TT>. It is a table of one column of <I>Object</I>-values
+       that represent the KeySet from the previous query.</P>
+
+   </DD></DL>
+
+       <PRE>
+acedb&gt; find author
+
+// Found 5178 objects in this class
+// 5178 Active Objects 
+acedb&gt; aql <CODE><EM>select</EM> :1 <EM>from</EM> @active <EM>where</EM> :1-&gt;Mail = "U.K."</CODE>
+"Berks M"
+"Sulston JE"
+...
+"Wolstenholme AJ"
+"Yeung M"
+// 33 Active Objects 
+acedb&gt;
+	</PRE>
+
+   <DL><DD><!-- indent section -->
+
+	After each AQL query the new active KeySet will be the first column
+	with <I>Object</I>-values from the results table of the last query.
+       
+
+        <H4>Command line arguments in taql</H4>
+
+        In <TT>taql</TT>, the user can pass in the value of a scalar variable
+	using the command line (the <TT>-param</TT> argument). This enable sthe use of shell or perl
+	script to supply different values, and the pre-formed query
+	will stay the same, because it references a scalar variable.
+	<BR>
+	Type <TT>taql -h</TT> for help on command line options.
+   </DD></DL>
+       
+
+<HR>
+<ADDRESS><A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A></ADDRESS>
+
+</BODY>
+</HTML>

@@ -1,0 +1,302 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - October 2001</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - October 2001</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+
+<P>A quiet month in preparation for the introduction of a major new facility for
+constructing virtual sequences in acedb: Smap. This will be the subject of next
+months newsletter when there will coverage of new code for putting together
+DNA and the features on that DNA.
+
+<P>There are some welcome additions to the way blixem can be run, both in terms
+of speed and flexibility. There is also some new code for dumping just the CDS
+parts of objects listed in the keyset window of xace.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+<a name="blixem"></a><H3>Running Blixem from xace: new options</H3>
+
+<P>Previously, if you used blixem from within xace then you cannot failed
+to have noticed that sometimes blixem takes a long time to retrieve the
+sequences it wants and that during this time xace is effectively "frozen"
+and you cannot do any work. In addition if blixem should crash for any reason
+then xace crashes to.
+
+<P>These problems are caused by two aspects of the way blixem is being run:
+
+<ol>
+  <li>blixem makes a separate call to "efetch" for each sequence it needs and
+      although efetch is fast, starting it up many times is not.
+  <li>the blixem code is compiled in to xace to form a single program, hence
+      if blixem crashes so does xace.
+</ol>
+
+<P>Two new features have been added to address these problems:
+
+<ol>
+  <li>blixem can now make a single call to a "pfetch" server to retrieve all
+      sequences it requires in one go. This is <b><i>much</i></b> faster.
+  <li>blixem can now be called as a separate program from within xace with the
+      result that:
+      <ul>
+	<li>you can continue to work with xace while waiting for blixem to
+	    retrieve sequences and display the results.
+	<li>you can start up as many blixems as you want, you are not
+	    restricted to one blixem per xace.
+	<li>if blixem crashes, xace will continue to run and you can
+	    start a new blixem.
+      </ul>
+</ol>
+
+
+
+<P>You can control how blixem is run from the preferences menu, the following
+preferences have been added:
+
+<dl>
+  <dt><b>BLIXEM_EXTERNAL</b>
+  <dd>Select this option if you want blixem to be called as an external program.
+  <dt><b>BLIXEM_PFETCH</b>
+  <dd>Select this option if you want blixem to use "pfetch" instead of "efetch" to
+      obtain its sequences.
+
+      <P>You should then set the following preferences so that blixem can find
+      the pfetch server (you should contact your local pfetch administrator if
+      you don't know what values to use):
+      <dl>
+	<dt><b>BLIXEM_NETID</b>
+	<dd>Set this to either the dotted decimal, e.g. "999.9.99.99" or the
+	    text form, e.g. "hal" of the network address of the server.
+	<dt><b>BLIXEM_PORT_NUMBER</b>
+	<dd>Set this to the port number that the pfetch server is listening on,
+	    e.g. 2001
+      </dl> 
+</dl>
+
+<P>Note that <b>BLIXEM_EXTERNAL</b> and <b>BLIXEM_PFETCH</b> can be set independently
+to one another so you can have any combination of the two.
+
+<P>If you are using blixem as a separate program and want to set it to use pfetch
+then you can do this in two ways:
+
+<dl>
+  <dt><b>environment variables</b>
+  <dd>You can use two environment variables to make blixem use pfetch:
+      <dl>
+	<dt><b>BLIXEM_PFETCH</b>
+	<dd>e.g. "setenv BLIXEM_PFETCH hal"
+	<dt><b>BLIXEM_PORT</b>
+	<dd>e.g. "setenv BLIXEM_PORT 2001"
+      </dl>
+      The examples assume you use csh.
+  <dt><b>command line options</b>
+  <dd>
+      <dl>
+	<dt><b>-P nodeid<:port></b>
+	<dd>You can specify the machine and port number with as an option to blixem,
+	    e.g. <b>blixem -P hal:2001  rest_of_blixem_args</b>
+      </dl>
+</dl>
+
+<P>blixem will use the environment variables when run from xace as well, but you are
+recommended to control blixems use of pfetch via the preferences menu.
+
+
+<a name="cds_fasta"></a><H3>Dumping CDS from the Keyset window</H3>
+
+<P>A new option has been added to dump just the CDS dna or corresponding
+protein translation in FastA format from
+a set of objects in the keyset window. From the "Export.." menu, select
+"CDS DNA in Fasta format" or "CDS Protein in Fasta format". If an object
+in the window does not contain the CDS tag then nothing will be dumped for that object.
+
+
+<a name="fmap_coords"></a><H3>Fmap cursor coordinates</H3>
+
+<P>Fmap now displays cursor co-ords during middle-button drag.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+<a name="dotter_fix"></a><H3>Dotter bug fixed</H3>
+
+<P>A small buglet in dotter is fixed: re-draw HSP lines after changing grey-ramp.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+<P>If you wish to make comments/suggestions about any of the below, please mail them
+to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>
+
+
+<a name="aceio_tmp"></a><H3>New routines for the aceTmp package</H3>
+
+<P>Some new routines/options have been added to the aceTmp package:
+
+<dl>
+  <dt><b>aceTmpCreateDir()</b>
+  <dd>Creates a directory and then creates a temporary file within that directory, this
+      makes it more convenient to put all temporary files of a particular type
+      into a single subdirectory of <b>/tmp</b> for instance.
+  <dt><b>aceTmpNoRemove()</b>
+  <dd>By default aceTmp removes any temporary files that it creates, this is not always
+      desireable, so you can use this call to stop file removal. It is of course then
+      your responsibility to remove the file, you can use the unix "<b>unlink</b>" call to
+      do this:
+<pre>               char *tmpfile_name ;
+               ACETMP tmpfile ;
+
+               tmpfile = aceTmpCreate( args ) ;
+ 
+               tmpfile_name = aceTmpGetFileName(tmpfile) ;
+               aceTmpNoRemove(tmpfile) ;
+
+               /* some time later */
+               unlink(tmpfile_name) ;
+</pre> 
+</dl>
+
+
+<a name="bindexfind_stuff"></a><H3>Some comments about the use of bIndexFind()</H3>
+
+<P>(<I>Thanks to Jean Thierry-Mieg for his comments</I>
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)
+
+<P>There have been a number of emails about bIndexFind() recently and it's
+probably good to summarise some of these:
+
+<p>bIndexFind() was designed to speed up queries by referencing an in memory
+table to determine whether an object contains a particular tag, rather than
+reading the object in, opening it and searching for the tag. The speed up is
+enormous.
+
+<P>So what's the problem ? The main problem is that bIndexFind() <b>does not</b> simply
+return a boolean, i.e. TRUE if it can find the tag in the index, FALSE if not. The
+call returns one of three possible values:
+<dl>
+  <dt><b>BINDEX_TAG_ABSENT (= 0)</b>
+  <dd>The tag is absent from the index.
+  <dt><b>BINDEX_TAG_UNCLEAR (= 1)</b>
+  <dd>Currently this can be returned for a whole host of reasons: the index is not up to date,
+      bindex package has not been initialised, the supplied key is a protected class or
+      is not a B object or, well quite a few other factors really (see below for more
+      on this). 
+  <dt><b>BINDEX_TAG_PRESENT (= 2)</b>
+  <dd>The tag is present in the index.
+</dl>
+
+<p>This means that it is not safe to write code like this assuming that because you
+have entered the "if" clause all is OK:
+
+<pre><code>if (bIndexFind (obj, tag))
+  {
+    some actions....
+  }
+</code></pre>
+
+<P>this can fail because bIndexFind() may return <b>BINDEX_TAG_UNCLEAR</b>.
+
+<P>Safer is to use two functions written by Jean which handle the
+bIndexFind() return values: 
+
+<pre><code><b>KEY keyGetKey(KEY key, KEY tag) ;
+BOOL keyFindTag(KEY key, KEY tag) ;
+</b></code></pre>
+
+<P>These use the index where possible and only open the object if necessary.
+
+<P>It is also safe to use bIndexFind() to speed up operations in some circumstances,
+e.g. If you were going to do this:
+
+<pre><code><b>if ((obj = bsCreate())
+  {
+    if (bsGetData (obj,tag,...))
+      { ... }
+    bsDestroy (obj) ;
+  }
+</b></code></pre>
+
+<P>you could instead do this:
+
+<pre><code><b>if ((bIndexFind(obj, tag) != BINDEX_TAG_ABSENT) && (obj = bsCreate())
+  {
+    if (bsGetData (obj,tag,...))
+      { ... }
+    bsDestroy (obj) ;
+  }
+</b></code></pre>
+
+<P>the latter is faster if the tag is <b>not</b> found in the index because the
+object does not need to be opened, and it's safe because otherwise we then go on
+to open the object and look for the tag anyway.
+
+<P>Currently bIndexFind() returns <b>BINDEX_TAG_UNCLEAR</b> for a number of conditions
+which are likely to be coding errors, we should consider messcrashing for these
+instead, e.g. if the index has not been initialised, trying to find a tag with a value
+less than "_Date" and maybe others. Send any thoughts on this to:
+<A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<H2>October monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<H2>Next User Group Meeting - D319, 2.30pm, Thursday, 18th October 2001</H2>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Mon Nov 12 15:08:34 GMT 2001
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

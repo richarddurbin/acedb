@@ -1,0 +1,119 @@
+<!--  $Id: Session_control.html,v 1.5 1999-04-28 13:13:23 fw Exp $  -->
+<head>
+<title>Session_control</title>
+</head>
+
+<BODY BGCOLOR=#ffffff>
+
+<h2>Acedb sessions and the control window</h2>
+
+
+<H3>What is session ?</H3>
+In Acedb a session can be thought of as a collection of modifications
+between "Gain write access" and "Save" actions. 
+<P>
+When the database starts up, this initial state is session 1. Every
+time the user gains write access, a new session (called <B>This_session</B>)
+is derived from the previous. 
+Sessions are given sequential numbers. All initial additions before first save 
+after the database was initialized will be stored in session 2.
+Changes to the new objects are newly added ones are stored in Session 3 etc.
+<P>
+A new session inherits all the data from its predecessor and it will also
+store modifications.
+<P>
+Objects can modified either interactively or by parsing ace-files.
+Until the user saves, all modified objects are held in a cache.
+When the database saves it copies those modified objects 'flushed'
+out of the cache and copied into the main-database.
+<P>
+Any user starting the database after that "save" will be able to 'see'
+the changes. Users who started the same database before that "save"
+occurred will not notice the changes and continue looking at the
+old data (if they happen to look at an object which was modified).
+<P>
+
+<H3>Session garbage collection</H3>
+
+When a new process starts up the database, it build up an image
+of where objects are stored in the database. This enables it to
+quickly find an object on disk and display it on the screen.
+<P>
+When objects are added or modified in a new session they are stored
+in a different place in the database. This way an process that has started
+before the save can still find the older objects in their original place,
+and the user can continue browsing the database.
+<P>
+There is however an overhead to this. If every old version of an object was
+kept in the database it would quickly grow out of proportion.
+This is why the database flushes older data out of the database in regular intervals
+to reclaim their disk space. That is a process known as garbage collection.
+<P>
+All changes to the database are always nicely bundled into a session. It is therefor 
+convenient to destroy older sessions, every time a new one is saved.
+For reasons of data security a certain number of older sessions is kept alive.
+This number is usually 2 or 3 and it can be configured for a given database
+by adding this line to the file <CODE>wspec/database.wrm</CODE>:
+
+<BLOCKQUOTE>SESSION_KEEP_ALIVE 2</BLOCKQUOTE>
+
+This configuration feature is available since version 4.7b, earlier versions
+will most likely use the number 2 by default. It may be configured to be bigger
+than that, but the smallest number allowed is 2.
+<P>
+
+<H3>Session read-locks</H3>
+
+We have discussed the notion of processes still being able to browse
+objects in their original place in the database, although another process
+has updated the database which has moved some objects to a new location.
+If an updating process performs a lot of saves, it may 'garbage collect'
+older sessions. This would crash a process that was still looking at objects from
+older sessions, if their sessions were deleted virtually under their feet
+by another updating process.
+<P>
+A protection mechanism is available since version 4.7b to protect such session
+from deletion if another program is still looking at it. This mechanism is called a
+"read-lock". It tells the database if there are any programs still browsing through
+data from older sessions before destroying them.
+<P>
+When the database quits normally its read-lock is removed and its sessions
+must no longer be kept alive. If however, the database exited in an unexpected way
+(like a computer failure or a program crash) it's read-lock may remain in the database.
+For this reason, every read-lock which is older than a certain time-span is ignored
+by an updating program which checks which old sessions can be destroyed.
+In Acedb version 4.7b this 'grace_period' is fixed to 8 hours, but it may become
+configurable in future releases.
+<P>
+
+<HR>
+This is an example of a session control window :
+
+<P><IMG SRC="sessctrl.gif" WIDTH=580 HEIGHT=607></P>
+
+<P>to <a href="TOC.html">Table of Contents</a><p>
+
+last edited: Dec 1998<p>
+
+</BODY>
+
+<!--
+*********************************************************************
+************************ CVS change log *****************************
+*********************************************************************
+
+$Log: Session_control.html,v $
+Revision 1.5  1999-04-28 13:13:23  fw
+added BODY tag with white BGCOLOR
+
+Revision 1.4  1999/03/22 14:45:41  fw
+corrected syntax of comment at the top
+
+Revision 1.3  1999/01/15 18:13:22  fw
+first version of this file with actual content,
+it explains acedb sessions, garbage collection of old sessions
+and readlocks.
+It will need work, as novice users may not understand what I'm talking about.
+
+
+-->

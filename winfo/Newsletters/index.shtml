@@ -1,0 +1,85 @@
+<HTML>
+
+<!--                                                                          -->
+<!-- Currently this file is constructed by hand, really it should be done by  -->
+<!-- mkindex.pl, one day it will be.                                          -->
+<!--                                                                          -->
+
+<HEAD>
+
+<TITLE>Acedb Newsletters</TITLE>
+
+<LINK REL="stylesheet" TYPE="text/css" HREF="./newsletter.css" TITLE="Style sheet for Newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<H1>Acedb Newsletters</H1>
+
+<P>These newsletters are sent out each month, if you want to receive
+a copy send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+<h2><A HREF="./Year2004/August.html">This months newsletter - August 2004</A></h2>
+
+<ul>
+  <li><a href="./Year2004/August.html#New_Features">New Features</a></li>
+    <ul>
+      <li><a href="./Year2004/August.html#acedb_php">A PHP interface to AceDB</a></li>
+    </ul>
+    <ul>
+      <li><a href="./Year2004/August.html#opteron">Opteron port</a></li>
+    </ul>
+    <ul>
+      <li><a href="./Year2004/August.html#smap_cmds">Some New SMap commands</a></li>
+    </ul>
+    <ul>
+      <li><a href="./Year2004/August.html#quiet_cmds">New quiet command</a></li>
+    </ul>
+  <li><a href="./Year2004/August.html#Articles">Articles</a></li>
+    <ul>
+      <li><a href="./Year2004/August.html#embl_acc">Change to how EMBL dumping in AceDB dumps accession numbers</a></li>
+    </ul>
+    <ul>
+      <li><a href="./Year2004/August.html#gff_feature">Extension to how AceDB handles GFF_feature in the Method class</a></li>
+    </ul>
+  <li><a href="./Year2004/August.html#Bugs_Fixed">Bugs Fixed</a></li>
+    <ul>
+      <li><a href="./Year2004/August.html#AQL_active">AQL and the active keyset</a></li>
+    </ul>
+  <li><a href="./Year2004/August.html#Developers_Corner">Developers Corner</a></li>
+    <ul>
+      <li><a href="./Year2004/August.html#ace_c">Acelib.h to AceC transition</a></li>
+    </ul>
+    <ul>
+      <li><a href="./Year2004/August.html#graph_text">Text Editor Bug</a></li>
+    </ul>
+    <ul>
+      <li><a href="./Year2004/August.html#name_decorate">Displaying object class and name</a></li>
+    </ul>
+    <ul>
+      <li><a href="./Year2004/August.html#messubs">messubs changes</a></li>
+    </ul>
+    <ul>
+      <li><a href="./Year2004/August.html#bssubs">New function to return the name of an object from an OBJ pointer.</a></li>
+    </ul>
+</ul><br />
+
+
+
+<h2>Older newsletters</h2>
+<UL>
+  <LI> <A HREF="./Year2000/index.shtml">2000</A>
+  <LI> <A HREF="./Year2001/index.shtml">2001</A>
+  <LI> <A HREF="./Year2002/index.shtml">2002</A>
+  <LI> <A HREF="./Year2003/index.shtml">2003</A>
+  <LI> <A HREF="./Year2004/index.shtml">2004</A>
+</UL>
+
+
+<HR>
+<ADDRESS><A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A></ADDRESS>
+</BODY>
+</HTML>
+

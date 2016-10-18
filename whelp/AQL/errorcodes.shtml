@@ -1,0 +1,861 @@
+<HTML>
+
+<HEAD>
+  <TITLE>AQL - Error codes</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="./aql.css" TITLE="Style sheet for AQL docs">
+</HEAD>
+<BODY>
+
+
+<H2>AQL - Error codes</H2>
+
+When AQL processes a query, a number of checks are performed at various stages of the processing.
+Every type of error that can occur during query processing has been assigned a number code
+that can be looked up in the table below.
+<P>
+The errors have been arranged into various categories and colour-coded according to the <A HREF="#COLORKEY">key at the bottom of this page</A>.
+
+<P>An asterisk (*) in a quoted error message stands for some value filled in according to the actual query use.</P>
+
+<TABLE BORDER=0 WIDTH=100% CELLPADDING=0 CELLSPACING=20>
+
+  <TR BGCOLOR=khaki>
+   <TH>Number Code</TH>
+   <TH>Error message</TH>
+   <TH>Explanation and Examples</TH>
+  </TR>
+
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=red ALIGN=CENTER VALIGN=MIDDLE><B>600</B></TD>
+   <TD VALIGN=TOP>Code: Undefined Error</TD>
+   <TD VALIGN=TOP>The code has encountered a fatal error executing the current operation and has
+                  aborted. The source of the error could not be determined.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=red ALIGN=CENTER VALIGN=MIDDLE><B>610</B></TD>
+   <TD VALIGN=TOP>Code: Logic Error</TD>
+   <TD VALIGN=TOP>The code has encountered a condition that should not be logically possible
+                  and has aborted the current operation.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=red ALIGN=CENTER VALIGN=MIDDLE><B>620</B></TD>
+   <TD VALIGN=TOP>Code: Tree Error</TD>
+   <TD VALIGN=TOP>The code has detected an error in the parse tree it has constructed
+                  and has aborted the current operation.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=red ALIGN=CENTER VALIGN=MIDDLE><B>630</B></TD>
+   <TD VALIGN=TOP>Code: Called Function Error</TD>
+   <TD VALIGN=TOP>The code has received an unexpected error from a function outside of the AQL
+                  package and has aborted the current operation.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightyellow ALIGN=CENTER VALIGN=MIDDLE><B>700</B></TD>
+   <TD VALIGN=TOP>Syntax error</TD>
+   <TD VALIGN=TOP>The query doesn't satisfy the syntax as defined by the <A HREF="syntax.shtml">parsing grammar</A>.
+                  Other syntax errors that slip through the net of first-pass parsing will be reported
+		  using more specific error codes.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightyellow ALIGN=CENTER VALIGN=MIDDLE><B>701</B></TD>
+   <TD VALIGN=TOP>Syntax error : invalid character</TD>
+   <TD VALIGN=TOP>The query contains a character that isn't defined anywhere in the <A HREF="syntax.shtml">parsing grammar</A>.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightyellow ALIGN=CENTER VALIGN=MIDDLE><B>702</B></TD>
+   <TD VALIGN=TOP>Syntax error : Bad time/data literal</TD>
+   <TD VALIGN=TOP>The string following the <TT>`</TT> isn't a valid date, 
+                  see <A HREF="syntax.shtml#DATE_LITERAL">date syntax</A> for details..
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightyellow ALIGN=CENTER VALIGN=MIDDLE><B>703</B></TD>
+   <TD VALIGN=TOP>Syntax error: unrecognized Method name '*'</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a, a.<I>function</I> from a in class C1</CODE></DL>
+		  The Method <I>function</I> is not a recognized method.
+		  See the language documentation for a list of <A HREF="overview.shtml#LOC_METHOD">valid Method names</A>.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>990</B></TD>
+   <TD VALIGN=TOP>scalar variable * undefined</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a from a in class C1 where a->Field1 == <I>$x</I></CODE></DL>
+		  The scalar variable <TT>$x</TT> has to be defined in the previous query or
+		  in the environment context.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>991</B></TD>
+   <TD VALIGN=TOP>table variable * undefined</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a:1 from a in @t</CODE></DL>
+		  The table-variable <TT>@t</TT> has to be defined in the previous query or
+		  in the environment context.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>992</B></TD>
+   <TD VALIGN=TOP>iterator variable * undeclared</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a, b from a in class author</CODE></DL>
+		  The locator-variable <TT>b</TT> has to be declared in the <U>from-clause</U>
+		  of the same query.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>993</B></TD>
+   <TD VALIGN=TOP>no unnamed iterator declaration</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select p from p in class person where exists <I>->born</I></CODE></DL>
+		The argument for the exists expression uses the 
+		<A HREF="overview.shtml#DEF_ITERATOR">default iterator</A>, which is used
+		for unnamed declarations.
+		Use either <BR>
+		<CODE>select p from p in class person where exists <I>p</I>->born</CODE>
+		<BR>or<BR>
+		<CODE>select <I>all</I> class person where exists ->born</CODE>
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>961</B></TD>
+   <TD VALIGN=TOP>Malformed FROM in SelectFromWhere</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select s from sequence</CODE></DL>
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+
+  <TR>
+   <TD BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>988</B></TD>
+   <TD VALIGN=TOP>only one declaration allowed for default iterator</TD>
+   <TD VALIGN=TOP>caused by a query like 
+		  <DL><DD><CODE>select all from a,b</CODE></DL>
+                  The default locator that is initiated by <TT>select all</TT> 
+		  can only be based upon one declaration.
+		  It cannot be redeclared in the same table expression.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+
+  <TR>
+   <TD BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>989</B></TD>
+   <TD VALIGN=TOP>multiple declaration of variable * in same scope</TD>
+   <TD VALIGN=TOP>caused by a query like 
+		  <DL><DD><CODE>select a from a in class C1, a in class C2</CODE></DL>
+                  The <U>from-clause</U> defines the variable a to be derived from class C1, but then
+		  you can't define the same variable based on a different class again.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>958</B></TD>
+   <TD VALIGN=TOP>invalid declaration</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>$x:= @t:2</CODE></DL>
+		  where a table-variable is referenced without a proper declaration.<BR>
+		  This query makes no sense because <TT>$x</TT> is a scalar variable
+		  (i.e. can only have one value) and <TT>@t:2</TT> is a column of a table 
+		  (i.e. a list of values).
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>959</B></TD>
+   <TD VALIGN=TOP>invalid outside declaration</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>$x := yeardiff(p->Title, now)</CODE></DL> 
+                  where <TT>p->Title</TT> refers to a declaration outside the function that doesn't exist.
+   </TD>
+  </TR>
+
+
+<TR><TD COLSPAN=3><A NAME="ERRNO930"><HR NOSHADE></A></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>930</B></TD>
+   <TD VALIGN=TOP>Invalid column-selection on *:*</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a:&lt;columnNo&gt; from a in class movie</CODE></DL>
+		The select-field is a row-variable <TT>a</TT>, but it is illogical to
+		extract a column (specified by <I>number</I>) from a class-based from-clause 
+		<BR>&nbsp;--or--
+                  <DL><DD><CODE>select a:&lt;columnNo&gt; from a in @tb:1</CODE></DL>
+		The variable <B>a</B> is already declared to iterate over columns in <B>@tb</B>,
+		so another column selection in a single-value iterator makes no sense.
+
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>931</B></TD>
+   <TD VALIGN=TOP>Invalid column-selection on *:*</TD>
+   <TD VALIGN=TOP>This error is a slight variation on <A HREF="#ERRNO930">error 930</A>, but for invalid
+                  column selection by name. (Error 930 deals with selection by column-number).
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><A NAME="ERRNO932"><HR NOSHADE></A></TD></TR>
+
+  <TR>
+   <TD ROWSPAN=2 BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>932</B></TD>
+   <TD ROWSPAN=2 VALIGN=TOP>variable * is row based and must specify the column that is to be extracted from the iterating rows</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a from a in @tb</CODE></DL>
+                  The from-clause defines the variable <B>a</B> as a row-variable on the table-variable <B>tb</B>.
+		  The select-clause states that <B>a</B> should be output to the results-table, but
+		  <B>a</B> is an entire column. We need to refer to the exact column in the row <B>a</B>
+		  in order to extract just a single value for the results-table.<BR>
+		  The query <CODE>select a:1 from a in @tb</CODE> is OK, and it will pull out the first (i.e. leftmost)
+		  column from the table.
+   </TD>
+  </TR>
+  <TR>
+   <TD BGCOLOR=lightcoral VALIGN=TOP>
+                  However, the parser could allow the original query above, in the case that <B>@tb</B> has only one column anyway.
+                  This is currently not implemented.
+   </TD>
+  </TR>
+
+
+<TR><TD COLSPAN=3><A NAME="ERRNO933"><HR NOSHADE></A></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>933</B></TD>
+   <TD VALIGN=TOP>Cannot dereference a row-based variable directly</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a->tagname from a in @tb</CODE></DL>
+                  This error is a slight variation on <A HREF="#ERRNO932">error 932</A>.
+		  We cannot dereference <B>a</B>, as it stands for an entire row from table <B>@tb</B>.
+		  The query <CODE>select a:1->tagname from a in @tb</CODE> would be correct in the case that the
+		  object values in column 1 in table <B>@tb</B> should be followed up to tag <B>tagname</B>.		  
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>920</B></TD>
+   <TD VALIGN=TOP>table &lt;union/diff/intersect&gt; operator - column number mismatch</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a->Field1, a->Field2 from a in class C1<BR>
+				union<BR>
+				select b->Field1 from b in class C2</CODE></DL>
+		The table operators <TT>union</TT>, <TT>diff</TT> (aka <TT>except</TT>)
+		 and <TT>intersect</TT> can only combine two table that have the same number of columns,
+		whereas the above example yields a two-column table with the query on class <TT>C1</TT> and a one-column table
+		with the query on class <TT>C2</TT>.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>921</B></TD>
+   <TD VALIGN=TOP>table-argument for tableFunc expression must generate ONLY 1 column</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>$x := count(select a->Field1, a->Field2 from a in class C1)</CODE></DL>
+		The table-functions (count, sum, avg, min, max, first, last) can only act on tables that have one column.
+		The inner select-query should be restricted to one select field or the column specified by name or number.
+                  <DL><DD><CODE>$x := count(select a->Field1 from a in class C1)</CODE></DL>
+                  <DL><DD><CODE>$x := count(select a->Field1, a->Field2 from a in class C1):1</CODE></DL>
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><A NAME="ERRNO922"><HR NOSHADE></A></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>922</B></TD>
+   <TD VALIGN=TOP>field number * out of range</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a, b from a in ..., b in ... order by :3</CODE></DL>
+		The table returns two result column, but the sort-clause is trying to refer to a third
+		column in the result table on which to sort by. The number of that field in invalid
+		for the given select-clause.<BR>
+		This error may be reported for table-fields with the <TT>order</TT> keyword,
+		fields in row-variables and when a table-function specifies a field-number as in
+                  <DL><DD><CODE>$x := max(select a, b from ... ):4</CODE></DL>
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightblue ALIGN=CENTER VALIGN=MIDDLE><B>923</B></TD>
+   <TD VALIGN=TOP>field name * not in table</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a from a in ... order by :b</CODE></DL>
+		  Similar to <A HREF="#ERRNO922">error 922</A>, but traps <U>named</U> 
+		  references to non-existing table-fields.
+		  <BR>
+		  The sort field 'b' isn't recognised in the result table, because the
+		  select-clause only defines the result to have a table with one column called 'a'.
+		  <BR>
+		  This error may be reported for table-field names used with the <TT>order</TT> keyword,
+		  field-names in row-variables and when a table-function specifies a non-existing field-name as in
+                  <DL><DD><CODE>$x := max(select a from ... ):b</CODE></DL>
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>883</B></TD>
+   <TD VALIGN=TOP>The like operator can only be used on Text types</TD>
+   <TD VALIGN=TOP>The operator <TT>~</TT> or the keyword <TT>like</TT>
+                  can only be used to compare Text values. One of the expressions either side
+		  of the operator does not evaluate to a Text value-type.
+		  <BR>
+		  NOTE: when <I>Object</I>-values are compared to Text, so <TT>~</TT> <U>can</U> be used.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><A NAME="ERRNO884"><HR NOSHADE></A></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>884</B></TD>
+   <TD VALIGN=TOP>illegal value types for comparison operator</TD>
+   <TD VALIGN=TOP>The comparison operator used is not supported (or makes no sense) for the value types involved in
+                  the expression
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><A NAME="ERRNO885"><HR NOSHADE></A></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><BR><B>885</B><BR><BR></TD>
+   <TD COLSPAN=2 VALIGN=TOP>Comparison involving boolean values only allows = and != operators</TD>
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><A NAME="ERRNO886"><HR NOSHADE></A></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><BR><B>886</B><BR><BR></TD>
+   <TD COLSPAN=2 VALIGN=TOP>Comparison of two <I>Object</I> values only allows = and != operators</TD>
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>887</B></TD>
+   <TD VALIGN=TOP>Only min() or max() function can operate over DateType values!</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>$y := avg (select p->Publish_Date from a in class Author, p in a->Paper)</CODE></DL>
+		  The inner query produces a list of dates on which authors have published their papers.
+		  <BR>
+		  The table-function <TT>avg</TT> is not defined for values of type <I>DateType</I>,
+		  only <TT>min</TT> and <TT>max</TT> can be used on <I>DateType</I> tables.
+
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>888</B></TD>
+   <TD VALIGN=TOP>Only min() or max() function can operate over Text values!</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>$y := avg (select a->Full_name from a in class Author)</CODE></DL>
+		  The inner query produces a list of names of all authors.
+		  <BR>
+		  The table-function <TT>avg</TT> is not defined for values of type <I>Text</I>,
+		  only <TT>min</TT> and <TT>max</TT> can be used on <I>Text</I> tables.
+
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>889</B></TD>
+   <TD VALIGN=TOP>Table selection returns wrong type of value.</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>$x := sum (select a->Name from a in class Author)</CODE></DL>
+		  The inner query lists the names of all authors. These names would naturally be string values.
+		  <BR>
+		  Functions <TT>min</TT>, <TT>max</TT> only work over columns of <I>Int</I>, <I>Float</I> or <I>DateType</I> values.
+		  The functions <TT>sum</TT>, <TT>avg</TT> work over numeric values (Int or Float) only.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>890</B></TD>
+   <TD VALIGN=TOP>operand of &lt;<I>dateDiffFunc</I>&gt;() is not a DateType</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a, Age::yeardiff(a->Name, now) from a in class Author</CODE></DL>
+
+		  This is the wrong query, if the user wanted the authors age to be calculated
+		  as the difference in years between the current date and the date of his/her birth.
+		  <BR>
+		  The field <TT>a->Name</TT> will probably return a string value, and therefore the 
+		  yeardiff function will fail.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><A NAME="ERRNO895"><HR NOSHADE></A></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>895</B></TD>
+   <TD VALIGN=TOP>Arithmetic exception - division by zero</TD>
+   <TD VALIGN=TOP>caused by a division of integer or float value zero.
+                  (Any other value-type in a division by zero will cause error No <A HREF="#ERRNO896">896</A> first.)
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><A NAME="ERRNO896"><HR NOSHADE></A></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>896</B></TD>
+   <TD VALIGN=TOP>invalid expression types (*).(*) for arithmetic operator</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a, (a->Born + 10.0) from a in class Author</CODE></DL>
+		  when the second select-field expression is evaluated, <TT>a->Born</TT> assumes
+		  <I>DateType</I> values, whereas 10.0 is a <I>Float</I>.
+		  <P>
+		  The arithmetic operators +, -, *, / are only defined for numeric data-types (Int, Float).
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><A NAME="ERRNO897"><HR NOSHADE></A></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>897</B></TD>
+   <TD VALIGN=TOP>invalid expression types (*).(*) for modulo operator (integer only)</TD>
+   <TD VALIGN=TOP>The modulo operator only works on integer values. If either of the expressions evaluate
+                  to ny other type, you will get this error.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>898</B></TD>
+   <TD VALIGN=TOP>incorrect expression type (*) for unary MINUS operator</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a from a in class Author where <I>-a = "ddd"</I></CODE></DL> 
+		  The variable <TT>a</TT> will assume <I>Object</I> values during evaluation.
+                  In an arithmetic expression the minus operator '-' can only be used for Int and Float values,
+                  but naturally not for DateType, Text, Object-values or others.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>899</B></TD>
+   <TD VALIGN=TOP>incorrect expression type (*) for abs() ExprFunc</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a, abs(a->Paper) from a in class Author</I></CODE></DL> 
+		  The locator <TT>a->Paper</TT> will assume <I>Object</I> values during evaluation.
+                  The expression function <TT>abs()</TT> can only be used for Int and Float values,
+                  but naturally not for DateType, Text, Object-values or others.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>860</B></TD>
+   <TD VALIGN=TOP>invalid valuetype of operand for method 'name'</TD>
+   <TD VALIGN=TOP>The method 'name' can only be used on object or tag-values.
+		  It converts the internal key of the object or tag into
+		  a Text-string. <BR>
+		  The use of this method on a variable of any other valuetype 
+		  will raise this error.<BR>
+		  Note: In table-results that are rendered into text-format
+		  usually show object and text-values in the same way - as quoted strings.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>861</B></TD>
+   <TD VALIGN=TOP>invalid valuetype of operand for method 'class'</TD>
+   <TD VALIGN=TOP>The method 'class' can only be used on object-values.
+		  It will return the Text-string for the class-name
+		  of an object value. <BR>
+		  The use of this method on a variable of any other valuetype 
+		  will raise this error.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><A NAME="ERRNO862"><HR NOSHADE></A></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>862</B></TD>
+   <TD VALIGN=TOP>invalid valuetype of operand for method 'length'</TD>
+   <TD VALIGN=TOP>The 'length' method return an integer containing the length
+		  of an array or Text-string. The operand to this method
+		  must be either a Text-value or an object value.
+		  Error <A HREF="#ERRNO863">863</A> will be raised if an
+		  object value does not belong to an A-class, which stores arrays
+		  (as opposed to B-classes which store objects in B-tree format).
+		  <BR>
+		  The use of this method on an iterator of any other valuetype will 
+		  cause this error.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><A NAME="ERRNO863"><HR NOSHADE></A></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>863</B></TD>
+   <TD VALIGN=TOP>invalid valuetype of operand for method 'length'</TD>
+   <TD VALIGN=TOP>This error is raised if the operand to the 'length' method
+	          is an object not belonging to an A-class.
+		  <BR>
+		  See Error <A HREF="#ERRNO862">862</A>.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>864</B></TD>
+   <TD VALIGN=TOP><TABLE><TR><TD ALIGN=RIGHT>
+                  invalid valuetype of operand for method 'create_time'</TD></TR>
+                                      <TR><TD ALIGN=RIGHT>'create_session'</TD></TR>
+				      <TR><TD ALIGN=RIGHT>'update_time'</TD></TR>
+				      <TR><TD ALIGN=RIGHT>'update_session'</TD></TR></TABLE>
+   </TD>
+   <TD VALIGN=TOP>These timestamps methods can only be used on object-values.<BR>
+	          They return either a DateType-value or an object-value of a UserSession
+		  object relating to the session when that object was created or updated.
+		  <BR>
+		  The use of this method on a variable of any other valuetype 
+		  will raise this error.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>865</B></TD>
+   <TD VALIGN=TOP><TABLE><TR><TD ALIGN=RIGHT>
+                  invalid valuetype of operand for method 'node_time'</TD></TR>
+                                      <TR><TD ALIGN=RIGHT>'node_session'</TD></TR></TABLE>
+   </TD>
+   <TD VALIGN=TOP>These timestamps methods operate on a piece of data inside an object.
+	          That means the variable that this method can be called on, must
+		  refer to a tag or a data-value positioned relative to a tag in an object.
+		  Therefor this method only works if called upon such values.
+		  <BR>
+	          The methods return either a DateType-value or an object-value of a UserSession
+		  object relating to the session when that tag or data-node was added to the object.
+		  <BR>
+		  The use of this method on a variable of any other valuetype 
+		  will raise this error.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightsalmon ALIGN=CENTER VALIGN=MIDDLE><B>850</B></TD>
+   <TD VALIGN=TOP>Multiple declaration of table variable * in environment scope</TD>
+   <TD VALIGN=TOP>A table variable has been declared twice in the environment context of the query.
+   This is possibly an error in the application program that uses AQL.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightseagreen ALIGN=CENTER VALIGN=MIDDLE><B>810</B></TD>
+   <TD VALIGN=TOP>Incinsistent value types in table column *</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select x[1],x[2],x[3],x[4] from x in object("<I>Class</I>","<I>Key</I>")</CODE></DL>
+		  Depending on the model for objects of class <TT><I>Class</I></TT>, the object tree
+		  might use different value-types for the data at deeper levels. So, the result-table gets
+		  initialized with whatever type it finds first, and at a different branch in the tree that
+		  maps to the same table column it may find tags of a different value type that can't be placed
+		  in the same result-table column that has been created with a different type before.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightseagreen ALIGN=CENTER VALIGN=MIDDLE><B>941</B></TD>
+   <TD VALIGN=TOP>Unrecognized class *</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a->Field1 from a in class <I>Class1</I></CODE></DL>
+		where <TT><I>Class1</I></TT> is not a valid class in the database.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightseagreen ALIGN=CENTER VALIGN=MIDDLE><B>942</B></TD>
+   <TD VALIGN=TOP>Unrecognized class * in construct object("&lt;class&gt;", ...)</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select all object ("<I>Sequqnce</I>", "KH462")</CODE></DL>
+		where <TT><I>Sequqnce</I></TT> is not a valid class in the database.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightseagreen ALIGN=CENTER VALIGN=MIDDLE><B>952</B></TD>
+   <TD VALIGN=TOP>invalid value-type of left expression in object constructor</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a, object(3.14, "Address") from a in class Author</CODE></DL>
+		  Where the right expression <TT><I>3.14</I></TT> does not represent a key value of a class.
+		  Only direct key values (i.e. <TT>class(a)</TT> in the above query) or string literals
+		  yield key values in the object constructor.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightseagreen ALIGN=CENTER VALIGN=MIDDLE><B>943</B></TD>
+   <TD VALIGN=TOP>Can't find *:*  - object "*" not found in class "*"</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a->address from a in object ("Author", "<I>martin</I>")</CODE></DL>
+		where the key <TT><I>martin</I></TT> does not exist in class <TT>Author</TT>.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightseagreen ALIGN=CENTER VALIGN=MIDDLE><B>953</B></TD>
+   <TD VALIGN=TOP>invalid value-type of right expression in object constructor</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a, object("paper", 3.14) from a in class Author</CODE></DL>
+		  Where the right expression <TT><I>3.14</I></TT> does not represent a key value.
+		  Only direct key values (i.e. <TT>a</TT> in the above query) or string literals
+		  yield key values in the object constructor.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightseagreen ALIGN=CENTER VALIGN=MIDDLE><B>944</B></TD>
+   <TD VALIGN=TOP>Unrecognized tag *</TD>
+   <TD VALIGN=TOP>caused by queries like 
+                  <DL><DD><CODE>select a-><I>Field1</I> from a in class Class1</CODE></DL>
+                  <DL><DD><CODE>select all object("Class1", "Key")-><I>Field1</I></CODE></DL>
+		where the tag <TT><I>Field1</I></TT> does not exist in class <TT>Class1</TT>.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightseagreen ALIGN=CENTER VALIGN=MIDDLE><B>900</B></TD>
+   <TD VALIGN=TOP>Follow position : Trying to dereference (->) something not an object</TD>
+   <TD VALIGN=TOP>
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightseagreen ALIGN=CENTER VALIGN=MIDDLE><B>901</B></TD>
+   <TD VALIGN=TOP>Follow tag : Trying to dereference (->) something not an object</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>select a, b->Full_name from a in class author, b in a->Full_name</CODE></DL>
+		  Only locators that return Key-type values can be dereferenced using the ARROW operator -&gt;.
+		  In this case b is declared to be a->Full_name (let's say that's a string value), but the
+		  select field tries to extract a tag from it (Full_name again), so this query is most probably
+		  a typo.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightseagreen ALIGN=CENTER VALIGN=MIDDLE><B>902</B></TD>
+   <TD VALIGN=TOP>Positioning within an object has to follow a tag</TD>
+   <TD VALIGN=TOP>caused by a queries like 
+                  <DL><DD><CODE>select a[1] from a in class Movie</CODE></DL>
+                  <DL><DD><CODE>select ->0, [cast] from class movie</CODE></DL>
+		  The notation that allows an iterator to position to a
+		  tag or position within the references object has to
+		  be base upon a tag and can't be rooted directly
+		  at the object itself.<BR>
+		  The notation <TT>[<I>tagname</I>]</TT> only makes
+		  sense if used as <TT><I>obj</I>-><I>tag</I>[<I>positioning</I>]</TT>, where <I>positioning</I> is the number of steps to the
+		  right or a name to jump to directly.
+		  <P>
+		  <B>Note</B>: It is always possible to write
+		  <DL><DD><TT>a->Mail</TT></DL>
+		  instead of
+		  <DL><DD><TT>a->Address[Mail]</TT></DL>
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightseagreen ALIGN=CENTER VALIGN=MIDDLE><B>903</B></TD>
+   <TD VALIGN=TOP>Illegal argument to boolean clause `exists_tag' (tags-by-name only)</TD>
+   <TD VALIGN=TOP>caused by a query like 
+                  <DL><DD><CODE>... where exists_tag ->email[1]</CODE></DL>
+		  The variable b is declared to move one to the right in the object model
+		  of a which is from class Author. <P>
+		  That is very ambiguous and only allowed by dereferencing an object using the follow-tag notation.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightseagreen ALIGN=CENTER VALIGN=MIDDLE><B>960</B></TD>
+   <TD VALIGN=TOP>table combining operator - error in column *, value-type mismatch between the columns the two tables</TD>
+   <TD VALIGN=TOP>caused by a query like (find all American authors that haven't yet published)
+                  <DL><DD><CODE>(select a->Full_name from a in class Author where a->address = "USA")<BR>
+                                except<BR>
+                                (select all class Author where exists ->Paper)
+		  </CODE></DL>
+		According to database specific evaluation, the first query produces a table that is a list of strings,
+		whereas the second one returns a list of key-values.
+		<P>
+		The table operator can only combine row-compatible tables, i.e. the value types
+		have to match in each column of both tables.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=lightseagreen ALIGN=CENTER VALIGN=MIDDLE><B>962</B></TD>
+   <TD VALIGN=TOP>table combining operator - value-type mismatch between the columns the two tables</TD>
+   <TD VALIGN=TOP>As error 962 - Sometimes the value-types of table columns aren't known until
+                  both tables are fully computed. This might be the case, if a select-field
+		  is calculated as an expression whose final value isn't known until the
+		  database specific expression evaluation.
+		  <BR>
+		  Therefor a possible type mismatch (Error 960) remains unnoticed until after
+		  complete construction of both tables.
+		  This error will pick out any mismatches that occur during table evaluation.
+   </TD>
+  </TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+<TR><TD COLSPAN=3 BGCOLOR=khaki ALIGN=CENTER><B>The causes of these errors will be fixed in the future</B></TD></TR>
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+<TR><TD COLSPAN=3><HR NOSHADE></TD></TR>
+
+  <TR>
+   <TD BGCOLOR=rosybrown ALIGN=CENTER VALIGN=MIDDLE><B>798</B></TD>
+   <TD VALIGN=TOP>Sorry : Unimplemented date-function weekdiff()</TD>
+   <TD VALIGN=TOP>The weekdiff() date-function hasn't been written yet (as of 991004)
+   </TD>
+  </TR>
+
+</TABLE>
+
+<!--********************************************************************************************************-->
+
+<HR SIZE=5 NOSHADE>
+<A NAME="COLORKEY"><H2 ALIGN=CENTER>Colour codes of error categories</H2></A>
+
+<HR>
+
+<TABLE BORDER=0 WIDTH=100% CELLPADDING=10 CELLSPACING=10>
+ <TR>
+    <TD BGCOLOR=red><B>Code Error</B></TD>
+    <TD>The code has detected an error which is probably the result of incorrect programming.
+ </TR>
+
+ <TR>
+    <TD BGCOLOR=lightyellow><B>Syntax Error</B></TD>
+    <TD>see <A HREF="syntax.shtml">AQL Syntax Document</A></TD>
+ </TR>
+
+ <TR>
+    <TD BGCOLOR=lightblue><B>Semantic Error</B></TD>
+    <TD>Although the query passes the syntax check, the query isn't allowed by the language specifications</TD>
+ </TR>
+
+ <TR>
+    <TD BGCOLOR=lightsalmon><B>Logical Error</B></TD>
+    <TD>Basically a semantic error as well, but probably just the wrong query.</TD>
+ </TR>
+
+ <TR>
+    <TD BGCOLOR=lightseagreen><B>Evaluation Error</B></TD>
+    <TD>The query fails, because the specific database that is being used</TD>
+ </TR>
+
+ <TR>
+    <TD BGCOLOR=rosybrown><B>Unimplemented feature</B></TD>
+    <TD>Query is not wrong, but uses a certain language feature, that is not yet implemented</TD>
+ </TR>
+
+</TABLE>
+
+<HR>
+<ADDRESS><A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A></ADDRESS>
+
+</BODY>
+</HTML>
+

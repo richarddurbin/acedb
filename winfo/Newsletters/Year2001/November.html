@@ -1,0 +1,268 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - November 2001</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - 2001</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<P>The arrival and then disappearance again of some smap code, no more unexpected changes
+in the accuracy of float data, more control of file parsing in xace, an
+important bug fix for the Url class in AceDB.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+
+<a name="new_dna"></a><H3>Introduction and then removal of smap-based dna retrieval</H3>
+
+<P>Or to put it another way...an apology.
+
+<P>I tested some new code which used Smap functions (more of this in the January issue)
+to retrieve the dna for sequences in fmap. I compared the old and new code by dumping the dna
+for the whole of Chromosome 22 in Human and found that it worked correctly. I put the new
+code in the November monthly release, only to find that the code did not work properly when
+the sequence object selected contained exons specified via the Source_exons tag. Sadly this
+has resulted in a number of bugs in other parts of the code not obviously related to this
+problem.
+
+<P>Accordingly the change was removed until we could be sure it was working correctly.
+Sorry, sorry, sorry to all of you who used the November code and found it to be not working
+at all well. A fix is being worked on now.
+
+
+<a name="float_rounding"></a><H3>Judicious rounding of floats to ensure constant accuracy
+across platforms</H3>
+
+<P>Accuracy in floating point numbers across different platforms can be very different. The
+IEEE floating point standards do guarantee a minimum of 6 significant figures of accuracy.
+AceDB now rounds all floating point numbers to this accuracy on output/input from ace files
+to ensure that floating point numbers <B>stay the same</b> in a database regardless of
+the machine being used to interact with the database.
+
+<P>This is important otherwise floating numbers can appear to have changed just because
+a different machine is used to read in or output them. This causes a problem because
+objects that have floating point numbers with many significant figures (e.g. x = 1/3)
+look as though they have changed because they can be specified more exactly in an
+ace file than in the machine which must round them to its maximum available accuracy.
+
+<P>You should be aware that AceDB will now hold floating point numbers to a maximum
+of 6 significant figures.
+
+
+<a name="parse_files"></a><H3>Ignoring errors while parsing files in xace</H3>
+
+<P>tace has the command "pparse" to allow you to parse a file and ignore any
+errors on the way, xace would always stop however at the first error. Now an
+extra button has been added to the parse dialog window to allow you to select
+to ignore errors and keep parsing the file. This can be very useful if you
+just want to see how many errors there are in a trial parse of a file. The
+errors get reported at the end so you do get to see them.
+
+<P>This also resulting in the fixing of a bug that meant that if the input file
+was a series of "-R", "-D" or "-A"
+lines without blank lines in between, then the parser skipped to the end
+of the file even if it was supposed to be allowing for errors.
+
+<a name="netscape_openurl"></a><H3>Bug in Netscapes "OpenURL" command
+breaks AceDB's Url class</H3>
+
+<P>A bug in Netscapes "OpenURL" command caused AceDB WWW links to fail if
+the link contained a ",". This is often the case for links that are cgi programs
+as a comma is often used to separate the arguments to the cgi program.
+AceDB uses the netscape "OpenURL" remote command to display links, but the 
+syntax for this command is: "OpenURL (URL [, new-window])" and unfortunately
+netscape assumes that any "," contained in the url
+is actually the "," for its OpenURL command and reports a syntax error !
+
+<p>Having found the
+cause of the problem we were able to call on Roger Pettet of the Sanger Centre
+web team to
+provide a solution. AceDB now scans the url from the database for any commas
+and replaces them with "%2C", which is the standard URL code for a comma. Netscape
+will then honour the request via its OpenURL command to display the link. Users
+will unfortunately see this translation in the link displayed in the text box
+at the top of Netscape but this is unavoidable which looks a bit ugly but at
+least the Url's work reliably.
+
+
+
+<a name="blixem_external"></a><H3>Some more points about running an external Blixem</H3>
+
+<P>Last months newsletter talked about how to run
+blixem externally
+but unfortunately missed out a couple of important points.
+
+<h4>What you need to do to your database to use the external blixem</h4>
+
+<P>Firstly, you <b>must</b> use versions of xace and blixem from the same
+release of acedb, this is because xace passes information to blixem via command
+line parameters and these have changed as more function has been added. If you
+use an old blixem with a new xace, or vice versa, you may get unexplained crashes.
+
+<P>When you tell xace to use an external version of blixem, it actually
+calls a script in the <code><b>wscripts</b></code> subdirectory of your
+database. The script is called blixem_standalone and you can download
+it from the acedb downloads page. If you edit the script you will see
+it looks like this:
+
+<pre>#!/bin/csh
+# This script is called by xace to launch a standalone
+# version of blixem. You should replace the below
+# path with wherever you keep the acedb code.
+#
+
+~/acedb/CODE/acedb/bin.ALPHA_4/blixem $*
+
+
+exit 0
+</pre>
+
+<P>You should edit the blixem line so that it contains the path to where you
+have downloaded your copy of the latest blixem.
+
+<h4>Temporary files clutter</h4>
+
+<P>Some of the information passed from xace to blixem is passed via temporary
+files, these files are stored in a directory called
+<code><b>/tmp/your_userid_ACEDB_BLIXEM</b></code> on your machine. The xace and blixem
+code has been written so that it will remove these files if the programs terminate normally
+and also in most cases if the programs crash for some reason.
+You should be aware however that there are some circumstances in which the files will not
+be removed and you should periodically look in this directory and remove old files.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+<a name="test_overflow"></a><H3>Main window "text overflow"</H3>
+
+<P>An old chestnut, it was possible to overflow the text query box on the
+old style main window because its length was given wrongly compared to the size
+of buffer underlying it. The usual bug of not counting properly the terminating
+NULL char.
+
+
+<a name="cds_display"></a><H3>Bug in CDS display</H3>
+
+<P>The cds display for exons had a bug so that if the sequence was complemented
+or reversed or either followed by an fmap recalculate, the cds position in the
+exons was no longer displayed correctly. This has now been fixed.
+
+
+<a name="blixem_bug_external"></a><H3>Bug in call to external blixem</H3>
+
+<P>AceDB was not passing across to an externally called blixem any sequences already
+contained in the database.
+Instead blixem would have to call efetch or pfetch which might not find
+the sequence. This has now been fixed and AceDB will pass over all sequences
+that it contains for blixem to display.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+<a name="aceTmpRemove"></a><H3>New aceTmp call</H3>
+
+<P>Originally the aceTmp package always removed temporary files when the aceTmp
+object was destroyed. A new call, aceTmpNoRemove(), allows the programmer to
+control dynamically whether this happens or not. There are occasions when
+the files need to be left where they are, see the
+<A href="#blixem_external">blixem article</A> above.
+
+
+<a name="implicit_decs"></a><H3>Those damned implicit declarations</H3>
+
+<P>Probably every developer does it at one time or another, its late and
+you just can't be bothered to put in the include for that system header
+that declares the function you've just used and anyway its only a compiler
+warning.
+
+<P>Simon fixed one in freesubs for strtod() and strtol() by including
+stdlib.h. Perhaps I'll let him have the last word, his CVS entry for
+this bug which broke AceDB compilation on the Mac was:
+
+<pre><code>declare strtod and strtol by including stdlib.h
+Those "implicit declaration" warnings should be read as "one day, this
+_will_ break". In this case on porting to MACOS_X
+</code></pre>
+
+
+<a name="utils_int"></a><H3>New "string to integer" conversion routines</H3>
+
+<P>There are a couple of new routines in the libfree.a library which convert
+strings to "int" or "long int" more reliably than the standard C library
+routines. For instance, did you know that strtol() will convert "123rubbish"
+into the "long int" 123 <b>and</b> you won't be able to detect that the entire
+word was not converted ?
+
+<P>Now you can use utStr2Int() and utStr2LongInt() to convert strings reliably
+to "int" or "long int", the functions return TRUE if the conversion was successful
+and FALSE if it failed including for the case mentioned above.
+
+
+<a name="string_prefs"></a><H3>User preferences now include strings</H3>
+
+<P>The user preferences code has been extended to allow the specifying of
+preferences that are strings, an example would be the machine id for specifying
+where the pfetch server is for sequence fetches.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<H2>November monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<H2>Next User Group Meeting - D319, 2.30pm, Thursday, 15th November 2001</H2>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Wed Feb 13 10:54:39 GMT 2002
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

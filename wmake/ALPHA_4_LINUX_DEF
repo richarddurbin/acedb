@@ -1,0 +1,37 @@
+# CVS:   $Id: ALPHA_4_LINUX_DEF,v 1.4 2000-04-11 12:56:18 srk Exp $
+
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+############### wmake/ALPHA_4_LINUX_DEF    March 1999 ###########
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+#########    for the DEC-ALPHA, running LINUX   #################
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+NAME = LINUX
+# Compiler used to build 3rd party libraries 
+LIBCC = gcc
+
+COMPILER = gcc -g -Wall -O2 -DACEDB4 -DALIGNMENT_64_BIT `../w3rdparty/include-config`
+
+LINKER = gcc -g
+
+LIBS = `../w3rdparty/libs-config` -lreadline -lm -lcurses
+
+### Linux uses flex to emulate the standard 'lex' program
+LEX_LIBS = -lfl
+### flex -l emulates AT&T lex as accurately as possible
+LEX = flex
+LEX_OPTIONS = -l
+
+RPCGEN_FLAGS = -b -I -K -1
+RANLIB_NEEDED = false
+
+#################################################################
+#################################################################

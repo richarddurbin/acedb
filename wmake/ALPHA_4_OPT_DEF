@@ -1,0 +1,38 @@
+# $Id: ALPHA_4_OPT_DEF,v 1.6 2000-07-18 15:39:51 srk Exp $
+
+#################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+########### wmake/DEC_ALPHA_DEF    March-18-1993       ##########
+#################################################################
+
+#################################################################
+########## Machine dependant compiler modification ##############
+####### for the DEC-Alpha 3000 model 500 running Unix ###########
+#################################################################
+########### This file is included by wmake/truemake #############
+######  Edit this file to adapt the ACeDB to a new machine ######
+#####   following the explanations given in wmake/truemake  #####
+#################################################################
+
+NAME = ALPHA
+
+# Compiler used to build 3rd party libraries 
+LIBCC = cc
+
+COMPILER = cc -O -Olimit 3000 -std1 -DACEDB4 -ieee_with_inexact `../w3rdparty/include-config -I/usr/local/include`
+
+# rd 970131 - I am told that -O does the most optimisation possible
+# there may be levels above -O2
+
+LINKER = cc
+
+# need /usr/local/lib for GNU software, e.g. readline package.
+LIBS = `../w3rdparty/libs-config -L/usr/local/lib` -lreadline -lm -lcurses  
+
+.c.o:
+	$(CC)  $*.c
+
+#################################################################
+#################################################################
+
+ 

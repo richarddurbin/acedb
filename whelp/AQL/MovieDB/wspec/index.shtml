@@ -1,0 +1,24 @@
+<!--#set var="title" value="AQL - MovieDB wspec files" --> 
+<!--#set var="icon" value="aql.gif" --> 
+<!--#set var="author" value="fw" --> 
+
+<!--#exec cgi="/cgi-bin/header" -->
+
+<H2 ALIGN=CENTER>AQL - MovieDB wspec files</H2>
+
+<UL>
+ <LI><A HREF="cachesize.wrm"> wspec/cachesize.wrm</A>
+ <LI><A HREF="database.wrm"> wspec/database.wrm</A>
+ <LI><A HREF="displays.wrm"> wspec/displays.wrm</A>
+ <LI><A HREF="layout.wrm"> wspec/layout.wrm</A>
+ <LI><A HREF="models.wrm"> wspec/models.wrm</A>
+ <LI><A HREF="options.wrm"> wspec/options.wrm</A>
+ <LI><A HREF="passwd.wrm"> wspec/passwd.wrm</A>
+ <LI><A HREF="psfonts.wrm"> wspec/psfonts.wrm</A>
+ <LI><A HREF="subclasses.wrm"> wspec/subclasses.wrm</A>
+ <LI><A HREF="xfonts.wrm"> wspec/xfonts.wrm</A>
+</UL>
+
+<!--#config timefmt="%d-%b-%C%y, %I:%M %p" -->
+<!--#exec cgi="/cgi-bin/footer" -->
+

@@ -1,0 +1,58 @@
+ACEDB futures pages.
+
+These pages record possible changes to ACEDB, they are organised to allow looking
+at the pages with or without the use of frames.
+
+
+Dependencies:
+
+NOTE that these pages make use of a style file in the directory below called acedocs.css
+(referenced by relative directory), this is intended to be a general style file for
+acedb documents.
+
+
+Organisation:
+
+The pages are organised like this:
+
+				   index.shtml		(*)count_monitor.html
+					|
+		--------------------------------------------------------
+	       |							|
+	       |							V
+	       |           			(**)		  frame_init.html
+	       |				frame_short.html  frame_medium.html  frame_long.html
+	       |					    top_index.html   blank.html
+	       |							|
+	       |							|
+	       |							|
+		------------------------                 ---------------
+					|		|
+					V		V
+			----------------------------------------------
+		       |			|		      |
+		       V			V		      V
+		short_index.html	medium_index.html	long_index.html
+		       |			|		      |
+		       V			V		      V
+		short_term.html		medium_term.html	long_term.html
+
+
+(*)	Usage of the pages is monitored by hidden counters on the following pages:
+
+	index.shtml, short_term.html, medium_term.html, long_term.html
+
+	the 'hidden' page count_monitor.html can be linked to in order to see at a 
+	glance the usage counts for these pages.
+
+(**)	This slightly complicated arrangement of frames allows us to change two windows within
+	the frames layout with a single click on a hypertext link. The top_index.html simply has
+	links to frame_short/medium/long.html, blank.html is a blank document with a white
+	background. frame_short/medium/long.html have the links to show the indexes to the
+	short, medium and long documents.
+
+
+index.shtml:	does not require frames and presents the user with a choice of frame or non-frame
+		based indexing.
+
+

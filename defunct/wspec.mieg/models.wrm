@@ -1,0 +1,476 @@
+// models.wrm - main file defining tree class structures
+// This file is read only when starting a new database or when you select 
+// "Read Models" or "Add Update File" from the main menu.
+//
+// all tags must appear in tags.wrm or systags.wrm
+
+// Magic tag2 construct, such as Inside xxx ?AA
+//  denotes a case where Inside and ?AA are read by the display code
+// whereas the intermediate xxx is up to the schema designer
+
+// @  is for Attach-Query
+
+?Map	Type UNIQUE Genetic  // this flag can be used to define subclasses
+                    Cytogenetic // Chromosome could be Map, filtered Cytogenetic
+                    Physical
+        Display Non_graphic  // Prevents a graphic display 
+                Title UNIQUE ?Text
+                Remark Text // Will appear in top right corner  
+		Flipped // Then coordinates go upwards
+                Unit   Text // i.e. kb, centiMorgan, MegaParsec
+		Centre UNIQUE Float UNIQUE Float  // centre, width - else 0, 10
+	    	Extent UNIQUE Float UNIQUE Float  // min, max - else min, max gene/locus
+                Error_scale UNIQUE Float  // To position loci on x axis, default = 10
+        Inherits  From_map ?Map 	  // To loaclly edit
+		  Author Text             // login name of who edited it
+		  Date Text
+ 	Main_Marker Main_Locus ?Locus XREF Main_Marker // Appear left of scroll bar
+	Symbol Text UNIQUE Text  // Class Tag, if present, use tag content as name for class
+        Contains Locus ?Locus XREF Map
+		 Allele ?Allele XREF Map 
+                 Clone ?Clone XREF Map 
+                 YAC ?YAC XREF Map
+                 Interval ?Interval XREF Map 
+                 Chrom_Band ?Chrom_Band XREF Map
+                 Contig ?Contig XREF MAP 
+                 Map ?Map XREF Map #map_location
+ 
+?map_location UNIQUE Position UNIQUE Float #map_error
+                     Multi_Position  Float #map_error
+                     Ends Left UNIQUE Float #map_error
+                          Right UNIQUE Float #map_error
+
+?map_error Error UNIQUE Float
+
+
+
+?MultiMap Map ?Map
+	  Min Int // keep loci appearing on at least min maps. Default = 2 
+          Anchor UNIQUE Text UNIQUE Text UNIQUE Text  // Class tag1 tag2
+                            // i.e Locus Homeology_group Homelogs
+	                    // class members on different maps with the
+                            // same Anchor tag will be chained
+
+?Allele Name	Other_name ?Text
+		Qualifier Text	    // sd, sm, ts etc.  Not systematic just now
+		Rearrangement ?Interval XREF Allele
+	Source	UNIQUE Gene ?Locus XREF Allele
+	               Gene_class ?Gene_Class XREF Allele
+        Reference_Allele
+	Isolation	Author	Text		// should be ?Author
+			Date	Text
+		        Mutagen UNIQUE ?Mutagen  UNIQUE Text 	// Text is dose
+			Procedure Text
+        Location ?Laboratory #Lab_Location
+        Strain ?Strain XREF Allele
+        Genetics        Map ?Map  XREF Allele #map_location //if no known Locus
+                        Mapping_data    2_point ?2_point_data
+                                        Multi_point ?Multi_pt_data
+	                                Df_Dup ?Df_Dup_data
+			Covers Text // from MRC allele list
+	Description     Phenotype       ?Text
+			Recessive
+                        Dominant
+			Semi_dominant
+			Intragenic_revertant_of_dominant	// used twice
+			Weak
+                        Temperature_sensitive	Heat_sensitive
+						Cold_sensitive
+			Amber
+                        Maternal	Strictly_Maternal
+					With_Maternal_Effect
+                        Paternal
+			Muscle
+	Remark	?Text
+        Reference ?Paper XREF Allele               // Mary
+
+?Gene_Class     Phenotype ?Text
+                Designating_laboratory UNIQUE ?Laboratory XREF Gene_classes
+                Allele ?Allele	XREF Gene_class
+
+?Locus  Name    Other_name ?Text
+	Type	Gene	Reference_Allele ?Allele Text
+			Phenotype ?Text
+			Complementation_data Text
+		Polymorphism    RFLP	Text
+				Transposon_insertion  Text
+				Detection_method Text
+		PCR_product	Primers  Text
+				Length   Int	// bp
+        Molecular_information	Positive_clone ?Clone XREF Positive_locus
+				Negative_clone ?Clone XREF Negative_locus
+				Sequence ?Sequence XREF Gene	
+                                Product ?Text
+	Remark ?Text
+	Position  UNIQUE Map    ?Map XREF Locus #map_location
+			 Maps_with UNIQUE ?Locus XREF Canonical_for
+	Mapping_data	Well_ordered		// "on the line"
+			Canonical_for ?Locus XREF Maps_with
+			2_point ?2_point_data
+                        Multi_point ?Multi_pt_data
+			Df_Dup ?Df_Dup_data
+                	Inside Inside_Rearr ?Interval XREF Contained_Locus
+			Outside Outside_Rearr ?Interval XREF Exterior_Locus
+        Allele  ?Allele XREF Gene
+        Strain  ?Strain XREF Gene
+	Laboratory ?Laboratory
+        Reference ?Paper XREF Locus
+
+?Balancer From_left_end
+          To_right_end
+          Locus ?Locus Text
+
+?Interval 	Name    Other_name ?Text
+			Allele ?Allele XREF Rearrangement
+		Type    Rearrangement	Deletion
+				       	Duplication	Free_dup
+					Translocation
+					Compound	Text
+                        		Phenotype ?Text             // Mary
+					Balances ?Map #Balancer
+//	possibility to refer to other Intervals to describe a complex rearrangement
+//	for the worm this is not too necessary, but important for fly and mouse
+//	or perhaps there should be another class Complex_Rear that refers to
+//	several intervals.
+			Hybrid_cell_line
+// 				?add Chrom_Band here, or reciprocal pointers
+	        Reference_strain ?Strain
+		Remark ?Text
+		Isolation	Author Text		// should be ?Author
+				Date Text
+				Mutagen UNIQUE ?Mutagen UNIQUE Text // Text is dose
+        	Map     ?Map XREF Interval #map_location
+		Mapping_data	Df_Dup ?Df_Dup_data
+	        Inside Inside_Rearr ?Interval XREF Contained_Rearr
+		Contains Contained_Locus ?Locus XREF Inside_Rearr ?Df_Dup_data
+                         Contained_Rearr ?Interval XREF Inside_Rearr ?Df_Dup_data
+		Does_not_Contain Exterior_Locus ?Locus XREF Outside_Rearr ?Df_Dup_data
+	        Overlaps Overlapping_Rearr ?Interval XREF Overlapping_Rearr ?Df_Dup_data
+	        Does_Not_Overlap No_Overlap_Rearr ?Interval XREF No_Overlap_Rearr ?Df_Dup_data
+	        Molecular_information	Clone_inside  ?Clone XREF Inside
+					Clone_outside ?Clone XREF Outside
+		Location ?Laboratory #Lab_Location
+	        Strain   ?Strain XREF Rearrangement
+        	Reference ?Paper XREF Rearrangement
+
+?Interval_ends	Left UNIQUE Float UNIQUE Float
+		Right UNIQUE Float UNIQUE Float
+      
+?Strain  Genotype Text
+	 Males Text
+         Gene	 ?Locus XREF Strain
+  	 Allele    ?Allele XREF Strain 
+	 Rearrangement	 ?Interval XREF Strain
+         Reference_strain Text
+         Location ?Laboratory XREF Strain #Lab_Location
+	 Remark	?Text
+
+?Mutagen Protocol Text
+
+?Cell   Fate    ?Text
+        Embryo_division_time Text
+        Remark        ?Text
+        Lineage Parent  UNIQUE  ?Cell XREF Daughter
+                Daughter      ?Cell XREF Parent
+                Lineage_name    Text
+                Equivalence_fate ?Cell XREF Equivalence_origin
+                Equivalence_origin ?Cell XREF Equivalence_fate
+        Group   In_group ?Cell XREF Group_member
+                Group_member    ?Cell XREF In_group
+        Neurodata ?Cell #Neurodata
+
+?Neurodata      Send    Text    UNIQUE Int              // series count
+                Send_joint      Text    UNIQUE Int      // ditto for the rest
+                Receive Text    UNIQUE Int
+                Receive_joint   Text    UNIQUE Int
+                Gap_junction    Text    UNIQUE Int
+                Contact Text    UNIQUE Int
+
+
+?Clone  Remark  General_remark ?Text
+		Y_remark ?Text
+		PCR_remark ?Text
+        Position  pMap UNIQUE  ?Contig XREF Clone  UNIQUE Int UNIQUE Int 
+							// pMap units are bands
+                  Hybridizes_to ?Clone_Grid ?Clone XREF Positive_probe ?Text
+		  Does_not_hybridize_to ?Clone_Grid ?Clone XREF Negative_probe
+		  Positive_probe ?Clone
+		  Negative_probe ?Clone
+		  Positive_pool_probe ?Pool
+		  Positive_locus ?Locus XREF Positive_clone
+		  Negative_locus ?Locus XREF Negative_clone
+		  Inside ?Interval XREF Clone_inside
+		  Outside ?Interval XREF Clone_outside
+	Sequence	?Sequence XREF Clone
+	Length		Seq_length UNIQUE Int 			// bp
+			Gel_length UNIQUE Float			// Kb
+	Location ?Laboratory #Lab_Location
+	In_pool ?Pool XREF Clone
+        Gridded ?Clone_Grid
+        FingerPrint     Gel_Number UNIQUE Int
+                        Approximate_Match_to UNIQUE ?Clone XREF Canonical_for
+                        Exact_Match_to UNIQUE ?Clone XREF Canonical_for 
+                        Funny_Match_to UNIQUE ?Clone XREF Canonical_for 
+                        Canonical_for ?Clone UNIQUE Int UNIQUE Int 
+				// start and stop offsets from self start
+                        Bands   UNIQUE Int UNIQUE Int
+	Contig9	Chromosome UNIQUE ?Map 
+                Vaxmap UNIQUE Float
+		In_Situ  UNIQUE Int UNIQUE Int // percent of physical chromosome
+		Cosmid_grid
+                Canon_for_cosmid
+	        Flag    UNIQUE Int
+		Autopos
+	Expression_construct	Pattern ?Text
+				Image ?Image
+
+?Clone_Grid	Title	?Text
+		Layout	Columns	Int
+			Lines_at	Int Int	// x, y spacing
+			Space_at	Int Int	// x, y spacing
+			No_stagger	// default is with alternate lines staggered
+			A1_labelling	// label spaced blocks a-h down LHS, 1-12 across top
+		Row Int UNIQUE ?Clone XREF Gridded REPEAT
+
+?Contig Map	?Map XREF Contig #map_location
+        pMap    UNIQUE Int UNIQUE Int         // extremities in pMap units
+	Clone	?Clone XREF Contig
+
+?2_point_data   Genotype  UNIQUE Text
+                Results  UNIQUE Text
+		Remark ?Text
+		Locus_1	?Locus XREF 2_point UNIQUE ?Allele XREF 2_point
+		Locus_2	?Locus XREF 2_point UNIQUE ?Allele XREF 2_point
+		Experiment	Mapper ?Author
+				Laboratory ?Laboratory
+				Date  UNIQUE Text
+				Temperature UNIQUE Text
+		Calculation UNIQUE Full UNIQUE Int UNIQUE Int UNIQUE Int UNIQUE Int // WT X Y XY
+				   One_recombinant UNIQUE Int UNIQUE Int // WT X
+				   Selected UNIQUE Int UNIQUE Int // X XY
+				   One_all UNIQUE Int UNIQUE Int // X ALL
+				   Recs_all UNIQUE Int UNIQUE Int UNIQUE Int UNIQUE Int // X Y ALL
+				   One_let UNIQUE Int UNIQUE Int // X ALL
+				   Tested UNIQUE Int UNIQUE Int // X H
+				   Selected_trans UNIQUE Int UNIQUE Int // X XY
+				   Backcross UNIQUE Int UNIQUE Int UNIQUE Int UNIQUE Int // WT X Y XY
+				   Back_one UNIQUE Int UNIQUE Int // WT X
+				   Sex_full UNIQUE Int UNIQUE Int UNIQUE Int UNIQUE Int // WT X Y XY
+				   Sex_one UNIQUE Int UNIQUE Int // WT X
+				   Sex_cis UNIQUE Int UNIQUE Int // X ALL
+				   Dom_one UNIQUE Int UNIQUE Int // WT nonWT
+				   Dom_selected UNIQUE Int UNIQUE Int // WT X
+				   Dom_semi UNIQUE Int UNIQUE Int // XD ALL
+				   Dom_let UNIQUE Int UNIQUE Int // WT ALL
+				   Direct UNIQUE Int UNIQUE Int // R T
+				   Complex_mixed UNIQUE Int UNIQUE Int // X ALL
+	        Old_CGC_distance   Min      UNIQUE Float 
+                                   Distance UNIQUE Float
+                                   Max      UNIQUE Float
+                                   Error    UNIQUE Float
+                                   Linkage  UNIQUE Text
+		Calc	Calc_distance UNIQUE Float
+			Calc_lower_conf UNIQUE Float
+			Calc_upper_conf UNIQUE Float
+
+?Df_Dup_data	Genotype  UNIQUE Text
+		Experiment	Mapper ?Author
+				Laboratory ?Laboratory
+				Date  UNIQUE Text
+                Results  UNIQUE Text
+		Type UNIQUE Type_1 Locus	UNIQUE ?Locus XREF Df_Dup UNIQUE ?Allele XREF Df_Dup
+				   Rearrangement UNIQUE ?Interval XREF Df_Dup
+				   Calculation_1 UNIQUE Inside
+					                Outside
+			    Type_2 Rearrangement_1 ?Interval XREF Df_Dup
+				   Rearrangement_2 ?Interval XREF Df_Dup
+				   Calculation_2 UNIQUE Overlap
+					                No_overlap
+						        1_includes_2
+						        1_does_not_include_2
+		Remark ?Text
+
+?Multi_pt_data	Genotype  UNIQUE Text
+		Selected_loci	Locus_A UNIQUE ?Locus UNIQUE ?Allele XREF Multi_point
+				Locus_B UNIQUE ?Locus UNIQUE ?Allele XREF Multi_point
+		Locus ?Locus UNIQUE ?Allele XREF Multi_point
+		Experiment	Mapper ?Author
+				Laboratory ?Laboratory
+				Date  UNIQUE Text
+	        Results A_non_B #Multi_counts
+			B_non_A	#Multi_counts
+			Combined #Multi_counts
+		Old_CGC_results Text
+		Remark ?Text
+
+?Multi_counts	UNIQUE ?Locus XREF Multi_point UNIQUE Int #Multi_counts
+
+?Laboratory     Address Mail Text
+                        Phone Text
+                        E_mail Text
+			       Bitnet Text
+                               Internet Text
+			Fax Text
+                CGC     Representative UNIQUE ?Author XREF Laboratory 
+                        Strain_designation Text
+                        Allele_designation Text
+                        Gene_classes ?Gene_Class XREF Designating_laboratory
+		Staff   ?Author XREF Laboratory
+                Strain   ?Strain XREF Location
+
+?Author Full_name Text
+	Laboratory ?Laboratory XREF Staff
+        Address Mail Text
+                E_mail Text
+                Phone Text
+		Fax   Text
+        Paper ?Paper @"WHOLE"
+
+?Journal Paper ?Paper XREF Journal
+
+?Paper  Reference       Title UNIQUE ?Text 
+                        Journal UNIQUE ?Journal XREF Paper
+			Publisher UNIQUE Text
+			Contained_in ?Paper XREF Contains
+                        Year UNIQUE Int
+                        Volume UNIQUE Text Text
+                        Page  UNIQUE  Text UNIQUE Text
+        Author ?Author XREF Paper
+        Abstract ?LongText
+	Type UNIQUE Text
+	Contains ?Paper XREF Contained_in
+        Refers_to	Locus ?Locus XREF Reference
+                        Allele ?Allele XREF Reference    //Mary
+			Rearrangement ?Interval XREF Reference
+			Sequence ?Sequence XREF Reference
+        Keyword ?Keyword
+
+?Motif	Site UNIQUE Text // AA or DNA or some more elaborate descriptor
+	Oligo
+	Restriction_Enzyme	Isoschizomers ?Motif XREF Isoschizomers 
+		                Offset Int   
+	        		Cleavage Text  // will show the cleavage points ex: G_ACGT'C
+		                Overhang  Int
+                		Company  Text
+        Location #Lab_Location
+        Remark Text
+
+?Sequence Title UNIQUE ?Text
+	  Other_name ?Text	// for repeats
+	  Type UNIQUE DNA UNIQUE ?DNA UNIQUE Int	// Int is the length
+		      Peptide UNIQUE ?AA
+          RNA			// if this tag is set display AUGC
+	  Structure  Length UNIQUE Int
+		     From	Source UNIQUE ?Sequence
+				Source_Exons Int UNIQUE Int // start at 1
+	                        Assembled_into ?Sequence
+		     Subsequence ?Sequence XREF Source UNIQUE Int UNIQUE Int
+		     Overlap_right UNIQUE ?Sequence XREF Overlap_left UNIQUE Int  // Use this 
+		     Overlap_left UNIQUE ?Sequence XREF Overlap_right
+		     Assembled_from ?Sequence XREF Assembled_into UNIQUE Int UNIQUE Int
+                     Xbap_Assembly UNIQUE ?Sequence UNIQUE Int UNIQUE Int // Xbap relations
+	  Library	?Library Text Text // ID  Accession_number
+	  Origin  From_Library ?Library
+		  From_Author ?Author
+		  From_Laboratory ?Laboratory
+		  Date Text
+		  Species ?Species XREF Sequence
+	  Visible	cDNA 
+			Genomic_Canonical UNIQUE Float // from the project: order
+			Matching_Genomic ?Sequence XREF Matching_cDNA
+			Matching_cDNA ?Sequence XREF Matching_Genomic
+			Corresponding_DNA ?Sequence XREF Corresponding_peptide
+			Corresponding_peptide ?Sequence XREF Corresponding_DNA
+		  	Clone ?Clone XREF Sequence 
+          	        Locus ?Locus XREF Sequence
+		        Related_Sequence ?Sequence XREF Related_Sequence
+			Keyword ?Keyword
+	  		Remark ?Text
+			DB_remark ?Text
+			Confidential_remark ?Text
+			Brief_identification ?Text
+	  		Reference ?Paper XREF Sequence
+			Foreign_Reference ?Text
+			DB_searched ?Library Int // version
+			Expression_construct ?Clone
+	  Properties    Pseudogene Text
+			Transposon Text
+			Coding	CDS UNIQUE Int UNIQUE Int
+				CDS_predicted_by ?Method Float // score of method
+				Precursor
+			Transcript	End_not_found
+				 	Start_not_found Int // Int is frame of base 1
+					mRNA	Processed_mRNA
+						Unprocessed_mRNA
+					tRNA Text
+					rRNA Text
+					snRNA Text
+			Status	Shotgun	Text
+				Contiguous Text
+				Finished Text
+				Submitted Text
+
+	  Repeats	Inverted	Int UNIQUE Int #Match
+			Tandem		Int UNIQUE Int #Match
+			Direct		Int UNIQUE Int #Match
+          Assembly_tags Text Int Int Text
+	  ABI      ABI_Date Text
+                   Run_Start Text
+                   Run_Stop Text
+                   Clipping UNIQUE Int UNIQUE Int
+                   Otto Text REPEAT
+                   ABI_Comment ?Text
+	           ABI_Analysis Text
+	           ABI_Machine Text
+	           Sample Text
+                   Author ?Author XREF Sequence
+                   Allele Text
+                   Primer ?Motif XREF PCR_Product
+                   SCF_File UNIQUE Text
+                   Fragment_of UNIQUE ?Sequence 
+          Vector Insertion_Length UNIQUe int
+	  Features	TSL_site Int UNIQUE Int Text // Trans-spliced leader
+			TSL Int UNIQUE Int Text
+			Possible_exon Int UNIQUE Int UNIQUE Int ?Method UNIQUE Float // 3rd Int is frame
+			promoter Int UNIQUE Int ?Text
+			polyA_site Int UNIQUE Int Text
+			polyA_signal Int UNIQUE Int Text  // AATAA
+			misc_signal Int UNIQUE Int ?Text
+			misc_feature Int UNIQUE Int ?Text
+			repeat_region Int UNIQUE Int Text
+			repeat_unit Int UNIQUE Int Text
+			mutation Int UNIQUE Int ?Text
+			sig_peptide Int UNIQUE Int Text
+			mat_peptide Int UNIQUE Int Text
+			old_sequence Int UNIQUE Int Text
+			modified_base Int UNIQUE Int Text
+			TATA_signal Int UNIQUE Int Text
+	  Similarity	Homol ?Sequence XREF Homol ?Method Float Int UNIQUE Int Int UNIQUE Int
+
+?Species Sequence ?Sequence XREF Species	// much more to do here
+
+?Match	Percent_Identity UNIQUE Int
+	Score ?Method UNIQUE Float
+	N_gaps UNIQUE Int
+	Loop UNIQUE Int UNIQUE Int	// rel start, stop
+	Unit_Length UNIQUE Int
+
+?Library	Name Text // Full name
+		Contents ?Text // Description of material included
+
+?Method	Function ?Text	// what does it do?
+	Variant_of UNIQUE ?Method XREF Variant
+	Variant ?Method
+	Version	Text
+	Parameters 	Float_Params UNIQUE Text Float REPEAT 
+			Int_Params UNIQUE Text Int REPEAT
+			Text_Params UNIQUE Text Text REPEAT
+	Min_score UNIQUE Float	// used in plotting
+	Remark ?Text
+	Reference ?Paper XREF Search_Method
+
+?Lab_Location	Freezer		Text
+		LiquidN2        Text
+		Minus70		Text
+                Remark		?Text
+

@@ -1,0 +1,39 @@
+<HTML>
+
+<HEAD>
+  <TITLE>AQL - MovieDB Tutorial</TITLE>
+  <LINK REL="stylesheet" TYPE="text/css" HREF="../aql.css" TITLE="Style sheet for AQL docs">
+</HEAD>
+<BODY>
+
+<H2>AQL - MovieDB Tutorial</H2>
+
+
+<P>In order top demonstrate some basic language capabilities of 
+   AQL, a small example database has been designed. 
+</P>
+
+<P>This database of movie-related data shows the use of ACeDB for 
+   non-biological data and provides an easy playground to get 
+   used to AQL.
+</P>
+
+<P>The data has mainly been extracted from the
+   <A HREF="http://uk.imdb.com">Internet Movie database</A>.
+</P>
+
+<UL>
+ <LI><A HREF="setup.shtml">Setup of the example database</A>
+ <LI><A HREF="usage.shtml">Usage of AQL with MovieDB</A>
+ <P>
+ <LI><A HREF="queries.shtml"><B>Example queries</B></A>
+
+</UL>
+
+
+
+<HR>
+<ADDRESS><A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A></ADDRESS>
+
+</BODY>
+</HTML>

@@ -1,0 +1,64 @@
+<!--#config timefmt="%d-%b-%C%y, %I:%M %p" -->
+<!--#set var="title" value="AQL - movie DB result" --> 
+<!--#set var="icon" value="blank.gif" --> 
+<!--#set var="author" value="fw" --> 
+
+<!--#exec cgi="/cgi-bin/header" -->
+
+
+<H2 ALIGN=CENTER>AQL - Movie DB result (7)</H2>
+
+<CODE><B>
+select p->Full_name, p->Phone from p in class person 
+</CODE></B>
+
+<PRE><HR>
+Result table with 41 lines
+------------------------------
+Robert de Niro	1-800-ROBERT
+Sharon Stone	0891-SHARON
+Joe Pesci	
+James Woods	
+Martin Scorsese	
+Nicholas Pileggi	
+Al Pacino	
+Robert Duvall	
+Francis Ford Coppola	
+Mario Puzo	
+John D. MacDonald	
+James R. Webb	
+Wesley Strick	
+John Cusack	
+Bridget Fonda	
+Harold Becker	
+Paul Schrader	
+Chazz Palminteri	
+Michael Douglas	
+Paul Verhoeven	
+Joe Eszterhas	
+Joseph Conrad	
+Marlon Brando	
+Martin Sheen	
+Bo Goldman	
+Gina Gershon	
+John Woo	
+Christian Slater	
+Patricia Arquette	
+Dennis Hopper	
+Gary Oldman	
+Christopher Walken	
+Tony Scott	
+Quentin Tarantino	
+Roger Avary	
+Peter Fonda	
+Terry Southern	
+Jack Nicholson	
+John Travolta	
+Oliver Stone	
+Nicholas Cage	
+------------------------------
+</PRE>
+
+<!--#exec cgi="/cgi-bin/footer" -->
+
+

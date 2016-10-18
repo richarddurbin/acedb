@@ -1,0 +1,186 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - December 2003</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - December 2003</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+
+<P>This month sees better support for Confirmed Introns in FMap, some changes
+to EMBL dumping to better support SMap'd classes, some improvements to GFF output
+and yes, the usual bug fixes.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="introns"></a><H3>Confirmed Introns in FMap</H3>
+
+<P>If you click on a Confirmed Intron in FMap you will now see which sequence(s)
+confirms that intron in the blue report line at the top of FMap.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+
+
+<a name="EMBL"></a><H3>EMBL dumping</H3>
+
+<P>If you don't use the EMBL dumping options from AceDB then you don't really
+need to read this.
+
+<P>Changes to the wormbase database models have enforced some changes to
+the EMBL dumping routines in AceDB, this will almost certainly affect you if
+you use the AceDB EMBL dump routines.
+
+<P>Only objects that specify an EMBL_dump_method via the EMBL_dump_XXXX tags
+will now get dumped, otherwise they will be ignored, this is a tightening up
+on previous behaviour.
+
+<P>The code now knows how to handle the new Wormbase
+CDS_child, Transcript, Pseudogene and Transposon classes.
+The Pseudogene tag has changed to either Coding_pseudogene or RNA_pseudogene.
+This has required small but significant changes to the code that handles
+CDS vs. RNA and whether something is a pseudogene. If you make use of these tags
+you should try out the EMBL dump routines before submitting data to EMBL.
+
+
+<a name="FMAP_SMAP_GFF"></a><H3>More FMap/SMap/GFF changes</H3>
+
+<P>We have added a new FEATURE_OBJ seg type for more generalised features that result
+from smap objects that are not Sequence class objects. These new segs can be handled
+in a more generalised way than before.
+
+
+<a name="GFF"></a><H3>GFF changes</H3>
+
+<P>GFF dumping has been improved so that parent/child related features are dumped
+properly, i.e. a CDS with is relevant exons/introns is now labelled correctly.
+This includes better support for the GFF_XXX tags in the Method class.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="confirmed_bug"></a><H3>Confirmed Intron bug</H3>
+
+<P>A stupid bug in setting the position of confirmed introns
+meant that in certain circumstances they could be off by one on the
+forward strand and off by two on the reverse. The basic cause of the bug
+was forgetting that database coords are 1-based but FMap segs are 0-based.
+
+
+<a name="smap_bug"></a><H3>SMap bug</H3>
+
+<P>Fixing a bug in blixem whereby % identity was not correctly calculated for
+gapped alignments revealed a bug in sMapLocalMapEx() which caused the nucleic acid coords for a
+protein alignment to be truncated.
+
+
+<a name="blixem_bug"></a><H3>Blixem bug</H3>
+
+<P>Fixed a number of problems with blixem:
+
+<ul>
+  <li>Very long sequence names are now abbreviated in the middle so
+      annotators can still see beginning/end, current abbrev. is "&gt;&lt;".
+  <li>The selected sequence name was being truncated, this is no longer so.
+  <li>The % identity routine did not do gapped alignments, it does
+      now but not for tblastn or tblastx which will need further work.
+</ul>
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+
+<a name="ZMap"></a><H3>ZMap</H3>
+
+<P>December has seen much work to get our systems into a state where we can
+get on with the detailed implementation of ZMap, we've decided to use more
+of the Gnome/GTK software as it is widely ported and most readily available
+on Linux.
+
+<P>We've decide for instance to make use the Gnome Canvas for drawing the
+sequence etc. as this provides many useful features including complete support
+for event handling based on what in the Graph package would be "boxes".
+
+
+<a name="classModel2Class"></a><H3>classModel2Class() function</H3>
+
+<P>Added classModel2Class() function that given the key that equates to "?&gt;model&lt;"
+(e.g. "?Sequence"),
+as found in the model for a class, returns the int that represents that class,
+returns 0 on failure. This slightly odd looking function is useful when
+writing code that needs to trawl through the models for a number of classes,
+see code in w7/fmapgene.c which needs to dynamically examine the database
+models and record which classes contain certain tags.
+
+
+<a name="aquila"></a><H3>Aquila changes</H3>
+
+<P>Rob Clack has been making more changes to our build/test system to further
+improve its automation and save us work in the future. He has also fixed a
+number of problems as Sanger systems have migrated to new levels of Linux, OSF
+etc.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>December monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Thu Jan  8 13:30:40 GMT 2004
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

@@ -1,0 +1,605 @@
+/* $Id: tags.wrm,v 1.18 1994-07-27 13:57:54 ulrich Exp $ */ 
+
+  /* wspec/tags.wrm
+     
+     This file is read at compile and at execution time
+
+     It holds the enumaration of the tags.
+     Those necessary to the kernel are defined in 
+     a second file wspec/systags.wrm which should serve as
+     a model for writing this one .
+     There should be no repetitions of tags numbers.
+    
+     The number must appear in ascending order.
+
+     To reserve tags for your own use, please contact the authors.
+
+     The 2 files could be appended, but this would imply a
+     recompilation of the kernel whenever the application
+     is modified.
+
+     Each #define line correspond to a tag
+     The compiler and the executable read this file.
+     You can add new tags at will, but if you
+     suppress one or renumber it, you must recompile
+     and reconstruct the database from ace files.
+
+     The Tag name must be a recognised C identifier,
+     The leading _ and Capital is but a convention to
+     facilitate human reading and is of no significance to the code.
+    
+     Tag name should differ otherwise than by their capitalisation,
+     i.e. mytag  and myTag would create a bug.
+   */
+
+/* Tags 1-500 reserved for systags.wrm */
+
+/*   tags 500 to 815 were made from the initial models */
+
+#define _1_does_not_include_2 500
+#define _1_includes_2 501
+#define _2_point 502
+#define _A1_labelling 503
+#define _A_non_B 504
+#define _Abstract 505
+#define _Address 506
+#define _Allele 507
+#define _Allele_designation 508
+#define _Alu_segment 509
+#define _Amber 510
+#define _Approximate_Match_to 511
+#define _Assembly_repeat 512
+#define _Assembly_tags 513
+#define _Author 514
+#define _Autopos 515
+#define _B_non_A 516
+#define _Back_one 517
+#define _Backcross 518
+#define _Balances 519
+#define _Bands 520
+#define _Bitnet 521
+#define _Brief_identification 522
+#define _CDS 523
+#define _CDS_predicted_by 524
+#define _CGC 525
+#define _Calc 526
+#define _Calc_distance 527
+#define _Calc_lower_conf 528
+#define _Calc_upper_conf 529
+#define _Calculation 530
+#define _Calculation_1 531
+#define _Calculation_2 532
+#define _Canon_for_cosmid 533
+#define _Canonical_for 534
+#define _Chromosome 536
+#define _Cleavage 537
+#define _Clone 538
+#define _Clone_as_locus 539
+#define _Clone_inside 540
+#define _Clone_outside 541
+#define _Cloning_vector 542
+#define _Coding 543
+#define _Cold_sensitive 544
+#define _Columns 545
+#define _Combined 546
+#define _Comment 547
+#define _Company 548
+#define _Complementation_data 549
+#define _Complex_mixed 550
+#define _Compound 551
+#define _Compression 552
+#define _Contained_in 553
+#define _Contains 554
+#define _Contents 555
+#define _Contig 556
+#define _Contig9 557
+#define _Contiguous 558
+#define _Correct_name 559
+#define _Corresponding_DNA 560
+#define _Corresponding_peptide 561
+#define _Cosmid_grid 562
+#define _Cosmid_vector 563
+#define _Covers 564
+#define _DB_remark 565
+#define _DB_searched 566
+#define _DNA 567
+#define _DNA_homol 568
+#define _Deletion 570
+#define _Description 571
+#define _Designating_laboratory 572
+#define _Detection_method 573
+#define _Df_Dup 574
+#define _Direct 575
+#define _Display 576
+#define _Distance 577
+#define _Does_not_hybridize_to 578
+#define _Dom_let 579
+#define _Dom_one 580
+#define _Dom_selected 581
+#define _Dom_semi 582
+#define _Dominant 583
+#define _Duplication 584
+#define _E_mail 585
+#define _End_not_found 586
+#define _Error 587
+#define _Error_scale 588
+#define _Exact_Match_to 589
+#define _Experiment 590
+#define _Expression_construct 591
+#define _Extent 592
+#define _Fax 593
+#define _Features 594
+#define _FingerPrint 595
+#define _Finished 596
+#define _Flag 597
+#define _Float_Params 598
+#define _Free_dup 599
+#define _Freezer 600
+#define _From 601
+#define _From_Author 602
+#define _From_Laboratory 603
+#define _From_Library 604
+#define _From_left_end 605
+#define _From_map 606
+#define _Full 607
+#define _Full_name 608
+#define _Function 609
+#define _Funny_Match_to 610
+#define _Gel_Number 611
+#define _Gel_length 612
+#define _Gene 613
+#define _Gene_class 614
+#define _Gene_classes 615
+#define _General 616
+#define _General_remark 617
+#define _Genetics 618
+#define _Genomic_Canonical 619
+#define _Genotype 620
+#define _Gridded 621
+#define _Heat_sensitive 622
+#define _Homol 623
+#define _Hybrid_cell_line 624
+#define _Hybridizes_to 625
+#define _In_Situ 627
+#define _In_pool 628
+#define _Inherits 629
+#define _Inside 630
+#define _Int_Params 631
+#define _Internet 632
+#define _Interval 633
+#define _Intragenic_revertant_of_dominant 634
+#define _Inverted 635
+#define _Isolation 636
+#define _Isoschizomers 637
+#define _Journal 638
+#define _Keyword 639
+#define _Laboratory 640
+#define _Layout 641
+#define _Left 642
+#define _Length 643
+#define _Library 644
+#define _Lines_at 645
+#define _Linkage 646
+#define _LiquidN2 647
+#define _Location 648
+#define _Locus 649
+#define _Locus_1 650
+#define _Locus_2 651
+#define _Locus_A 652
+#define _Locus_B 653
+#define _Loop 654
+#define _Mail 655
+#define _Males 656
+#define _Map 657
+#define _Mapper 658
+#define _Mapping_data 659
+#define _Maps_with 660
+#define _Marker_locus 661
+#define _Matching_Genomic 662
+#define _Matching_cDNA 663
+#define _Maternal 664
+#define _Max 665
+#define _Min 666
+#define _Min_score 667
+#define _Minus70 668
+#define _Molecular_information 669
+#define _Multi_point 670
+#define _Muscle 671
+#define _Mutagen 672
+#define _N_gaps 673
+#define _Name 674
+#define _Negative_clone 675
+#define _Negative_locus 676
+#define _Negative_probe 677
+#define _Nick_name 678
+#define _No_overlap 679
+#define _No_stagger 680
+#define _Offset 682
+#define _Old_CGC_distance 683
+#define _Old_CGC_results 684
+#define _Oligo 685
+#define _One_all 686
+#define _One_let 687
+#define _One_recombinant 688
+#define _Origin 689
+#define _Other_name 690
+#define _Outside 691
+#define _Overhang 692
+#define _Overlap 693
+#define _PCR_product 694
+#define _PCR_remark 695
+#define _Page 696
+#define _Paper 697
+#define _Parameters 698
+#define _Paternal 699
+#define _Pattern 700
+#define _Pep_homol 701
+#define _Peptide 702
+#define _Percent_Identity 703
+#define _Phenotype 704
+#define _Phone 705
+#define _Polymorphism 706
+#define _Position 707
+#define _Positive_clone 708
+#define _Positive_locus 709
+#define _Positive_pool_probe 710
+#define _Positive_probe 711
+#define _Possible_exon 712
+#define _Precursor 713
+#define _Primers 714
+#define _Procedure 715
+#define _Processed_mRNA 716
+#define _Product 717
+#define _Properties 718
+#define _Protocol 719
+#define _Pseudogene 720
+#define _Publisher 721
+#define _Qualifier 722
+#define _RFLP 723
+#define _RNA 724
+#define _Rearrangement 725
+#define _Rearrangement_1 726
+#define _Rearrangement_2 727
+#define _Recessive 728
+#define _Recs_all 729
+#define _Reference 730
+#define _Reference_Allele 731
+#define _Reference_strain 732
+#define _Refers_to 733
+#define _Related_Sequence 734
+#define _Remark 735
+#define _Repeats 736
+#define _Representative 737
+#define _Results 738
+#define _Right 739
+#define _Row 740
+#define _Score 741
+#define _Search_Method 742
+#define _Selected 743
+#define _Selected_loci 744
+#define _Selected_trans 745
+#define _Semi_dominant 746
+#define _Seq_length 747
+#define _Sequence 748
+#define _Sequencing_vector 749
+#define _Sex_cis 750
+#define _Sex_full 751
+#define _Sex_one 752
+#define _Shotgun 753
+#define _Similarity 754
+#define _Site 755
+#define _Source 756
+#define _Source_Exons 757
+#define _Space_at 758
+#define _Species 759
+#define _Staff 760
+#define _Start_not_found 761
+#define _Status 762
+#define _Stop 763
+#define _Strain 764
+#define _Strain_designation 765
+#define _Strictly_Maternal 766
+#define _Structure 767
+#define _Subsequence 768
+#define _TATA_signal 769
+#define _TSL 770
+#define _TSL_site 771
+#define _Tandem 772
+#define _Temperature 773
+#define _Temperature_sensitive 774
+#define _Tested 775
+#define _Text_Params 776
+#define _Title 777
+#define _To_right_end 778
+#define _Transcript 779
+#define _Translocation 780
+#define _Transposon 781
+#define _Transposon_insertion 782
+#define _Type 783
+#define _Type_1 784
+#define _Type_2 785
+#define _Unit_Length 786
+#define _Unprocessed_mRNA 787
+#define _Variant 788
+#define _Variant_of 789
+#define _Vaxmap 790
+#define _Version 791
+#define _Volume 792
+#define _Weak 793
+#define _Well_ordered 794
+#define _With_Maternal_Effect 795
+#define _Y_remark 796
+#define _Year 797
+#define _cDNA 798
+#define _mRNA 799
+#define _mat_peptide 800
+#define _misc_feature 801
+#define _misc_signal 802
+#define _modified_base 803
+#define _mutation 804
+#define _old_sequence 805
+#define _pMap 806
+#define _polyA_signal 807
+#define _polyA_site 808
+#define _promoter 809
+#define _rRNA 810
+#define _repeat_region 811
+#define _repeat_unit 812
+#define _sig_peptide 813
+#define _snRNA 814
+#define _tRNA 815
+#define _A_Repeat 816
+#define _Note 817
+#define _Subpool 818
+#define _Colour 819
+#define _ORF 820
+#define _ATG 821
+#define _Splice3 822
+#define _Splice5 823
+#define _Coding_seg 824
+#define _Foreign_Reference 825
+#define _Virtual_row 826
+#define _In_grid 827
+
+#define _Chrom_Band 830
+#define _Centromere 831
+#define _Dark 832
+#define _NOR 833
+#define _Inherits_from 834
+#define _Fate 835               /* 940119 moc */
+#define _Lineage 836            /* 940119 moc */
+#define _Parent 837             /* 940119 moc */
+#define _Daughter 838           /* 940119 moc */
+#define _Group 839              /* 940119 moc */
+#define _In_group 840           /* 940119 moc */
+#define _Group_member 841       /* 940119 moc */
+#define _Neurodata 842          /* 940119 rd */
+#define _Send 843               /* 940119 rd */
+#define _Send_joint 844         /* 940119 rd */
+#define _Receive 845            /* 940119 rd */
+#define _Receive_joint 846      /* 940119 rd */
+#define _Gap_junction 847       /* 940119 rd */
+#define _Contact 848            /* 940119 rd */
+#define _Lineage_name 849       /* 940120 rd */
+#define _Equivalence_fate 850   /* 940120 rd */
+#define _Equivalence_origin 851 /* 940120 rd */
+#define _Embryo_division_time 852 /*940203 moc*/
+#define _Clone_left_end 853
+#define _Clone_right_end 854
+#define _Derived_from 855
+#define _Derivative 856
+#define _Isolated_for 857
+#define _Wormpep 858
+#define _Replaces 859
+#define _Replaced_by 860
+#define _Confidential_remark 861
+#define _Submitted 862
+#define _Overlap_right 863
+#define _Overlap_left 864
+#define _Repeat_consensus 865
+#define _cDNA_EST 866
+#define _Archived 867
+
+/* tags up to 1000 for richard */
+
+/* tags 1000 to 1500 for jean */
+
+#define _Lethal 1001
+#define _Hand_fixed 1002
+#define _Balancer 1003
+#define _Region 1004
+#define _Hand_verified 1005
+#define _YAC 1006
+#define _Cytogenetic 1007
+#define _Inside_YAC 1008
+#define _Inside_Fragment 1009
+#define _Bibliography 1010
+#define _Links 1011
+#define _Link 1012
+#define _Chimeric 1013
+#define _Non_Chimeric 1014
+#define _Size 1015
+#define _Interval_Mapping 1016
+#define _Main_Marker 1017
+#define _Ends 1018
+#define _Mapping 1019
+#define _p_Telomere 1020
+#define _q_Telomere 1021
+
+#define _Drawing 1022
+#define _Multi_Position 1023
+
+#define _Does_not_Contain 1024
+#define _Contained_Locus 1025
+#define _Exterior_Locus 1026
+#define _Inside_Rearr 1027
+#define _Outside_Rearr 1028
+		        
+#define _Overlaps 1029
+#define _Does_not_Overlap 1030
+#define _No_Overlap_Rearr 1031
+#define _Overlapping_Rearr 1032        
+#define _Contained_Rearr 1033
+#define _Email 1034
+#define _Flipped 1035
+#define _Assembled_from 1036
+#define _Assembled_into 1037
+#define _Genetic 1038
+#define _Physical 1039
+#define _Restriction_Enzyme 1040
+
+#define _AA 1041
+#define _Clone_Grid 1042
+#define _Df_Dup_data 1043
+#define _Fragment 1044
+#define _Pages 1045
+#define _Medline_ID 1046
+#define _Lab_Location 1047
+#define _Match 1048
+#define _Method 1049
+#define _Motif 1050
+#define _MultiMap 1051
+#define _Multi_counts 1052
+#define _Multi_pt_data 1053
+#define _Pool 1054
+#define _Unpublished 1055
+#define _EC_enzyme 1056
+#define _Document 1057
+
+#define _Unit 1066
+/* #define _Contact 1067 == 848 */
+#define _Enzyme 1068
+#define _GDB_id 1069
+#define _OMIM 1070
+#define _Probe 1071
+#define _ATCC_ref 1074
+#define _Add_date 1075
+#define _Annotation 1076
+#define _Approval_date 1077
+#define _Approved 1078
+#define _Assign_mode 1079
+#define _Availability 1080
+#define _CS 1081
+#define _Cosmid_clones 1083
+#define _Created 1084
+#define _Current_symbol 1085
+#define _Cytogenetic_location 1086
+#define _DNA_type 1087
+#define _Data_source 1088
+#define _EC_ref 1089
+#define _Editing_Date 1090
+#define _Excision_Data 1091
+#define _GDB 1092
+#define _GenBank_ref 1094
+#define _HGML_ref 1095
+#define _KW 1096
+#define _Links_to 1097
+#define _Max_heterozygosity 1098
+#define _Modification_date 1099
+#define _Modified 1100
+#define _OMIM_document 1101
+#define _Old_Num 1102
+#define _Originator 1103
+#define _Polymorphism_Data 1104
+#define _Previous_symbol 1105
+#define _Vector_type 1107
+#define _Primer  1108
+#define _SCF_File 1109
+#define _PCR 1110
+#define _Cor 1111
+#define _Neighbours 1112
+#define _Common_bands 1113
+#define _Band_Values 1114
+#define _Segment_Lengths 1115
+#define _Fragment_of 1116
+
+#define _ABI 1118
+#define _Wild_type 1119
+#define _ABI_Date  1120
+#define _ABI_Comment  1121
+#define _ABI_Machine 1122
+#define _Sample 1123
+#define _ABI_Analysis  1124
+#define _Run_Start 1125
+#define _Run_Stop 1126
+#define _Clipping 1127
+#define _Xbap_Assembly 1128
+#define _Symbol 1129
+#define _Anchor 1130
+#define _Band 1131
+#define _Gel 1132
+#define _Band_Lengths 1133
+#define _Otto  1134
+#define _Main_Locus 1135
+
+#define _STS 1200
+#define _Checked_individually 1201
+#define _Outside_YAC 1202
+#define _STS_out 1203
+#define _AluPCR 1204 
+#define _by_AluPCR_Hybridisation 1205
+#define _by_Finger_Printing 1206
+#define _Kpn 1207
+#define _THE 1208
+#define _Somatic_hybrid 1209
+#define _Genethon 1210
+#define _Route_2 1211
+#define _Inside_YAC_Not_Verified 1212
+#define _Locus_Not_Verified 1213
+#define _Possibly_Contains_Locus 1214
+#define _Possibly_Inside_YAC 1215
+#define _Locus_Out 1216
+
+/* tags up to 1300 for jean */
+
+/* tags 1301 to 1500 for Otto/igd */
+
+#define _Allelic_Variants 1310
+#define _Clinical_Synopses 1311
+#define _Cross_References 1312
+#define _Diagnosis 1313
+#define _Evolution 1314
+#define _Historical_Information 1315
+#define _Index_Terms 1316
+#define _Last_Edited 1317
+#define _Locus_Description 1318
+#define _MIM_Number 1319
+#define _Old_MIM_Number 1320
+#define _Population_Genetics 1321
+#define _References 1322
+#define _Treatment 1323
+#define _Main_Text 1324
+#define _Animal_Models 1325
+#define _map_location 1326
+#define _map_error 1327
+#define _LongText 1328
+#define _PCR_data 1329
+#define _Clone_data 1330
+#define _Oligo_DNA 1331
+#define _Allelep 1332
+#define _Allelem 1333
+#define _Gametep 1334
+#define _Gametem 1335
+
+/* tags 1501 to 1600 for LBL */
+/* tags 1601 to 1800 for Suzanna - Berkeley fly */
+/* tags 1801 to 1900 for Jo Dicks - Oxford (comparative) */
+/* tags 1901 to 2000 for Michelle Kirby - Harwell (mouse) */
+/* tags 2001 to 2100 for Staffan, Pasteur */
+/* tags 2101 to 2200 for aatdb, M.F.Jourjon, Toulouse */
+/* tags 2201 to 2300 for aatdb, Sam Cartinhour */
+/* tags 2301 to 2500 for richard - acedb 2 */
+/* many of them already in the 500-800 range */
+
+/* tags 2501 to 2700 for ChlamyDB - glh@acpub.duke.edu - Chlamydomonas Genetics Centre */
+/* tags 2701 to 3000 for Eddy, flybase */
+/* tags 3001 to 4000 for Grain, SoyBase Dendrome */
+/* tags 4001 to 4100 for Suzanne Liebl - MIPS yeast */
+/* tags 4101 to 4200 for ICRF Hugues, Guenther, Richard etc */
+/* tags 4201 to 4300 for IMB Jena - Bernd, Andre Rosenthal etc */
+/* tags 4501 to 4700 for McPherson@chrom5.hsis.uci.edu */
+
+#define _Tetrad 4582
+#define _Centromere_segregation 4583
+
+/* tags 4701 to 4800 for G.Haberhauer@DKFZ-Heidelberg.de */

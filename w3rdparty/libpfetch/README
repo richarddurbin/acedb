@@ -1,0 +1,16 @@
+==================================================================================
+lipfetch notes
+
+ - please read before messing about with the way this code is built.
+
+
+libpfetch is taken from code that Roy Storey wrote for zmap. In that case the
+code was autoconf'd but we don't use autoconf for acedb so I copied the makefiles
+from zmap and hacked them to make everything compile here. Accordingly there is a
+lot of junk in the Makefile that doesn't need to be there and the Makefile does
+not operate correctly for all targets.
+
+This was expedient but also fits in more with the acedb philosophy of not using
+anything autoconf-like.
+
+Ed Griffiths.

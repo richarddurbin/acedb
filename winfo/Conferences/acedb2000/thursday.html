@@ -1,0 +1,88 @@
+<html>
+<head><title>ACeDB2000 conference proceedings: Day 4</title></head>
+<body bgcolor=white>
+<blockquote>
+
+<div align=center>
+<h5><a href="index.html">Back to conference overview</a></h5>
+<h2>ACeDB2000: Day 3</h2>
+</div>
+ 
+<h3>Summaries from task groups:</h3>
+
+<p><b>Curators:</b> There were some more volunteers to work on the comparative map display stuff. Mummi will talk about his use of the Clone grid in the afternoon if time allows. Richard has abandonded the Wiki-idea for now and setup a <a href="/acedocs/outline">simple CGI-script page</a> to accept doc-text.
+
+<p><b>Programmers:</b> ZAce is in its beginning stages,the programmers have a primitive running version now. The XML-discussion is getting really close to what a standard should look like.
+
+<p><b>Middleware:</b> Steven Jones has been working on a new version of Efetch that fetches seqs from an external SRS-server
+
+<hr>
+
+<h3>Ed Griffiths: Client/server tutorial</h3>
+<p><b>Socket layer:</b> 
+<ul>
+  <li>Handles new connections
+  <li>multiple connections
+  <li>non-blocking IO at any stage
+  <li>handles errors and timeouts
+</ul>
+
+<p><b>ACeDB layer:</b>
+<ul>
+  <li>Handles authentication and write access
+  <li>Does requests like queries and stuff
+  <li>Slices large requests into smaller bits
+</ul>
+
+<p>(some nice diagrams of the schema), and now we're talking low-level code description and socket stuf. I'll ask him for some text on this..
+
+<p><b>Summary:</b>
+<ol>
+  <li>The server is now well layered: connecting code in one layer, the ACeDB code in another, and no impact on the 'core' Ace.
+  <li> The server is easier to port, since TCP/IP sockets are everywhere.
+  <li> Easier to connect to server with Perl/JAVA etc. 
+  <li>Truly networked with new password/user system. 
+  <li>Better control of shutdowns and crashes. 
+  <li>Easier to administer with the new user commands.
+</ol>
+<hr>
+   
+<h3>Hamish McWilliam: Java clients, CORBA servers</h3>
+
+<p>Here are <a href="http://acedb2000.bcgsc.bc.ca/~hmcwill/acedb_2000/index.htm"> Hamish's slides from the talk</a>.
+
+<hr>
+
+<h3>Robin Dowell:DAS, a Distributed Annotation System</h3>
+
+<p>Often times many groups are working on annotating of a particular piece of a genome, and this can often lead to multiple databases spread all over, and the user that needs the data contained in them has to go to many different places to get the data.
+<br>One solution is to have centralized databases like GenBank, but this poses problems of ownership and organization in itself.
+
+<p>Another solution is to link all those databases to each others, but then the user needs to learn how to use all the databases.
+
+<p>So, a system that automatically gathers the data from the different databases. Requirements of system:
+<ol>
+  <li>Handle multiple levels of relative coordinates<
+  <li>Easily generated and parsed
+  <li>Extensible
+  <li>Functional groupings of annotations
+</ol>
+
+<p>now she's showing some slides that I can't see very well. Must ask her for copies.The URL is <a href="http://stein.cshl.org/das">http://stein.cshl.org/das</a>
+
+<hr>
+
+<h3>Dave Matthews: Quick queries on the web using AceBrowser</h3>
+
+<p>The subject is premade queries (by curator) that can be offered on AceBrowser homepages. For example, finding all loci within a certain distance from a locus we are interested in... See Dave's homepage for the examples: (somewhere at the Cornell site,<a href="http://ars-genome.cornell.edu/cgi-bin/WebAce/webace?db=graingenes">get URL from Dave..</a>)
+
+<p>If the (power) user is not satisfied with using the default distance, he can modify the table definition. But the idea is that the basic query is provided and the user can play with that and even save it to disk for later use.
+
+
+<br> I'll leave the details to Dave, see if he has a written tutorial lying around, or in the making.
+
+<h3>Maria Nemchuk: AcePerl version of WebAce</h3>
+
+See <a href="http://genome.cornell.edu/webace/webace_install.html">website with installation instructions</A>
+
+

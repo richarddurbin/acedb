@@ -1,0 +1,90 @@
+<!--#config timefmt="%d-%b-%C%y, %I:%M %p" -->
+<!--#set var="title" value="AQL - movie DB result" --> 
+<!--#set var="icon" value="blank.gif" --> 
+<!--#set var="author" value="fw" --> 
+
+<!--#exec cgi="/cgi-bin/header" -->
+
+
+<H2 ALIGN=CENTER>AQL - Movie DB result (6)</H2>
+
+<CODE><B>
+select p->Full_name, p->Address[2] from p in class person 
+</CODE></B>
+
+<PRE><HR>
+Result table with 67 lines
+------------------------------
+Robert de Niro	New York
+Robert de Niro	USA
+Robert de Niro	deniro@hollywood.com
+Robert de Niro	1-800-ROBERT
+Sharon Stone	Meadville
+Sharon Stone	Pennsylvania, USA
+Sharon Stone	0891-SHARON
+Joe Pesci	Newark
+Joe Pesci	New Jersey
+Joe Pesci	USA
+James Woods	
+Martin Scorsese	Flushing
+Martin Scorsese	New York
+Martin Scorsese	USA
+Martin Scorsese	martin.scorses@aol.com
+Nicholas Pileggi	
+Al Pacino	
+Robert Duvall	
+Francis Ford Coppola	Detroit
+Francis Ford Coppola	Michigan
+Francis Ford Coppola	USA
+Mario Puzo	New York
+Mario Puzo	USA
+Mario Puzo	m.puzo@aql.com
+John D. MacDonald	
+James R. Webb	
+Wesley Strick	New York, USA
+John Cusack	
+Bridget Fonda	
+Harold Becker	New York City
+Harold Becker	New York, USA
+Paul Schrader	Grand Rapids
+Paul Schrader	Michigan
+Paul Schrader	USA
+Chazz Palminteri	
+Michael Douglas	New Brunswick
+Michael Douglas	New Jersey
+Michael Douglas	USA
+Paul Verhoeven	
+Joe Eszterhas	
+Joseph Conrad	
+Marlon Brando	Omaha
+Marlon Brando	Nebraska
+Marlon Brando	USA
+Martin Sheen	Dayton
+Martin Sheen	Ohio, USA
+Bo Goldman	
+Gina Gershon	
+John Woo	
+Christian Slater	
+Patricia Arquette	sexybabe@hollywood.com
+Dennis Hopper	Dodge City
+Dennis Hopper	Kansas
+Dennis Hopper	USA
+Gary Oldman	New Cross
+Gary Oldman	South London
+Gary Oldman	England, UK
+Christopher Walken	
+Tony Scott	
+Quentin Tarantino	
+Roger Avary	
+Peter Fonda	
+Terry Southern	
+Jack Nicholson	
+John Travolta	
+Oliver Stone	
+Nicholas Cage	
+------------------------------
+</PRE>
+
+<!--#exec cgi="/cgi-bin/footer" -->
+
+

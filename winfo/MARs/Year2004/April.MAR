@@ -1,0 +1,51 @@
+================================================================================
+                              AceDB - April MAR
+
+
+Executive summary.                                                                        
+------------------                                                                        
+
+ZMap GUI now taking shape with splittable panes and use of gnomecanvas for
+drawing/zooming. ZMap now able to talk to servers of different types.
+
+Acedb now available as latest code on latest version of Mac OSX. Otherwise
+most work was fixes to support annotation groups.
+
+
+ZMap
+----
+
+Testing of gnomecanvas as general drawing engine, gnomecanvas now available on
+Alphas and linux so all builds now incorporate this library. ZMap now allows
+independent splitting/zooming of windows (i.e. sequence views).
+
+ZMap now talks to both Acedb and DAS2 (experimental) servers via a generalised
+server interface.
+
+Support for user configuration files added.
+
+Doxygen tool now being used to automatically generate documentation for
+internal interfaces.
+
+
+Acedb
+-----
+
+Some new command options added (e.g. zones for the "dna" command, courtesy of
+Jean Thierry-Meig.)
+
+The latest code is now available for the Mac (big thanks to Steve Searle for all          
+his help with this work).                                                                 
+
+Fixes for worm build in several areas of GFF output.
+
+Fixes for havana for homology mapping where mapping is clipped.
+
+Fixes for zebra fish for EST read pair display.
+
+
+
+
+
+
+

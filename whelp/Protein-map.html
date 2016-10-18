@@ -1,0 +1,125 @@
+<HEAD>
+<TITLE>Protein-map</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="./whelp.css"
+title="Style sheet for whelp documents">
+
+</HEAD>
+
+<BODY>
+
+<H1>Protein-map</H1>
+<P>
+PEPMAP is a specialised display module in acedb, comparable to the
+FMAP (the display module for DNA sequence) or GMAP (the display module
+for genetic and other types of maps).
+The key sections of models that it uses are the following:
+<PRE><CODE>
+?Protein  Title UNIQUE ?Text
+          Peptide UNIQUE ?Peptide UNIQUE Int UNIQUE Int // Int Int are length, checksum
+          View_info View ?View
+                    Default_view UNIQUE ?View
+          Homol DNA_homol ?Sequence XREF Pep_homol ?Method Float Int UNIQUE Int Int
+UNIQUE Int #Homol_info
+                Pep_homol ?Protein XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE
+Int #Homol_info
+                Motif_homol ?Motif XREF Pep_homol ?Method Float Int UNIQUE Int Int UNIQUE
+Int #Homol_info
+            // Float Int Int Int Int are score, start end in protein, start end in target
+          Feature ?Method Int Int UNIQUE Float  // display according to method
+            // Int Int Float are start, end, score
+</CODE></PRE>
+with reciprocal entries in ?Sequence, ?Motif for homology information.
+
+<P>
+?Peptide is an array class.  You should enter protein sequence as
+follows:
+<PRE><CODE>
+Peptide WP:K04C2.3
+MATQTAVTATTVPQGSPSVTGSASQGGILNSARQFFSLAAPKVEKDKEFSFRFLTSP
+LRSKPAATVNADNFYMYACGSINMP
+</CODE></PRE>
+similar to the way DNA is entered.  This will automatically create the
+Protein class object with the same name, and enter the link to the
+peptide with the length and checksum.
+
+<P>
+The main way to enter annotation for the protein sequence is via Homol
+and Feature lines, exactly as for DNA.  The way they are displayed are
+controlled by the Method object, with a different method for each
+different type of Match/Feature.  The relevant parts of the ?Method
+model are:
+<PRE><CODE>
+?Method Remark ?Text
+          // the Display information controls how the column looks.
+        Display Colour #Colour
+                Score   Score_by_offset // has priority over width, for Jean
+                        Score_by_width
+                        Score_bounds UNIQUE Float UNIQUE Float 
+                                // limits for squashing
+                Bumpable          // bump to avoid overlap
+        Blixem_P
+        Belvu
+</CODE></PRE>
+
+<P>
+The PEPMAP display uses the same system of columns controlled by a
+View object as the GMAP display.  The relevant parts of the View
+models are given below, but although you need them you don't really
+need to understand them - they are all handled by the code and you
+should not enter data for them directly.
+<PRE><CODE>
+?View   Type    UNIQUE  Pepmap
+        Display Submenus        // BOOL for submenus on item boxes
+                No_buttons      // suppress header buttons for WWW 
+                Hide_header     // No headers and footers 
+        Name    UNIQUE  Text
+        Columns Text UNIQUE Int #Column // Int is BOOL for Hidden/Visible
+
+?Column UNIQUE  Scale Scale_unit UNIQUE Float   // minimum increment
+                      Cursor Cursor_on
+                             Cursor_unit UNIQUE Float
+                Locator Magnification UNIQUE Float
+                        Projection_lines_on
+                pepSequence     PS_Highlight_residue   // il all needed for colomn display of peptides
+                                PS_Residues_per_wrap Int
+                                PS_Colours Text #Colour
+                Hydrophobicity  HP_Show_Zero_bar
+                                HP_Fixed_Scaling
+                                HP_Calculation_window Int
+                                HP_Display_width Int
+                Homol           HOM_bump
+                pepFeature      FEA_bump
+                                FEA_Query Text
+                Homol_Name      HOM_NAME_bump
+                                HOM_NAME_width Int
+                pepActiveZone
+</CODE></PRE>              
+there are other column types and parts of the ?View module needed for
+other displays.  The list of columns shows what sort of information
+can be shown in the PEPMAP.  A default View is constructed
+automatically, but quite a lot is configurable, and configurations can
+be stored as named View objects, and proteins can have default and
+alternative views.  e.g. the sequence itself can be displayed with
+different colouring schemes, configurable from the view control window
+obtained by pressing the "View" button on the peptide display.
+
+<P>
+It looks like by default there are columns for BlastP, BlastX,
+Pfam-hmmls and Pfam-hmmfs.  Anything other methods need adding
+explicitly to the View in the View control window.  You can display
+multiple methods in one column by separating the method names with
+'+', e.g. "Pfam-hmmls+Pfam-hmmfs".  This is all a bit hard-wired for
+our priorities, sorry.
+
+<P>
+Also, the PEPMAP has not been continuously developed and upgraded over
+the last few years, so is lacking gif drawing support for gifaceserver
+and new Method/Column options available in FMAP.  But it is functional
+and quite powerful/flexible for displaying new sorts of data.
+
+<HR>
+to <a href="TOC.html">Table of Contents</a><p>
+</BODY>
+</HTML>

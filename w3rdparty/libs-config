@@ -1,0 +1,35 @@
+#!/bin/sh 
+#
+# Usage:     libs-config  [-local local_libpath] [-libonly] <library(ies)>
+# 
+# Examples of library should be "gtk+-2.0" or "glib-2.0" but you can
+# add other pkg_config'd libraries after or before them, just separate with spaces.
+#
+# -libonly must come after -local if the latter is specified.
+#
+# Use either the pkg-config on the path or the one specified by the "-local" flag.
+#
+# In either case pkg-config is passed the libraries which must be in pucker
+# pkg-config form.
+#
+# The -libonly flag causes the script to print only the lib directory path.
+#
+
+pkg_config='pkg-config'
+
+if [ "$1" == '-local' ] ; then				    # quotes protect the "-" in -local
+  local_path="$2"
+  shift ; shift
+  pkg_config="$local_path/bin/$pkg_config"
+fi
+
+
+if [ "$1" == '-libonly' ] ; then
+  shift
+  $pkg_config --libs-only-L $* | sed "s/-L//g"
+else
+  $pkg_config  --libs $*
+fi
+
+
+exit 0

@@ -1,0 +1,245 @@
+#
+#  $Id: im3make,v 1.26 2000-04-11 12:01:57 srk Exp $
+#
+# Image Makefile.
+#
+# This software has been created by Genome Research Limited (GRL). 
+# GRL hereby grants permission to use, copy, modify and distribute 
+# this software and its documentation for non-commercial purposes 
+# without fee at the user's own risk on the basis set out below.
+# GRL neither undertakes nor accepts any duty whether contractual or 
+# otherwise in connection with the software, its use or the use of 
+# any derivative, and makes no representations or warranties, express
+# or implied, concerning the software, its suitability, fitness for
+# a particular purpose or non-infringement.
+# In no event shall the authors of the software or GRL be responsible 
+# or liable for any loss or damage whatsoever arising in any way 
+# directly or indirectly out of the use of this software or its 
+# derivatives, even if advised of the possibility of such damage.
+# Our software can be freely distributed under the conditions set out 
+# above, and must contain this copyright notice.
+
+#################################################################
+# Before running the make command
+# setenv ACEDB_MACHINE to indicate one of the predefined
+# Machine dependant option files, or write your own.
+# These files are called  $(ACEDB_SRC)/wmake/$(ACEDB_MACHINE)_DEF
+#
+
+#################################################################
+########## Machine dependent compiler modification ##############
+############# Are included from an external file ################
+#### This is equivalent to, but more portable than $($(CC)) #####
+### Edit these rules to adapt the makefile to a new machine #####
+#################################################################
+# suppress auto SCCS extraction
+.SCCS_GET:
+.KEEP_STATE:
+.SUFFIXES: .o .c .h .cc
+
+###########################################################
+##  Compiler and library options
+## CC, LIBS, NAME are defined in $(ACEDB_MACHINE)_DEF
+###########################################################
+ 
+IDIR = -I.. -I../wh -I../im3src -I/usr/local/include
+# Do not use -I/usr/include
+# it prevents gcc from picking up its own includes
+# (cc goes to /usr/include anyway)
+
+## to undefine any rubbish
+CCFLAGS =  
+GCFLAGS =
+
+## Different platforms use CC or COMPILE.c
+CC =        $(COMPILER) $(USEROPTS) $(IDIR) -D$(NAME) -DHaveTIFF -c
+COMPILE.c = $(COMPILER)  $(USEROPTS) $(IDIR) -D$(NAME) -DHaveTIFF -c
+
+#.c.o:
+#	$(COMPILER) $(CCFLAGS)  -c $< -o $@
+
+# defaults overridable in $(ACEDB_MACHINE)_DEF
+# e.g. different compiler when using purify
+CCC = g++
+CCCLINK = g++
+
+.cc.o:
+	$(CCC) $(IDIR) $(CCCFLAGS) $(USEROPTS) -c $< -o $@
+
+XWIN_LIBS = `gtk-config --libs`
+GRAPHXWIN_DEPEND  = libgraph.a libgex.a libgif.a
+GRAPHXWIN_LIBS    = -lgraph -lgex -lgif
+
+LIB_LDFLAGS = 
+
+###################################################
+############### do not edit below  ################
+############### override the above ################
+###### settings in $(ACEDB_MACHINE)_DEF ###########
+############### if necessary ######################
+###################################################
+
+################ machine dependent compiler definitions ########
+
+include deffile
+
+
+# Note that you can keep different DEF files for the same machine
+# setting various compiler options
+
+#############################################################
+
+      ALL_SRCS = imChooser.c imStep1.c imStep2.c imStep3.c imStep4.c \
+		imPrefs.c imParamDialogGui.c imParamDialogSig.c imParams.c \
+		imInfo.c imLanes.c imChange.c imMisc.c imBitmap.c \
+		imConfig.c imExternal.c imHidump.c \
+		utBandTrain.c
+
+$(ALL_SRCS):
+	ln -s ../im3src/$@ .
+
+
+## as of version 3.10 Image is dependant on GTK libraries ###
+
+      IM_OBJS = imChooser.o imStep1.o imStep2.o imStep3.o imStep4.o \
+		imPrefs.o imParamDialogGui.o imParamDialogSig.o imParams.o \
+		imInfo.o imLanes.o imChange.o imMisc.o imBitmap.o \
+		imConfig.o imExternal.o imHidump.o
+
+im3:	libfree.a $(GRAPHXWIN_DEPEND) $(IM_OBJS)
+	$(LINKER) -o im3 $(IM_OBJS) -L. $(GRAPHXWIN_LIBS) $(XWIN_LIBS) -lfree $(LIBS)
+
+$(IM_OBJS): ../im3src/im.h
+
+imConfig.o: ../im3src/imconfig.h
+
+##########################
+# Band Shape Training Tool
+##########################
+
+    BSTT_OBJS = utBandTrain.o imZoom.o imHidump.o
+
+bstt:		libfree.a libgraph.a libgex.a libgif.a $(BSTT_OBJS) imZoom.o imHidump.o
+		$(LINKER) -L. -o bstt $(BSTT_OBJS) -L. $(GRAPHXWIN_LIBS) $(XWIN_LIBS) -lfree $(LIBS) 
+
+$(BSTT_OBJS): ../im3src/bstt.h
+
+########################
+# Image-Conversion tool
+# using ImageMagick
+########################
+
+  MAGICK_OBJS = cvdecode.o \
+                cvquantize.o \
+		cvcompress.o \
+		cvimage.o \
+		cvmonitor.o \
+		cverror.o \
+		cvutility.o \
+		cvcolors.o
+
+   IMCONV_OBJS = $(IMCONV_SRCS:.c=.o) 
+   IMCONV_SRCS = cvMain.c cvReadClean.c imHidump.c imBitmap.c $(MAGICK_OBJS:.o=.c) 
+
+im3conv:	libfree.a $(IMCONV_OBJS)
+		$(LINKER) -o im3conv $(IMCONV_OBJS) -L. $(LIB_LDFLAGS) -lfree -ltiff $(LIBS)
+
+$(MAGICK_OBJS:.o=.c) cvMain.c cvReadClean.c:
+		ln -s ../im3src/$@ .
+
+########################################
+# batch mode modules for image analysis
+########################################
+
+
+  IMAGE_AM_SRCS =	$(IMAGE_AM_OBJS:.o=.cc)
+
+  IMAGE_AM_OBJS = amPgm.o amCli.o amInfo.o amABI.o \
+		amDataStruct.o amMystring.o amILoad.o amLLoad.o \
+		amStep2.o amLaneTrack.o \
+		amStep3.o amTrace.o amBandCall.o \
+		amStep4.o amRBLoad.o amNormGrid.o amLockOnLane.o\
+		amStep5.o amBandCall2.o amBandCall2b.o \
+		amBrent.o amLinmin.o amMnbrak.o \
+		amPowell.o amBandModel.o  amSpline.o amSplint.o amApproxPeak.o \
+		amBandModel2.o amWellFind.o  amParafit.o amLudcmp.o \
+		amLubksb.o amReadTrain.o banddiff.o amBandHeight.o \
+		amBGSubtract.o amMultiPrep.o general.o laneconvert.o \
+		fill_ics.o write_ics.o write_ids.o
+
+
+$(IMAGE_AM_SRCS):
+		ln -s ../im3src/$@ .
+
+#################
+#the lanetracker
+
+IMAGE_AM2_OBJS = amLaneTrack.o amPgm.o amStep2.o amCli.o amMystring.o \
+	amABI.o amInfo.o amDataStruct.o amParafit.o amLudcmp.o \
+	        amLubksb.o amReadTrain.o amILoad.o
+
+amStep2: $(IMAGE_AM2_OBJS)
+	$(CCCLINK) -g -o amStep2 $(CCFLAGS) $(IMAGE_AM2_OBJS) -lm
+
+#############################
+#lanetracing and bandcalling
+
+IMAGE_AM3_OBJS = amPgm.o amStep3.o amCli.o amMystring.o amABI.o amInfo.o \
+	amILoad.o amLLoad.o amDataStruct.o amTrace.o amBandCall.o \
+	amLaneTrack.o amBandCall2.o amBandCall2b.o amBrent.o amLinmin.o amMnbrak.o \
+	amPowell.o amBandModel.o amSpline.o amSplint.o amApproxPeak.o \
+	amBandModel2.o amWellFind.o amParafit.o amLudcmp.o \
+	amLubksb.o amReadTrain.o amBandHeight.o amBGSubtract.o amMultiPrep.o \
+	general.o laneconvert.o
+
+amStep3: $(IMAGE_AM3_OBJS)
+	$(CCCLINK) -g -o amStep3 $(CCFLAGS) $(IMAGE_AM3_OBJS) -lm
+
+###################
+#the normalisation
+
+IMAGE_AM4_OBJS = amStep4.o amCli.o amMystring.o amInfo.o \
+	amRBLoad.o amNormGrid.o amLockOnLane.o amDataStruct.o \
+	amLLoad.o
+
+amStep4: $(IMAGE_AM4_OBJS)
+	$(CCCLINK) -g -o amStep4 $(CCFLAGS) $(IMAGE_AM4_OBJS) -lm
+
+###########################
+#the output of the results
+
+IMAGE_AM5_OBJS = amStep5.o amCli.o amMystring.o amInfo.o amRBLoad.o \
+	amSpline.o amSplint.o fill_ics.o write_ics.o write_ids.o
+
+amStep5: $(IMAGE_AM5_OBJS)
+	$(CCCLINK) -g -o amStep5 $(CCFLAGS) $(IMAGE_AM5_OBJS) -lm
+
+##########################################
+# little tool for comparison of band files
+
+IMAGE_BANDDIFF_OBJS = amRBLoad.o amCli.o amMystring.o amInfo.o banddiff.o
+
+banddiff: $(IMAGE_BANDDIFF_OBJS)
+	$(CCCLINK) -g -o banddiff $(CCFLAGS) $(IMAGE_BANDDIFF_OBJS) -lm
+
+
+###########################################################################
+# little tool to patch the built-in configurations in a im3 executable file
+#
+
+image_configure.c:
+	ln -s ../im3src/$@ .
+
+image_configure: image_configure.o
+	$(LINKER) -o image_configure image_configure.o $(LIBS)
+
+
+########### remove all objects created by rules in this file ########
+image_clean:
+	rm -f $(IM_OBJS) imHidump.o $(BSTT_OBJS) imPrefs.bstt.o \
+		$(IMCONV_OBJS) $(IMAGE_AM_OBJS)
+
+###########################################################
+########### end of the image make file ####################
+###########################################################
+ 

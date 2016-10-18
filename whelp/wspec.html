@@ -1,0 +1,115 @@
+<head>
+<title>The wspec directory</title>
+
+<LINK rel=stylesheet type="text/css"
+href="./whelp.css"
+title="Style sheet for whelp documents">
+
+</head>
+
+<BODY>
+
+<h2>The wspec directory</h2>
+
+<P>Sadly this file is only just started, but at least its started.
+
+<P>The intention is to document the various files in the wspec subdirectory
+of an acedb database.
+
+
+<h3>cachesize.wrm</h3>
+
+<P>A user said (and Jean replied):
+
+<pre>&gt; I have created a new acedb database from scratch using 4.9z code. When I 
+&gt; start it I get a popup: "The cache1 is full do you want write access"
+&gt; 
+&gt; I'm guessing it's because I have 2 large sequence objects
+&gt; 
+&gt; In cachesize.wrm I have:
+&gt; CACHE1 = 4000
+&gt; CACHE2 = 4000
+&gt; DISK =  4000
+&gt; 
+&gt; Presumably I can alter the above to fix this?
+&gt; 
+&gt; 1) Is there a way of estimating what to set this to
+
+well, if you get a warning, you may wish to increase
+the values are in kb, so here you ask for
+4M of cache 1 and cache 2
+this is very little on todays computer
+
+my own human genome config has
+CACHE1 = 60000    // Size of first cache, as used in w5/blocksubs.c
+CACHE2 = 100000     // Size of second cache, as used in w5/objcache.c
+
+so 60M and 100M
+
+If you are interested in understanding the gloomy details:
+the minimal cache 1 size is
+size of biggest obj, normally the ?Text disctionary and the size
+of that is given in the graphic interface
+main-acedb-window-&gt; admin button right mouse menu-&gt; program status
+in that window : right mouse button -&gt;  number of obj per class
+
+plus about 1 kb per object you which to have in the cache
+so at minimum 1000 * 1 k = 1M
+
+but all this is really irrelevant, 
+just see how big your machine is a put at least 10 M 10 M
+i do not know why you got so small numbers (4M/4M) to begin with
+
+
+&gt; 2) Do I have to recompile and/or re-read the data
+
+No, 
+in fact acedb adapts itself automatically
+if the cache is smaller than the biggest object the cache is
+simply doubled, the limit you give is an indication not a
+hard limit
+
+if the cache is full objects get deleted
+however if they have been updated/modified, they should not
+be deleted, so the program asks you to get write access so it 
+can save the changes
+
+so my guess is that you got this message while changing the
+data, is that correct ?
+
+
+&gt; 3) If i have to re-read data will it dump correctly in it's current state
+
+you do NOT need to dump reload
+
+but if you did, the cache size would not prevent dumping.
+
+By the way, if some day you get a disk error, those happen
+sometimes on machines running over NFS on a heavy network
+it is nearly guaranteed that you can still open the dabase
+dump and reload. This works because acedb keeps shadow copies
+of previous states of the database, so the dump normally does does not
+need to access the corrupted block which is normally detected during a
+write operation.
+
+By the way again, acedb runs much faster (factor 3 to 10) off a local
+disk relative to off an NFS mounted disk
+
+&gt; 3) What are the consequences of doing nothing
+
+you may get the warning often
+but the largest effect is that too small a cache, and yours is very
+small, just good for a demo database, slows the program because
+there will be more disk access
+
+please how did you inherit such a config
+where did you get your wspec directory from ?
+
+by the way also, i suppose you know that the same code may
+work on several databases with totally different schemata
+and cache sizes etc, each database has its own wspec config dir
+
+</pre>
+
+</BODY>
+</HTML>

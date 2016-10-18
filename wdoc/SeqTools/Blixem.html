@@ -1,0 +1,150 @@
+<HTML>
+
+<style>
+pre{ width: 95%; background-color: #DDDDDD; border-style: solid; border-width: 1px; padding: 10px }
+.example{ border-color: #000000 }
+</style>
+
+
+<HEAD>
+<TITLE>Guide To Blixem</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../wdoc.css"
+title="Style sheet for wdoc developer documents">
+
+</HEAD>
+
+<BODY>
+
+
+
+
+<BLOCKQUOTE>
+<DIV ALIGN=CENTER>
+ <IMG SRC="./acedb-logo.gif" ALT="[ACEDB 4_9 DOCUMENTATION]" align=middle>
+ <H3>
+  ACEDB Version 4_9
+ </H3>
+</DIV>
+
+
+<DIV ALIGN=CENTER>
+
+<H1 align=center>Guide To Blixem</H1>
+
+<ADDRESS>
+Originally written by<BR>
+Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;, August 2009
+</ADDRESS>
+
+</DIV>
+
+
+<H2>Input File Formats</H2>
+
+
+
+
+<P>set out extended format and normal format, rest can be added later....lean on gffv3,
+check strings in gffv3, semi-colons ????? escaped ?????
+
+
+<h3>exblx and seqbl</h3>
+
+<p>FILL THIS IN....</p>
+
+
+<h3>exblx_x and seqbl_x</h3>
+
+<p>These are extended versions of the exblx and seqbl formats which add:</p>
+
+<ul>
+  <li>Strand field for match sequence.
+  <li>Gaps data for gapped alignments.
+  <li>Tag/value format to allow addition of attributes in a flexible way.
+</ul>
+
+<p>These changes have become necessary to allow blixem to display the more extensive match data
+now available.</p>
+
+<p>The format is line based and all lines are either comments or valid feature lines. Comment
+lines start with a "#" and the first line of the file must be either "# exblx_x" or "#
+seqbl_x" to specify the format.</p>
+
+<p>The feature lines are column based and the
+format borrows from the <A HREF="http://www.sequenceontology.org/gff3.shtml">GFF version 3 spec</a>, in particular:</p>
+
+<ul>
+  <li>The format consists of 9 columns, separated by tabs (NOT spaces).
+  <li>The following characters must be escaped using URL escaping conventions (%XX hex codes):
+      <ul>
+	<li>tab
+	<li>newline
+	<li>carriage return
+	<li>control characters
+      </ul>
+  <li>The following characters have reserved meanings and must be escaped when used in other contexts:
+      <ul>
+	<li>; (semicolon)
+	<li>= (equals)
+	<li>% (percent)
+	<li>& (ampersand)
+	<li>, (comma)
+      </ul>
+  <li>Unescaped quotation marks, backslashes and other ad-hoc escaping conventions that have been
+      added to the GFF format are explicitly forbidden.
+  <li>Note that unescaped spaces are allowed within
+      fields, meaning that parsers must split on tabs, not spaces.
+  <li>Undefined fields are replaced with the "." character, as described in the original GFF spec.
+</ul>
+
+
+<p>The 9 columns are:</p>
+
+<pre class="example">
+score reference_strand_frame reference_start reference_end match_start match_end match_strand match_name attributes
+</pre>
+
+<p>The attributes column consists of a list of feature attributes in the format "tag values".
+Multiple "tag values" pairs are separated by semicolons. URL escaping rules are used for tags
+or values containing the following characters: ",=;". Spaces are allowed in this field,
+but tabs must be replaced with the %09 URL escape.</p>
+
+<p>For exblx_x the attributes are:</p>
+
+<pre class="example">
+[gaps data] [match_description]
+</pre>
+
+<p>and for seqbl_x:</p>
+
+<pre class="example">
+[gaps data] [match_sequence]
+</pre>
+
+<p>The format of these attributes is:
+
+<pre class="example">
+"Gaps [ref_start ref_end match_start match_end]+ ;"
+
+"Description the sequence description ;"
+ 
+"Sequence aaagggtttttcccccc ;"
+</pre>
+
+
+
+
+
+
+<HR>
+<H3 ALIGN="CENTER">ACEDB Version 4_9</H3>
+
+<HR>
+<ADDRESS><a href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</a></ADDRESS>
+<!-- hhmts start -->
+Last modified: Tue Aug 18 17:09:15 BST 2009
+<!-- hhmts end -->
+</BODY>
+</HTML>

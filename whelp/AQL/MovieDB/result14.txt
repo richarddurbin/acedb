@@ -1,0 +1,186 @@
+"Marlon Brando"	2
+"Al Pacino"	6
+"Robert Duvall"	3
+"James Caan"	1
+"Sean Penn"	1
+"Robert De Niro"	11
+"Val Kilmer"	2
+"John Voight"	1
+"Tom Sizemore"	2
+"Natalie Portman"	1
+"Bridget Fonda"	2
+"Danny Aiello"	1
+"Johnny Depp"	2
+"Michael Madsen"	1
+"Martin Sheen"	1
+"Dennis Hopper"	4
+"Harrison Ford"	8
+"Christian Slater"	2
+"Patricia Arquette"	1
+"Gary Oldman"	2
+"Samuel L. Jackson"	5
+"Brad Pitt"	3
+"Peter Fonda"	1
+"Nicolas Cage"	2
+"Sean Connery"	10
+"River Phoenix"	1
+"Mark Hamill"	3
+"Alec Guiness"	3
+"Carrie Fisher"	3
+"David Prowse"	2
+"Tom Hanks"	1
+"Tim Allen"	1
+"Rick Moranis"	1
+"Bill Pullman"	1
+"John Candy"	1
+"Mel Brooks"	1
+"Mike Myers"	1
+"Elizabeth Hurley"	1
+"Michael York"	1
+"Mimi Rogers"	1
+"Robert Wagner"	1
+"Woody Allen"	1
+"Sharon Stone"	3
+"Sylvester Stallone"	1
+"Christopher Walken"	2
+"Paul Newman"	2
+"Tom Cruise"	2
+"Mary Elizabeth Mastrantonio"	1
+"Bruce Willis"	5
+"Mark Wahlberg"	1
+"Kim Basinger"	2
+"Ursula Andress"	1
+"Roger Moore"	7
+"Bernard Lee"	1
+"Gert Froebe"	1
+"George Lazenby"	1
+"Pierce Brosnan"	3
+"Sophie Marceau"	1
+"Teri Hatcher"	1
+"Judi Dench"	2
+"Timothy Dalton"	2
+"Benicio del Toro"	2
+"Sam Neill"	2
+"Ewan McGregor"	2
+"Johnny Lee Miller"	1
+"Robert Carlyle"	1
+"Irvine Welsh"	1
+"Ray Liotta"	1
+"Joe Pesci"	4
+"Lorraine Bracco"	1
+"Paul Sorvino"	1
+"Jody Foster"	1
+"Dianne Abbot"	1
+"Arnold Schwarzenegger"	2
+"Jamie Lee Curtis"	1
+"Leslie Nielsen"	1
+"Chazz Palminteri"	2
+"Meryl Streep"	1
+"John Savage"	1
+"Cathy Moriarty"	1
+"Anthony Perkins"	4
+"Janet Leigh"	1
+"Mickey Rourke"	1
+"Lisa Bonet"	1
+"James Woods"	1
+"Jean Reno"	2
+"Sean Bean"	1
+"John Travolta"	1
+"Uma Thurman"	1
+"Harvey Keitel"	1
+"Tim Roth"	1
+"Eric Stoltz"	2
+"Rosanne Arquette"	2
+"Alan Rickman"	1
+"Jeff Goldblum"	1
+"Laura Dern"	2
+"Julie Delphy"	1
+"Jean-Hugues Anglade"	1
+"Michael Keaton"	1
+"Pam Grier"	1
+"Kevin Spacey"	4
+"Gabriel Byrne"	1
+"Jean Marc-Barr"	1
+"Dennis Leary"	1
+"Gwyneth Paltrow"	1
+"Morgan Freeman"	1
+"Willem Dafoe"	2
+"Charlie Sheen"	1
+"Tom Berenger"	1
+"Tommy Lee Jones"	1
+"Rutger Hauer"	1
+"Jeremy Irons"	1
+"Francis Coppola"	
+"Mario Puzo"	
+"Brain De Palma"	
+"David Koepp"	
+"Michael Mann"	
+"Alan Smithee"	
+"Harold Becker"	
+"Mike Newell"	
+"Tony Scott"	
+"Quentin Tarantino"	
+"Roger Avary"	
+"John Dahl"	
+"Steven Spielberg"	
+"George Lucas"	
+"Irvin Kershner"	
+"Leigh Bracket"	
+"John Lasseter"	
+"M. Jay Roach"	
+"Luc Besson"	
+"Paul Thomas Anderson"	
+"Robert Rossen"	
+"Sidney Carroll"	
+"Walter Tevis"	
+"Terence Young"	
+"Ian Fleming"	
+"Richard Maibaum"	
+"Kevin McClory"	
+"John Glen"	
+"Ridley Scott"	
+"Philip K. Dick"	
+"Martin Scorsese"	
+"Nicholas Pileggi"	
+"Danny Boyle"	
+"Johanna Harwood"	
+"Guy Hamilton"	
+"Tom Mankiewicz"	
+"Lewis Gilbert"	
+"Christopher Wood"	
+"Michael Apted"	
+"Bruse Feirstein"	
+"Neal Purvis"	
+"Roger Spottiswoode"	
+"James Cameron"	
+"Paul Schrader"	
+"Paul Verhoeven"	
+"Michael Crichton"	
+"Paul McGuigan"	
+"Michael Cimino"	
+"Alfred Hitchcock"	
+"Robert Bloch"	
+"Richard Franklin"	
+"Tom Holland"	
+"Terry Gilliam"	
+"Alan Parker"	
+"John Frankenheimer"	
+"Bryan Singer"	
+"John McTiernan"	
+"Robert Garland"	
+"David Lynch"	
+"Oliver Stone"	
+"Movita"	
+"Anna Kashfi"	
+"Tarita"	
+"Grace Hightower"	
+"Maeve Quinlan"	
+"Janet"	
+"Melissa Mathison"	
+"Maru Marquart"	
+"Michael Hawkins"	
+"Mary Jo Slater"	
+"LaTanya Richardson"	
+"Nicole Kidman"	
+"Lenny Kravitz"	
+"Joseph Conrad"	

@@ -1,0 +1,668 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - June 2003</TITLE>
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - June 2003</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<P>The June release includes the first extension to the Query language for some
+time, a new programmer's interface in 
+C, Ace-C, reminiscent of AcePerl, but such that the same subroutines can 
+be used in distant clients, as stand alone executables or embedded in 
+tace/xace,
+an enhancement to the xace/xremote interface, tips for models file
+editting, bug fixes for gene making and acediff and a speed fix for the
+server.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="General_News"></a><H2>General News</H2>
+
+<P>Jean Thierry-Mieg
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A> reports:
+
+<P>Very good news: Jean mieg@ncbi.nlm.nih.gov and Richard rd@sanger.ac.uk 
+have decided that they will from now on try to contribute regularly to 
+this newsletter, and encourage developers to use it as a forum to 
+discuss planned or desirable enhancements of Acedb.
+
+<P>Very sad news: Mark Sienkiewicz, after one year of excellent work on 
+acedb at NCBI, has left. In this short time, in collaboration with Jean, 
+he has made several lasting contributions to acedb. He wrote the support 
+for arbitrary genetic code, recursively hooked to the closest parent 
+sequence. This code is compatible with the NCBI recognized set of 
+genetic codes, and is therefore usable, modulo a simple declaration, for 
+all organisms and organelles. It is currently used in WormBase to 
+translate the mitochondrial genes. Mark then worked on tricky kernel 
+issues, affecting the very large acedb database that Jean uses at NCBI 
+to support the annotation of the complete human genome (4 million 
+sequences, 16 million objects). He fixed in particular a rare disk 
+runaway and accelerated the client/server TCP protocol. But his most 
+important realization is his contribution to the design and 
+implementation of the new Ace-C programmer's interface described below.
+"He went over to the dark side, but let us hope for the return of the Jedi".
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="query"></a><H3>Expanding Keysets in the ACEDB query language</H3>
+
+<P>(<I>This article is courtesy of Dan Lawson
+<A HREF="mailto:dl1@sanger.ac.uk">dl1@sanger.ac.uk</A> (who originally requested this
+new feature) and Jean Thierry-Mieg
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A> (who coded the new feature))</I>
+
+<P>ACEDB handles sets of objects called Keysets (you have all seen the xace 
+window termed 'Main KeySet' or the tace line '// 13 Active Objects'). We 
+use Keysets all the time during an ACEDB session, as transient lists of 
+objects of interest, and it is possible to save them for later 
+retrieval/use, using the 'save as' button in the 'Select/Modif' menu of 
+the keyset window. They then belong to the "Keyset" class and can be 
+retrieved in xace from the main window, or using the query: find keyset 
+toto.
+
+<P>The problem was to get the objects contained in the keyset. In graphic 
+mode (xace), you click on the Keyset object and it expands in a new 
+keyset window, which you can query, intersect, dump etc. In text mode 
+(tace), you could only so far get inside the keyset using the tace 
+command 'follow'. However, a major limitation of the tace behaviour was 
+that this command was not part of the query language, so it could not be 
+used in complex queries or from the WormBase interface.
+
+<P>The new operator, 'expand', fixes this problem in the way you expect. 
+Let us consider a biological example. In each release of WormBase, there 
+is a canned keyset called CDS_with_RNAi. You can now say, from the
+command line:
+
+<P><pre><code>acedb> query find Keyset CDS_with_RNAi; expand; where From_laboratory = HX;
+
+// Found 8425 objects
+// 8425 Active Objects
+acedb>
+</code></pre>
+
+This is especially useful when you use the <A HREF="http://www.wormbase.org/">WormBase</A>
+single line
+<A HREF="http://www.wormbase.org/db/searches/query">query search box</A>:
+
+<P><pre><code>find Keyset CDS_with_RNAi; expand; From_laboratory = HX;
+</code></pre>
+
+<P>(Note that you do not need to specify the leading "query" keyword when using the
+Wormbase query dialog.)
+
+<P>This query returns those members of the CDS_with_RNAi keyset which were
+predicted by the Sanger Institute.
+
+<P>In addition, since the expand operator is now part of the standard acedb 
+query language, it can be used in more complex queries as follows:
+
+<P><pre>Expand: query language operator.
+Expand takes no parameter.
+It opens the keysets present in the active set and returns as the new 
+active set the union of all the objects that they contain.
+
+examples: (at the tace prompt)
+
+<code>acedb> query find author; expand</code>
+returns an empty set, because authors are not keysets, but plain objects
+
+<code>acedb> query find keyset CDS_with_RNAi; expand</code>
+returns as the active keyset all objects contained in CDS_with_RNAi
+
+<code>acedb> query find keyset C* ; expand ; IS > b10 AND IS <= b100</code>
+returns all members of all keysets called C*; then filters those on 
+their names. Recall that, in acedb, b8 < b10 < b20 < b22a < b100.
+So you will get objects from b11* to b100, possibly including b22a.
+
+<code>acedb> query find keyset ; COUNT { expand } > 12 ; expand</code>
+returns a keyset of all keysets containing at least 12 objects, then
+expands just those
+</pre>
+
+
+
+
+<a name="windowid"></a><H3>Getting the xace main window id for use with xremote</H3>
+
+<P>To interact with a running xace program via xremote you need to know the
+window id of the xace main window. This is now provided along with other useful
+information in the "readlock" file for the running xace process.
+
+<P>Readlock files are held in the database subdirectory "&lt;db&gt;/database/readlocks"
+and have a file name of the format:
+
+<P><pre>      <code>&lt;session&gt;.&lt;host&gt;.&lt;pid&gt;</code>
+
+e.g.      <code>5.grifbo.457076</code>
+</pre>
+
+<P>Typical contents of a readlock are:
+
+<P><pre><code>Readlock file to prevent destruction of sessions still in use by other processes
+Created: 2003-07-02_13:45:46
+User: edgrif
+Program: xace
+Version: ACEDB 4_9t
+Linkdate: compiled on: Jul  1 2003 14:00:08
+WindowID: 0x6c00028
+</code></pre>
+
+<P>Note the window id as the final entry.
+
+
+
+
+<a name="ace-c"></a><H3>Ace-C: a new C interface to acedb</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Mieg
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)</I>
+
+<P>Mark Sienkiewicz and Jean Thierry-Mieg designed a new C interface to 
+acedb. It is analog to AcePerl, but programmed as a C library.
+Like Janus, it has a double face. The same Ace-C code can run as a 
+subroutine in tace, or as a distant client talking to the acedb server.
+
+<P>This is in fact the seventh interface developed for acedb, but we hope 
+that, together with AcePerl, Ace-C will last. The problem at stake is to 
+use acedb to support a Web site. We first had the Moulon server of the 
+enigmatic Guy Decoux which was a clever hack rather than a programmer's 
+interface. Then we had the -p style of Doug Bigwood et al. which 
+exported full fledged Perl objects, but was hard to use. Then Lincoln 
+and Jean developed the -j style to support first Jade, a Java universal 
+interface to acedb, which died as a victim of the Java war, then 
+AcePerl, the clear success we are all familiar with. In the meantime, 
+another java interface, javace, was developed, but it is not universal 
+and exports only a particular acedb schema into a particular biojava 
+schema. There were also two C interfaces, one called acelib, which was 
+designed collectively at the Cornell acedb meeting but was incomplete 
+and clumsy, and a second one designed at NCBI, which was too complex and 
+never released. By the way, we would like to remove acelib, so if anyone 
+is using it, which I doubt, please let us know, we can help port the 
+code to the new Ace-C.
+
+<P>Why so many attempts ? Well, clearly it is a hard problem, but each time 
+we benefit from the previous tries. Why not just use AcePerl ? Because 
+AcePerl modules can only be used as distant slow clients, and cannot be 
+embedded as fast subroutines to develop new tools inside acedb. In fact 
+AcePerl would benefit from being rewritten above the new Ace-C, which is 
+better optimized than the current AcePerl communication layer and which 
+offers new functionalities.
+
+<P>The real nice thing is that the Ace-C programmer's interface is defined 
+in a single include file, wac/ac.h, and you may choose to link your 
+program either with the client Ace-C lib, called libaccl.a or with the 
+standalone Ace-C lib called libacs.a.
+
+<P>In the client case, data are exchanged with the server using the new 
+'show -C' mode, born from ideas discussed years ago with Richard and 
+Doug Bigwood.
+In the standalone case, the Ace-C function calls are just wrappers for 
+standard acedb kernel calls, which means that Ace-C runs with a 
+negligible overhead, and can run standalone or as a subroutine imbedded 
+in tace/xace.
+The interface is powerful, streamlined, unambiguous and well defined, 
+and should be easy to learn and use.
+
+
+<P>Example (extracted from in wacext/makefile.acc):
+
+<P><pre><code>kscount: kscount.o  $(LINK_ACC)
+$(LINKER) -o $@ kscount.o $(LINK_ACC) $(LIBS)
+
+skscount: kscount.o  $(LINK_ACS)
+$(LINKER) -o $@ kscount.o $(LINK_ACS) $(LIBS)
+
+kscount s:host:12345:anonymous   # runs as a client
+skscount $ACEDB                  # runs standalone
+</code></pre>
+
+<P>Ace-C is now used in production underneath the NCBI AceView website 
+http://www.humangenes.org
+All the source code has been put in the CVS, the library is well 
+documented in wac/ac.h, although there is no user manual, and there is a 
+built in regression suite. However, the rarely used functions may still 
+need some tuning and we would appreciate feedback.
+
+<P>If you are interested, please use the acedb daily build and mail 
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)</I>
+
+
+<a name="Named_Keysets"></a><H3>Named Keysets</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Mieg
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)</I>
+
+<P>As part of the support for Ace-C, we introduced 3 new commands to the
+acedb command language, available from tace and aceclient.
+
+<P><pre><code>kstore name  : store active keyset in internal tmp space as name
+kget name  : copy named set as active keyset
+kclear name  : clear named set
+</code></pre>
+
+<P>The name space and all the named keyset are per client and released
+when the client quits.
+
+<P>Example: Build a Wen diagram
+
+<P><pre><code>   query ......... // a very slow query
+kstore L1
+query ......... // a very slow query
+kstore L2
+....
+kget L1
+spush
+kget L2
+sand
+spop
+count  // counts the objects in the intersect
+</code></pre>
+
+<P>I remember that Lincoln had for years been asking for this functionality.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+
+
+<a name="models_file"></a><H3>Editting wspec/models.wrm</H3>
+
+<P>A couple of times recently users have sent emails with questions about the
+models file and how it should be edited. Here are tips/guidelines/rules.
+
+<P>The spatial layout of the models.wrm file is crucial as it describes the structure
+of objects in the database. Here is a crude example:
+
+<P><pre><code> Class in models.wrm               Object in database
+
+?Name	First_name Text        Ed---->First_name--->"Edward"
+Surname Text                      |
+V
+Surname---->"Griffiths"
+</code></pre>
+
+<P>If you misaligned the class definition as below acedb would complain and refuse to
+parse the models file:
+
+<P><pre><code>?Name	First_name Text
+Surname Text
+</code></pre>
+
+<P>This is fine in a way because you would quickly find out about the error and nothing
+will be corrupted. Mistakes
+can however be less obvious if you have a deeply nested object and you have used Tabs to
+space out your class. The accidental deletion of a Tab can change the whole branching
+structure of your class:
+
+<P><pre>Original class:
+
+<code>?Map	No_cache // Don't cache segs for this map.
+Display Non_graphic  // Prevents a graphic display!
+Title UNIQUE ?Text
+Flipped // Then coordinates go upwards
+Unit UNIQUE Text 
+// e.g. kb, centiMorgan, MegaParsec
+Centre UNIQUE Float UNIQUE Float  
+// default centre, width - else 0, 10
+Extent UNIQUE Float UNIQUE Float  
+// min, max - else min, max gene/locus
+Default_view UNIQUE ?View
+Minimal_view UNIQUE ?View // use this when >1 map displayed
+View ?View                // Columns to display
+Inherits  From_map UNIQUE ?Map 	// To locally edit
+Author Text	// login name of who created it</code>
+
+Class after accidental deletion of Tab preceding "Centre":
+
+<code>?Map	No_cache // Don't cache segs for this map.
+Display Non_graphic  // Prevents a graphic display!
+Title UNIQUE ?Text
+Flipped // Then coordinates go upwards
+Unit UNIQUE Text 
+// e.g. kb, centiMorgan, MegaParsec
+Centre UNIQUE Float UNIQUE Float  
+// default centre, width - else 0, 10
+Extent UNIQUE Float UNIQUE Float  
+// min, max - else min, max gene/locus
+Default_view UNIQUE ?View
+Minimal_view UNIQUE ?View // use this when >1 map displayed
+View ?View                // Columns to display
+Inherits  From_map UNIQUE ?Map 	// To locally edit
+Author Text	// login name of who created it</code>
+</pre>
+
+<P>This one character deletion changes the branching structure of the object completely
+legally to something quite different from the original. There are now three main branches
+in the object defined by the "Display", "Centre" and "Inherits" tags where there used
+to be two. While usage of both spaces and Tabs is completely legal, using Tabs is
+not a good idea !
+
+
+<P>If inadvertantly you read this wrong model file and start using it
+<ul>
+  <li>You can still see your old data, because acedb uses the schema as 
+      it was when the data was loaded.
+  <li>You can parse old ace files, because the list of tags did not 
+      change, just their organization. But now data under "Centre" go to the 
+      new place.
+  <li>Queries concerning "Centre" and any tag below only retrieve newly 
+      entered data, because the old objects do not contain those tags in the 
+      current position
+</ul>
+
+<P>To fix the mess, please use tace:
+
+<P><pre><code>tace $ACEDB << EOF
+query find map centre // gets just the 'new' centre
+show -a -f toto.ace centre // exports just that tag
+edit -D centre // removes the tag in the 'new' objects
+read-models // read back the correct models
+parse toto.ace  // recover your data in the right place
+save
+quit
+EOF</code></pre>
+
+
+<P>Here are some tips that will help you to avoid having trouble editting the models.wrm
+file:
+
+<ul>
+  <li>Only use a plain text editor, i.e. one that does not format or add any control
+      characters to the file, e.g. "vi", "emacs" or some similar editor in Unix and
+      "Notepad" in Windows. In particular note that if you are working on a Windows machine
+      your editor will probably add DOS style "end of line" characters to the
+      end of each line. This is fine if you only use the models file from a windows
+      machine but you should be aware that this will make that models file unparseable
+      from a Unix machine.
+  <li>Use a constant width font to view the file so you can be sure your tags are correctly lined up.
+  <li>Always use spaces instead of Tabs, that way it will be more obvious if you
+      accidentally delete something. Chances are that you will produce an illegal
+      models file and acedb will report the error.
+</ul>
+
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+
+<a name="parent_bug"></a><H3>Gene curation bug in FMap</H3>
+
+<P>A number of users have reported the error
+"Failed to update parent sequence object: <name of object>" when trying to
+make temporary genes from within the gene finding package for the FMap.
+This has now been fixed and was a fault in the code that tried to find a
+parent for the temporary gene.
+
+
+<a name="blixem"></a><H3>Blixem not displaying homologies that extend to end of sequence</H3>
+
+<P>A trivial (as in the coding, not in the debugging sense !) off-by-one error in coordinate
+calculations in blixem calling code resulted in the loss of
+all homologies which extend right to the end of the displayed sequence.
+
+
+<a name="acediff"></a><H3>acediff bugs</H3>
+
+<P>acediff was erroneously interpretting "//" in a text field as the start of an
+acedb style comment and hence getting the text field wrong. This is now fixed,
+backslash escapes in comment delimiters are now honoured:
+
+<P><pre><code>// this is a  comment
+/\/ this is not (now) a comment
+</code></pre>
+
+<P>acediff had a problem processing files where the same tag was repeated due to clumsy
+pre-processing and generated spurious -D lines in the output, this is now fixed.
+
+
+<a name="print_window"></a><H3>Printer list in print window</H3>
+
+<P>The printer list in the print window used to contain blank lines if the 
+system file /etc/printcap contained incomplete entries. This is now fixed.
+
+
+<a name="make"></a><H3>makefile shenanigans</H3>
+
+<P>Replaced "test" with "/usr/bin/test" since the test builtin in some
+versions of the shell doesn't understand "-L" -- step forward Solaris!
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+<a name="performance"></a><H3>Performance and acedb</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Mieg
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)</I>
+
+<P>This could be interesting to all programmers. I recently fixed heavy 
+performance problems just by editing my makefile:
+
+<ol>
+  <li>I had an apparent memory leak in the acedb server underneath my 
+      web-site, affecting Solaris on sparc or on Intel. The leak went away 
+      when I removed from my makefile the pragma <b>-l malloc</b>
+  <li>On Linux, I considerably accelerated parsing files by removing a pragma
+      <b>-l pthread</b>,
+      although I was actually not using threads, acedb is NOT thread save, the 
+      library was listed in my configuration files, because of other programs, 
+      and this turned the getc(), used by the acedb parser to scan input 
+      files, from a  macro into a very slow function.
+      It is possible that this library is linked implicitly in many C++ 
+      implementations, slowing down many of your programs, beware!
+  <li>Several months ago, qsort on Solaris was bugged, retrieving a 
+      negative record at a very low but non zero probability, and inducing 
+      very soon after that a flat crash. I fixed that by replacing in 
+      arraySort the call to qsort by an actually faster call to msort, a 
+      function that I added in freesubs.
+      Conclusion: If you have any trouble with performance, do not forget to 
+      suspect the standard Unix functions, such as qsort, and standard 
+      libraries, such as lmalloc and lpthread. Also remember that I am always 
+      interested in hearing about performance problems (mieg@ncbi.nlm.nih.gov).
+</ol>
+
+
+<a name="cattext"></a><H3>About catText catBinary</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Mieg
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)</I>
+
+<P>Let us re-explain what happened last month.
+Since its introduction, catBinary was bugged, it was appending an extra 
+zero at the end of the buffer. This was apparent only if you were 
+calling catBinary() twice on the same stack, because you then had this 
+extra zero in between the two pages. Nobody ever complained, may be 
+nobody ever tried. This bug was fixed by Mark Sienkiewicz around May 25.
+
+<P>While fixing the bug, catText was inadvertently modified. This killed 
+the query language, was detected by Aquila the same night, and fixed the 
+following day. So, just to clarify:
+
+<ul>
+  <li>The automatic Aquila test correctly reported the error, merci Detlef.
+  <li>catText was not modified, except for a few hours, and only on the 
+      development version, during which acedb was brain dead (all queries 
+      failed). So nobody should worry about catText.
+  <li>However, catBinary was purposely modified. This affects, in the 
+      public distribution, binary buffers exported by aceserver. If by chance 
+      you had a work-around the bug in your client code, you should be aware 
+      of this change and modify your clients to cope with the now correct data 
+      exported by the acedb server.
+</ul>
+
+
+
+<a name="server"></a><H3>Server speed up</H3>
+
+<P>(<I>Thanks to Mark Sienkiewicz (formerly of NCBI) for spotting this one.</I>)
+
+<P>Requests/replies can be greatly speeded up for the server by setting the TCP_NODELAY
+flag for the socket. This prevents TCP from waiting for an acknowledgement for each packet
+before it sends the next one. This is particularly relevant for small requests on slow
+networks (the effect is hardly noticeable on a local high speed network):
+
+
+<P>Jean Thierry-Mieg
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A> reports:
+
+<P>Mark Sienkiewicz greatly speeded up the server by setting the 
+TCP_NODELAY flag for the socket. This prevents TCP from waiting for an 
+acknowledgement for each packet before it sends the next one. The 
+improvement is particularly important for small requests on slow 
+networks, as when one uses AcePerl over the network across the Atlantic 
+ocean. The way Mark found the bug is interesting. Because it seemed too 
+hard to retrofit the ace.4_9 TCP protocol (let us call it the 
+s-protocol) in the ace.4_7 code still used in production at NCBI, he 
+wrote, in the context of Ace-C, a new simple minded TCP protocol (let us 
+call it the a-protocol). Later the Ace-C client was adapted to talk to 
+the ace.4_9 saceserver, and it became immediately apparent that the 
+s-protocol was way slower than the a-protocol, even on the NCBI 
+intranet. After some testing, it all boiled down to raising a single 
+flag, and speeds were equalized.
+
+
+<a name="optimisations"></a><H3>Optimisations</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Mieg
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)</I>
+
+<P>With data size ever increasing, it becomes necessary to optimize the 
+code once more. To this end, i revamped the acedb CHRONO and started 
+pushing fixes in the CVS.
+
+<ol>
+  <li>A glitch in the hashing function used by the dict library was fixed. 
+      This does not affect the acedb main classes, which have their own direct 
+      hashing. The improvement is visible only if you use a dict with over 
+      100,000 entries.
+  <li>I modified disk/cache handling with a tremendous effect on very large 
+      databases. To parse the 16 million objects of the whole human genome 
+      annotation database on an alpha, time went down from 24 to 12 hours.
+  <li>The problem of disk runaways has been found by Mark Sienkiewicz but needs to be
+      incorporated into the development code.
+  <li>File scanning optimization is under way, and will be put in the CVS 
+      shortly.
+  <li>Several types of query now use the internal indexing more efficiently.
+</ol>
+
+
+<a name="Chrono"></a><H3>Chrono</H3>
+
+<P>(<I>This article is courtesy of Jean Thierry-Mieg
+<A HREF="mailto:mieg@ncbi.nlm.nih.gov">mieg@ncbi.nlm.nih.gov</A>)</I>
+
+<P>Chrono is back and working. It is a very versatile way of profiling
+acedb. It is programmed as macros, and does not affect the compiled code 
+when turned off.
+
+<pre>Usage:
+<code>#define CHRONO       /* if undef, all chrono calls disappear */
+#include "chrono.h"   /* must come after the define CHRONO */
+...
+f ()
+{
+chrono ("f") ;      /* or any message you like */
+.........            /* do something */
+chronoReturn () ;   /* carefully chronoReturn along each path*/ 
+/* 
+beware of goto's and early return statements */
+}
+...
+main()
+{
+chronoStart () ;
+chronoStop() ;
+chronoReport () ;
+}</code>
+</pre>
+
+<P>The nice thing is that you can chrono a whole function or just a few 
+lines of code. Nested chrono calls are allowed.
+
+<P>To start and stop a chrono session, there are four methods
+
+<ul>
+  <li>call chronoStart/Stop/Report in main()
+  <li>define CHRONO at the top of session.c to chrono the whole acedb session.
+  <li>activate chrono from the tace prompt (to be folded in CVS very soon)
+      Chrono {start | stop | show} affects all chrono-aware routines
+  <li>activate and visualize chrono from xace->admin->chrono
+      This option is available in xace up to 4_7, but seems lost in 4_9.
+</ul>
+
+
+<P>Example comparing acein and freecard on the same dataset:
+
+<pre><code>// Total time : 4.42 s  system,  66.43 user  level = 0
+//           # of calls   System       %          User       %
+//   Chrono        0      0.00 s      0 %         0.00 s     0 %
+//test_acein       1      0.65 s     14 %        14.50 s    21 %
+//test_freecard    1      0.92 s     20 %        13.93 s    20 %
+</code></pre>
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>June monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="User_Group"><H2>Next User Group Meeting - D319, 3.00pm, Thursday, 10th July 2003</H2>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Tue Jul  8 10:46:24 BST 2003
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

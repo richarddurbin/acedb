@@ -1,0 +1,54 @@
+Notes: 
+With version 4.9u, dotter and blixem have been split off and
+are now shipped as a separate distribution on the Mac.  Acedb is not
+dependent on dotter and blixem being present, but if you want to
+run dotter or blixem as standalones, you must install them separately.
+
+I haven't yet got around to writing an installer for dotter and
+blixem, so if you want to build them from the source, you'll have
+to do so by hand.  It's pretty simple, just not fully automated yet.
+
+If this README isn't sufficiently clear or contains errors, please 
+email me at webmaster@acedb.org.
+
+
+To install the binaries, use the debian package manager:
+
+dpkg -i dotterandblixem_4.9.27-1_darwin-powerpc.deb
+
+
+
+To build and install them:
+
+Make a .info file for the latest version using command
+
+mkinfo_dotblix <version> <revision>
+
+
+Put the .info file in /sw/fink/dists/local/main/finkinfo/database
+
+To build:
+
+fink build dotterandblixem
+
+This downloads the source files from the acedb website, compiles them all
+and creates a .deb file which it leaves in
+
+/sw/fink/dists/local/main/binary-darwin-powerpc/database
+
+
+To install:
+
+fink install dotterandblixem
+
+or you could go to where the deb file is and install using dpkg
+
+dpkg -i dotterandblixem_4.9.27-1_darwin-powerpc.deb
+
+
+If you want to upgrade to the latest version, you'll need to 
+
+fink rebuild dotterandblixem
+
+to force fink to download a fresh tarfile.  Otherwise it just uses the deb it
+already has, which is not what you want.

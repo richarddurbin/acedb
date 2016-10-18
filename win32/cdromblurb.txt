@@ -1,0 +1,20 @@
+Welcome to the C. elegans Acedb database CD-ROM distribution.
+
+Please note that this is an experimental release, made on
+7th January 2000. Please ensure that it has not been superceded
+before using it.
+
+This installation program will install both the Acedb software
+and, when that is complete, the C. Elegans database. If you wish 
+to install only one of these components (for instance if you
+already have the Acedb software installed) then click the 
+Cancel button now and use the separate installation programs 
+on this CD-ROM
+
+Acedb.exe - to install the acedb software.
+Wormace.exe - to install the C. Elegans data.
+
+If you wish to install both components, click the next button,
+which will take you first through installing the Acedb 
+software, and then the C. Elegans data.
+

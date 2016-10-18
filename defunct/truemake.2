@@ -1,0 +1,418 @@
+
+# $Id: truemake.2,v 1.22 1994-06-20 15:09:39 esr Exp $ #
+##################################################################
+############### acedb: R.Durbin and J.Thierry-Mieg ##############
+############### wmake/truemake,  Jan-12-1992       ##############
+#################################################################
+
+# mieg moved libace, devace, localace rules to LOCALSUN_DEF
+
+#################################################################
+# Before running the make command
+# setenv ACEDB_MACHINE to indicate one of the predefined
+# Machine dependant option files, or write your own.
+# These files are called  $(ACEDB_SRC)/wmake/$(ACEDB_MACHINE)_DEF
+#
+# They define 4 (possibly 5) names:
+#    NAME, CC, LIBS, OPTIONS, RANLIB_NEEDED, AR_OPTIONS
+# CC is the compiler and its specific flags (cc, gcc, xlc ...)
+# LIBS the corresponding libraries (-lm gcc-gnulib ...)
+# RANLIB_NEEDED should be set to false if ranlib is not needed, 
+# it defaults to true for backward compatibility.
+# AR_OPTIONS defaults to rlu for backward compatibility.
+# NAME and OPTIONS must be selected as follows
+#################################################################
+
+### pick NAME from among this list.
+### NAME is used in the source code to conform to the
+### target machine. It is used mostly in wh/mystdlib.h,
+### wh/mydirent.h but also in a few awkward places, for example
+### wh/array.h redefines the stack Macros in a particular way to
+### please the xlc compiler of the IBM.
+### If you port to a new machine, please let us know.
+
+# SUN    Tested for Sun Sparc 1, 2, 10 and on SUN3/80
+# DEC    Tested on DecStation 3100 and 5000 
+#	(on Dec stations add in wh a link to /usr/include/mit/X11)
+# NEXT   Tested on a several Next.
+
+# SGI    Tested on several recent Silicon Graphics running X11, model unknown.
+#      Until July 92, I used gcc, I now use the newer SGI ANSI-C compiler
+
+# ALLIANT  Alliant multiprocessor at MRC-LMB.
+
+# CONVEX Contributed by Jukka Ukkonen (ukkonen@csc.fi)
+#       For make command to work
+#	it does not help to
+#		setenv ACEDB_MACHINE CONVEX
+#	as adviced in the installation document. The
+#	make command on Convex does not look in the
+#	environment variables to fill in it's internal
+#	variables when ACEDB_MACHINE is not defined as
+#	a make's internal variable. To circumvent this
+#	inconvenience do the make as follows
+#		make ACEDB_MACHINE=CONVEX
+#	and everything should work nice and easy.
+
+# IBM   IBM-risc 6000,
+#       We sometime  have difficulties to compile with the graph package
+
+# LINUX IBM-PC 386 and compatible, running gcc and the freeware
+#       LINUX operating system. This platform is extremely cheap 
+#       around 2000$ hardware + disk + sofware and remarkably fast
+#
+#	We use either gnu-compiler gcc or the native cc compilers
+#       This choice is made by the $(ACEDB_MACHINE)_DEF file.
+# 
+#       On SGI and Alliant our 2 steps make does not properly works,
+#       so on those ACEDB_MACHINEs:
+#       do the following by hand:
+#	setenv ACEDB_MACHINE SGI or ALLIANT
+#       mkdir database ; mkdir bin
+#       cp wmake/truemake bin/makefile
+#       cd bin ; make all
+
+#### The following machine-dependent options are recognized
+#### by the code
+
+# -DNO_LEFT_CASTING For compilers which refuse (int*)p++ syntax
+
+#################################################################
+#################################################################
+# add in DISP_OBJS your own display codes, 
+# in CALCUL_OBJS your algorithms
+# link your displays in wspec/quovadis.wrm
+#################################################################
+
+# gmapdisp.o  gmapdrag.o 
+
+DISP_OBJS =  biblio.o griddisp.o geldisp.o cmapdisp.o \
+	gmapdisp.o  mapcontrol.o colcontrol.o pmapdisp.o \
+	pmapconvert.o dnacpt.o fpdisp.o pepdisp.o
+CALCUL_OBJS = correl.o topology.o defcpt.o   \
+		regression.o alignmaps.o gmapcpt.o \
+		intervalmap.o pmapcpt.o dnacmp.o
+PMAP_NEIL_OBJS = pmaped.o pmapcons.o pmappad.o
+FMAP_OBJS = fmapcontrol.o fmapsequence.o fmapfeatures.o \
+	fmapgene.o
+OTHER_OBJS = gfcode.o embl.o blxview.o translate.o gmapdata.o \
+	align.o gmapphys.o gmapdata2.o dotter.o # nmer.o
+
+#################################################################
+################## Non Graphic Variants #########################
+#################################################################
+# List here the file that contain an ifdef NON_GRAPHIC variant
+NON_GRAPHIC_VARIANT = dump.o help.o session.o parse.o class.o \
+	chrono.o longtext.o
+                 
+#################################################################
+################## Graphic Libraries ############################
+#################################################################
+# In principle the following X libraries can be found using:
+
+Xt_LIBS = -lXaw -lXt -lXmu -lXext -lX11
+SUNWIEW_LIBS = -lsuntool -lsunwindow -lpixrect
+
+# On badly configurated machines, you may redefine these libraries
+# in a more precise way in your $(ACEDB_MACHINE)_DEF file
+
+#################################################################
+################## Source code directory, #######################
+###### can be changed in $(ACEDB_MACHINE)_DEF if need be ########
+#################################################################
+
+# W1 = w1      # General tools, useful in any C program
+# W2 = w2      # Graphic library: Sunview, X11, Post-script ...
+# W3 = w3      # Network communications
+# W4 = w4      # Acedb-kernel: session control etc
+# W5 = w5      # Acedb-kernel: database manager
+# W6 = w6      # Acedb-kernel: object handler and query language
+# W7 = w7      # Graphic Applications: gmaps, pmaps etc
+# W8 = w8      # Non graphic applications
+# W9 = w9      # Miscellaneous applications
+# WACE = wace  # Parsers
+
+W1 = w1
+W2 = w2    
+W3 = w3    
+W4 = w4    
+W5 = w5    
+W6 = w6    
+W7 = w7    
+W8 = w8    
+W9 = w9    
+WACE = wace
+
+RANLIB_NEEDED = true
+AR_OPTIONS = rlu
+#################################################################
+########## Machine dependent compiler modification ##############
+############# Are included from an external file ################
+#### This is equivalent to, but more portable than $($(CC)) #####
+### Edit these rules to adapt the makefile to a new machine #####
+#################################################################
+
+include ../wmake/$(ACEDB_MACHINE)_DEF
+
+# Note that you can keep different DEF files for the same machine
+# setting  various compiler  options
+
+#################################################################
+#################################################################
+# In principle you should not have to edit the rest of this file
+#################################################################
+#################################################################
+
+# suppress auto SCCS extraction
+.SCCS_GET:
+
+FREE_OBJS = freesubs.o messubs.o arraysub.o help.o filsubs.o \
+	heap.o timesubs.o bump.o  randsubs.o 
+#			# CLEAN_OBJS is for smaller  programs
+CLEAN_OBJS = freesubs.o arraysub.o messclean.o	filclean.o \
+	 timesubs.o bump.o  randsubs.o
+INTERACTIVE_OBJS = display.o parse.o chrono.o \
+		newkey.o menu.o keyset.o
+
+GRAPH_OBJS = graphcon.o graphsub.o graphps.o graphselect.o \
+	graphascii.o graphprint.o
+SUN_OBJS = graphsun.o prstatic.o sunsubs.o
+Xt_OBJS =  graphxt.o graphxlib.o xtsubs.o 
+WCS_OBJS =  wcscom.o wcomm.o 
+
+ACE_OBJS =  pmapace2.o homonym.o acediff.o 
+
+MAIN_OBJS = xacemain.o session.o status.o picksubs.o model.o\
+            mainpick.o dump.o update.o class.o metadata.o longtext.o
+
+BASE_OBJS = lexsubs.o disksubs.o blocksub.o objcache.o keysetdump.o 
+B_OBJS    = asubs.o bsubs.o bstree.o bstools.o bssubs.o \
+	bsdumps.o nicedump.o dnasubs.o peptide.o check.o
+GENERIC_DISPLAY_OBJS  = plot.o acdbtest.o treedisp.o ksetdisp.o \
+	querydisp.o qbedisp.o querybuild.o \
+	sprddata.o sprdctrl.o sprdop.o sprdmap.o sprddisplay.o \
+	action.o 
+
+
+RPC_SERVER_OBJS = nace_sp.o aceserver.o 
+RPC_CLIENT_OBJS = nace_cp.o aceclient.o nace_clnt.o
+FRED_OBJS = igdevent.o 
+
+WORM_OBJS  = $(FREE_OBJS) $(GRAPH_OBJS) $(INTERACTIVE_OBJS) \
+	$(MAIN_OBJS) $(BASE_OBJS) $(B_OBJS) \
+	 $(GENERIC_DISPLAY_OBJS) \
+	$(FMAP_OBJS) \
+	$(DISP_OBJS) \
+	queryexe.o $(OTHER_OBJS)  # $(FRED_OBJS)  
+
+WORM_SERVER_OBJS = \
+	objcache.o bssubs.o \
+	queryexe.o picksubs.o \
+	bstools.o \
+	lexsubs.o keyset.o model.o \
+	blocksub.o disksubs.o asubs.o \
+	bstree.o bsubs.o \
+	bsdumps.o nicedump.o keysetdump.o sprdop.o \
+	dnasubs.o
+
+CLIENT_OBJS = $(CLEAN_OBJS) \
+	$(RPC_CLIENT_OBJS) \
+	nace_xdr.o
+
+SERVER_OBJS  = $(CLEAN_OBJS) $(WORM_SERVER_OBJS) \
+	$(RPC_SERVER_OBJS) \
+	nace_xdr.o
+
+TACE_OBJS  =  $(CLEAN_OBJS) $(WORM_SERVER_OBJS) \
+	tacemain.o 
+
+##################### 
+ 
+W1_SOURCES = $(FREE_OBJS:.o=.c)  $(INTERACTIVE_OBJS:.o=.c) \
+	filclean.c messclean.c 
+W2_SOURCES = $(GRAPH_OBJS:.o=.c) $(SUN_OBJS:.o=.c) $(Xt_OBJS:.o=.c) \
+	graphtest.c
+W3_SOURCES = $(WCS_OBJS:.o=.c) $(NETWORK_OBJS:.o=.c) \
+	$(FRED_OBJS:.o=.c)
+WRPC_SOURCES = $(RPC_SERVER_OBJS:.o=.c)  \
+	$(RPC_CLIENT_OBJS:.o=.c) nace_xdr.c
+W4_SOURCES = $(MAIN_OBJS:.o=.c) queryexe.c tacemain.c
+W5_SOURCES = $(BASE_OBJS:.o=.c)
+W6_SOURCES = $(B_OBJS:.o=.c) $(GENERIC_DISPLAY_OBJS:.o=.c)
+W7_SOURCES = $(DISP_OBJS:.o=.c) $(PMAP_OBJS:.o=.c) \
+	$(FMAP_OBJS:.o=.c) 
+W8_SOURCES = $(CALCUL_OBJS:.o=.c)
+W9_SOURCES = $(OTHER_OBJS:.o=.c) \
+	blxmain.c blxselect.c blxparser.c \
+	diskdump.c diskfix.c \
+	dotterMain.c colormap.c \
+	fetch.c dbidx.c
+
+WACE_SOURCES = $(ACE_OBJS:.o=.c)  
+FRED_SOURCES = $(FRED_OBJS:.o=.c)
+
+########## Compiler and library options
+ 
+IDIR = -I../wh -I../wspec 
+#-I/usr/include
+# : prevents gcc from picking up its own includes
+# (cc goes to /usr/iclude anyway)
+
+######## CC, LIBS, NAME, OPTIONS are defined in $(ACEDB_MACHINE)_DEF
+
+CCFLAGS =   ## to undefine any rubbish
+GCFLAGS =   ## to undefine any rubbish
+CC = $(COMPILER) $(IDIR) $(OPTIONS) -DACEDB -DACEDB2 -DBIBLIO \
+	-DACEDB_MAILER -D$(NAME) -c
+# Note that COMPILE.c is not recognized on the Next
+COMPILE.c = $(COMPILER) $(IDIR) $(OPTIONS) -DACEDB -DACEDB2 -DBIBLIO \
+	-DACEDB_MAILER -D$(NAME) -c
+
+###############################
+ 
+.KEEP_STATE:
+all :  xace  # sunace tace  homonym  aceserver aceclient ace   acediff
+
+$(W1_SOURCES) : ../w1/$$@
+	cp ../w1/$@ .
+	chmod u+w $@
+$(W2_SOURCES) : ../w2/$$@
+	cp ../w2/$@ .
+	chmod u+w $@
+$(W3_SOURCES) : ../w3/$$@
+	cp ../w3/$@ .
+	chmod u+w $@
+$(W4_SOURCES) : ../w4/$$@
+	cp ../w4/$@ .
+	chmod u+w $@
+$(W5_SOURCES) : ../w5/$$@
+	cp ../w5/$@ .
+	chmod u+w $@
+$(W6_SOURCES) : ../w6/$$@
+	cp ../w6/$@ .
+	chmod u+w $@
+$(W7_SOURCES) : ../w7/$$@
+	cp ../w7/$@ .
+	chmod u+w $@
+$(W8_SOURCES) : ../w8/$$@
+	cp ../w8/$@ .
+	chmod u+w $@
+$(W9_SOURCES) : ../w9/$$@
+	cp ../w9/$@ .
+	chmod u+w $@
+
+$(WRPC_SOURCES) : ../wrpc/$$@
+	cp ../wrpc/$@ .
+	chmod u+w $@
+ 
+$(WACE_SOURCES) : ../wace/$$@
+	cp ../wace/$@ .
+	chmod u+w $@
+ 
+# must compile prstatic with cc because pixrect macros are non-ANSI - YUCK!
+prstatic.o : prstatic.c
+	cc -c prstatic.c -o prstatic.o
+
+#### Non graphic variants ##########################
+
+NON_GRAPHIC_OBJS = $(NON_GRAPHIC_VARIANT:.o=.ng.o)
+$(NON_GRAPHIC_OBJS) : $(@:.ng.o=.c)
+	$(COMPILER) $(IDIR) $(OPTIONS) -D$(NAME) -DACEDB -DACEDB2 \
+	-DNON_GRAPHIC  -c $(@:.ng.o=.c)  -o $@
+
+#### main program ##########################
+ 
+tace tace2 : $(TACE_OBJS) $(NON_GRAPHIC_OBJS)
+	$(LINKER) $(BSTATIC) -o  tace $(TACE_OBJS) $(NON_GRAPHIC_OBJS) $(LIBS)
+	chmod 755 tace
+
+## no setuid for tace : textace may fork subshells
+
+xace xace2 : $(WORM_OBJS) $(Xt_OBJS) $(WCS_OBJS)
+	$(LINKER) $(BSTATIC) -o xace $(WORM_OBJS) $(Xt_OBJS) $(WCS_OBJS) \
+	$(Xt_LIBS) $(LIBS)
+	chmod 4755 xace
+
+# set BSTATIC = -Bstatic before compiling the distribution files
+# see the SUN_STATIC_DEF file.
+
+#### distributed programs ################
+
+aceserver : $(SERVER_OBJS) $(NON_GRAPHIC_OBJS)
+	$(LINKER) $(BSTATIC) -o aceserver $(SERVER_OBJS) $(NON_GRAPHIC_OBJS) $(LIBS)
+	chmod 755 aceserver
+
+aceclient : $(CLIENT_OBJS) 
+	$(LINKER) $(BSTATIC) -o aceclient $(CLIENT_OBJS) $(LIBS)
+	chmod 755 aceclient
+
+#### graphics library and test program ################
+
+GL_OBJS = $(GRAPH_OBJS:.o=.gl.o) $(FREE_OBJS:.o=.gl.o) \
+	$(Xt_OBJS:.o=.gl.o)
+GL_FLAGS = -I../wh -D$(NAME) $(OPTIONS)
+
+$(GL_OBJS):	$(@:.gl.o=.c)
+		$(COMPILER) $(GL_FLAGS) -c $(@:.gl.o=.c) -o $@
+
+libgraph.a: 	$(GL_OBJS)
+		ar $(AR_OPTIONS) libgraph.a $?
+		if ( $(RANLIB_NEEDED) ) then ranlib libgraph.a; fi
+
+libfree.a: $(CLEAN_OBJS)
+	ar $(AR_OPTIONS) libfree.a $?
+	if ( $(RANLIB_NEEDED) ) then ranlib libfree.a; fi
+
+xtest : graphtest.o $(GL_OBJS)
+	$(LINKER) -o xtest graphtest.o $(GL_OBJS) $(Xt_LIBS) $(LIBS)
+
+#### image program #########################
+
+image : image.o libgraph.a
+	$(LINKER) -Bstatic -o image image.o libgraph.a $(Xt_LIBS) $(LIBS)
+
+morpion : morpion.o libgraph.a
+	$(LINKER) -Bstatic -o morpion morpion.o libgraph.a $(Xt_LIBS) $(LIBS)
+
+othello : othello.o libgraph.a
+	$(LINKER)  -o othello othello.o libgraph.a $(Xt_LIBS) $(LIBS)
+
+
+diskdump : diskdump.o
+	$(LINKER) -o diskdump diskdump.o $(LIBS)
+
+diskfix : diskfix.o
+	$(LINKER) -o diskfix diskfix.o $(LIBS)
+
+blixem : blxmain.o blxview.o blxparser.o translate.o dotter.o libgraph.a 
+	$(LINKER) -o blixem blxmain.o blxview.o blxparser.o translate.o dotter.o libgraph.a $(Xt_LIBS) $(LIBS)
+
+blixelect : blxselect.o blxparser.o blxview.o translate.o dotter.o libgraph.a 
+	$(LINKER) -o blixelect blxselect.o blxparser.o blxview.o translate.o dotter.o libgraph.a $(Xt_LIBS) $(LIBS)
+
+dotter : dotter.o dotterMain.o colormap.o libgraph.a
+	$(LINKER) -o dotter dotter.o dotterMain.o colormap.o libgraph.a $(Xt_LIBS) $(LIBS)
+
+fetch : fetch.o dbidx.o
+	$(LINKER) -o fetch fetch.o dbidx.o
+
+fetch.o : fetch.c
+	$(CC) -c -o $@ fetch.c -DMIXDB
+
+#### conversion programs ###################
+
+PMAPACE_OBJS  =  pmapace2.o $(CLEAN_OBJS) 
+pmapace :  $(PMAPACE_OBJS)
+	$(LINKER) -o pmapace $(PMAPACE_OBJS) $(LIBS)
+ 
+HOMONYM_OBJS  =  homonym.o $(CLEAN_OBJS)
+homonym :  $(HOMONYM_OBJS)
+	$(LINKER) -o homonym $(HOMONYM_OBJS) $(LIBS)
+
+DIFF_OBJS = acediff.o messclean.o arraysub.o freesubs.o	timesubs.o
+acediff : $(DIFF_OBJS)
+	$(LINKER) $(BSTATIC) -o acediff $(DIFF_OBJS) $(LIBS)
+
+###########################################################
+########### end of the acedb truemake file ################
+###########################################################

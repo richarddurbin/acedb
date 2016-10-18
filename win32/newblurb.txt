@@ -1,0 +1,19 @@
+A new (empty) acedb database has been created, 
+probably on c:\Acedb Databases\New Database, unless
+you asked for a diferent location.
+
+The behavior of an acedb database in controlled by
+a myriad of control files which can be found in
+c:\Acedb Databases\New Database\wspec. Double-click
+on them to browse or edit.
+
+The most important file is models.wrm, which controls
+the schema of the data held by Acedb. The models.wrm file
+which is currently in your database is the one used by 
+the C. Elegans database. You may want to edit it and 
+use the "Read models" function before adding any data.
+
+If you are unable to gain write access to your acedb
+database, look in passwd.wrm and add you usename there.
+(If you don't have a username use the GetLoginFailed option.)
+

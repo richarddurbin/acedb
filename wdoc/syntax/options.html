@@ -1,0 +1,82 @@
+<head>
+<title>AceDB options.wrm syntax</title>
+
+<LINK rel=stylesheet type="text/css"
+href="../wdoc.css"
+title="Style sheet for wdoc documents">
+
+</head>
+
+<body>
+<h2>AceDB options.wrm syntax</h2>
+
+<p>This file is read only at execution time</p>
+
+<p>It holds the class definitions necessary to the applications.
+The kernel classes are defined in the program code.</p>
+
+<p>You can freely edit this file without recompiling
+but it must remain consistent with the other wspec files
+and you must never change the type (A, B, X) of a class
+unless you reconstruct the database from ace files.</p>
+
+<p>Line starting with _VClassName are parsed, they are expected
+to contain a la Unix a set of -Option parameters.
+Class names must match their enumeration in wspec/classes.wrm</p>
+
+<p>The order in which classes appear here will be used in displays.</p>
+
+<p>Options names can be abbreviated, recognized options are</p>
+
+<dl>
+  <dt>-Hidden    
+  <dd>  this class will be listed in the Main Window triangle.
+  <dt>-Visible   
+  <dd>  this class will be listed in the acedb Main Window.
+  <dt>-Array     
+  <dd>  this class is of type A, (Array or tuple).
+  <dt>-Btree     
+  <dd>  this class is of type B, it must be further defined in models.wrm
+  <dt>-XREF      
+  <dd>  Auto cross referencing Hidden B system class. Do not use.
+  <dt>-Display  displayType 
+  <dd>  The preferred display type of the class.
+  <dt>-Title  Tag 
+  <dd>  If present in some object of that class, the text following it
+      will be used preferentially when referring to that object.
+  <dt>-Symbol Tag 
+  <dd>  If present in some object of that class, the text
+      or key following it will be used preferentially
+      when referring to that object in Maps.
+  <dt>-Rename otherName 
+  <dd>  Other name will show in lists, old and new
+      name will be recognized in ace files and queries, old
+      is used in the code. In case some newName
+      matches some old name, the new name takes precedence.
+  <dt>-CaseSensitive 
+  <dd>  The names in this class will be case sensitive.
+      Never undo this option once it has been used.
+  <dt>-Known 
+  <dd>  Prevents indirect creation of new object in ace files
+      You can't enter a new object in this class directly
+      but not by quoting it in another object.
+</dl>
+
+<p>Classes default as -B -H -D TREE
+type A classes further default as -H -D ZERO</p>
+
+<dl>
+  <dt> Displays
+   <dd> Every display type needs a display function.
+   <dt> Parsers
+   <dd> Special code must be provided for A Classes
+   <dt> Dumps
+   <dd> Special code must be provided to dump A classes
+ </dl>
+
+<p>
+These routines must be registered in file wspec/quovadis.h before
+recompilation.</p>
+
+</body>
+</html>

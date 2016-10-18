@@ -1,0 +1,27 @@
+
+=============================================================================
+                           ACEDB INSTALL SCRIPTS
+=============================================================================
+
+Currently there are a plethora of MAKE_xxxx and INSTALL files, this is being
+simplified down to:
+
+
+                   MAKE_INSTALL                INSTALL
+acedb source/bin  -------------->  tar.gz   ------------> acedb installed
+
+
+We the developers use MAKE_INSTALL to make various install packages, the user
+uses INSTALL to install the packages.
+
+
+N.B. exclusions to this for now include:
+
+	- the acembly MAKE/INSTALL stuff has been left alone.
+	- the xclient INSTALL has been left as it includes extra
+	  stuff to see if the client/server are running.
+
+
+The intention is get away from the repetition of code from install script to
+install script and have a neater, more maintainble way of doing things.
+

@@ -1,0 +1,152 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - January 2004</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - January 2004</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+
+<P>A very brief (and late) newsletter for January as both Rob and I have been
+working mostly on ZMap or DAS 2 issues. There will be a report of progress
+on ZMap next month.
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="new_query"></a><H3>Some New Query Features</H3>
+
+<P>Jean has added further optimisations to the Query language to improve the performance
+when using COUT.
+
+<P>He has also added webQuery, a registered acembly uitility for users of acembly,
+please contact <A HREF="mailto:mieg@ncbi.nlm.nih.gov">Jean Thierry-Mieg</A> for details.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Articles"></a><H2>Articles</H2>
+
+
+<a name="more_smap"></a><H3>More SMap Related Changes</H3>
+
+<P>A number of changes have been made to support the introduction of new classes
+for sequence annotation in worm base:
+
+<P>In the <b>Sequence</b> class the Source_Exons tag was preceded by a "From" tag:
+
+<pre><code>	  Structure  From	Source UNIQUE ?Sequence
+				Source_Exons Int UNIQUE Int // start at 1
+</code></pre>
+
+<P>A dependency in the Temporary Gene code of FMap on the "From" tag has been removed
+allowing embedding of just the "Source_Exons" tag set into any SMappable class.
+
+<P>The temporary gene code now copies the "CDS", "Start_not_found"
+and "End_not_found" tags into the temporary gene in a more consistent way.
+
+<P>Any class that contains 
+"Source_Exon" and/or "CDS" tags will now behave like a Sequence class objects
+for display, dumping etc. giving a consistent look/feel to the way such objects
+can be annotated. Note that the
+code now prints a warning if you have a "CDS" tag in an object but no defined "Source_exons".
+Previously the code manufactured a source exon for dumping/display if one did not exist,
+but a discussion
+with the worm group suggested that this sort of implicit production of features was leading
+to undetected data inconsistencies.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+<a name="treedisp"></a><H3>Tree Display Update Bug</H3>
+
+<P>A bug which meant that text editting was broken in the Update Tree Display mode
+after a mouse click in the window has been fixed.
+
+
+<a name="dna_dump"></a><H3>DNA exporting coordinate bug in FMap</H3>
+
+<P>A woeful bug in the code that reports DNA assuming it begins at zero instead of 1
+has been fixed. This was resulting in the start/end coords in the FASTA file being one
+less than they should have been.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+
+<a name="GTK2"></a><H3>GTK version 2 is coming</H3>
+
+<P>The next monthly build will see wmake/XXXXX_DEF files for compiling acedb
+with GTK version 2 for both the Alpha and Linux. This will be an important move
+as the newer version of GTK fixes many bugs and has some good new features.
+We also need to move versions because the previous GTK version is no longer
+supported.
+
+
+<a name="xacz"></a><H3>xacez, xace + ZMap</H3>
+
+<P>The acedb makefile system now includes an "xacez" target which builds an
+xace execuatable which includes the display part of the new ZMap code. This is
+completely experimental so please don't report bugs on it yet. The intention
+is to allow part of the ZMap code to be embedded in xace so annotators here at
+Sanger can
+try out the display as early as possible.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Monthly_Build"><H2>January monthly build now available.</H2>
+
+<P>You can pick up the monthly builds from:
+<dl>
+  <dt><b>Sanger users</b>
+  <dd>~acedb/RELEASE.DEVELOPMENT
+  <dt><b>External users</b>
+  <dd><A href="http://www.acedb.org/Software/Downloads/monthly.shtml">
+      http://www.acedb.org/Software/Downloads/monthly.shtml</A>
+</dl>
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Tue Feb 24 10:23:37 GMT 2004
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

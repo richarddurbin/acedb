@@ -1,0 +1,40 @@
+select all from class movie 
+
+select p from p in class person 
+
+select m->Title, m->Director from m in class Movie 
+
+select m->Title, m->Director->Full_name from m in class Movie 
+
+select a->Full_name from m in class Movie, a in m->Based_on->Author 
+
+select p->Full_name, p->Address[2] from p in class person 
+
+select p->Full_name, p->Phone from p in class person 
+
+select m->Title, d->Full_name from m in class Movie, d in m->Director where exists d 
+
+select m->Cast->Full_name from m in class Movie where m = "truerom" 
+
+select m->Title, year from m in class Movie, year in m->Released  where year > `1990 
+
+select m, m->Released from m in class movie where not exists  m->Released 
+
+select p->Full_name, yeardiff(p->Born, today) from p in class Person 
+
+select p->Full_name, yeardiff(p->Born, today) from p in class Person where yeardiff(p->Born, today) > 55 
+
+select m->Title, year from m in class Movie, year in m->Released where yeardiff (year,`1990) > 0 
+
+select p->Full_name, count(select p->Stars_in) from p in class Person
+
+select m->Title from m in class Movie where count(select m->Cast) > 3
+
+select avg(select yeardiff(p->Born, now) from p in class Actor) 
+
+select max(select m->released from m in class movie) 
+
+$x := count(select all class movie) 
+
+$x := avg(select m->rating from m in class movie); select m->title, r from m in class movie, r in m->rating where r > $x
+

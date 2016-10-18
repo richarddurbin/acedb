@@ -1,0 +1,82 @@
+#!/usr/bin/perl
+#
+# Perl script to insert the name of a release directory into the aceversion.c
+# source file.
+#
+# We need this to happen so that we can be sure which version of the source
+# code users are compiling from. Currently it isn't obvious to us except
+# by update level which does not change for monthly updates.
+#
+# Script will fail if aceversion.c is not writeable.
+# 
+#
+
+# Initialise...
+$debug = 0 ;						    # Debug flag, may be reset from command line...
+
+($cmd = $0) =~ s#.*/## ;				    # Get this commands basename (got this
+							    # magic from 'Learning Perl', p. 214.).
+
+$msghdr = $cmd . ': ' ;					    # Set up a prefix for error messages.
+
+$source_file = 'aceversion.c' ;				    # The ACEDB source file to be searched.
+
+
+# We don't want any arguments to the script.
+#
+($debug) && print $msghdr . "program arguments - @ARGV\n" ;
+($#ARGV != 1) && die $msghdr . "Wrong number of parameters supplied, specify: <aceversion.c_source_directory> <RELEASE.YYYY_MM_DD>\n" ;
+
+
+# This is the location of the aceversion.c file we want to read.
+#
+$input_file = "@ARGV[0]/$source_file" ;
+$output_file = "$input_file.tmp" ;
+
+$release_dir = @ARGV[1] ;
+$final_file = "$release_dir/$source_file" ;
+
+
+# Now check out the input file to see if it's OK...
+(-f $input_file && -r $input_file && -w $input_file) || die $msghdr . "file specified is not a file, or is not readable/writeable by this program.\n" ;
+
+# Open the input file...
+open(INFILE, $input_file) || die $msghdr . "could not open $input_file\n" ;
+
+open(OUTFILE, ">$output_file") || die $msghdr . "could not open $output_file\n" ;
+
+# Now start parsing the input file...
+while (<INFILE>)
+  {
+  ($debug) && print $msghdr . "Data just read in $_\n" ;
+
+  # Once we find the start tag we know that the version, release & update are on the next
+  # three lines.
+  if ( /ACE_RELEASE_DIR_START/ )
+    {
+    print OUTFILE "$_" ;
+
+    $release_dir_line = <INFILE> ;
+    ($define, $label, $junk) = split(/\s+/, $release_dir_line) ;
+    print OUTFILE "$define $label \"$release_dir\"\n" ;
+    }
+  else
+    {
+    print OUTFILE "$_" ;
+    }
+
+  }
+
+# Don't need the file anymore so close it...
+close(INFILE) || die $msghdr . "could not close $input_file\n" ;
+
+close(OUTFILE) || die $msghdr . "could not close $output_file\n" ;
+
+
+# overwrite the old version of the file with the new one.
+rename ($output_file, $final_file) || die $msghdr . "rename of $output_file to $final_file failed.\n" ;
+
+($debug) && print $msghdr . "File successfully processed...\n" ;
+
+exit 0 ;
+

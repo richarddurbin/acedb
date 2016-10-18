@@ -1,0 +1,53 @@
+int	client	what
+		AC_DB
+		AC_ITER
+		AC_KEYSET
+		AC_OBJ
+y	y	AC_TABLE
+y	y	ac_type
+y	y	enum ac_tablemaker_where
+		
+		ac_adata
+		ac_aql
+		ac_class
+	y	ac_command 
+		ac_dup
+	y	ac_empty_table
+		ac_free
+			ac_free_table
+	y		ac_free_db
+		ac_get
+		ac_has_tag	
+		ac_keyset_add 
+		ac_keyset_and 
+		ac_keyset_copy 
+		ac_keyset_count
+		ac_keyset_iter 
+		ac_keyset_minus 
+		ac_keyset_or 
+		ac_keyset_xor 
+		ac_name	
+		ac_new_keyset 
+		ac_next 
+	y	ac_open
+		ac_query_iter 
+		ac_query_keyset 
+		ac_rewind 
+		ac_table (table after tag)
+		ac_table_delete_row
+	y	ac_table_float	
+	y	ac_table_insert
+	y	ac_table_insert_type
+	y	ac_table_int 	
+		ac_table_obj	
+	y	ac_table_printable
+		ac_table_tag 
+	y	ac_table_text
+		ac_tablemaker
+		ac_tag_float	
+		ac_tag_int 	
+		ac_tag_obj 	
+		ac_tag_table
+		ac_tag_text	
+		ac_tag_type 	
+	y	ac_table_type 	

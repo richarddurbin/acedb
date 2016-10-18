@@ -1,0 +1,193 @@
+<HTML>
+
+<HEAD>
+<TITLE>ACEDB User Group Newsletter - August 2002</TITLE>
+
+<!-- you won't pick up the style sheet if you view this template file, it works OK
+for the newsletters which are in the directory above. -->
+
+<LINK rel=stylesheet type="text/css"
+href="../newsletter.css"
+title="Style sheet for Acedb newsletters">
+
+</HEAD>
+
+
+<BODY>
+
+<HR>
+<HR>
+
+<!-- Don't change this name unless you change mkindex.pl.                     -->
+<a name="Top"></a>
+
+<H1>ACEDB User Group Newsletter - August 2002</H1>
+
+
+<!-- ******************************************************************** -->
+<P>If you want to have this newsletter mailed to you <B>or</B> you want to
+make comments/suggestions about the format/content then
+send an email to <A HREF="mailto:acedb@sanger.ac.uk">acedb@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<P>A new acedb coder (Rob Clack) joins, tree display of empty strings, a server
+PID file and some bug fixes.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="General_News"></a><H2>General News</H2>
+
+<a name="Staff_change"></a><H3>Rob Clack joins us</H3>
+
+<P>At the end of last year John Sturdy unfortunately had to leave us and we
+have finally managed to recruit Rob Clack as a replacement. Rob will initially
+be taking over the acedb web site and test systems. You can send email to Rob
+at <A HREF="mailto:rnc@sanger.ac.uk">rnc@sanger.ac.uk</A>.
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="New_Features"></a><H2>New Features</H2>
+
+
+<a name="empty_strings"></a><H3>Empty Strings in Tree Display.</H3>
+
+<P>The tree display has been altered so that it will now display
+<code><b><empty></b></code> for text fields with null
+strings, previously they were not displayed at all and hence not edittable.
+
+
+<a name="server_pid"></a><H3>New Server PID file</H3>
+
+<P>A new <code><b>PIDFILE</b></code> option has been added to the
+wspec/serverconfig.wrm file, uncommenting this will cause the server
+during initialisation to write a
+file into the <code><b>database/</b></code> subdirectory containing the pid of the server.
+The file will be deleted when the server terminates. You can use this
+file to control the server via a number of unix utilities which
+are commonly used to provide general control of server programs.
+
+<P>As with other new configuration options in acedb, to make use of the
+new options you should:
+
+<ol>
+  <li>Get a copy of the new wspec/serverconfig.wrm from the acedb web site.
+  <li>In your database merge your old wspec/serverconfig.wrm with the new one.
+  <li>Uncomment the new PIDFILE flag in serverconfig.wrm
+  <li>Run the new server against the database and you should see a file called
+      database/SERVER_PIDFILE.wrm which should contain the pid of the server.
+</ol>
+
+<P>Some things to note:
+<ul>
+  <li>In normal operation the server creates the pid file at start up and removes it
+      at shutdown.
+  <li>If the server crashes in an untrappable way then the pidfile will not be removed
+      of course. In this case when the server starts up, if the pid file is still
+      there it will complain but _will_ start up. If you don't want it to restart
+      after crashing you should take a look at the NO_RESTART option in
+      serverconfig.wrm.
+</ul>
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Bugs_Fixed"></a><H2>Bugs Fixed</H2>
+
+<a name="keymatch_bug"></a><H3>aceInKeyMatch() and exact matches</H3>
+
+<P>A bbug in aceInKeyMatch() meant that it did not distinguish an exact match from
+a longer keyword that began with the same letters, e.g. matching "write" to
+"write" and "writeaccess" should return just the exact match of "write".
+
+
+<a name="nosave_bug"></a><H3>Nosave option and write lock file</H3>
+
+<P>The "nosave" code in sessionDoClose() did not remove the write lock
+file if tace had gained write access. The bug became obvious because
+some tace commands do a sessionsave which removes the lock file while others don't.
+The reason for this inconsistency is not known.
+
+
+<a name="logging_bug"></a><H3>Logging stops after saving from tace</H3>
+
+<P>Dan Lawson reported that logging stops after saving from tace.
+It turns out that closing of the log got introduced into sessionClose() at
+the beginning of 2000, as part of the conversion to use aceOut for accessing
+the logfile. One can see why this was originally done: sessionClose() is called when the
+application is exitting. Unfortunately its also called when applications are
+just saving. To avoid this problem calls to sessionClose() have been replaced with
+calls to sessionMark(), sessionMark() no longer calls sessionClose(), instead
+they both call an internal routine closeSession(), which saves the session
+but does not close the log file.
+sessionClose() is now the routine to call when the application is going
+to exit.
+
+
+<a name="query_bugs"></a><H3>Query Fixes</H3>
+
+<P>Number evaluation has been removed from string compares,
+this was producing errors when obj names actually were numbers
+because they got rounded !
+
+<P>An optimiser has been added in [] calcul clause after a bug report
+by Dave Matthews about the slowness of this. This has reduced
+a 10 minute query to &lt; 1 second.
+
+
+<a name="fmap_bug"></a><H3>Fmap redraw bug</H3>
+
+<P>Yet another FMap bug related to stale data when recalculations
+are introduced into unexpected places.
+Add the relevant offset to the values stored in the chosen and
+antichosen assocs when we do a recalc - otherwise this data is no
+longer valid.
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<a name="Developers_Corner"></a><H2>Developers Corner</H2>
+
+
+<a name="aquila"></a><H3>Aquila work</H3>
+
+<P>Rob and Mark (Sienkiewicz) have been doing good work on aquila on serveral
+fronts:
+
+<ul>
+  <li>Verifying the test results to make sure that output is actually
+      correct rather than just different.
+  <li>Introducing the new aquila program (written by Robs predecessor
+      but never fully integrated into the test system). This system enables
+      the running of individual tests or multiple tests because test script files
+      can now "include" other test script files to build up sets of tests.
+  <li>Putting all the aquila and build scripts into cvs.
+  <li>Creating a document to describe how simple it is to add new tests !
+</ul>
+
+
+
+<!-- ******************************************************************** -->
+<P><hr width="62%" align=left>
+<H2>August monthly build not available.</H2>
+
+<P>Apologies, once again there was no build this month due to the major
+SMap development work.
+
+
+<!-- ******************************************************************** -->
+<HR>
+<HR>
+
+<ADDRESS><A href="mailto:edgrif@sanger.ac.uk">Ed Griffiths &lt;edgrif@sanger.ac.uk&gt;</A></ADDRESS>
+<!-- hhmts start -->
+Last modified: Thu Dec 19 13:33:33 GMT 2002
+<!-- hhmts end -->
+
+</BODY>
+</HTML>

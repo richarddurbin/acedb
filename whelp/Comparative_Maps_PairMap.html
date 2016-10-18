@@ -1,0 +1,40 @@
+<HTML>
+<HEAD>
+<TITLE> The display of comparative mapping data using ACEDB </TITLE>
+</HEAD>
+<BODY>
+<H1> The Pairwise Chromosome Map </H1>
+<P>The PairMap shows a single cell of an Oxford Grid in some detail. Homologies are shown as small blue boxes, plotted at their respective positions on the Maps  of the two species, should these positions be known (in an Oxford Grid, points are plotted at random, as there are often too many points in a cell for their positions to be informative). So if, for example, we are looking at the PairMap of an Oxford Grid's 14,12 cell, the x-coordinate of an homology box will be the locus' position on chromosome 14 in the first species and the y-coordinate will be its position on chromosome 12 in the second species. Homology boxes are shown with error bars relating to the known errors of their locations in each species.</P>
+<P>
+The PairMap is labelled with chromosome (banding pattern) ideograms, should these be available, or by numeric scales. If the former, then all chromosome band names will be shown and these may be double-clicked to bring up text information on the bands. In either case the Map names will be shown in bold black text and may be double-clicked to bring up their graphical displays.</P>
+<P>
+The PairMap can be used to spot segments that are conserved between the two species (these can be seen as clear "bottom left to top right" diagonal lines of boxes). An inversion of a segment between the two Maps will be easy to identify as a diagonal  going "the wrong way" (i.e. top left to bottom right).</P>
+<P> 
+A single click on a blue homology box (it is then selected and is coloured light green) causes the names of the two homologous loci to be displayed in the light blue header bar beneath the button menus. Any homology may be selected by double-clicking on it with the mouse. Upon this a text window appears giving information on the homology and on homologies between the two loci involved and loci from other species.</P>
+<P>
+Two search facilities are provided, one for searching for an homology and one for a locus. If the text entered in either of these fields matches an homology or a locus that is present on the PairMap, then the relevant homology box will be selected.
+<P>Button options available within the PairMap are :<BR>
+<UL>
+<LI>Hide/Draw Chromosomes - toggles between a numeric scale and banded chromosome ideograms, should these be available
+<LI>Hide/Draw Error Bars  - removes/returns the error bars relating to the accuracy of the homology box's positions on the two Maps
+<LI>Flip                  - flips the PairMap to change the axes of the two Maps
+<LI>Highlight...          - a menu giving various highlighting options
+<LI>Shade/Unshade         - this option will only work if chromosome banding patterns are available and are currently drawn on-screen. The idea behind this is to see whether most loci lie in the white space, as they should do if the assumption that light bands contain more genes than dark bands is correct. This option shades or unshades the whole display as follows :<BR>
+<UL>
+<LI>Dark band species1/dark band species2   = dark
+<LI>Dark band species1/light band species2  = light grey
+<LI>Light band species1/dark band species1  = light grey
+<LI>Light band species1/light band species2 = white
+</UL>
+<LI>Zoom in               - increases the size of the graph
+<LI>Zoom out              - decreases the size of the graph
+</UL> 
+<P>Menu options available within the PairMap are :<BR>
+<UL>
+<LI>Quit     - destroys the PairMap window
+<LI>Help     - displays this help information
+<LI>Print    - brings up the Print/Mail Selection tool
+<LI>Preserve - preserves the current PairMap
+</UL>
+</BODY>
+</HTML>
