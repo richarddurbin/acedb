@@ -22,7 +22,7 @@ acedb is licensed under the GNU public licence as described in the file
 
 Extensive documentation from a range of different times, including the original READMEs, can be found in [wdoc/](wdoc/).
 
-In brief, to compile and get going in a Unix environment you first need to install the readline package and Glib, GDK and GTK, which can be obtained together in the GTK+ package from  [www.gtk.org](http://www.gtk.org).  Then you need to set the environment variable ACEDB_MACHINE to something appropriate in [wmake/](wmake/), e.g.
+In brief, to compile and get going in a Unix environment you first need to have installed the readline package and Glib, GDK and GTK, which can be obtained together in the GTK+ package from  [www.gtk.org](http://www.gtk.org).  Then you need to set the environment variable ACEDB_MACHINE to something appropriate in [wmake/](wmake/), e.g.
 ```
 setenv ACEDB_MACHINE LINUX_4
 ```
