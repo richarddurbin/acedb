@@ -1,0 +1,59 @@
+Below are a list of package installations that created an environment in which acedb could be 
+compiled on a clean Linux Redhat 1.7 virtual machine in mid-October 2016.
+
+- gcc
+Installed                      Packages
+gcc.x86_64                     4.8.5-4.el7          @rhel-7-server-rpms
+
+- libc
+Installed                      Packages
+glibc.x86_64                   2.17-106.el7_2.4     @rhel-7-server-rpms
+glibc-common.x86_64            2.17-106.el7_2.4     @rhel-7-server-rpms
+glibc-devel.x86_64             2.17-106.el7_2.4     @rhel-7-server-rpms
+glibc-headers.x86_64           2.17-106.el7_2.4     @rhel-7-server-rpms
+
+- readline
+Installed                      Packages
+readline.x86_64                6.2-9.el7            @anaconda/7.1
+readline-devel.x86_64          6.2-9.el7            @rhel-7-server-rpms
+
+- libcurl
+Installed                      Packages
+libcurl.x86_64                 7.29.0-25.el7        @rhel-7-server-rpms
+libcurl-devel.x86_64           7.29.0-25.el7        @rhel-7-server-rpms
+
+- yacc
+Installed                      Packages
+byacc.x86_64                   1.9.20130304-3.el7   @rhel-7-server-rpms
+
+- bison
+Installed                      Packages
+bison.x86_64                   2.7-4.el7            @rhel-7-server-rpms
+bison-devel.x86_64             2.7-4.el7            @rhel-7-server-optional-rpms
+
+Available                      Packages
+bison-devel.i686               2.7-4.el7            rhel-7-server-optional-rpms
+bison-runtime.x86_64           2.7-4.el7            rhel-7-server-optional-rpms
+
+- flex
+Installed                      Packages
+flex.x86_64                    2.5.37-3.el7         @rhel-7-server-rpms
+flex-devel.x86_64              2.5.37-3.el7         @rhel-7-server-optional-rpms
+
+Available                      Packages
+flex-devel.i686                2.5.37-3.el7         rhel-7-server-optional-rpms
+flex-doc.x86_64                2.5.37-3.el7         rhel-7-server-optional-rpms
+
+- libXmu
+Installed                      Packages
+libXmu.x86_64                  1.1.2-2.el7          @rhel-7-server-rpms
+libXmu-devel.x86_64            1.1.2-2.el7          @rhel-7-server-rpms
+ 
+Available                      Packages
+libXmu.i686                    1.1.2-2.el7          rhel-7-server-rpms
+libXmu-devel.i686              1.1.2-2.el7          rhel-7-server-rpms
+
+-gtk+
+Installed                      Packages
+gtk2.x86_64                    2.24.28-8.el7        @rhel-7-server-rpms
+gtk2-devel.x86_64              2.24.28-8.el7        @rhel-7-server-rpms
